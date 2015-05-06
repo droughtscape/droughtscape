@@ -1,0 +1,43 @@
+/* CSS declarations go here */
+.btn.btn-success {
+    padding: 1rem 3rem 1rem;
+}
+
+.centered-text {
+    text-align:center
+}
+
+div.container {
+    box-sizing: border-box;
+    width: 100em;
+    height: 45em;
+    text-align: left;
+    border: 0.1em solid red;
+}
+
+.div3 {
+    border: 1px solid blue;
+    box-sizing: border-box;
+    flex: 1 1 auto;
+    /*height: 100%;*/
+}
+
+.renderArea {
+    display: flex;
+    height: 100%;
+    position: relative;
+}
+
+.renderArea .content {
+    border: 1px solid red;
+    flex: 1 1 auto;
+}
+
+.btn-bottom {
+    position: absolute;
+    bottom: 45px;
+}
+
+.btn-large .nav {
+    height: 10em;
+}

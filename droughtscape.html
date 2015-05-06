@@ -1,0 +1,107 @@
+<head>
+    <title>droughtscape</title>
+</head>
+
+<body>
+</body>
+
+<template name="hello">
+    <button>Click Me</button>
+    <p>You've pressed the button {{counter}} times.</p>
+</template>
+
+<template name="home">
+    <header>
+        <!--The resize div is hidden and used to enable re-render on window resizes
+        Some magic has to be done due to the virtual dom-->
+        <div style="visibility: hidden; height: 0">{{resize}}</div>
+        <!--<h1 class="center-align">Droughtscape</h1>-->
+    </header>
+    <nav>
+        <div class="nav-wrapper teal darken-2">
+            <a href="#!" class="brand-logo right">Droughtscape-Logo</a>
+            <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="mdi-navigation-menu"></i></a>
+            <ul class="left hide-on-med-and-down">
+                <li><a id="personalize" class="col s2 waves-effect waves-light btn-large">
+                    <i class="mdi-action-face-unlock right"></i>Personalize</a></li>
+                <li><a id="plants" class="col s2 waves-effect waves-light btn-large">
+                    <i class="mdi-image-photo-library right"></i>Plants</a></li>
+                <li><a id="gallery" class="col s2 waves-effect waves-light btn-large">
+                    <i class="mdi-image-photo-library right"></i>Gallery</a></li>
+                <li><a id="community" class="col s2 waves-effect waves-light btn-large">
+                    <i class="mdi-social-group right"></i>Community</a></li>
+                <li><a id="rebates" class="col s2 waves-effect waves-light btn-large">
+                    <i class="mdi-editor-attach-money right"></i>Rebates</a></li>
+            </ul>
+            <ul class="side-nav" id="mobile-demo">
+                <li><a id="personalize" class="col s2 waves-effect waves-light btn-large">
+                    <i class="mdi-action-face-unlock right"></i>Personalize</a></li>
+                <li><a id="plants" class="col s2 waves-effect waves-light btn-large">
+                    <i class="mdi-image-photo-library right"></i>Plants</a></li>
+                <li><a id="gallery" class="col s2 waves-effect waves-light btn-large">
+                    <i class="mdi-image-photo-library right"></i>Gallery</a></li>
+                <li><a id="community" class="col s2 waves-effect waves-light btn-large">
+                    <i class="mdi-social-group right"></i>Community</a></li>
+                <li><a id="rebates" class="col s2 waves-effect waves-light btn-large">
+                    <i class="mdi-editor-attach-money right"></i>Rebates</a></li>
+            </ul>
+        </div>
+    </nav>
+<!--
+    <div class="row">
+        <a id="personalize" class="col s2 waves-effect waves-light btn-large">
+            <i class="mdi-action-face-unlock right"></i>Personalize</a>
+        <a id="plants" class="col s2 waves-effect waves-light btn-large">
+            <i class="mdi-image-photo-library right"></i>Plants</a>
+        <a id="gallery" class="col s2 waves-effect waves-light btn-large">
+            <i class="mdi-image-photo-library right"></i>Gallery</a>
+        <a id="community" class="col s2 waves-effect waves-light btn-large">
+            <i class="mdi-social-group right"></i>Community</a>
+        <a id="rebates" class="col s2 waves-effect waves-light btn-large">
+            <i class="mdi-editor-attach-money right"></i>Rebates</a>
+    </div>
+-->
+
+    <div id="content" class="renderArea row">
+        <div class="div3 col s10">RenderContent</div>
+        <div class="div3 col s2">
+            <div class="row">
+                <a id="create" class="col s12 waves-effect waves-light btn-large">
+                    <i class="mdi-action-face-unlock right"></i>Create</a>
+            </div>
+            <hr>
+            <a id="favorites" class="col s12 waves-effect waves-light btn-large">
+                <i class="mdi-action-face-unlock right"></i>My Favs</a>
+
+            <div id="spacer">
+                spacer
+            </div>
+            <a id="aboutbtn" class="col s12 waves-effect waves-light btn-large">About Droughtscape</a>
+        </div>
+    </div>
+
+    <div class="center-align valign-wrapper">
+        <div id="about-card" class="row"
+             style="position: fixed; top: 100px; z-index: 1000; visibility: hidden">
+            <!--style="position: absolute; top: 100px; left: 100px; z-index: 1000; visibility: hidden">-->
+            <div class="col s12 m6">
+                <div class="card blue-grey darken-1">
+                    <div class="card-content white-text">
+                        <div class="center-align">
+                            <span class="card-title">About Droughtscape</span>
+                        </div>
+
+                        <p>Droughtscape is a completely free, open source, web based tool
+                            to help folks replace water hungry suburban lawns with
+                            drought friendly, beautiful yards.</p>
+                    </div>
+                    <div class="card-action">
+                        <div class="center-align">
+                            <a id="dismiss-about-btn" class="waves-effect waves-light btn">Dismiss</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
