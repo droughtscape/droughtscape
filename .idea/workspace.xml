@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="ddf23795-1daa-4cc8-a1c3-8d0cb84eb140" name="Default" comment="Add droughtscape_work config&#10;Add WaterWise button&#10;Handle older chrome for setting render area height dynamically.">
+    <list default="true" id="ddf23795-1daa-4cc8-a1c3-8d0cb84eb140" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/waterwise.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/waterwise.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/droughtscape.html" afterPath="$PROJECT_DIR$/droughtscape.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/droughtscape.js" afterPath="$PROJECT_DIR$/droughtscape.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
@@ -38,22 +40,43 @@
       <file leaf-file-name="droughtscape.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/droughtscape.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-10.375">
-              <caret line="67" column="25" selection-start-line="67" selection-start-column="25" selection-end-line="67" selection-end-column="25" />
+            <state vertical-scroll-proportion="-0.0">
+              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
               <folding>
                 <element signature="n#style#0;n#div#0;n#header#0;n#template#1;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#img#0;n#div#0;n#nav#0;n#template#1;n#!!top" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="droughtscape.js" pinned="false" current-in-tab="true">
+      <file leaf-file-name="waterwise.html" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/waterwise.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="-5.0">
+              <caret line="8" column="50" selection-start-line="8" selection-start-column="50" selection-end-line="8" selection-end-column="50" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="waterwise.js" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/waterwise.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.12352941">
+              <caret line="18" column="1" selection-start-line="18" selection-start-column="1" selection-end-line="18" selection-end-column="1" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="droughtscape.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/droughtscape.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.46588236">
-              <caret line="69" column="55" selection-start-line="69" selection-start-column="55" selection-end-line="69" selection-end-column="55" />
+            <state vertical-scroll-proportion="0.0">
+              <caret line="100" column="32" selection-start-line="100" selection-start-column="32" selection-end-line="100" selection-end-column="32" />
               <folding>
-                <marker date="1430937311426" expanded="true" signature="2876:2877" placeholder="{...}" />
+                <marker date="1430942917418" expanded="true" signature="2925:2926" placeholder="{...}" />
               </folding>
             </state>
           </provider>
@@ -71,6 +94,14 @@
       </file>
     </leaf>
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Html5" />
+        <option value="JavaScript File" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
@@ -81,6 +112,8 @@
         <option value="$PROJECT_DIR$/README.md" />
         <option value="$PROJECT_DIR$/droughtscape.html" />
         <option value="$PROJECT_DIR$/droughtscape.js" />
+        <option value="$PROJECT_DIR$/waterwise.html" />
+        <option value="$PROJECT_DIR$/waterwise.js" />
       </list>
     </option>
   </component>
@@ -92,7 +125,8 @@
     <order />
   </component>
   <component name="ProjectFrameBounds">
-    <option name="y" value="146" />
+    <option name="x" value="1946" />
+    <option name="y" value="79" />
     <option name="width" value="1920" />
     <option name="height" value="1029" />
   </component>
@@ -151,6 +185,7 @@
     <property name="restartRequiresConfirmation" value="true" />
     <property name="js.meteor.project" value="true" />
     <property name="js.meteor.library.was.enabled" value="true" />
+    <property name="DefaultHtmlFileTemplate" value="Html5" />
   </component>
   <component name="RunManager" selected="Meteor.droughtscape_work">
     <configuration default="true" type="DartCommandLineRunConfigurationType" factoryName="Dart Command Line Application">
@@ -249,11 +284,17 @@
       <option name="project" value="LOCAL" />
       <updated>1430924251392</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Add droughtscape_work config&#10;Add WaterWise button&#10;Handle older chrome for setting render area height dynamically.">
+      <created>1430937468255</created>
+      <option name="number" value="00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1430937468255</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="146" width="1920" height="1029" extended-state="0" />
+    <frame x="1946" y="79" width="1920" height="1029" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3287827" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -311,6 +352,7 @@
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="n#style#0;n#div#0;n#header#0;n#template#1;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#img#0;n#div#0;n#nav#0;n#template#1;n#!!top" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -320,7 +362,7 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="107" column="0" selection-start-line="107" selection-start-column="0" selection-end-line="107" selection-end-column="0" />
           <folding>
-            <marker date="1430937311426" expanded="true" signature="2876:2877" placeholder="{...}" />
+            <marker date="1430942917418" expanded="true" signature="2925:2926" placeholder="{...}" />
           </folding>
         </state>
       </provider>
@@ -347,6 +389,7 @@
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="n#style#0;n#div#0;n#header#0;n#template#1;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#img#0;n#div#0;n#nav#0;n#template#1;n#!!top" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -356,7 +399,7 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="23" column="0" selection-start-line="23" selection-start-column="0" selection-end-line="23" selection-end-column="0" />
           <folding>
-            <marker date="1430937311426" expanded="true" signature="2876:2877" placeholder="{...}" />
+            <marker date="1430942917418" expanded="true" signature="2925:2926" placeholder="{...}" />
           </folding>
         </state>
       </provider>
@@ -398,6 +441,42 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/../materials.test/materials.test.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.18711019">
+          <caret line="12" column="11" selection-start-line="9" selection-start-column="0" selection-end-line="12" selection-end-column="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/droughtscape.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="100" column="32" selection-start-line="100" selection-start-column="32" selection-end-line="100" selection-end-column="32" />
+          <folding>
+            <marker date="1430942917418" expanded="true" signature="2925:2926" placeholder="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/waterwise.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-5.0">
+          <caret line="8" column="50" selection-start-line="8" selection-start-column="50" selection-end-line="8" selection-end-column="50" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/droughtscape.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="n#style#0;n#div#0;n#header#0;n#template#1;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#img#0;n#div#0;n#nav#0;n#template#1;n#!!top" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/droughtscape.css">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -406,30 +485,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../materials.test/materials.test.html">
+    <entry file="file://$PROJECT_DIR$/waterwise.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.18711019">
-          <caret line="12" column="11" selection-start-line="9" selection-start-column="0" selection-end-line="12" selection-end-column="11" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/droughtscape.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-10.375">
-          <caret line="67" column="25" selection-start-line="67" selection-start-column="25" selection-end-line="67" selection-end-column="25" />
-          <folding>
-            <element signature="n#style#0;n#div#0;n#header#0;n#template#1;n#!!top" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/droughtscape.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.46588236">
-          <caret line="69" column="55" selection-start-line="69" selection-start-column="55" selection-end-line="69" selection-end-column="55" />
-          <folding>
-            <marker date="1430937311426" expanded="true" signature="2876:2877" placeholder="{...}" />
-          </folding>
+        <state vertical-scroll-proportion="0.12352941">
+          <caret line="18" column="1" selection-start-line="18" selection-start-column="1" selection-end-line="18" selection-end-column="1" />
+          <folding />
         </state>
       </provider>
     </entry>

@@ -1,5 +1,7 @@
 Router.map(function () {
 	this.route('home', {path: '/'});
+	this.route('waterwise', {path: '/waterwise'});
+	this.route('hello', {path: '/hello'});
 });
 
 if (Meteor.isClient) {
@@ -94,9 +96,9 @@ if (Meteor.isClient) {
 		'click #dismiss-about-btn': function () {
 			var aboutCard = document.getElementById('about-card');
 			aboutCard.style.visibility = 'hidden';
-			//if (aboutCard) {
-			//	setTimeout(function(){ aboutCard.style.visibility = 'hidden'; }, 1000);
-			//}
+		},
+		'click #waterwise': function () {
+			Router.go('waterwise');
 		}
 	})
 }
