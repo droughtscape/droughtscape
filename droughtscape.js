@@ -66,6 +66,8 @@ if (Meteor.isClient) {
 			var contentHeight = (window.innerHeight - footerHeight) - contentPos.y;
 			content.style.height = contentHeight + 'px';
 			//console.log('content: ' + content + ', w x h: ' + screen.width + ':' + screen.height);
+			var render = document.getElementById('render');
+			render.style.height = contentHeight + 'px';
 			var aboutbtn = document.getElementById("aboutbtn");
 			var aboutTop = contentPos.y + (contentHeight - (aboutbtn.offsetHeight + 10));
 			var spacer = document.getElementById('spacer');
