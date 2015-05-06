@@ -1,6 +1,7 @@
 Router.map(function () {
 	this.route('home', {path: '/'});
 	this.route('waterwise', {path: '/waterwise'});
+	this.route('plants', {path: '/plants'});
 	this.route('hello', {path: '/hello'});
 });
 
@@ -70,6 +71,8 @@ if (Meteor.isClient) {
 			//console.log('content: ' + content + ', w x h: ' + screen.width + ':' + screen.height);
 			var render = document.getElementById('render');
 			render.style.height = contentHeight + 'px';
+			var rightNav = document.getElementById('rightnav');
+			rightNav.style.height = contentHeight + 'px';
 			var aboutbtn = document.getElementById("aboutbtn");
 			var aboutTop = contentPos.y + (contentHeight - (aboutbtn.offsetHeight + 10));
 			var spacer = document.getElementById('spacer');
@@ -97,6 +100,8 @@ if (Meteor.isClient) {
 			var aboutCard = document.getElementById('about-card');
 			aboutCard.style.visibility = 'hidden';
 		},
+		'click #plants': function () {
+			Router.go('plants');		},
 		'click #waterwise': function () {
 			Router.go('waterwise');
 		}

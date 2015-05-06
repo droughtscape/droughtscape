@@ -22,6 +22,11 @@ div.container {
     /*height: 100%;*/
 }
 
+.div2 {
+    box-sizing: border-box;
+    flex: 1 1 auto;
+}
+
 .renderArea {
     display: flex;
     height: 100%;

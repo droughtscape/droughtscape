@@ -18,7 +18,7 @@
         <!--<h1 class="center-align">Droughtscape</h1>-->
     </header>
     <nav>
-        <div class="nav-wrapper teal darken-2">
+        <div class="nav-wrapper brown lighten-4">
             <img src="watersave.jpg" class="brand-logo right" style="width:80px;height:64px">
             <!--<a href="watersave.jpg" class="brand-logo right">watersave.jpg</a>-->
             <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="mdi-navigation-menu"></i></a>
@@ -47,6 +47,8 @@
                     <i class="mdi-social-group right"></i>Community</a></li>
                 <li><a id="rebates" class="col s2 waves-effect waves-light btn-large">
                     <i class="mdi-editor-attach-money right"></i>Rebates</a></li>
+                <li><a id="waterwise" class="col s2 waves-effect waves-light btn-large">
+                    <i class="mdi-social-share right"></i>WaterWise</a></li>
             </ul>
         </div>
     </nav>
@@ -66,7 +68,7 @@
 -->
     <div id="content" class="renderArea row">
         <div id="render" class="div3 col s10">RenderContent</div>
-        <div class="div3 col s2">
+        <div id="rightnav" class="div2 col s2 brown lighten-4">
             <div class="row">
                 <a id="create" class="col s12 waves-effect waves-light btn-large">
                     <i class="mdi-action-face-unlock right"></i>Create</a>
@@ -74,10 +76,16 @@
             <hr>
             <a id="favorites" class="col s12 waves-effect waves-light btn-large">
                 <i class="mdi-action-face-unlock right"></i>My Favs</a>
-
-            <div id="spacer">
-                spacer
+            <hr>
+            <div class="center-align">
+                <iframe src="http://www.bewaterwise.com/widgets/Widget_smll3.html" name="Water Guage" frameborder=0 id="widget_v03" scrolling="no" height="164" width="143" marginheight="0" marginwidth="0" ></iframe>
             </div>
+            <hr>
+            <div class="center-align">
+                <iframe src="http://www.mwdh2o.com/DocSvcsPubs/widgets/Public_Widgets/WI-small/wwi.html" name="Watering Index" frameborder=0 id="widget_v01" scrolling="no" height="54" width="143" marginheight="0" marginwidth="0" ></iframe>
+            </div>
+            <hr>
+            <div id="spacer"></div>
             <a id="aboutbtn" class="col s12 waves-effect waves-light btn-large">About Droughtscape</a>
         </div>
     </div>
