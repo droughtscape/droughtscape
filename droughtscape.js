@@ -1,6 +1,7 @@
 Router.map(function () {
 	this.route('home', {path: '/'});
 	this.route('waterwise', {path: '/waterwise'});
+	this.route('personalize', {path: '/personalize'});
 	this.route('plants', {path: '/plants'});
 	this.route('hello', {path: '/hello'});
 });
@@ -100,6 +101,8 @@ if (Meteor.isClient) {
 			var aboutCard = document.getElementById('about-card');
 			aboutCard.style.visibility = 'hidden';
 		},
+		'click #personalize': function () {
+			Router.go('personalize');		},
 		'click #plants': function () {
 			Router.go('plants');		},
 		'click #waterwise': function () {
