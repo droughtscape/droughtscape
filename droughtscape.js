@@ -3,6 +3,9 @@ Router.map(function () {
 	this.route('waterwise', {path: '/waterwise'});
 	this.route('personalize', {path: '/personalize'});
 	this.route('plants', {path: '/plants'});
+	this.route('gallery', {path: '/gallery'});
+	this.route('community', {path: '/community'});
+	this.route('rebates', {path: '/rebates'});
 	this.route('hello', {path: '/hello'});
 });
 
@@ -105,6 +108,12 @@ if (Meteor.isClient) {
 			Router.go('personalize');		},
 		'click #plants': function () {
 			Router.go('plants');		},
+		'click #gallery': function () {
+			Router.go('gallery');		},
+		'click #community': function () {
+			Router.go('community');		},
+		'click #rebates': function () {
+			Router.go('rebates');		},
 		'click #waterwise': function () {
 			Router.go('waterwise');
 		}
