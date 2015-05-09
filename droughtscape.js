@@ -7,6 +7,7 @@ Router.map(function () {
 	this.route('community', {path: '/community'});
 	this.route('rebates', {path: '/rebates'});
 	this.route('hello', {path: '/hello'});
+	this.route('signin', {path: '/signin'});
 });
 
 if (Meteor.isClient) {
@@ -129,6 +130,10 @@ if (Meteor.isClient) {
 		},
 		'click #waterwise': function () {
 			Router.go('waterwise');
+		},
+		'click #login': function () {
+			console.log('login reached');
+			Router.go('signin');
 		}
 	})
 }
