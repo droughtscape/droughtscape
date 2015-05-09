@@ -46,3 +46,17 @@ div.container {
 .btn-large .nav {
     height: 10em;
 }
+
+.renderComponent {
+    border: 1px solid red;
+    display: inline-block;
+    width: 100%;
+    height: 100%
+}
+
+.splashImage {
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+}

@@ -9,6 +9,11 @@
     <button>Click Me</button>
     <p>You've pressed the button {{counter}} times.</p>
 </template>
+<template name="check">
+	<div id="check">
+		check
+</div>
+</template>
 
 <template name="home">
     <header>
@@ -52,6 +57,7 @@
             </ul>
         </div>
     </nav>
+	<!--{{> Template.dynamic template="render-component"}}-->
 <!--
     <div class="row">
         <a id="personalize" class="col s2 waves-effect waves-light btn-large">
@@ -68,30 +74,30 @@
 -->
     <div id="content" class="renderArea row">
         <div id="render" class="div3 col s10">
-	        <div class="center-align valign-wrapper">
-                RenderContent - Three.js play area
-	        </div>
+	        <!--<div class="center-align valign-wrapper">-->
+				{{> Template.dynamic template=dynamicTemplate}}
+	        <!--</div>-->
         </div>
-        <div id="rightnav" class="div2 col s2 brown lighten-4">
-            <div class="row">
-                <a id="create" class="col s12 waves-effect waves-light btn-large">
-                    <i class="mdi-action-face-unlock right"></i>Create</a>
+            <div id="rightnav" class="div2 col s2 brown lighten-4">
+                <div class="row">
+                    <a id="create" class="col s12 waves-effect waves-light btn-large">
+                        <i class="mdi-action-face-unlock right"></i>Create</a>
+                </div>
+                <hr>
+                <a id="favorites" class="col s12 waves-effect waves-light btn-large">
+                    <i class="mdi-action-face-unlock right"></i>My Favs</a>
+                <hr>
+                <div class="center-align">
+                    <iframe src="http://www.bewaterwise.com/widgets/Widget_smll3.html" name="Water Guage" frameborder=0 id="widget_v03" scrolling="no" height="164" width="143" marginheight="0" marginwidth="0" ></iframe>
+                </div>
+                <hr>
+                <div class="center-align">
+                    <iframe src="http://www.mwdh2o.com/DocSvcsPubs/widgets/Public_Widgets/WI-small/wwi.html" name="Watering Index" frameborder=0 id="widget_v01" scrolling="no" height="54" width="143" marginheight="0" marginwidth="0" ></iframe>
+                </div>
+                <hr>
+                <div id="spacer"></div>
+                <a id="aboutbtn" class="col s12 waves-effect waves-light btn-large">About Droughtscape</a>
             </div>
-            <hr>
-            <a id="favorites" class="col s12 waves-effect waves-light btn-large">
-                <i class="mdi-action-face-unlock right"></i>My Favs</a>
-            <hr>
-            <div class="center-align">
-                <iframe src="http://www.bewaterwise.com/widgets/Widget_smll3.html" name="Water Guage" frameborder=0 id="widget_v03" scrolling="no" height="164" width="143" marginheight="0" marginwidth="0" ></iframe>
-            </div>
-            <hr>
-            <div class="center-align">
-                <iframe src="http://www.mwdh2o.com/DocSvcsPubs/widgets/Public_Widgets/WI-small/wwi.html" name="Watering Index" frameborder=0 id="widget_v01" scrolling="no" height="54" width="143" marginheight="0" marginwidth="0" ></iframe>
-            </div>
-            <hr>
-            <div id="spacer"></div>
-            <a id="aboutbtn" class="col s12 waves-effect waves-light btn-large">About Droughtscape</a>
-        </div>
     </div>
 
     <div class="center-align valign-wrapper">

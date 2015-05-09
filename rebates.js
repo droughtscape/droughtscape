@@ -12,5 +12,9 @@
  */
 if (Meteor.isClient) {
 	Template.rebates.events({
+		'click #turf-rebates': function () {
+			window.location.href = 'http://www.socalwatersmart.com/index.php/qualifyingproducts/turfremoval';
+		}
+
 	})
 }

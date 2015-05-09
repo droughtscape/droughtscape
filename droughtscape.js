@@ -10,7 +10,7 @@ Router.map(function () {
 });
 
 if (Meteor.isClient) {
-	Session.set("resize", null);
+	Session.setDefault("resize", null);
 	Meteor.startup(function () {
 		window.addEventListener('resize', function () {
 			Session.set("resize", new Date());
@@ -18,11 +18,12 @@ if (Meteor.isClient) {
 	});
 // counter starts at 0
 	Session.setDefault('counter', 0);
+	Session.setDefault('renderView', 'splash');
 	//if (THREE) {
 	//	var scene = new THREE.Scene();
 	//	console.log('THREE: scene: ' + scene);
 	//}
-	
+
 
 	window.addEventListener("resize", myFunction);
 	var x = 0;
@@ -56,11 +57,16 @@ if (Meteor.isClient) {
 		return {x: xPosition, y: yPosition};
 	}
 
+	var renderView = 'render-component';
+
 	Template.home.helpers({
 		resize: function () {
 			//console.log('resize');
 			renderContent();
 			return Session.get("resize");
+		},
+		dynamicTemplate: function () {
+			return Session.get('renderView');
 		}
 	});
 
@@ -86,7 +92,7 @@ if (Meteor.isClient) {
 	};
 
 	Template.home.rendered = function () {
-		$(document).ready(function(){
+		$(document).ready(function () {
 			console.log('ready');
 			$(".button-collapse").sideNav();
 		});
@@ -105,15 +111,22 @@ if (Meteor.isClient) {
 			aboutCard.style.visibility = 'hidden';
 		},
 		'click #personalize': function () {
-			Router.go('personalize');		},
+			Router.go('personalize');
+		},
 		'click #plants': function () {
-			Router.go('plants');		},
+			Session.set('renderView', 'plants');
+			//renderView = 'plants';
+			//Router.go('plants');
+		},
 		'click #gallery': function () {
-			Router.go('gallery');		},
+			Router.go('gallery');
+		},
 		'click #community': function () {
-			Router.go('community');		},
+			Router.go('community');
+		},
 		'click #rebates': function () {
-			Router.go('rebates');		},
+			Router.go('rebates');
+		},
 		'click #waterwise': function () {
 			Router.go('waterwise');
 		}
