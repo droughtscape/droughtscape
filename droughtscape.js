@@ -20,10 +20,13 @@ if (Meteor.isClient) {
 // counter starts at 0
 	Session.setDefault('counter', 0);
 	Session.setDefault('renderView', 'splash');
-	//if (THREE) {
-	//	var scene = new THREE.Scene();
-	//	console.log('THREE: scene: ' + scene);
-	//}
+	if (typeof THREE !== 'undefined') {
+		var scene = new THREE.Scene();
+		console.log('THREE: scene: ' + scene);
+	}
+	else {
+		console.log('THREE is undefined');
+	}
 
 
 	window.addEventListener("resize", myFunction);
@@ -67,6 +70,8 @@ if (Meteor.isClient) {
 			return Session.get("resize");
 		},
 		dynamicTemplate: function () {
+			// Contents of session variable renderView will 
+			// fill the content area
 			return Session.get('renderView');
 		}
 	});
@@ -112,7 +117,8 @@ if (Meteor.isClient) {
 			aboutCard.style.visibility = 'hidden';
 		},
 		'click #personalize': function () {
-			Router.go('personalize');
+			Session.set('renderView', 'personalize');
+			//Router.go('personalize');
 		},
 		'click #plants': function () {
 			Session.set('renderView', 'plants');
@@ -120,20 +126,30 @@ if (Meteor.isClient) {
 			//Router.go('plants');
 		},
 		'click #gallery': function () {
-			Router.go('gallery');
+			Session.set('renderView', 'gallery');
+			//Router.go('gallery');
 		},
 		'click #community': function () {
-			Router.go('community');
+			Session.set('renderView', 'community');
+			//Router.go('community');
 		},
 		'click #rebates': function () {
-			Router.go('rebates');
+			Session.set('renderView', 'rebates');
+			//Router.go('rebates');
 		},
 		'click #watersmart': function () {
-			Router.go('watersmart');
+			Session.set('renderView', 'watersmart');
+			//Router.go('watersmart');
 		},
 		'click #login': function () {
 			console.log('login reached');
 			Router.go('signin');
+		},
+		'click #create': function () {
+			Session.set('renderView', 'createview');
+		},
+		'click #droughtscapelogo': function () {
+			Session.set('renderView', 'splash');
 		}
 	})
 }
