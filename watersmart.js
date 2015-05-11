@@ -11,7 +11,7 @@
  *
  */
 if (Meteor.isClient) {
-	Template.waterwise.events({
+	Template.watersmart.events({
 		'click #dismiss-about-btn': function () {
 			history.back();
 		}

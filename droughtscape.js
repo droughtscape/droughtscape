@@ -1,6 +1,6 @@
 Router.map(function () {
 	this.route('home', {path: '/'});
-	this.route('waterwise', {path: '/waterwise'});
+	this.route('watersmart', {path: '/watersmart'});
 	this.route('personalize', {path: '/personalize'});
 	this.route('plants', {path: '/plants'});
 	this.route('gallery', {path: '/gallery'});
@@ -128,8 +128,8 @@ if (Meteor.isClient) {
 		'click #rebates': function () {
 			Router.go('rebates');
 		},
-		'click #waterwise': function () {
-			Router.go('waterwise');
+		'click #watersmart': function () {
+			Router.go('watersmart');
 		},
 		'click #login': function () {
 			console.log('login reached');
