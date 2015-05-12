@@ -107,14 +107,7 @@ if (Meteor.isClient) {
 
 	Template.home.events({
 		'click #aboutbtn': function () {
-			var aboutCard = document.getElementById('about-card');
-			if (aboutCard) {
-				aboutCard.style.visibility = 'visible';
-			}
-		},
-		'click #dismiss-about-btn': function () {
-			var aboutCard = document.getElementById('about-card');
-			aboutCard.style.visibility = 'hidden';
+			Session.set('renderView', 'about');
 		},
 		'click #personalize': function () {
 			Session.set('renderView', 'personalize');
@@ -143,7 +136,8 @@ if (Meteor.isClient) {
 		},
 		'click #login': function () {
 			console.log('login reached');
-			Router.go('signin');
+			Session.set('renderView', 'signin');
+			//Router.go('signin');
 		},
 		'click #create': function () {
 			Session.set('renderView', 'createview');

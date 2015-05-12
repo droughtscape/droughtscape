@@ -1,5 +1,5 @@
 /**
- * Created by kishigo on 5/9/15.
+ * Created by kishigo on 5/12/15.
  * Copyright (c) 2015 DirecTV LLC, All Rights Reserved
  *
  * This software and its documentation may not be used, copied, modified or distributed, in whole or in part, without express
@@ -11,10 +11,9 @@
  *
  */
 if (Meteor.isClient) {
-	Template.signin.events({
-		'click #dismiss-sign-in': function () {
+	Template.about.events({
+		'click #dismiss-about': function () {
 			Session.set('renderView', 'splash');
-			//history.back();
 		}
 	})
 }
