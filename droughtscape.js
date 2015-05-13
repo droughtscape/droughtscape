@@ -29,26 +29,12 @@ if (Meteor.isClient) {
 		console.log('THREE is undefined');
 	}
 
-
 	window.addEventListener("resize", myFunction);
 	var x = 0;
 
 	function myFunction() {
 		x += 1;
 	}
-	
-	Template.hello.helpers({
-		counter: function () {
-			return Session.get('counter');
-		}
-	});
-
-	Template.hello.events({
-		'click button': function () {
-			// increment the counter when button is clicked
-			Session.set('counter', Session.get('counter') + 1);
-		}
-	});
 
 	function getPosition(element) {
 		var xPosition = 0;
@@ -62,12 +48,20 @@ if (Meteor.isClient) {
 		return {x: xPosition, y: yPosition};
 	}
 
-	Template.home.onCreated(function(){
+	Template.home.onCreated(function () {
 		this.testButton = new ReactiveVar;
 		this.testButton.set('favoritesBtn');
 	});
 
 	Template.home.helpers({
+		navButtons: [
+			{name: 'personalize', class: 'mdi-action-face-unlock right'},
+			{name: 'plants', class: 'mdi-image-photo-library right'},
+			{name: 'gallery', class: 'mdi-image-photo-library right'},
+			{name: 'community', class: 'mdi-social-group right'},
+			{name: 'rebates', class: 'mdi-editor-attach-money right'},
+			{name: 'watersmart', class: 'mdi-social-share right'}
+		],
 		resize: function () {
 			//console.log('resize');
 			renderContent();
@@ -84,6 +78,41 @@ if (Meteor.isClient) {
 		}
 	});
 
+	Template.navBar.helpers({
+		navButtons: [
+			{name: 'personalize', class: 'mdi-action-face-unlock right'},
+			{name: 'plants', class: 'mdi-image-photo-library right'},
+			{name: 'gallery', class: 'mdi-image-photo-library right'},
+			{name: 'community', class: 'mdi-social-group right'},
+			{name: 'rebates', class: 'mdi-editor-attach-money right'},
+			{name: 'watersmart', class: 'mdi-social-share right'}
+		]
+	});
+	
+	Template.navBar.events({
+		'click': function (event) {
+			console.log(event);
+			//Session.set('renderView', event.currentTarget.id);
+			var id = event.currentTarget.id;
+			switch (id) {
+			case 'droughtscapelogo':
+				Router.go('home');
+				break;
+			default:
+				Router.go(id);
+				break;
+			}
+		}
+	});
+	
+	Template.sideBar.onRendered(function(){
+		console.log(this);
+		var sideBar = document.getElementById('slide-out');
+		if (sideBar) {
+			sideBar.style.left = 'auto';
+		}
+	});
+	
 	var renderContent = function renderContent() {
 		var content = document.getElementById("content");
 		if (content) {

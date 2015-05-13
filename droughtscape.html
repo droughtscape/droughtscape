@@ -3,93 +3,126 @@
 </head>
 
 <body>
+{{> navBar}}
+{{> sideBar}}
 </body>
 
-<template name="hello">
+<!--<template name="hello">
     <button>Click Me</button>
     <p>You've pressed the button {{counter}} times.</p>
 </template>
 <template name="check">
-	<div id="check">
-		check
-</div>
-</template>
+    <div id="check">
+        check
+    </div>
+</template>-->
 
 <template name="home">
-    <header>
-        <!--The resize div is hidden and used to enable re-render on window resizes
-        Some magic has to be done due to the virtual dom-->
+<!--    <header>
+        &lt;!&ndash;The resize div is hidden and used to enable re-render on window resizes
+        Some magic has to be done due to the virtual dom&ndash;&gt;
         <div style="visibility: hidden; height: 0">{{resize}}</div>
-        <!--<h1 class="center-align">Droughtscape</h1>-->
-    </header>
+        &lt;!&ndash;<h1 class="center-align">Droughtscape</h1>&ndash;&gt;
+		&lt;!&ndash;{{> navBar}}&ndash;&gt;
+    </header>-->
+<!--
     <nav>
         <div class="nav-wrapper brown lighten-4">
             <img src="watersave.jpg" id="droughtscapelogo" class="brand-logo right" style="width:80px;height:64px">
-            <!--<a href="watersave.jpg" class="brand-logo right">watersave.jpg</a>-->
+            &lt;!&ndash;<a href="watersave.jpg" class="brand-logo right">watersave.jpg</a>&ndash;&gt;
             <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="mdi-navigation-menu"></i></a>
             <ul class="left hide-on-med-and-down">
-                <li><a id="personalize" class="col s2 waves-effect waves-light btn-large">
-                    <i class="mdi-action-face-unlock right"></i>Personalize</a></li>
-                <li><a id="plants" class="col s2 waves-effect waves-light btn-large">
-                    <i class="mdi-image-photo-library right"></i>Plants</a></li>
-                <li><a id="gallery" class="col s2 waves-effect waves-light btn-large">
-                    <i class="mdi-image-photo-library right"></i>Gallery</a></li>
-                <li><a id="community" class="col s2 waves-effect waves-light btn-large">
-                    <i class="mdi-social-group right"></i>Community</a></li>
-                <li><a id="rebates" class="col s2 waves-effect waves-light btn-large">
-                    <i class="mdi-editor-attach-money right"></i>Rebates</a></li>
-                <li><a id="watersmart" class="col s2 waves-effect waves-light btn-large">
-                    <i class="mdi-social-share right"></i>WaterSmart</a></li>
-				<li><a id="login" class="col s2 waves-effect waves-light btn-large"> {{> atNavButton}}</a></li>
+				{{#each navButtons}}
+					{{> navButton}}
+				{{/each}}
+                <li><a id="login" class="col s2 waves-effect waves-light btn-large"> {{> atNavButton}}</a></li>
             </ul>
             <ul class="side-nav" id="mobile-demo">
-                <li><a id="personalize" class="col s2 waves-effect waves-light btn-large">
-                    <i class="mdi-action-face-unlock right"></i>Personalize</a></li>
-                <li><a id="plants" class="col s2 waves-effect waves-light btn-large">
-                    <i class="mdi-image-photo-library right"></i>Plants</a></li>
-                <li><a id="gallery" class="col s2 waves-effect waves-light btn-large">
-                    <i class="mdi-image-photo-library right"></i>Gallery</a></li>
-                <li><a id="community" class="col s2 waves-effect waves-light btn-large">
-                    <i class="mdi-social-group right"></i>Community</a></li>
-                <li><a id="rebates" class="col s2 waves-effect waves-light btn-large">
-                    <i class="mdi-editor-attach-money right"></i>Rebates</a></li>
-                <li><a id="watersmart" class="col s2 waves-effect waves-light btn-large">
-                    <i class="mdi-social-share right"></i>WaterSmart</a></li>
+				{{#each navButtons}}
+					{{> navButton}}
+				{{/each}}
                 <li><a id="login" class="col s2 waves-effect waves-light btn-large"> {{> atNavButton}}</a></li>
             </ul>
         </div>
     </nav>
+-->
+<!--
     <div id="content" class="renderArea row">
         <div id="render" class="div3 col s10">
-	        <!--<div class="center-align valign-wrapper">-->
-				{{> Template.dynamic template=dynamicTemplate}}
-	        <!--</div>-->
+            &lt;!&ndash;<div class="center-align valign-wrapper">&ndash;&gt;
+			{{> Template.dynamic template=dynamicTemplate}}
+            &lt;!&ndash;</div>&ndash;&gt;
         </div>
-            <div id="rightnav" class="div2 col s2 brown lighten-4">
-                <div class="row">
-                    <a id="create" class="col s12 waves-effect waves-light btn-large">
-                        <i class="mdi-action-face-unlock right"></i>Create</a>
-                </div>
-                <hr>
-	            <!--{{> favoritesBtn}}-->
-	            {{> Template.dynamic template=buttonDynamic}}
-<!--
-                <a id="favorites" class="col s12 waves-effect waves-light btn-large">
-                    <i class="mdi-action-face-unlock right"></i>My Favs</a>
--->
-                <hr>
-                <div class="center-align">
-                    <iframe src="http://www.bewaterwise.com/widgets/Widget_smll3.html" name="Water Guage" frameborder=0 id="widget_v03" scrolling="no" height="164" width="143" marginheight="0" marginwidth="0" ></iframe>
-                </div>
-                <hr>
-                <div class="center-align">
-                    <iframe src="http://www.mwdh2o.com/DocSvcsPubs/widgets/Public_Widgets/WI-small/wwi.html" name="Watering Index" frameborder=0 id="widget_v01" scrolling="no" height="54" width="143" marginheight="0" marginwidth="0" ></iframe>
-                </div>
-                <hr>
-                <div id="spacer"></div>
-                <a id="aboutbtn" class="col s12 waves-effect waves-light btn-large">About Droughtscape</a>
+        <div id="rightnav" class="div2 col s2 brown lighten-4">
+            <div class="row">
+                <a id="create" class="col s12 waves-effect waves-light btn-large">
+                    <i class="mdi-action-face-unlock right"></i>Create</a>
             </div>
+            <hr>
+            &lt;!&ndash;{{> favoritesBtn}}&ndash;&gt;
+			{{> Template.dynamic template=buttonDynamic}}
+            &lt;!&ndash;
+				<a id="favorites" class="col s12 waves-effect waves-light btn-large">
+					<i class="mdi-action-face-unlock right"></i>My Favs</a>
+&ndash;&gt;
+            <hr>
+            <div class="center-align">
+                <iframe src="http://www.bewaterwise.com/widgets/Widget_smll3.html" name="Water Guage" frameborder=0
+                        id="widget_v03" scrolling="no" height="164" width="143" marginheight="0"
+                        marginwidth="0"></iframe>
+            </div>
+            <hr>
+            <div class="center-align">
+                <iframe src="http://www.mwdh2o.com/DocSvcsPubs/widgets/Public_Widgets/WI-small/wwi.html"
+                        name="Watering Index" frameborder=0 id="widget_v01" scrolling="no" height="54" width="143"
+                        marginheight="0" marginwidth="0"></iframe>
+            </div>
+            <hr>
+            <div id="spacer"></div>
+            <a id="aboutbtn" class="col s12 waves-effect waves-light btn-large">About Droughtscape</a>
+        </div>
     </div>
+-->
+</template>
+
+<template name="navBar">
+    <nav>
+        <div class="nav-wrapper brown lighten-4" style="z-index: 100">
+            <img src="watersave.jpg" id="droughtscapelogo" class="brand-logo right" style="width:80px;height:64px">
+            <!--<a href="watersave.jpg" class="brand-logo right">watersave.jpg</a>-->
+            <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="mdi-navigation-menu"></i></a>
+            <ul class="left hide-on-med-and-down">
+				{{#each navButtons}}
+					{{> navButton}}
+				{{/each}}
+                <li><a id="login" class="col s2 waves-effect waves-light btn-large"> {{> atNavButton}}</a></li>
+            </ul>
+            <ul class="side-nav" id="mobile-demo">
+				{{#each navButtons}}
+					{{> navButton}}
+				{{/each}}
+                <li><a id="login" class="col s2 waves-effect waves-light btn-large"> {{> atNavButton}}</a></li>
+            </ul>
+        </div>
+    </nav>
+</template>
+
+<template name="sideBar">
+    <div style="left: auto">
+        <ul id="slide-out" class="side-nav fixed right-aligned brown lighten-4" style="width: 300px; top: 64px">
+            <li><a href="#!">First Sidebar Link</a></li>
+            <li><a href="#!">Second Sidebar Link</a></li>
+        </ul>
+<!--
+        <a href="#" data-activates="slide-out" class="button-collapse"><i class="mdi-navigation-menu"></i></a>
+-->
+
+    </div>
+</template>
+
+<template name="navButton">
+    <li><a id={{name}} class="col s2 waves-effect waves-light btn-large">
+        <i class={{class}}></i>{{name}}</a></li>
 </template>
 
 <template name="favoritesBtn">
