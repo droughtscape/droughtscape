@@ -8,6 +8,7 @@ Router.map(function () {
 	this.route('rebates', {path: '/rebates'});
 	this.route('hello', {path: '/hello'});
 	this.route('signin', {path: '/signin'});
+	this.route('create', {path: })
 });
 
 if (Meteor.isClient) {
@@ -110,6 +111,26 @@ if (Meteor.isClient) {
 		var sideBar = document.getElementById('slide-out');
 		if (sideBar) {
 			sideBar.style.left = 'auto';
+		}
+	});
+	
+	Template.sideBar.helpers({
+		sideBarButtons: [
+			{name: 'create', class: 'mdi-action-face-unlock right'},
+			{name: 'favorites', class: 'mdi-image-photo-library right'},
+		]
+	});
+	
+	Template.sideBar.events({
+		'click': function (event) {
+			console.log(event);
+			//Session.set('renderView', event.currentTarget.id);
+			var id = event.currentTarget.id;
+			switch (id) {
+			default:
+				Router.go(id);
+				break;
+			}
 		}
 	});
 	

@@ -110,8 +110,9 @@
 <template name="sideBar">
     <div style="left: auto">
         <ul id="slide-out" class="side-nav fixed right-aligned brown lighten-4" style="width: 300px; top: 64px">
-            <li><a href="#!">First Sidebar Link</a></li>
-            <li><a href="#!">Second Sidebar Link</a></li>
+			{{#each sideBarButtons}}
+				{{> sideBarButton}}
+			{{/each}}
         </ul>
 <!--
         <a href="#" data-activates="slide-out" class="button-collapse"><i class="mdi-navigation-menu"></i></a>
@@ -121,6 +122,11 @@
 </template>
 
 <template name="navButton">
+    <li><a id={{name}} class="col s2 waves-effect waves-light btn-large">
+        <i class={{class}}></i>{{name}}</a></li>
+</template>
+
+<template name="sideBarButton">
     <li><a id={{name}} class="col s2 waves-effect waves-light btn-large">
         <i class={{class}}></i>{{name}}</a></li>
 </template>
