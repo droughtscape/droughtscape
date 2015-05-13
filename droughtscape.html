@@ -71,8 +71,12 @@
                         <i class="mdi-action-face-unlock right"></i>Create</a>
                 </div>
                 <hr>
+	            <!--{{> favoritesBtn}}-->
+	            {{> Template.dynamic template=buttonDynamic}}
+<!--
                 <a id="favorites" class="col s12 waves-effect waves-light btn-large">
                     <i class="mdi-action-face-unlock right"></i>My Favs</a>
+-->
                 <hr>
                 <div class="center-align">
                     <iframe src="http://www.bewaterwise.com/widgets/Widget_smll3.html" name="Water Guage" frameborder=0 id="widget_v03" scrolling="no" height="164" width="143" marginheight="0" marginwidth="0" ></iframe>
@@ -86,5 +90,10 @@
                 <a id="aboutbtn" class="col s12 waves-effect waves-light btn-large">About Droughtscape</a>
             </div>
     </div>
+</template>
+
+<template name="favoritesBtn">
+    <a id="favorites" class="col s12 waves-effect waves-light btn-large">
+        <i class="mdi-action-face-unlock right"></i>My Favs</a>
 </template>
 

@@ -20,6 +20,7 @@ if (Meteor.isClient) {
 // counter starts at 0
 	Session.setDefault('counter', 0);
 	Session.setDefault('renderView', 'splash');
+	Session.setDefault('secondBtn', 'favoritesBtn');
 	if (typeof THREE !== 'undefined') {
 		var scene = new THREE.Scene();
 		console.log('THREE: scene: ' + scene);
@@ -35,7 +36,7 @@ if (Meteor.isClient) {
 	function myFunction() {
 		x += 1;
 	}
-
+	
 	Template.hello.helpers({
 		counter: function () {
 			return Session.get('counter');
@@ -61,7 +62,10 @@ if (Meteor.isClient) {
 		return {x: xPosition, y: yPosition};
 	}
 
-	var renderView = 'render-component';
+	Template.home.onCreated(function(){
+		this.testButton = new ReactiveVar;
+		this.testButton.set('favoritesBtn');
+	});
 
 	Template.home.helpers({
 		resize: function () {
@@ -73,6 +77,10 @@ if (Meteor.isClient) {
 			// Contents of session variable renderView will 
 			// fill the content area
 			return Session.get('renderView');
+		},
+		buttonDynamic: function () {
+			return Template.instance().testButton.get();
+			//return Session.get('secondBtn');
 		}
 	});
 
