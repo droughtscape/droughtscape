@@ -80,42 +80,42 @@ if (Meteor.isClient) {
 		}
 	});
 
-	Template.navBar.helpers({
-		navButtons: [
-			{name: 'personalize', class: 'mdi-action-face-unlock right'},
-			{name: 'plants', class: 'mdi-image-photo-library right'},
-			{name: 'gallery', class: 'mdi-image-photo-library right'},
-			{name: 'community', class: 'mdi-social-group right'},
-			{name: 'rebates', class: 'mdi-editor-attach-money right'},
-			{name: 'watersmart', class: 'mdi-social-share right'}
-		]
-	});
-	
-	Template.navBar.events({
-		'click': function (event) {
-			console.log(event);
-			//Session.set('renderView', event.currentTarget.id);
-			var id = event.currentTarget.id;
-			switch (id) {
-			case 'droughtscapelogo':
-				Session.set('renderView', 'home');
-				//Router.go('home');
-				break;
-			default:
-				Session.set('renderView', event.currentTarget.id);
-				//Router.go(id);
-				break;
-			}
-		}
-	});
-	
-	Template.rightBar.helpers({
-		dynamicTemplate: function () {
-			// Contents of session variable renderView will 
-			// fill the content area
-			return Session.get('renderView');
-		},
-	});
+	//Template.navBar.helpers({
+	//	navButtons: [
+	//		{name: 'personalize', class: 'mdi-action-face-unlock right'},
+	//		{name: 'plants', class: 'mdi-image-photo-library right'},
+	//		{name: 'gallery', class: 'mdi-image-photo-library right'},
+	//		{name: 'community', class: 'mdi-social-group right'},
+	//		{name: 'rebates', class: 'mdi-editor-attach-money right'},
+	//		{name: 'watersmart', class: 'mdi-social-share right'}
+	//	]
+	//});
+	//
+	//Template.navBar.events({
+	//	'click': function (event) {
+	//		console.log(event);
+	//		//Session.set('renderView', event.currentTarget.id);
+	//		var id = event.currentTarget.id;
+	//		switch (id) {
+	//		case 'droughtscapelogo':
+	//			Session.set('renderView', 'home');
+	//			//Router.go('home');
+	//			break;
+	//		default:
+	//			Session.set('renderView', event.currentTarget.id);
+	//			//Router.go(id);
+	//			break;
+	//		}
+	//	}
+	//});
+	//
+	//Template.rightBar.helpers({
+	//	dynamicTemplate: function () {
+	//		// Contents of session variable renderView will 
+	//		// fill the content area
+	//		return Session.get('renderView');
+	//	}
+	//});
 	
 	Template.sideBar.onRendered(function(){
 		console.log(this);
