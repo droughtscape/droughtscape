@@ -8,7 +8,7 @@ Router.map(function () {
 	this.route('rebates', {path: '/rebates'});
 	this.route('hello', {path: '/hello'});
 	this.route('signin', {path: '/signin'});
-	this.route('create', {path: })
+	this.route('create', {path: '/createview'})
 });
 
 if (Meteor.isClient) {
@@ -52,6 +52,7 @@ if (Meteor.isClient) {
 	Template.home.onCreated(function () {
 		this.testButton = new ReactiveVar;
 		this.testButton.set('favoritesBtn');
+		Session.set('renderView', 'splash');
 	});
 
 	Template.home.helpers({
@@ -97,13 +98,23 @@ if (Meteor.isClient) {
 			var id = event.currentTarget.id;
 			switch (id) {
 			case 'droughtscapelogo':
-				Router.go('home');
+				Session.set('renderView', 'home');
+				//Router.go('home');
 				break;
 			default:
-				Router.go(id);
+				Session.set('renderView', event.currentTarget.id);
+				//Router.go(id);
 				break;
 			}
 		}
+	});
+	
+	Template.rightBar.helpers({
+		dynamicTemplate: function () {
+			// Contents of session variable renderView will 
+			// fill the content area
+			return Session.get('renderView');
+		},
 	});
 	
 	Template.sideBar.onRendered(function(){
@@ -135,6 +146,7 @@ if (Meteor.isClient) {
 	});
 	
 	var renderContent = function renderContent() {
+		var navBarItem = document.getElementById('topNav');
 		var content = document.getElementById("content");
 		if (content) {
 			var footer = document.getElementById('page-footer');

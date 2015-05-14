@@ -4,7 +4,12 @@
 
 <body>
 {{> navBar}}
+<!--
+{{> rightBar}}
+-->
+<!--
 {{> sideBar}}
+-->
 </body>
 
 <!--<template name="hello">
@@ -18,6 +23,10 @@
 </template>-->
 
 <template name="home">
+    <div style="visibility: hidden; height: 0">{{resize}}</div>
+<!--
+	{{> splash}}
+-->
 <!--    <header>
         &lt;!&ndash;The resize div is hidden and used to enable re-render on window resizes
         Some magic has to be done due to the virtual dom&ndash;&gt;
@@ -46,12 +55,13 @@
         </div>
     </nav>
 -->
-<!--
+	{{> rightBar}}
+    <!--
     <div id="content" class="renderArea row">
         <div id="render" class="div3 col s10">
-            &lt;!&ndash;<div class="center-align valign-wrapper">&ndash;&gt;
+            <div class="center-align valign-wrapper">
 			{{> Template.dynamic template=dynamicTemplate}}
-            &lt;!&ndash;</div>&ndash;&gt;
+            </div>
         </div>
         <div id="rightnav" class="div2 col s2 brown lighten-4">
             <div class="row">
@@ -59,9 +69,11 @@
                     <i class="mdi-action-face-unlock right"></i>Create</a>
             </div>
             <hr>
-            &lt;!&ndash;{{> favoritesBtn}}&ndash;&gt;
+&lt;!&ndash;
+            {{> favoritesBtn}}
+&ndash;&gt;
 			{{> Template.dynamic template=buttonDynamic}}
-            &lt;!&ndash;
+&lt;!&ndash;
 				<a id="favorites" class="col s12 waves-effect waves-light btn-large">
 					<i class="mdi-action-face-unlock right"></i>My Favs</a>
 &ndash;&gt;
@@ -87,7 +99,7 @@
 
 <template name="navBar">
     <nav>
-        <div class="nav-wrapper brown lighten-4" style="z-index: 100">
+        <div id="topNav" class="nav-wrapper brown lighten-4" style="z-index: 100">
             <img src="watersave.jpg" id="droughtscapelogo" class="brand-logo right" style="width:80px;height:64px">
             <!--<a href="watersave.jpg" class="brand-logo right">watersave.jpg</a>-->
             <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="mdi-navigation-menu"></i></a>
@@ -107,11 +119,53 @@
     </nav>
 </template>
 
+<template name="rightBar">
+    <div id="content" class="renderArea row">
+    <div id="render" class="div3 col s10">
+        <div class="center-align valign-wrapper">
+			{{> Template.dynamic template=dynamicTemplate}}
+        </div>
+    </div>
+    <div id="rightnav" class="div2 col s2 brown lighten-4">
+        <div class="row">
+            <a id="create" class="col s12 waves-effect waves-light btn-large">
+                <i class="mdi-action-face-unlock right"></i>Create</a>
+        </div>
+        <hr>
+        <!--
+            {{> favoritesBtn}}
+-->
+		{{> Template.dynamic template=buttonDynamic}}
+        <!--
+				<a id="favorites" class="col s12 waves-effect waves-light btn-large">
+					<i class="mdi-action-face-unlock right"></i>My Favs</a>
+-->
+        <hr>
+        <div class="center-align">
+            <iframe src="http://www.bewaterwise.com/widgets/Widget_smll3.html" name="Water Guage" frameborder=0
+                    id="widget_v03" scrolling="no" height="164" width="143" marginheight="0"
+                    marginwidth="0"></iframe>
+        </div>
+        <hr>
+        <div class="center-align">
+            <iframe src="http://www.mwdh2o.com/DocSvcsPubs/widgets/Public_Widgets/WI-small/wwi.html"
+                    name="Watering Index" frameborder=0 id="widget_v01" scrolling="no" height="54" width="143"
+                    marginheight="0" marginwidth="0"></iframe>
+        </div>
+        <hr>
+        <div id="spacer"></div>
+        <a id="aboutbtn" class="col s12 waves-effect waves-light btn-large">About Droughtscape</a>
+    </div>
+    </div>
+</template>
+
 <template name="sideBar">
     <div style="left: auto">
-        <ul id="slide-out" class="side-nav fixed right-aligned brown lighten-4" style="width: 300px; top: 64px">
+        <ul id="slide-out" class="side-nav fixed right-aligned brown lighten-4" 
+            style="width: 300px; top: 64px">
 			{{#each sideBarButtons}}
 				{{> sideBarButton}}
+				<hr>
 			{{/each}}
         </ul>
 <!--
