@@ -74,6 +74,9 @@ if (Meteor.isClient) {
 			// fill the content area
 			return Session.get('renderView');
 		},
+		dynamicRightBar: function () {
+			return 'rightBar';
+		},
 		buttonDynamic: function () {
 			return Template.instance().testButton.get();
 			//return Session.get('secondBtn');

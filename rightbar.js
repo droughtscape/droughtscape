@@ -26,13 +26,9 @@ if (Meteor.isClient) {
 			//Session.set('renderView', event.currentTarget.id);
 			var id = event.currentTarget.id;
 			switch (id) {
-			case 'droughtscapelogo':
-				Session.set('renderView', 'home');
-				//Router.go('home');
-				break;
 			default:
-				Session.set('renderView', event.currentTarget.id);
-				//Router.go(id);
+				//Session.set('renderView', event.currentTarget.id);
+				Router.go(id);
 				break;
 			}
 		}
