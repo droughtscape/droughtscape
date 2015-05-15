@@ -1,0 +1,21 @@
+<template name="navBar">
+    <nav>
+        <div id="topNav" class="nav-wrapper brown lighten-4" style="z-index: 100">
+            <img src="watersave.jpg" id="droughtscapelogo" class="brand-logo right" style="width:80px;height:64px">
+            <!--<a href="watersave.jpg" class="brand-logo right">watersave.jpg</a>-->
+            <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="mdi-navigation-menu"></i></a>
+            <ul class="left hide-on-med-and-down">
+				{{#each navButtons}}
+					{{> navButton}}
+				{{/each}}
+                <li><a id="login" class="col s2 waves-effect waves-light btn-large"> {{> atNavButton}}</a></li>
+            </ul>
+            <ul class="side-nav" id="mobile-demo">
+				{{#each navButtons}}
+					{{> navButton}}
+				{{/each}}
+                <li><a id="login" class="col s2 waves-effect waves-light btn-large"> {{> atNavButton}}</a></li>
+            </ul>
+        </div>
+    </nav>
+</template>

@@ -11,6 +11,6 @@
  *
  */
 if (Meteor.isClient) {
-	Template.createview.events({
+	Template.create.events({
 	})
 }

@@ -1,0 +1,34 @@
+<template name="rightBar">
+    <div id="content" class="renderArea row">
+<!--
+        <div id="render" class="div3 col s10">
+            <div class="center-align valign-wrapper">
+				{{> Template.dynamic template=dynamicTemplate}}
+            </div>
+        </div>
+-->
+        <div id="rightnav" class="div2 col s2 brown lighten-4 renderArea row" style="float: right; height: 100%">
+            <div class="row">
+                <a id="create" class="col s12 waves-effect waves-light btn-large">
+                    <i class="mdi-action-face-unlock right"></i>Create</a>
+            </div>
+            <hr>
+			{{> Template.dynamic template=buttonDynamic}}
+            <hr>
+            <div class="center-align">
+                <iframe src="http://www.bewaterwise.com/widgets/Widget_smll3.html" name="Water Guage" frameborder=0
+                        id="widget_v03" scrolling="no" height="164" width="143" marginheight="0"
+                        marginwidth="0"></iframe>
+            </div>
+            <hr>
+            <div class="center-align">
+                <iframe src="http://www.mwdh2o.com/DocSvcsPubs/widgets/Public_Widgets/WI-small/wwi.html"
+                        name="Watering Index" frameborder=0 id="widget_v01" scrolling="no" height="54" width="143"
+                        marginheight="0" marginwidth="0"></iframe>
+            </div>
+            <hr>
+            <div id="spacer"></div>
+            <a id="aboutbtn" class="col s12 waves-effect waves-light btn-large">About Droughtscape</a>
+        </div>
+    </div>
+</template>
