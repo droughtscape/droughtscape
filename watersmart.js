@@ -13,7 +13,7 @@
 if (Meteor.isClient) {
 	Template.watersmart.events({
 		'click #dismiss-about-btn': function () {
-			history.back();
+			Session.set('renderView','home');
 		}
 	})
 }

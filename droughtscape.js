@@ -8,6 +8,7 @@ Router.map(function () {
 	this.route('rebates', {path: '/rebates'});
 	this.route('hello', {path: '/hello'});
 	this.route('signin', {path: '/signin'});
+	this.route('create', {path: '/createview'})
 });
 
 if (Meteor.isClient) {
@@ -29,26 +30,12 @@ if (Meteor.isClient) {
 		console.log('THREE is undefined');
 	}
 
-
 	window.addEventListener("resize", myFunction);
 	var x = 0;
 
 	function myFunction() {
 		x += 1;
 	}
-	
-	Template.hello.helpers({
-		counter: function () {
-			return Session.get('counter');
-		}
-	});
-
-	Template.hello.events({
-		'click button': function () {
-			// increment the counter when button is clicked
-			Session.set('counter', Session.get('counter') + 1);
-		}
-	});
 
 	function getPosition(element) {
 		var xPosition = 0;
@@ -62,12 +49,21 @@ if (Meteor.isClient) {
 		return {x: xPosition, y: yPosition};
 	}
 
-	Template.home.onCreated(function(){
+	Template.home.onCreated(function () {
 		this.testButton = new ReactiveVar;
 		this.testButton.set('favoritesBtn');
+		Session.set('renderView', 'splash');
 	});
 
 	Template.home.helpers({
+		navButtons: [
+			{name: 'personalize', class: 'mdi-action-face-unlock right'},
+			{name: 'plants', class: 'mdi-image-photo-library right'},
+			{name: 'gallery', class: 'mdi-image-photo-library right'},
+			{name: 'community', class: 'mdi-social-group right'},
+			{name: 'rebates', class: 'mdi-editor-attach-money right'},
+			{name: 'watersmart', class: 'mdi-social-share right'}
+		],
 		resize: function () {
 			//console.log('resize');
 			renderContent();
@@ -78,13 +74,82 @@ if (Meteor.isClient) {
 			// fill the content area
 			return Session.get('renderView');
 		},
+		dynamicRightBar: function () {
+			return 'rightBar';
+		},
 		buttonDynamic: function () {
 			return Template.instance().testButton.get();
 			//return Session.get('secondBtn');
 		}
 	});
 
+	//Template.navBar.helpers({
+	//	navButtons: [
+	//		{name: 'personalize', class: 'mdi-action-face-unlock right'},
+	//		{name: 'plants', class: 'mdi-image-photo-library right'},
+	//		{name: 'gallery', class: 'mdi-image-photo-library right'},
+	//		{name: 'community', class: 'mdi-social-group right'},
+	//		{name: 'rebates', class: 'mdi-editor-attach-money right'},
+	//		{name: 'watersmart', class: 'mdi-social-share right'}
+	//	]
+	//});
+	//
+	//Template.navBar.events({
+	//	'click': function (event) {
+	//		console.log(event);
+	//		//Session.set('renderView', event.currentTarget.id);
+	//		var id = event.currentTarget.id;
+	//		switch (id) {
+	//		case 'droughtscapelogo':
+	//			Session.set('renderView', 'home');
+	//			//Router.go('home');
+	//			break;
+	//		default:
+	//			Session.set('renderView', event.currentTarget.id);
+	//			//Router.go(id);
+	//			break;
+	//		}
+	//	}
+	//});
+	//
+	//Template.rightBar.helpers({
+	//	dynamicTemplate: function () {
+	//		// Contents of session variable renderView will 
+	//		// fill the content area
+	//		return Session.get('renderView');
+	//	}
+	//});
+	
+	Template.sideBar.onRendered(function(){
+		console.log(this);
+		var sideBar = document.getElementById('slide-out');
+		if (sideBar) {
+			sideBar.style.left = 'auto';
+		}
+	});
+	
+	Template.sideBar.helpers({
+		sideBarButtons: [
+			{name: 'create', class: 'mdi-action-face-unlock right'},
+			{name: 'favorites', class: 'mdi-image-photo-library right'},
+		]
+	});
+	
+	Template.sideBar.events({
+		'click': function (event) {
+			console.log(event);
+			//Session.set('renderView', event.currentTarget.id);
+			var id = event.currentTarget.id;
+			switch (id) {
+			default:
+				Router.go(id);
+				break;
+			}
+		}
+	});
+	
 	var renderContent = function renderContent() {
+		var navBarItem = document.getElementById('topNav');
 		var content = document.getElementById("content");
 		if (content) {
 			var footer = document.getElementById('page-footer');
