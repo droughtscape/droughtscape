@@ -28,9 +28,7 @@ Object.size = function (obj) {
 	}
 	return size;
 };
-var test = function test() {
-	console.log('test');
-};
+
 Template.navBar.helpers({
 	navButtons: function () {
 		// The nav bar is a singleton per "page" so we use a global
@@ -48,7 +46,7 @@ Template.navBar.events({
 		var id = event.currentTarget.id;
 		switch (id) {
 		case 'droughtscapelogo':
-			Session.set('renderView', 'home');
+			Session.set('renderView', 'splash');
 			//Router.go('home');
 			break;
 		default:

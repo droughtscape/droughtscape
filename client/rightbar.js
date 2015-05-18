@@ -21,6 +21,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+var getPosition = Utils.getPosition;
+
+Template.rightBar.onRendered(function () {
+		console.log('rightBar.onCreated');
+		_renderRightBar();
+	}
+);
+
 Template.rightBar.helpers({
 	dynamicTemplate: function () {
 		// Contents of session variable renderView will 
@@ -37,9 +45,33 @@ Template.rightBar.events({
 		var id = event.currentTarget.id;
 		switch (id) {
 		default:
-			//Session.set('renderView', event.currentTarget.id);
-			Router.go(id);
+			Session.set('renderView', event.currentTarget.id);
+			//Router.go(id);
 			break;
 		}
 	}
 });
+
+/**
+ * _renderRightBar function
+ * Dynamically adjusts the rightBar part of the app to fit the visible window less the footer (if any)
+ */
+var _renderRightBar = function _renderRightBar () {
+	var rightNav = document.getElementById('rightNav');
+	if (rightNav) {
+		var footer = document.getElementById('page-footer');
+		var footerHeight = (footer) ? footer.offsetHeight : 0;
+		var rightNavPos = getPosition(rightNav);
+		var rightNavHeight = (window.innerHeight - footerHeight) - rightNavPos.y;
+		rightNav.style.height = rightNavHeight + 'px';
+		render.style.width = rightNavPos.x;
+		var bottomDiv = document.getElementById('bottom-nav');
+		var aboutbtn = document.getElementById("about");
+		// magic space to get the bottom-nav into a good position relative to the bottom of the content
+		var magicSpacing = 45;
+		var bottomTop = rightNavPos.y + (rightNavHeight - (bottomDiv.offsetHeight + aboutbtn.offsetHeight + magicSpacing));
+		var spacer = document.getElementById('spacer');
+		var spacerPos = getPosition(spacer);
+		spacer.style.height = bottomTop - spacerPos.y + 'px';
+	}
+};

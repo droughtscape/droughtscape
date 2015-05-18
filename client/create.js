@@ -21,5 +21,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
+Template.create.onCreated(function(){
+	console.log('Template.create.onCreated');
+});
 Template.create.events({
 });

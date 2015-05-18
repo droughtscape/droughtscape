@@ -21,14 +21,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-Template.plants.onCreated(function () {
-	Session.set('rightBar', '');
-});
-Template.plants.events({
-	'click #plants-mwd-top-50': function () {
-		window.location.href = 'http://bewaterwise.com/pdf/50_Faves.pdf';
-	},
-	'click #turf-terminators-plant-catalog': function () {
-		window.location.href = 'http://turfterminators.com/how-turf-terminators-works/plant-and-groundcover-catalog/';
-	}
+Template.splash.onCreated(function () {
+	Session.set('rightBar', 'rightBar');
 });
