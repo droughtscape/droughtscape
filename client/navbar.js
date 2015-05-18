@@ -29,6 +29,16 @@ Object.size = function (obj) {
 	return size;
 };
 
+Template.navBar.onRendered(function () {
+	// if there is a signin macro button, size it
+	var signin = document.getElementById('at-nav-button');
+	if (signin) {
+		signin.style.height = '54px';
+		signin.style.lineHeight = '56px';
+		signin.fontSize = '1.6rem';
+	}
+});
+
 Template.navBar.helpers({
 	navButtons: function () {
 		// The nav bar is a singleton per "page" so we use a global
@@ -48,6 +58,9 @@ Template.navBar.events({
 		case 'droughtscapelogo':
 			Session.set('renderView', 'splash');
 			//Router.go('home');
+			break;
+		case 'at-nav-button':
+			Session.set('renderView', 'signin');
 			break;
 		default:
 			Session.set('renderView', event.currentTarget.id);
