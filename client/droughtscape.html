@@ -1,0 +1,24 @@
+<head>
+    <title>droughtscape</title>
+</head>
+
+<body>
+<!--
+	We can use the following injection enclosing template.. See NavConfig object
+-->
+{{> navBar }}
+</body>
+
+<template name="home">
+    <div style="visibility: hidden; height: 0">{{resize}}</div>
+
+    <div id="content" class="renderArea row">
+        <div id="render" class="div3 col s10">
+			{{> Template.dynamic template=dynamicTemplate}}
+        </div>
+		{{> Template.dynamic template=dynamicRightBar }}
+    </div>
+
+</template>
+
+

@@ -1,0 +1,35 @@
+<template name="rightBar">
+    <div id="rightNav" class="div2 col s2 brown lighten-4">
+        <div class="row">
+            <a id="create" class="col s12 waves-effect waves-light btn-large">
+                <i class="mdi-action-face-unlock right"></i>Create</a>
+        </div>
+        <hr>
+		{{> Template.dynamic template=buttonDynamic}}
+        <a id="favorites" class="col s12 waves-effect waves-light btn-large">
+            <i class="mdi-action-face-unlock right"></i>My Favs</a>
+        <hr>
+        <div id="spacer"></div>
+		<div id="bottom-nav">
+            <hr>
+            <div class="center-align">
+                <iframe src="http://www.bewaterwise.com/widgets/Widget_smll3.html" name="Water Guage" frameborder=0
+                        id="widget_v03" scrolling="no" height="164" width="143" marginheight="0"
+                        marginwidth="0"></iframe>
+            </div>
+            <hr>
+            <div class="center-align">
+                <iframe src="http://www.mwdh2o.com/DocSvcsPubs/widgets/Public_Widgets/WI-small/wwi.html"
+                        name="Watering Index" frameborder=0 id="widget_v01" scrolling="no" height="54" width="143"
+                        marginheight="0" marginwidth="0"></iframe>
+            </div>
+            <hr>
+            <a id="about" class="col s12 waves-effect waves-light btn-large">About Droughtscape</a>
+		</div>
+    </div>
+</template>
+
+<template name="favoritesBtn">
+    <a id="favorites" class="col s12 waves-effect waves-light btn-large">
+        <i class="mdi-action-face-unlock right"></i>My Favs</a>
+</template>
