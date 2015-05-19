@@ -67,5 +67,8 @@ Template.navBar.events({
 			//Router.go(id);
 			break;
 		}
+		// dispatch a resize event to force rendering of the home page
+		// Even if size doesn't change
+		window.dispatchEvent(new Event('resize'));
 	}
 });

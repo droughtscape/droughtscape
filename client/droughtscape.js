@@ -60,6 +60,7 @@ var getPosition = Utils.getPosition;
 
 Template.home.onCreated(function () {
 	Session.set('renderView', 'splash');
+	Session.set('rightBar', 'rightBar');
 });
 
 Template.home.helpers({
@@ -100,6 +101,12 @@ var renderContent = function renderContent() {
 		//console.log('content: ' + content + ', w x h: ' + screen.width + ':' + screen.height);
 		var render = document.getElementById('render');
 		render.style.height = contentHeight + 'px';
+		// Check for right bar present
+		//var rightNav = document.getElementById('rightNav');
+		//if (!rightNav) {
+		//	var renderWidth = window.innerWidth;
+		//	render.style.width = renderWidth + 'px';
+		//}
 	}
 };
 

@@ -21,5 +21,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+Template.personalize.onCreated(function () {
+	Session.set('rightBar', 'rightBar');
+});
 Template.personalize.events({
 });
