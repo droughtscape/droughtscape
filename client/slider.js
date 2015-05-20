@@ -21,17 +21,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-Template.gallery.onRendered(function () {
-	//$("#owl-demo").owlCarousel({
-	//
-	//	autoPlay: 3000, //Set AutoPlay to 3 seconds
-	//
-	//	items : 4,
-	//	itemsDesktop : [1199,3],
-	//	itemsDesktopSmall : [979,3]
-	//
-	//});
-	//$('.slider').slider({full_width: true});
-});
-Template.gallery.events({
+Template.slider.onRendered(function () {
+	$('.slider').slider({full_width: true});
 });
