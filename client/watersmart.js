@@ -21,8 +21,26 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+// For now, hard code tips
+var tips = [
+	"When you run the hot water tap, save the water that isn't hot yet to use for plants or pets!",
+	"Watering the average lawn takes about 800 gallons of water each time you do it." + "<br />" + 
+	"One year = 150,000 gallons or around $900.00"
+];
+var tipIndex = 0;
+
 Template.watersmart.events({
 	'click #dismiss-about-btn': function () {
 		Session.set('renderView','home');
+	},
+	'click #next-tip-btn': function () {
+		var tip = document.getElementById("tip-contents");
+		if (tip) {
+			tipIndex++;
+			if (tipIndex === tips.length) {
+				tipIndex = 0;
+			}
+			tip.innerHTML = tips[tipIndex];
+		}
 	}
 });
