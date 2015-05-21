@@ -30,6 +30,11 @@ var tips = [
 var tipIndex = 0;
 
 // Center the tip card
+/**
+ * @namespace Template.watersmart
+ * onRendered function to run any javascript we want to happen after the template is rendered into the DOM 
+ * @param {function} Center the tip card on the render div surface
+ */
 Template.watersmart.onRendered(function () {
 	var tipCard = document.getElementById('watersmart-card');
 	if (tipCard) {
@@ -49,8 +54,12 @@ Template.watersmart.onRendered(function () {
 	}
 });
 
+/**
+ * @namespace Template.watersmart
+ * events magic Meteor event handler 
+ */
 Template.watersmart.events({
-	'click #dismiss-about-btn': function () {
+	'click #dismiss-watersmart-btn': function () {
 		Session.set('renderView','home');
 	},
 	'click #next-tip-btn': function () {

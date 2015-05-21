@@ -24,6 +24,8 @@
 Template.signin.events({
 	'click #dismiss-sign-in': function () {
 		Session.set('renderView', 'splash');
-		//history.back();
+	},
+	'click #at-btn': function () {
+		Session.set('renderView', 'splash');
 	}
 });
