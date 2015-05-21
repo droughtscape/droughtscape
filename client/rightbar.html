@@ -5,9 +5,15 @@
                 <i class="mdi-action-face-unlock right"></i>Create</a>
         </div>
         <hr>
-		{{> Template.dynamic template=buttonDynamic}}
+	    {{#each rightButtons}}
+		    {{> rightButton}}
+	    {{/each}}
         <a id="favorites" class="col s12 waves-effect waves-light btn-large">
             <i class="mdi-action-face-unlock right"></i>My Favs</a>
+        <hr>
+        <hr>
+        <a id="watercalc" class="col s12 waves-effect waves-light btn-large">
+            <i class="mdi-action-face-unlock right"></i>Water Calculators</a>
         <hr>
         <div id="spacer"></div>
 		<div id="bottom-nav">
@@ -27,6 +33,11 @@
             <a id="about" class="col s12 waves-effect waves-light btn-large">About Droughtscape</a>
 		</div>
     </div>
+</template>
+
+<template name="rightButton">
+    <li><a id={{name}} class="col s2 waves-effect waves-light btn-large">
+        <i class={{class}}></i>{{name}}</a></li>
 </template>
 
 <template name="favoritesBtn">

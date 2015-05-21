@@ -27,9 +27,9 @@ Template.plants.onCreated(function () {
 
 Template.plants.events({
 	'click #plants-mwd-top-50': function () {
-		window.location.href = 'http://bewaterwise.com/pdf/50_Faves.pdf';
+		window.open('http://bewaterwise.com/pdf/50_Faves.pdf', '_blank');
 	},
 	'click #turf-terminators-plant-catalog': function () {
-		window.location.href = 'http://turfterminators.com/how-turf-terminators-works/plant-and-groundcover-catalog/';
+		window.open('http://turfterminators.com/how-turf-terminators-works/plant-and-groundcover-catalog/', '_blank');
 	}
 });
