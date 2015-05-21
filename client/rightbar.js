@@ -34,6 +34,10 @@ Template.rightBar.helpers({
 		// Contents of session variable renderView will 
 		// fill the content area
 		return Session.get('renderView');
+	},
+	rightButtons: function () {
+		// Key of navBarConfig
+		return NavConfig.getRightBarConfig(Session.get('navBarConfig'));
 	}
 });
 
