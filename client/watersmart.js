@@ -24,6 +24,10 @@
 
 var tipIndex = 0;
 
+Template.watersmart.onCreated(function () {
+	this.subscribe('watersavertips');
+});
+
 Template.watersmart.onRendered(function () {
 	var tipCard = document.getElementById('watersmart-card');
 	if (tipCard) {
