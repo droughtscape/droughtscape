@@ -22,11 +22,10 @@
  * THE SOFTWARE.
  */
 
-var tipIndex = 0;
-
-Template.watersmart.onCreated(function () {
-	this.subscribe('watersavertips');
-});
+var tipIndex = new ReactiveVar(0);
+var mySub;
+var tips;
+var tipsArray;
 
 Template.watersmart.onRendered(function () {
 	var tipCard = document.getElementById('watersmart-card');
@@ -45,23 +44,19 @@ Template.watersmart.onRendered(function () {
 			tipCard.style.top = top + 'px';
 		}
 	}
-	var tip = document.getElementById("tip-contents");
-	if (tip) {
-		if (Tips.length > 0) {
-			tip.innerHTML = Tips[0].tip;
-		}
-	}
 });
 
 Template.watersmart.helpers({
 	nextTip: function () {
-		var tip = document.getElementById("tip-contents");
-		if (tip) {
-			if (Tips.length > 0) {
-				tip.innerHTML = Tips[0].tip;
-			}
+		tips = WatersaverTips.find({});
+		tipsArray = tips.fetch();
+		if (tipsArray.length > 0) {
+			return tipsArray[tipIndex.get()].tip;
+		} 
+		else {
+			return 'no tips found';
 		}
-	}
+	},
 });
 
 Template.watersmart.events({
@@ -69,18 +64,17 @@ Template.watersmart.events({
 		Session.set('renderView','home');
 	},
 	'click #next-tip-btn': function () {
-		var tip = document.getElementById("tip-contents");
-		if (tip) {
-			tipIndex++;
-			if (tipIndex === Tips.length) {
-				tipIndex = 0;
+		if (tipsArray && tipsArray.length > 0) {
+			i = tipIndex.get();
+			i++;
+			if (i === tipsArray.length) {
+				i = 0;
 			}
-			tip.innerHTML = Tips[tipIndex].tip;
+			tipIndex.set(i);
 		}
 	},
 	'click #add-tip-btn': function () {
 		console.log('add a tip');
 		Session.set('renderView','newtip');
-		//Materialize.toast('I am a toast!', 0);
 	}
 });

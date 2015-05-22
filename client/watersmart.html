@@ -4,11 +4,9 @@
             <div class="card blue-grey darken-1">
                 <div class="card-content white-text">
                     <span class="card-title">WaterSmart Tip</span>
-		{{#if Template.subscriptionsReady}}
-                    <p id="tip-contents"></p>
-		{{else}}
-            <p id="tip-loading">Loading ...</p>
-		{{/if}}
+	                <div>
+		                {{nextTip}}
+	                </div>
                     <div class="card-action">
                         <a id="next-tip-btn" class="waves-effect waves-light btn">Next Tip</a>
                         <a id="add-tip-btn" class="waves-effect waves-light btn">Add a new Tip</a>
@@ -19,3 +17,4 @@
         </div>
     </div>
 </template>
+
