@@ -53,6 +53,17 @@ Template.watersmart.onRendered(function () {
 	}
 });
 
+Template.watersmart.helpers({
+	nextTip: function () {
+		var tip = document.getElementById("tip-contents");
+		if (tip) {
+			if (Tips.length > 0) {
+				tip.innerHTML = Tips[0].tip;
+			}
+		}
+	}
+});
+
 Template.watersmart.events({
 	'click #dismiss-watersmart-btn': function () {
 		Session.set('renderView','home');
