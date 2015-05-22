@@ -23,7 +23,7 @@
  */
 Template.rebates.events({
 	'click #turf-rebates': function () {
-		window.location.href = 'http://www.socalwatersmart.com/index.php/qualifyingproducts/turfremoval';
+		window.open('http://www.socalwatersmart.com/index.php/qualifyingproducts/turfremoval', '_blank');
 	}
 
 });

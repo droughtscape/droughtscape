@@ -25,6 +25,22 @@
 var tipIndex = 0;
 
 Template.watersmart.onRendered(function () {
+	var tipCard = document.getElementById('watersmart-card');
+	if (tipCard) {
+		// Center the card
+		var width = tipCard.clientWidth;
+		var height = tipCard.clientHeight;
+		var render = document.getElementById('render');
+		if (render) {
+			var renderWidth = render.clientWidth;
+			var renderHeight = render.clientHeight;
+			var left = renderWidth / 2 - (width/2);
+			var top = renderHeight / 2 - (height/2);
+			tipCard.style.position = 'absolute';
+			tipCard.style.left = left + 'px';
+			tipCard.style.top = top + 'px';
+		}
+	}
 	var tip = document.getElementById("tip-contents");
 	if (tip) {
 		if (Tips.length > 0) {
@@ -34,7 +50,7 @@ Template.watersmart.onRendered(function () {
 });
 
 Template.watersmart.events({
-	'click #dismiss-about-btn': function () {
+	'click #dismiss-watersmart-btn': function () {
 		Session.set('renderView','home');
 	},
 	'click #next-tip-btn': function () {

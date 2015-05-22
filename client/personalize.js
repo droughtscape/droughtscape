@@ -23,6 +23,13 @@
  */
 Template.personalize.onCreated(function () {
 	Session.set('rightBar', 'rightBar');
+	console.log('currentUser: ' + Meteor.userId());
 });
 Template.personalize.events({
+	'click #signin': function () {
+		Session.set('renderView', 'signin');
+	},
+	'click #dismiss-alert': function () {
+		Session.set('renderView', 'splash');
+	}
 });
