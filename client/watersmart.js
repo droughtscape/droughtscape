@@ -26,9 +26,11 @@ var tipIndex = new ReactiveVar(0);
 var mySub;
 var tips;
 var tipsArray;
+var watersmartTipCard = new ReactiveVar(true);
+var centerMe = new ReactiveVar(0);
 
-Template.watersmart.onRendered(function () {
-	var tipCard = document.getElementById('watersmart-card');
+var centerCard = function centerCard (id) {
+	var tipCard = document.getElementById(id);
 	if (tipCard) {
 		// Center the card
 		var width = tipCard.clientWidth;
@@ -44,22 +46,45 @@ Template.watersmart.onRendered(function () {
 			tipCard.style.top = top + 'px';
 		}
 	}
+};
+
+var tickleCenterMe = function tickleCenterMe () {
+	centerMe.set(centerMe.get() + 1);
+};
+
+Template.watersmart.onRendered(function () {
+	centerCard('watersmart-card');
 });
 
 Template.watersmart.helpers({
+	watersmartTip: function () {
+		return watersmartTipCard.get();
+	}
+});
+
+Template.watersmarttipcard.helpers({
+	centerMe: function () {
+		centerMe.get();
+		Meteor.defer(function () {
+			centerCard('watersmart-card');
+		});
+	},
 	nextTip: function () {
 		tips = WatersaverTips.find({});
 		tipsArray = tips.fetch();
 		if (tipsArray.length > 0) {
-			return tipsArray[tipIndex.get()].tip;
-		} 
+			return tipsArray[tipIndex.get()];
+		}
 		else {
 			return 'no tips found';
 		}
 	},
+	author: function () {
+		
+	}
 });
 
-Template.watersmart.events({
+Template.watersmarttipcard.events({
 	'click #dismiss-watersmart-btn': function () {
 		Session.set('renderView','home');
 	},
@@ -75,6 +100,35 @@ Template.watersmart.events({
 	},
 	'click #add-tip-btn': function () {
 		console.log('add a tip');
-		Session.set('renderView','newtip');
+		watersmartTipCard.set(false);
+		tickleCenterMe();
+		//Session.set('renderView','newtip');
 	}
 });
+
+Template.addtipcard.helpers({
+	centerMe: function () {
+		centerMe.get();
+		Meteor.defer(function () {
+			centerCard('watersmart-add-tip-card');
+		});
+	}
+});
+
+Template.addtipcard.events({
+	'click #save-new-tip-btn': function () {
+		// Save to collection
+		var value = document.getElementById('new-tip').value;
+		var author = document.getElementById('new-tip-author').value;
+		console.log('tip: ' + value + ', author: ' + author);
+		WatersaverTips.insert({tip: value, createdAt: new Date(), createdBy: author});
+		watersmartTipCard.set(true);
+		tickleCenterMe();
+
+	},
+	'click #cancel-add-btn': function () {
+		watersmartTipCard.set(true);
+		tickleCenterMe();
+
+	}
+})
