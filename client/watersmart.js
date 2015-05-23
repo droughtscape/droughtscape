@@ -28,6 +28,7 @@ var tips;
 var tipsArray;
 var watersmartTipCard = new ReactiveVar(true);
 var centerMe = new ReactiveVar(0);
+var author = new ReactiveVar(null);
 
 var centerCard = function centerCard (id) {
 	var tipCard = document.getElementById(id);
@@ -49,6 +50,7 @@ var centerCard = function centerCard (id) {
 };
 
 var tickleCenterMe = function tickleCenterMe () {
+	// Force reactivity
 	centerMe.set(centerMe.get() + 1);
 };
 
@@ -65,6 +67,7 @@ Template.watersmart.helpers({
 Template.watersmarttipcard.helpers({
 	centerMe: function () {
 		centerMe.get();
+		// use defer to allow template to modify DOM before centerCard
 		Meteor.defer(function () {
 			centerCard('watersmart-card');
 		});
@@ -73,14 +76,15 @@ Template.watersmarttipcard.helpers({
 		tips = WatersaverTips.find({});
 		tipsArray = tips.fetch();
 		if (tipsArray.length > 0) {
-			return tipsArray[tipIndex.get()];
+			author.set(tipsArray[tipIndex.get()].createdBy);
+			return tipsArray[tipIndex.get()].tip;
 		}
 		else {
 			return 'no tips found';
 		}
 	},
 	author: function () {
-		
+		return author.get();
 	}
 });
 
@@ -102,7 +106,6 @@ Template.watersmarttipcard.events({
 		console.log('add a tip');
 		watersmartTipCard.set(false);
 		tickleCenterMe();
-		//Session.set('renderView','newtip');
 	}
 });
 
@@ -120,6 +123,8 @@ Template.addtipcard.events({
 		// Save to collection
 		var value = document.getElementById('new-tip').value;
 		var author = document.getElementById('new-tip-author').value;
+		// Convert any line returns to <br>
+		value = value.replace(/(?:\r\n|\r|\n)/g, '<br />');
 		console.log('tip: ' + value + ', author: ' + author);
 		WatersaverTips.insert({tip: value, createdAt: new Date(), createdBy: author});
 		watersmartTipCard.set(true);
