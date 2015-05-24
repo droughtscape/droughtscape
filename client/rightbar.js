@@ -24,7 +24,7 @@
 var getPosition = Utils.getPosition;
 
 Template.rightBar.onRendered(function () {
-		console.log('rightBar.onCreated');
+		console.log('rightBar.onRendered');
 		_renderRightBar();
 	}
 );
@@ -36,8 +36,13 @@ Template.rightBar.helpers({
 		return Session.get('renderView');
 	},
 	rightButtons: function () {
-		// Key of navBarConfig
-		return NavConfig.getRightBarConfig(Session.get('navBarConfig'));
+		// Key off navBarConfig, defer recalculating dom measurements until
+		// after the vdom is rendered.  Since onRender now is only at startup,
+		// use the defer() function allows us to accomplish this
+		Meteor.defer(function () {
+			_renderRightBar();
+		});
+		return NavConfig.getRightBarConfig(Session.get('rightBarConfig'));
 	}
 });
 
@@ -68,7 +73,6 @@ var _renderRightBar = function _renderRightBar () {
 		var rightNavPos = getPosition(rightNav);
 		var rightNavHeight = (window.innerHeight - footerHeight) - rightNavPos.y;
 		rightNav.style.height = rightNavHeight + 'px';
-		render.style.width = rightNavPos.x;
 		var bottomDiv = document.getElementById('bottom-nav');
 		var aboutbtn = document.getElementById("about");
 		// magic space to get the bottom-nav into a good position relative to the bottom of the content

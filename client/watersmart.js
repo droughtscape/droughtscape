@@ -54,6 +54,14 @@ var tickleCenterMe = function tickleCenterMe () {
 	centerMe.set(centerMe.get() + 1);
 };
 
+Template.watersmart.onCreated(function () {
+	NavConfig.pushRightBar('', '');
+});
+
+Template.watersmart.onDestroyed(function () {
+	NavConfig.popRightBar();
+});
+
 Template.watersmart.onRendered(function () {
 	centerCard('watersmart-card');
 });

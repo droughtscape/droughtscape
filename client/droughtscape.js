@@ -24,14 +24,19 @@
 Router.map(function () {
 	this.route('home', {path: '/'});
 });
-
+// The resize Session variable is a hook to allow us to dynamically resize
+// screen components when the browser window is resized.
 Session.setDefault("resize", null);
+// The navBarConfig Session variable controls contents of the navBar
+// => see navconfig.js
 Session.setDefault('navBarConfig', 'home');
+// The rightBar Session variable controls presence or absence of the rightBar
 Session.setDefault('rightBar', 'rightBar');
+// The rightBarConfig Session variable controls contents of the rightBar (if present)
+// => see navconfig.js
 Session.setDefault('rightBarConfig', 'home');
-
-// counter starts at 0
-Session.setDefault('counter', 0);
+// The renderView Session variable controls what the render area template is currently
+// set to.  We use this to avoid routing.
 Session.setDefault('renderView', 'splash');
 
 Meteor.startup(function () {
@@ -60,7 +65,7 @@ var getPosition = Utils.getPosition;
 
 Template.home.onCreated(function () {
 	Session.set('renderView', 'splash');
-	Session.set('rightBar', 'rightBar');
+	NavConfig.pushRightBar('rightBar', 'home');
 });
 
 Template.home.helpers({

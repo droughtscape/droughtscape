@@ -21,11 +21,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-Template.plants.onCreated(function () {
-	Session.set('rightBar', 'rightBar');
+
+// Not sure why this works but onCreated and onDestroyed are called whenever the 
+// navBar button PARTS is clicked which sets the renderView Session variable.
+// I guess that since these are "subtemplates", the get created anew every time, similar to a route.
+// In any case, this is the desired effect.
+Template.parts.onCreated(function () {
+	NavConfig.pushRightBar('rightBar', 'parts');
 });
 
-Template.plants.events({
+Template.parts.onDestroyed(function () {
+	NavConfig.popRightBar();
+});
+
+Template.parts.events({
 	'click #plants-mwd-top-50': function () {
 		window.open('http://bewaterwise.com/pdf/50_Faves.pdf', '_blank');
 	},
