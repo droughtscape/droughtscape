@@ -1,7 +1,23 @@
 <template name="parts">
-    <a id="plants-mwd-top-50" class="waves-effect waves-light btn"><i class="mdi-file-cloud left"></i>Metropolitan Water Districts "50 Favorites"</a>
-    <a id="turf-terminators-plant-catalog" class="waves-effect waves-light btn">
-		<i class="mdi-file-cloud left"></i>TurfTerminators Drought Tolerant Catalog"</a>
-	<hr>
+    <form action="#">
+        <input class="part-select" name="part-type" type="radio" id="plants" checked="checked"/>
+        <label for="plants">Plants</label>
+        <input class="part-select" name="part-type" type="radio" id="groundcovers"/>
+        <label for="groundcovers">Groundcovers</label>
+        <input class="part-select" name="part-type" type="radio" id="borders"/>
+        <label for="borders">Borders</label>
+        <input class="part-select" name="part-type" type="radio" id="pavers"/>
+        <label for="pavers">Pavers</label>
+        <input class="part-select" name="part-type" type="radio" id="irrigation"/>
+        <label for="irrigation">Irrigation</label>
+        <input class="part-select" name="part-type" type="radio" id="lighting"/>
+        <label for="lighting">Lighting</label>
+    </form>
+    <hr>
 	{{> carousel}}
+    <hr>
+    <a id="plants-mwd-top-50" class="waves-effect waves-light btn"><i class="mdi-file-cloud left"></i>Metropolitan Water
+        Districts "50 Favorites"</a>
+    <a id="turf-terminators-plant-catalog" class="waves-effect waves-light btn">
+        <i class="mdi-file-cloud left"></i>TurfTerminators Drought Tolerant Catalog"</a>
 </template> 

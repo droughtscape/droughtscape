@@ -23,7 +23,6 @@
  */
 
 var tipIndex = new ReactiveVar(0);
-var mySub;
 var tips;
 var tipsArray;
 var watersmartTipCard = new ReactiveVar(true);

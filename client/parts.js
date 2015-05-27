@@ -22,6 +22,7 @@
  * THE SOFTWARE.
  */
 
+var partMode = new ReactiveVar('plants');
 // Not sure why this works but onCreated and onDestroyed are called whenever the 
 // navBar button PARTS is clicked which sets the renderView Session variable.
 // I guess that since these are "subtemplates", the get created anew every time, similar to a route.
@@ -40,5 +41,10 @@ Template.parts.events({
 	},
 	'click #turf-terminators-plant-catalog': function () {
 		window.open('http://turfterminators.com/how-turf-terminators-works/plant-and-groundcover-catalog/', '_blank');
+	},
+	'click .part-select': function(e) {
+		var clickedButton = e.currentTarget;
+		partMode.set(clickedButton.id);
+		console.log( 'partMode: ' + partMode.get());
 	}
 });
