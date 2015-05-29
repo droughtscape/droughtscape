@@ -1,0 +1,68 @@
+watersavertips
+    watersavertip => { tip: <string>, createdAt: Date, createdBy <string> }
+
+parts
+	{ plants: [ plant ... ] }
+		plant: {
+			name: <string>,
+			color: <string>,
+			annualWaterNeeds: <int>,
+			image: <url>,
+			description: <string>,
+			adultHeight: <int>,
+			category: <string>
+		}
+			
+	{ groundcovers: [ groundcover ... ] }
+		groundcover: {
+			name: <string>,
+			color: <string>,
+			annualWaterNeeds: <int>,
+			image: <url>,
+            description: <string>
+		}
+	{ borders: [ border ... ] }
+		border: {
+			name: <string>,
+			color: <string>,
+			image: <url>,
+			description: <string>,
+			height: <int>
+		}
+	{ pavers: [ paver ... ] }
+		paver: {
+			name: <string>,
+			color: <string>,
+			image: <url>,
+			description: <string>,
+			dimensions: {
+				width: <int>,
+				height: <int>,
+				thickness: <int>
+			}
+		}
+	{ irrigation: [ irrigationItem ] }
+		irrigationItem: {
+			name: <string>,
+			image: <url>,
+			type: <string>
+		}
+	{ lighting: [ lightingItem ] }
+		lightingItem: {
+			name: <string>,
+			powerSource: <string>,
+			annualPowerNeeds: <int>
+		}
+	{ decorative: [ decorativeItem ... ] }
+		decorativeItem: {
+			name: <string>,
+			color: <string>,
+			dimensions: {
+				width: <int>,
+				length: <int>,
+				height: <int>
+			},
+			image: <url>,
+			description: <string>
+		}
+  

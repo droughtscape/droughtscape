@@ -22,9 +22,14 @@
  * THE SOFTWARE.
  */
 Template.personalize.onCreated(function () {
-	Session.set('rightBar', 'rightBar');
+	NavConfig.pushRightBar('rightBar', 'home');
 	console.log('currentUser: ' + Meteor.userId());
 });
+
+Template.personalize.onDestroyed(function () {
+	NavConfig.popRightBar();
+});
+
 Template.personalize.events({
 	'click #signin': function () {
 		Session.set('renderView', 'signin');

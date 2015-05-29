@@ -22,5 +22,9 @@
  * THE SOFTWARE.
  */
 Template.splash.onCreated(function () {
-	Session.set('rightBar', 'rightBar');
+	NavConfig.pushRightBar('rightBar', 'home');
+});
+
+Template.splash.onDestroyed(function () {
+	NavConfig.popRightBar();
 });
