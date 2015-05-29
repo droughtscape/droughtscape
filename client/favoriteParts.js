@@ -35,6 +35,6 @@ Template.favoriteParts.events({
 		Session.set('renderView', 'signin');
 	},
 	'click #dismiss-alert': function () {
-		Session.set('renderView', 'splash');
+		Session.set('renderView', 'parts');
 	}
 });
