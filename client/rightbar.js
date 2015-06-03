@@ -30,6 +30,11 @@ Template.rightBar.onRendered(function () {
 );
 
 Template.rightBar.helpers({
+	resize: function () {
+		//console.log('resize');
+		_renderRightBar();
+		return Session.get("resize");
+	},
 	dynamicTemplate: function () {
 		// Contents of session variable renderView will 
 		// fill the content area
