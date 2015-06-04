@@ -24,9 +24,6 @@
 Router.map(function () {
 	this.route('home', {path: '/'});
 });
-// The resize Session variable is a hook to allow us to dynamically resize
-// screen components when the browser window is resized.
-Session.setDefault("resize", null);
 // The navBarConfig Session variable controls contents of the navBar
 // => see navconfig.js
 Session.setDefault('navBarConfig', 'home');
@@ -40,8 +37,13 @@ Session.setDefault('rightBarConfig', 'home');
 Session.setDefault('renderView', 'splash');
 
 Meteor.startup(function () {
+	// Dynamically resize content when window resizes.
+	// Just use the Meteor.defer() so that the DOM is fully
+	// rendered before we adjust
 	window.addEventListener('resize', function () {
-		Session.set("resize", new Date());
+		Meteor.defer(function () {
+			_renderContent();
+		});
 	});
 });
 
@@ -53,13 +55,6 @@ else {
 	console.log('THREE is undefined');
 }
 
-window.addEventListener("resize", myFunction);
-var x = 0;
-
-function myFunction() {
-	x += 1;
-}
-
 // Shorten call chain
 var getPosition = Utils.getPosition;
 
@@ -69,11 +64,6 @@ Template.home.onCreated(function () {
 });
 
 Template.home.helpers({
-	resize: function () {
-		//console.log('resize');
-		renderContent();
-		return Session.get("resize");
-	},
 	dynamicTemplate: function () {
 		// Contents of session variable renderView will 
 		// fill the content area
@@ -92,10 +82,10 @@ Template.home.helpers({
 });
 
 /**
- * renderContent function
+ * _renderContent function
  * Dynamically adjusts the content part of the app to fit the visible window less the footer (if any)
  */
-var renderContent = function renderContent() {
+var _renderContent = function _renderContent() {
 	var content = document.getElementById("content");
 	if (content) {
 		var footer = document.getElementById('page-footer');
@@ -106,12 +96,6 @@ var renderContent = function renderContent() {
 		//console.log('content: ' + content + ', w x h: ' + screen.width + ':' + screen.height);
 		var render = document.getElementById('render');
 		render.style.height = contentHeight + 'px';
-		// Check for right bar present
-		//var rightNav = document.getElementById('rightNav');
-		//if (!rightNav) {
-		//	var renderWidth = window.innerWidth;
-		//	render.style.width = renderWidth + 'px';
-		//}
 	}
 };
 
@@ -120,7 +104,7 @@ Template.home.rendered = function () {
 		console.log('ready');
 		$(".button-collapse").sideNav();
 	});
-	renderContent();
+	_renderContent();
 };
 
 Template.home.events({

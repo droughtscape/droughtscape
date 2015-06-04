@@ -23,6 +23,17 @@
  */
 var getPosition = Utils.getPosition;
 
+Meteor.startup(function () {
+	// Dynamically resize rightBar height when window resizes.
+	// Just use the Meteor.defer() so that the DOM is fully
+	// rendered before we adjust
+	window.addEventListener('resize', function () {
+		Meteor.defer(function () {
+			_renderRightBar();
+		})
+	});
+});
+
 Template.rightBar.onRendered(function () {
 		console.log('rightBar.onRendered');
 		_renderRightBar();
@@ -30,11 +41,6 @@ Template.rightBar.onRendered(function () {
 );
 
 Template.rightBar.helpers({
-	resize: function () {
-		//console.log('resize');
-		_renderRightBar();
-		return Session.get("resize");
-	},
 	dynamicTemplate: function () {
 		// Contents of session variable renderView will 
 		// fill the content area
@@ -68,7 +74,7 @@ Template.rightBar.events({
 
 /**
  * _renderRightBar function
- * Dynamically adjusts the rightBar part of the app to fit the visible window less the footer (if any)
+ * Dynamically adjusts the height of the rightBar part of the app to fit the visible window less the footer (if any)
  */
 var _renderRightBar = function _renderRightBar () {
 	var rightNav = document.getElementById('rightNav');

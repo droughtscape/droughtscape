@@ -1,6 +1,12 @@
 <template name="create">
-    <h1>Describe your lawn</h1>
-
+    <h1>Measure your lawn</h1>
+    <form action="#">
+        <input class="unit-select" name="unit-type" type="radio" id="English" checked="checked"/>
+        <label for="English">English</label>
+        <input class="unit-select" name="unit-type" type="radio" id="Metric"/>
+        <label for="Metric">Metric</label>
+    </form>
+    <hr>
     <p>Lawn Width in feet - Side to side distance</p>
 
     <p>Lawn Depth in feet - Distance from front of lawn closest to street to lawn closest to house</p>
@@ -11,30 +17,37 @@
         <form class="col s12">
             <div class="row">
                 <div class="input-field col s2">
-                    <input id="lawn_width_feet" type="text" class="validate">
+                    <input id="lawn_width_feet" type="number" class="validate">
                     <label for="lawn_width_feet">Lawn Width Feet</label>
                 </div>
                 <div class="input-field col s2">
-                    <input id="lawn_width_inches" type="text" class="validate">
+                    <input id="lawn_width_inches" type="number" class="validate">
                     <label for="lawn_width_inches">Lawn Width Inches</label>
                 </div>
             </div>
             <div class="row">
                 <div class="input-field col s2">
-                    <input id="lawn_length_feet" type="text" class="validate">
+                    <input id="lawn_length_feet" type="number" class="validate">
                     <label for="lawn_length_feet">Lawn Length Feet</label>
                 </div>
                 <div class="input-field col s2">
-                    <input id="lawn_length_inches" type="text" class="validate">
+                    <input id="lawn_length_inches" type="number" class="validate">
                     <label for="lawn_length_inches">Lawn Length Inches</label>
                 </div>
             </div>
             <div class="row">
                 <div class="input-field col s2">
-                    <input id="lawn_slope_inches" type="text" class="validate">
+                    <input id="lawn_slope_inches" type="number" class="validate">
                     <label for="lawn_slope_inches">Lawn Slope Inches</label>
                 </div>
             </div>
         </form>
+    </div>
+    <hr>
+    <div>
+        <li><a href="http://www.findlotsize.com/" target="_blank">Use FindLotSize.com</a></li>
+        <p>FindLotSize is a site which allows you to find and measure the size of property.  <br>
+        You can use this site to figure out lawn size by measuring just the lawn instead of the <br>
+        entire property.</p>
     </div>
 </template>
