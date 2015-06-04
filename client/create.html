@@ -1,3 +1,40 @@
 <template name="create">
-	create
+    <h1>Describe your lawn</h1>
+
+    <p>Lawn Width in feet - Side to side distance</p>
+
+    <p>Lawn Depth in feet - Distance from front of lawn closest to street to lawn closest to house</p>
+
+    <p>Slope in inches - height change from front to back or side to side</p>
+
+    <div class="row">
+        <form class="col s12">
+            <div class="row">
+                <div class="input-field col s2">
+                    <input id="lawn_width_feet" type="text" class="validate">
+                    <label for="lawn_width_feet">Lawn Width Feet</label>
+                </div>
+                <div class="input-field col s2">
+                    <input id="lawn_width_inches" type="text" class="validate">
+                    <label for="lawn_width_inches">Lawn Width Inches</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col s2">
+                    <input id="lawn_length_feet" type="text" class="validate">
+                    <label for="lawn_length_feet">Lawn Length Feet</label>
+                </div>
+                <div class="input-field col s2">
+                    <input id="lawn_length_inches" type="text" class="validate">
+                    <label for="lawn_length_inches">Lawn Length Inches</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col s2">
+                    <input id="lawn_slope_inches" type="text" class="validate">
+                    <label for="lawn_slope_inches">Lawn Slope Inches</label>
+                </div>
+            </div>
+        </form>
+    </div>
 </template>
