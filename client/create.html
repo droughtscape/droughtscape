@@ -10,7 +10,7 @@
     <hr>
     <p>Lawn Width in {{unitsOfMeasure}} - Side to side distance</p>
 
-    <p>Lawn Depth in {{unitsOfMeasure}} - Distance from front of lawn closest to street to lawn closest to house</p>
+    <p>Lawn Length in {{unitsOfMeasure}} - Distance from front of lawn closest to street to lawn closest to house</p>
 
     <p>Slope in {{unitsOfMeasure}} - height change from front to back or side to side</p>
     {{#if unitsOfMeasureAre 'English'}}
@@ -68,6 +68,9 @@
             </form>
         </div>
     {{/if}}
+    <button id="lawn-measure" class="btn waves-effect waves-light" type="submit" name="action">Submit
+        <i class="mdi-content-send right"></i>
+    </button>
     <hr>
     <div>
         <li><a href="http://www.findlotsize.com/" target="_blank">Use FindLotSize.com</a></li>

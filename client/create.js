@@ -44,5 +44,8 @@ Template.create.events({
 	'click .unit-select': function (e) {
 		var clickedButton = e.currentTarget;
 		Session.set('userUnitsOfMeasure', clickedButton.id);
+	},
+	'click #lawn-measure': function (e) {
+		console.log('lawn-measure clicked');
 	}
 });
