@@ -22,8 +22,27 @@
  * THE SOFTWARE.
  */
 
+// Units of measure global setting to work across any create submenus.
+// Note, within the system, we will translate to metric and do all calculations in metric and
+// convert back out to the current setting.  Valid settings: English, Metric
+Session.setDefault('userUnitsOfMeasure', 'English');
+
 Template.create.onCreated(function(){
 	console.log('Template.create.onCreated');
 });
+
+Template.create.helpers({
+	unitsOfMeasure: function () {
+		return (Session.get('userUnitsOfMeasure') === 'English') ? 'Feet and Inches' : 'Meters';
+	},
+	unitsOfMeasureAre: function (unitString) {
+		return Session.get('userUnitsOfMeasure') === unitString;
+	}
+});
+
 Template.create.events({
+	'click .unit-select': function (e) {
+		var clickedButton = e.currentTarget;
+		Session.set('userUnitsOfMeasure', clickedButton.id);
+	}
 });

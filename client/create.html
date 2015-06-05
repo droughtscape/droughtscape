@@ -1,5 +1,6 @@
 <template name="create">
     <h1>Measure your lawn</h1>
+
     <form action="#">
         <input class="unit-select" name="unit-type" type="radio" id="English" checked="checked"/>
         <label for="English">English</label>
@@ -7,47 +8,71 @@
         <label for="Metric">Metric</label>
     </form>
     <hr>
-    <p>Lawn Width in feet - Side to side distance</p>
+    <p>Lawn Width in {{unitsOfMeasure}} - Side to side distance</p>
 
-    <p>Lawn Depth in feet - Distance from front of lawn closest to street to lawn closest to house</p>
+    <p>Lawn Depth in {{unitsOfMeasure}} - Distance from front of lawn closest to street to lawn closest to house</p>
 
-    <p>Slope in inches - height change from front to back or side to side</p>
-
-    <div class="row">
-        <form class="col s12">
-            <div class="row">
-                <div class="input-field col s2">
-                    <input id="lawn_width_feet" type="number" class="validate">
-                    <label for="lawn_width_feet">Lawn Width Feet</label>
+    <p>Slope in {{unitsOfMeasure}} - height change from front to back or side to side</p>
+    {{#if unitsOfMeasureAre 'English'}}
+        <div class="row">
+            <form class="col s12">
+                <div class="row">
+                    <div class="input-field col s2">
+                        <input id="lawn_width_feet" type="number" class="validate">
+                        <label for="lawn_width_feet">Lawn Width Feet</label>
+                    </div>
+                    <div class="input-field col s2">
+                        <input id="lawn_width_inches" type="number" class="validate">
+                        <label for="lawn_width_inches">Lawn Width Inches</label>
+                    </div>
                 </div>
-                <div class="input-field col s2">
-                    <input id="lawn_width_inches" type="number" class="validate">
-                    <label for="lawn_width_inches">Lawn Width Inches</label>
+                <div class="row">
+                    <div class="input-field col s2">
+                        <input id="lawn_length_feet" type="number" class="validate">
+                        <label for="lawn_length_feet">Lawn Length Feet</label>
+                    </div>
+                    <div class="input-field col s2">
+                        <input id="lawn_length_inches" type="number" class="validate">
+                        <label for="lawn_length_inches">Lawn Length Inches</label>
+                    </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="input-field col s2">
-                    <input id="lawn_length_feet" type="number" class="validate">
-                    <label for="lawn_length_feet">Lawn Length Feet</label>
+                <div class="row">
+                    <div class="input-field col s2">
+                        <input id="lawn_slope_inches" type="number" class="validate">
+                        <label for="lawn_slope_inches">Lawn Slope Inches</label>
+                    </div>
                 </div>
-                <div class="input-field col s2">
-                    <input id="lawn_length_inches" type="number" class="validate">
-                    <label for="lawn_length_inches">Lawn Length Inches</label>
+            </form>
+        </div>
+    {{else}}
+        <div class="row">
+            <form class="col s12">
+                <div class="row">
+                    <div class="input-field col s2">
+                        <input id="lawn_width_meters" type="number" class="validate">
+                        <label for="lawn_width_meters">Lawn Width {{unitsOfMeasure}}</label>
+                    </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="input-field col s2">
-                    <input id="lawn_slope_inches" type="number" class="validate">
-                    <label for="lawn_slope_inches">Lawn Slope Inches</label>
+                <div class="row">
+                    <div class="input-field col s2">
+                        <input id="lawn_length_meters" type="number" class="validate">
+                        <label for="lawn_length_meters">Lawn Length {{unitsOfMeasure}}</label>
+                    </div>
                 </div>
-            </div>
-        </form>
-    </div>
+                <div class="row">
+                    <div class="input-field col s2">
+                        <input id="lawn_slope_meters" type="number" class="validate">
+                        <label for="lawn_slope_meters">Lawn Slope {{unitsOfMeasure}}</label>
+                    </div>
+                </div>
+            </form>
+        </div>
+    {{/if}}
     <hr>
     <div>
         <li><a href="http://www.findlotsize.com/" target="_blank">Use FindLotSize.com</a></li>
-        <p>FindLotSize is a site which allows you to find and measure the size of property.  <br>
-        You can use this site to figure out lawn size by measuring just the lawn instead of the <br>
-        entire property.</p>
+        <p>FindLotSize is a site which allows you to find and measure the size of property. <br>
+            You can use this site to figure out lawn size by measuring just the lawn instead of the <br>
+            entire property.</p>
     </div>
 </template>
