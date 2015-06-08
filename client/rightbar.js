@@ -64,6 +64,9 @@ Template.rightBar.events({
 		//Session.set('renderView', event.currentTarget.id);
 		var id = event.currentTarget.id;
 		switch (id) {
+		case 'about':
+			Session.set('renderView', event.currentTarget.id);
+			break;
 		default:
 			if (NavConfig.validateRightBarId(Session.get('rightBarConfig'), id)) {
 				Session.set('renderView', event.currentTarget.id);
