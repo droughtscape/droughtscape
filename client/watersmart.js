@@ -143,4 +143,4 @@ Template.addtipcard.events({
 		tickleCenterMe();
 
 	}
-})
+});

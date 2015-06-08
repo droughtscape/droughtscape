@@ -42,9 +42,13 @@ Template.parts.events({
 	'click #turf-terminators-plant-catalog': function () {
 		window.open('http://turfterminators.com/how-turf-terminators-works/plant-and-groundcover-catalog/', '_blank');
 	},
+	// Expect this template event to be invoked with context=<string>
+	// Where <string> := "parts" | "newPart" | ...
+	// The event comes from a subtemplate part_type
 	'click .part-select': function (e) {
 		var clickedButton = e.currentTarget;
 		partMode.set(clickedButton.id);
 		console.log( 'partMode: ' + partMode.get());
 	}
 });
+

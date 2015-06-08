@@ -29,10 +29,12 @@ Session.setDefault('userUnitsOfMeasure', 'English');
 
 var lawnData = {width: 0, length: 0, slope: 0};
 var lawnDataEnglish = {widthFeet: 0, widthInches: 0, lengthFeet: 0, lengthInches: 0, slopeInches: 0};
+var lawnDataDisplay = {w1: 0, w2: 0, l1: 0, l2: 0, s: 0};
 Session.setDefault('computedArea', 0);
 
 Template.create.onCreated(function(){
 	console.log('Template.create.onCreated');
+	Session.set('computedArea', 0);
 });
 
 Template.create.helpers({
@@ -42,17 +44,32 @@ Template.create.helpers({
 	unitsOfMeasureAre: function (unitString) {
 		return Session.get('userUnitsOfMeasure') === unitString;
 	},
-	lawnDataEnglish: function () {
-		return lawnDataEnglish;
-	},
-	lawnData: function () {
-		return lawnData;
+	lawnDataDisplay: function () {
+		// Fill in appropriately
+		if (Session.get('userUnitsOfMeasure') === 'English') {
+			// feet, inches
+			var fi = Utils.convertMetersToFeetInches(lawnData.width);
+			lawnDataDisplay.w1 = fi.feet;
+			lawnDataDisplay.w2 = fi.inches;
+			fi = Utils.convertMetersToFeetInches(lawnData.length);
+			lawnDataDisplay.l1 = fi.feet;
+			lawnDataDisplay.l2 = fi.inches;
+			lawnDataDisplay.s = Math.round(Utils.convertMetersToInches(lawnData.slope));
+		}
+		else {
+			// meters
+			lawnDataDisplay.w1 = lawnData.width;
+			lawnDataDisplay.l1 = lawnData.length;
+			lawnDataDisplay.s = lawnData.slope;
+		}
+		return lawnDataDisplay;
 	},
 	computedArea: function () {
+		Session.set('computedArea', Number(lawnData.width) * Number(lawnData.length));
 		var sqMeters = Session.get('computedArea');
-		var sqInches = Utils.convertMetersToEnglish(sqMeters);
+		var sqInches = Utils.convertMetersToInches(sqMeters);
 		var sqFeet = sqInches / 12.0;
-		return (Session.get('userUnitsOfMeasure') === 'English') ? sqFeet + ' sq ft' : sqMeters + ' sq m';
+		return (Session.get('userUnitsOfMeasure') === 'English') ? Math.round(sqFeet) + ' sq ft' : Math.round(sqMeters) + ' sq m';
 	}
 });
 
@@ -64,25 +81,16 @@ Template.create.events({
 	'click #lawn-measure': function (e) {
 		console.log('lawn-measure clicked');
 		if (Session.get('userUnitsOfMeasure') === 'English') {
-			lawnDataEnglish.widthFeet = document.getElementById('lawn_width_feet').value;
-			lawnDataEnglish.widthInches = document.getElementById('lawn_width_inches').value;
-			lawnDataEnglish.lengthFeet = document.getElementById('lawn_length_feet').value;
-			lawnDataEnglish.lengthInches = document.getElementById('lawn_length_inches').value;
-			lawnDataEnglish.slopeInches = document.getElementById('lawn_slope_inches').value;
-			lawnData.width = Utils.convertEnglishToMeters(lawnDataEnglish.widthFeet, lawnDataEnglish.widthInches);
-			lawnData.length = Utils.convertEnglishToMeters(lawnDataEnglish.lengthFeet, lawnDataEnglish.lengthInches);
-			lawnData.slope = Utils.convertEnglishToMeters(0, lawnDataEnglish.slopeInches);
+			lawnData.width = Utils.convertEnglishToMeters(document.getElementById('lawn_width_feet').value,
+				document.getElementById('lawn_width_inches').value);
+			lawnData.length = Utils.convertEnglishToMeters(document.getElementById('lawn_length_feet').value,
+				document.getElementById('lawn_length_inches').value);
+			lawnData.slope = Utils.convertEnglishToMeters(0, document.getElementById('lawn_slope_inches').value);
 		}
 		else {
 			lawnData.width = document.getElementById('lawn_width_meters').value;
 			lawnData.length = document.getElementById('lawn_length_meters').value;
 			lawnData.slope = document.getElementById('lawn_slope_meters').value;
-			
-			lawnDataEnglish.widthFeet = 0;
-			lawnDataEnglish.widthInches = Utils.convertMetersToEnglish(lawnData.width);
-			lawnDataEnglish.lengthFeet = 0;
-			lawnDataEnglish.lengthInches = Utils.convertMetersToEnglish(lawnData.length);
-			lawnDataEnglish.slopeInches = Utils.convertMetersToEnglish(lawnData.slope);
 		}
 		Session.set('computedArea', Number(lawnData.width) * Number(lawnData.length));
 		console.log('lawnData: ' + lawnData);

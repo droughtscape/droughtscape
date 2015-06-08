@@ -57,14 +57,14 @@ Template.navBar.events({
 		switch (id) {
 		case 'droughtscapelogo':
 			Session.set('renderView', 'splash');
-			//Router.go('home');
 			break;
 		case 'at-nav-button':
 			Session.set('renderView', 'signin');
 			break;
 		default:
-			Session.set('renderView', event.currentTarget.id);
-			//Router.go(id);
+			if (NavConfig.validateNavBarId(Session.get('navBarConfig'), id)) {
+				Session.set('renderView', event.currentTarget.id);
+			}
 			break;
 		}
 		// dispatch a resize event to force rendering of the home page

@@ -21,9 +21,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+var partMode = new ReactiveVar('plants');
 
 Template.newPart.onCreated(function () {
 	NavConfig.pushRightBar('rightBar', 'parts');
+});
+
+// Expect this template event to be invoked with context=<string>
+// Where <string> := "parts" | "newPart" | ...
+// The event comes from a subtemplate part_type
+Template.newPart.events({
+	'click .part-select': function (e) {
+		var clickedButton = e.currentTarget;
+		partMode.set(clickedButton.id);
+		console.log( 'partMode: ' + partMode.get());
+	}
 });
 
 Template.newPart.onDestroyed(function () {

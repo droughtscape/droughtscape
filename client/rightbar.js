@@ -30,7 +30,7 @@ Meteor.startup(function () {
 	window.addEventListener('resize', function () {
 		Meteor.defer(function () {
 			_renderRightBar();
-		})
+		});
 	});
 });
 
@@ -65,8 +65,9 @@ Template.rightBar.events({
 		var id = event.currentTarget.id;
 		switch (id) {
 		default:
-			Session.set('renderView', event.currentTarget.id);
-			//Router.go(id);
+			if (NavConfig.validateRightBarId(Session.get('rightBarConfig'), id)) {
+				Session.set('renderView', event.currentTarget.id);
+			}
 			break;
 		}
 	}
