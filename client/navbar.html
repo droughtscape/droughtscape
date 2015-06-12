@@ -8,8 +8,8 @@
 				{{#each navButtons}}
 					{{> navButton}}
 				{{/each}}
-				{{> atNavButton}}
-                {{> atNavItem}}
+				<!--{{> atNavButton}}-->
+                {{> atNavButton}}
             </ul>
             <ul class="side-nav" id="mobile-demo">
 				{{#each navButtons}}
@@ -22,10 +22,10 @@
 </template>
 
 <template name="navButton">
-    <li><a id="{{name}}" style="font-size: 1.75rem">{{friendlyName}}</a></li>
+    <!--<li><a id="{{name}}" style="font-size: 1.75rem">{{friendlyName}}</a></li>-->
 
-    <!--<li><a id={{name}} class="waves-effect waves-light btn-large">
-        <i class={{class}}></i>{{friendlyName}}</a></li>-->
+    <li><a id={{name}} class="waves-effect waves-light btn-large">
+        <i class={{class}}></i>{{friendlyName}}</a></li>
 
 </template>
 
@@ -33,3 +33,8 @@
     <li><a id="at-nav-item"></a>{{text}}</li>
 </template>
 
+<!--
+<template name="atNavButton">
+    <li><a id="at-nav-button"></a>{{text}}</li>
+</template>
+-->
