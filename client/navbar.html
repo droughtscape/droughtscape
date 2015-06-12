@@ -1,6 +1,6 @@
 <template name="navBar">
     <nav>
-        <div id="topNav" class="nav-wrapper brown lighten-4" style="z-index: 100">
+        <div id="topNav" class="nav-wrapper brown lighten-4">
             <img src="watersave.jpg" id="droughtscapelogo" class="brand-logo right" style="width:80px;height:64px">
             <!--<a href="watersave.jpg" class="brand-logo right">watersave.jpg</a>-->
             <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="mdi-navigation-menu"></i></a>
@@ -9,6 +9,7 @@
 					{{> navButton}}
 				{{/each}}
 				{{> atNavButton}}
+                {{> atNavItem}}
             </ul>
             <ul class="side-nav" id="mobile-demo">
 				{{#each navButtons}}
@@ -21,7 +22,14 @@
 </template>
 
 <template name="navButton">
-    <li><a id={{name}} class="col s2 waves-effect waves-light btn-large">
-        <i class={{class}}></i>{{friendlyName}}</a></li>
+    <li><a id="{{name}}" style="font-size: 1.75rem">{{friendlyName}}</a></li>
+
+    <!--<li><a id={{name}} class="waves-effect waves-light btn-large">
+        <i class={{class}}></i>{{friendlyName}}</a></li>-->
+
+</template>
+
+<template name="atNavItem">
+    <li><a id="at-nav-item"></a>{{text}}</li>
 </template>
 

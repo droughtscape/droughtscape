@@ -39,6 +39,19 @@ Template.navBar.onRendered(function () {
 	}
 });
 
+Template.atNavItem.helpers(AccountsTemplates.atNavButtonHelpers);
+Template.atNavItem.events({
+	'click': function (event) {
+		var id = event.currentTarget.id;
+		switch (id) {
+		default:
+		case 'at-nav-item':
+			Session.set('renderView', 'signin');
+			break;
+		}
+	}
+});
+
 Template.navBar.helpers({
 	navButtons: function () {
 		// The nav bar is a singleton per "page" so we use a global
