@@ -9,28 +9,30 @@
 					{{> navButton}}
 				{{/each}}
 				<!--{{> atNavButton}}-->
-                {{> atNavButton}}
+                {{> atNavItem}}
             </ul>
             <ul class="side-nav" id="mobile-demo">
 				{{#each navButtons}}
 					{{> navButton}}
 				{{/each}}
-				{{> atNavButton}}
+				{{> atNavItem}}
            </ul>
         </div>
     </nav>
 </template>
 
 <template name="navButton">
-    <!--<li><a id="{{name}}" style="font-size: 1.75rem">{{friendlyName}}</a></li>-->
+    <li><a id="{{name}}" style="font-size: 1.25rem">{{friendlyName}}</a></li>
 
+<!--
     <li><a id={{name}} class="waves-effect waves-light btn-large">
         <i class={{class}}></i>{{friendlyName}}</a></li>
+-->
 
 </template>
 
 <template name="atNavItem">
-    <li><a id="at-nav-item"></a>{{text}}</li>
+    <li><a id="at-nav-item" style="font-size: 1.25rem; color: {{loginColor}}">{{text}}</a></li>
 </template>
 
 <!--

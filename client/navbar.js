@@ -39,18 +39,28 @@ Template.navBar.onRendered(function () {
 	}
 });
 
-Template.atNavItem.helpers(AccountsTemplates.atNavButtonHelpers);
-Template.atNavItem.events({
-	'click': function (event) {
-		var id = event.currentTarget.id;
-		switch (id) {
-		default:
-		case 'at-nav-item':
-			Session.set('renderView', 'signin');
-			break;
+// From useraccounts_materialize.js
+// Simply 'inherits' helpers from AccountsTemplates
+Template.atNavItem.helpers(AccountsTemplates.atNavButtonHelpers);  
+Template.atNavItem.helpers({
+	text: function(){
+		var key = Meteor.userId() ? AccountsTemplates.texts.navSignOut : AccountsTemplates.texts.navSignIn;
+		var text = T9n.get(key, markIfMissing=false);
+		text = text.toLowerCase();
+		return text;
+	},
+	loginColor: function () {
+		if (Meteor.userId()) {
+			return 'green';
+		}
+		else {
+			return 'red';
 		}
 	}
 });
+
+// Simply 'inherites' events from AccountsTemplates
+Template.atNavItem.events(AccountsTemplates.atNavButtonEvents);
 
 Template.navBar.helpers({
 	navButtons: function () {
@@ -71,8 +81,14 @@ Template.navBar.events({
 		case 'droughtscapelogo':
 			Session.set('renderView', 'splash');
 			break;
+		case 'at-nav-item':
 		case 'at-nav-button':
-			Session.set('renderView', 'signin');
+			if (!Meteor.userId()) {
+				Session.set('renderView', 'signin');
+			}
+			else {
+				AccountsTemplates.logout();
+			}			
 			break;
 		default:
 			if (NavConfig.validateNavBarId(Session.get('navBarConfig'), id)) {
