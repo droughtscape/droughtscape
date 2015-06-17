@@ -50,7 +50,7 @@ Template.atNavItem.helpers({
 		return text;
 	},
 	loginColor: function () {
-		return (Meteor.userId()) ? 'green' : 'red';
+		return (Meteor.userId()) ? 'teal-text' : 'red-text';
 	},
 	loginIcon: function () {
 		return (Meteor.userId()) ? 'mdi-action-verified-user right' : 'mdi-action-input right';
