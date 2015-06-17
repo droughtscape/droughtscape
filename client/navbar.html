@@ -22,7 +22,8 @@
 </template>
 
 <template name="navButton">
-    <li><a id="{{name}}" style="font-size: 1.25rem">{{friendlyName}}</a></li>
+    <li><a id="{{name}}" class="blue-text" style="font-size: 1.25rem">
+        <i class={{class}}></i>{{friendlyName}}</a></li>
 
 <!--
     <li><a id={{name}} class="waves-effect waves-light btn-large">
@@ -32,11 +33,7 @@
 </template>
 
 <template name="atNavItem">
-    <li><a id="at-nav-item" style="font-size: 1.25rem; color: {{loginColor}}">{{text}}</a></li>
+    <li><a id="at-nav-item" style="font-size: 1.25rem; color: {{loginColor}}">
+        <i class={{loginIcon}}></i>{{text}}</a></li>
 </template>
 
-<!--
-<template name="atNavButton">
-    <li><a id="at-nav-button"></a>{{text}}</li>
-</template>
--->

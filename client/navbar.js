@@ -50,16 +50,14 @@ Template.atNavItem.helpers({
 		return text;
 	},
 	loginColor: function () {
-		if (Meteor.userId()) {
-			return 'green';
-		}
-		else {
-			return 'red';
-		}
+		return (Meteor.userId()) ? 'green' : 'red';
+	},
+	loginIcon: function () {
+		return (Meteor.userId()) ? 'mdi-action-verified-user right' : 'mdi-action-input right';
 	}
 });
 
-// Simply 'inherites' events from AccountsTemplates
+// Simply 'inherits' events from AccountsTemplates
 Template.atNavItem.events(AccountsTemplates.atNavButtonEvents);
 
 Template.navBar.helpers({
