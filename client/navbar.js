@@ -53,7 +53,7 @@ Template.atNavItem.helpers({
 		return (Meteor.userId()) ? 'teal-text' : 'red-text';
 	},
 	loginIcon: function () {
-		return (Meteor.userId()) ? 'mdi-action-verified-user right' : 'mdi-action-input right';
+		return (Meteor.userId()) ? 'mdi-social-person right' : 'mdi-action-input right';
 	}
 });
 
