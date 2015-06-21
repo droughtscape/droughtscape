@@ -21,11 +21,35 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+SignInUtils = (function () {
+	var renderViewTargetStack = [];
+	
+	var pushRenderViewTarget = function pushRenderViewTarget (target) {
+		renderViewTargetStack.push(target);
+	};
+	
+	var popRenderViewTarget = function popRenderViewTarget () {
+		return (renderViewTargetStack.length > 0) ? renderViewTargetStack.pop() : 'splash';
+	};
+	
+	var clearRenderViewTargets = function clearRenderViewTargets () {
+		renderViewTargetStack = [];
+	};
+	
+	return {
+		pushRenderViewTarget: pushRenderViewTarget,
+		popRenderViewTarget: popRenderViewTarget,
+		clearRenderViewTargets: clearRenderViewTargets
+	};
+})();
+
 Template.signin.events({
 	'click #dismiss-sign-in': function () {
+		// Clear all targets, go to splash on all dismisses
+		SignInUtils.clearRenderViewTargets();
 		Session.set('renderView', 'splash');
 	},
 	'click #at-btn': function () {
-		Session.set('renderView', 'splash');
+		Session.set('renderView', SignInUtils.popRenderViewTarget());
 	}
 });

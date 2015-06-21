@@ -1,4 +1,5 @@
 <template name="create">
+    {{#if currentUser}}
     <h2>Measure your lawn</h2>
 
     <form action="#">
@@ -79,4 +80,7 @@
             You can use this site to figure out lawn size by measuring just the lawn instead of the <br>
             entire property.</p>
     </div>
+    {{else}}
+        {{> require_signin message=signInMessage}}
+    {{/if}}
 </template>

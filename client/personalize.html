@@ -34,30 +34,6 @@
             </form>
         </div>
 	{{else}}
-        <div class="center-align valign-wrapper">
-            <div id="alert-card" class="row">
-                <!--style="position: fixed; top: 100px; z-index: 1000; visibility: visible">-->
-                <!--style="position: absolute; top: 100px; left: 100px; z-index: 1000; visibility: hidden">-->
-                <div class="col s12 m6" style="width: 500px">
-                    <div class="card red darken-3">
-                        <div class="card-content white-text">
-                            <div class="center-align">
-                                <span class="card-title">Please sign in first</span>
-                            </div>
-
-                            <p>Personalization allows droughtscape to more closely tailor
-                                the design to match your preferences</p>
-                        </div>
-                        <div class="card-action">
-                            <div class="center-align">
-                                <a id="signin" class="waves-effect waves-light red darken-1 btn">Sign In</a>
-                                <a id="dismiss-alert" class="waves-effect waves-light red darken-1 btn">Dismiss</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
+        {{> require_signin message=signInMessage}}
 	{{/if}}
 </template> 

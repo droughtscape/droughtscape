@@ -9,8 +9,8 @@ autopublish
 insecure
 iron:router
 materialize:materialize
-useraccounts:materialize
 accounts-password
 limemakers:three
 reactive-var
 richsilv:owl-carousel
+useraccounts:materialize

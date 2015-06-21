@@ -38,6 +38,9 @@ Template.create.onCreated(function(){
 });
 
 Template.create.helpers({
+	signInMessage: function () {
+		return 'Sign in so we can track your design(s)';
+	},
 	unitsOfMeasure: function () {
 		return (Session.get('userUnitsOfMeasure') === 'English') ? 'Feet and Inches' : 'Meters';
 	},
@@ -74,6 +77,10 @@ Template.create.helpers({
 });
 
 Template.create.events({
+	'click #signin': function () {
+		SignInUtils.pushRenderViewTarget('create');
+		Session.set('renderView', 'signin');
+	},
 	'click .unit-select': function (e) {
 		var clickedButton = e.currentTarget;
 		Session.set('userUnitsOfMeasure', clickedButton.id);

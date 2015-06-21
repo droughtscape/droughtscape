@@ -21,16 +21,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
-Template.favorites.helpers({
-	signInMessage: function () {
-		return 'Sign in to view your favorites'
-	}
-});
-
-Template.favorites.events({
-	'click #signin': function () {
-		SignInUtils.pushRenderViewTarget('favorites');
-		Session.set('renderView', 'signin');
+Template.require_signin.events({
+	'click #dismiss-alert': function () {
+		// Clear all targets, go to splash on all dismisses
+		SignInUtils.clearRenderViewTargets();
+		Session.set('renderView', 'splash');
 	}
 });

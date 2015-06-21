@@ -30,11 +30,15 @@ Template.personalize.onDestroyed(function () {
 	NavConfig.popRightBar();
 });
 
+Template.personalize.helpers({
+	signInMessage: function () {
+		return 'Personalization allows droughtscape to more closely tailor the design to match your preferences';
+	}
+});
+
 Template.personalize.events({
 	'click #signin': function () {
+		SignInUtils.pushRenderViewTarget('personalize');
 		Session.set('renderView', 'signin');
-	},
-	'click #dismiss-alert': function () {
-		Session.set('renderView', 'splash');
 	}
 });

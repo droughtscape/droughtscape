@@ -1,3 +1,7 @@
 <template name="favorites">
-	{{> carousel}}
+    {{#if currentUser}}
+        {{> carousel}}
+    {{else}}
+        {{> require_signin message=signInMessage}}
+    {{/if}}
 </template>
