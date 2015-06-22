@@ -36,10 +36,16 @@ SignInUtils = (function () {
 		renderViewTargetStack = [];
 	};
 	
+	var getUserName = function getUserName () {
+		var user = Meteor.user();
+		return Meteor.userId() && user && user.emails ? user.emails[0].address : "";	
+	};
+	
 	return {
 		pushRenderViewTarget: pushRenderViewTarget,
 		popRenderViewTarget: popRenderViewTarget,
-		clearRenderViewTargets: clearRenderViewTargets
+		clearRenderViewTargets: clearRenderViewTargets,
+		getUserName: getUserName
 	};
 })();
 

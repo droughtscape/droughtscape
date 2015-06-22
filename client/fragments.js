@@ -28,3 +28,9 @@ Template.require_signin.events({
 		Session.set('renderView', 'splash');
 	}
 });
+
+Template.display_user.helpers({
+	userName: function () {
+		return SignInUtils.getUserName();
+	}
+});

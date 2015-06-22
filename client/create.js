@@ -101,5 +101,30 @@ Template.create.events({
 		}
 		Session.set('computedArea', Number(lawnData.width) * Number(lawnData.length));
 		console.log('lawnData: ' + lawnData);
+		
+		var user = Meteor.user();
+		var userEmail = user.emails[0].address;
+		// See if we already have a profile, if so, look for myLawns, if not create one
+		var dsUsers = DroughtscapeUsers.find({});
+		var dsUsersArray = dsUsers.fetch();
+		if (dsUsersArray.length > 0) {
+			var updated = false;
+			for (var i= 0, len= dsUsersArray.length; i < len; ++i) {
+				if (dsUsersArray[i].user === userEmail) {
+					// found us, update
+					dsUsersArray[i].lawnData = lawnData;
+					updated = true;
+					break;
+				}
+			}
+			if (!updated) {
+				// user not found, add
+				DroughtscapeUsers.insert({user: userEmail, lawnData: lawnData});
+			}
+		}
+		else {
+			// No users so add us here
+			DroughtscapeUsers.insert({user: userEmail, lawnData: lawnData});
+		}
 	}
 });
