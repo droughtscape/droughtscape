@@ -102,6 +102,28 @@ Template.measure_lawn.helpers({
 Template.measure_lawn.onRendered(function () {
 	$('#modal-name').openModal();
 });
+
+var _insertFirstItem = function _insertFirstItem (userEmail, lawnData) {
+	var item = {user: userEmail, myLawns: []};
+	item.myLawns.push(lawnData);
+	DroughtscapeUsers.insert(item);
+};
+
+var _updateLawns = function _updateLawns (myLawns, lawn) {
+	var lawnUpdated = false;
+	for (var i= 0, len= myLawns.length; i<len; ++i) {
+		// if lawn is already present, just update any values
+		if (myLawns[i].name === lawn.name) {
+			myLawns[i] = lawn;
+			lawnUpdated = true;
+		}
+	}
+	if (!lawnUpdated) {
+		// Not found, just push it
+		myLawns.push(lawn);
+	}
+};
+
 Template.measure_lawn.events({
 	'click #name-lawn': function () {
 		lawnData.name = document.getElementById('lawn_name').value;
@@ -134,23 +156,26 @@ Template.measure_lawn.events({
 		var dsUsers = DroughtscapeUsers.find({});
 		var dsUsersArray = dsUsers.fetch();
 		if (dsUsersArray.length > 0) {
-			var updated = false;
+			var updated = null;
 			for (var i= 0, len= dsUsersArray.length; i < len; ++i) {
 				if (dsUsersArray[i].user === userEmail) {
 					// found us, update
-					dsUsersArray[i].lawnData = lawnData;
-					updated = true;
+					_updateLawns(dsUsersArray[i].myLawns, lawnData);
+					updated = dsUsersArray[i];
 					break;
 				}
 			}
 			if (!updated) {
 				// user not found, add
-				DroughtscapeUsers.insert({user: userEmail, lawnData: lawnData});
+				_insertFirstItem(userEmail, lawnData);
+			}
+			else {
+				DroughtscapeUsers.update(updated._id, updated);
 			}
 		}
 		else {
 			// No users so add us here
-			DroughtscapeUsers.insert({user: userEmail, lawnData: lawnData});
+			_insertFirstItem(userEmail, lawnData);
 		}
 	}
 });
