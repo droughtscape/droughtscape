@@ -27,10 +27,11 @@
 // convert back out to the current setting.  Valid settings: English, Metric
 Session.setDefault('userUnitsOfMeasure', 'English');
 
-var lawnData = {width: 0, length: 0, slope: 0};
+var lawnData = {name: 'MyLawn', width: 0, length: 0, slope: 0};
 var lawnDataEnglish = {widthFeet: 0, widthInches: 0, lengthFeet: 0, lengthInches: 0, slopeInches: 0};
-var lawnDataDisplay = {w1: 0, w2: 0, l1: 0, l2: 0, s: 0};
+var lawnDataDisplay = {name: 'MyLawn', w1: 0, w2: 0, l1: 0, l2: 0, s: 0};
 Session.setDefault('computedArea', 0);
+Session.setDefault('currentLawn', 'MyLawn');
 
 Template.create.onCreated(function(){
 	console.log('Template.create.onCreated');
@@ -40,12 +41,34 @@ Template.create.onCreated(function(){
 Template.create.helpers({
 	signInMessage: function () {
 		return 'Sign in so we can track your design(s)';
+	}
+});
+
+Template.create.events({
+	'click #signin': function () {
+		SignInUtils.pushRenderViewTarget('create');
+		Session.set('renderView', 'signin');
 	},
+	'click #lawn-create': function () {
+		lawnData.name = lawnDataDisplay.name;
+	}
+});
+
+Template.name_lawn.helpers({
+	lawnDataDisplay: function () {
+		return lawnDataDisplay;
+	}
+});
+
+Template.measure_lawn.helpers({
 	unitsOfMeasure: function () {
 		return (Session.get('userUnitsOfMeasure') === 'English') ? 'Feet and Inches' : 'Meters';
 	},
 	unitsOfMeasureAre: function (unitString) {
 		return Session.get('userUnitsOfMeasure') === unitString;
+	},
+	lawnName: function () {
+		return Session.get('currentLawn');
 	},
 	lawnDataDisplay: function () {
 		// Fill in appropriately
@@ -76,10 +99,13 @@ Template.create.helpers({
 	}
 });
 
-Template.create.events({
-	'click #signin': function () {
-		SignInUtils.pushRenderViewTarget('create');
-		Session.set('renderView', 'signin');
+Template.measure_lawn.onRendered(function () {
+	$('#modal-name').openModal();
+});
+Template.measure_lawn.events({
+	'click #name-lawn': function () {
+		lawnData.name = document.getElementById('lawn_name').value;
+		Session.set('currentLawn', lawnData.name);
 	},
 	'click .unit-select': function (e) {
 		var clickedButton = e.currentTarget;
@@ -101,7 +127,7 @@ Template.create.events({
 		}
 		Session.set('computedArea', Number(lawnData.width) * Number(lawnData.length));
 		console.log('lawnData: ' + lawnData);
-		
+
 		var user = Meteor.user();
 		var userEmail = user.emails[0].address;
 		// See if we already have a profile, if so, look for myLawns, if not create one

@@ -103,6 +103,7 @@ Template.home.rendered = function () {
 	$(document).ready(function () {
 		console.log('ready');
 		$(".button-collapse").sideNav();
+		$('.modal-trigger').leanModal();
 	});
 	_renderContent();
 };
