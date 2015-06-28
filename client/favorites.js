@@ -23,6 +23,18 @@
  */
 
 Template.favorites.helpers({
+	hasFavorites: function () {
+		var user = Meteor.user();
+		var userEmail = user.emails[0].address;
+		var dsUser = DroughtscapeUsers.findOne({user: userEmail});
+		return dsUser.myLawns.length > 0;
+	},
+	favoriteLawns: function () {
+		var user = Meteor.user();
+		var userEmail = user.emails[0].address;
+		var dsUser = DroughtscapeUsers.findOne({user: userEmail});
+		return dsUser.myLawns;
+	},
 	signInMessage: function () {
 		return 'Sign in to view your favorites'
 	}

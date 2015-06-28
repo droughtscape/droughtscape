@@ -22,13 +22,12 @@
  * THE SOFTWARE.
  */
 Template.carousel.onRendered(function () {
-	$("#owl-demo").owlCarousel({
-	
-		autoPlay: 3000, //Set AutoPlay to 3 seconds
-	
-		items : 4,
-		itemsDesktop : [1199,3],
-		itemsDesktopSmall : [979,3]
-	
-	});
+	$("#owl-demo").owlCarousel(CarouselData.getCarouselFormat(this.data));
+});
+
+Template.carousel.helpers({
+	items : function () {
+		console.log('items');
+		return CarouselData.getCarouselData(this.context);
+	}
 });

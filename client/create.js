@@ -129,6 +129,9 @@ Template.measure_lawn.events({
 		lawnData.name = document.getElementById('lawn_name').value;
 		Session.set('currentLawn', lawnData.name);
 	},
+	'click #open-lawn': function () {
+		Session.set('renderView', 'favorites');
+	},
 	'click .unit-select': function (e) {
 		var clickedButton = e.currentTarget;
 		Session.set('userUnitsOfMeasure', clickedButton.id);
@@ -160,6 +163,9 @@ Template.measure_lawn.events({
 			for (var i= 0, len= dsUsersArray.length; i < len; ++i) {
 				if (dsUsersArray[i].user === userEmail) {
 					// found us, update
+					if (!dsUsersArray[i].myLawns) {
+						dsUsersArray[i].myLawns = [];
+					}
 					_updateLawns(dsUsersArray[i].myLawns, lawnData);
 					updated = dsUsersArray[i];
 					break;

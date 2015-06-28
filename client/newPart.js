@@ -35,6 +35,9 @@ Template.newPart.events({
 		var clickedButton = e.currentTarget;
 		partMode.set(clickedButton.id);
 		console.log( 'partMode: ' + partMode.get());
+	},
+	'click #dismiss-part': function () {
+		console.log('dismiss-part');
 	}
 });
 
