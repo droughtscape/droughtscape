@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 Template.carousel.onRendered(function () {
-	$("#owl-demo").owlCarousel(CarouselData.getCarouselFormat(this.data));
+	$("#owl-carousel").owlCarousel(CarouselData.getCarouselFormat(this.data));
 });
 
 Template.carousel.helpers({

@@ -61,10 +61,10 @@ div.container {
     max-height: 100%;
 }
 
-#owl-demo .item{
+#owl-carousel .item{
     margin: 3px;
 }
-#owl-demo .item img{
+#owl-carousel .item img{
     display: block;
     width: 100%;
     height: auto;
