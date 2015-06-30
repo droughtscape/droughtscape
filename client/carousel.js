@@ -31,3 +31,9 @@ Template.carousel.helpers({
 		return CarouselData.getCarouselData(this.context);
 	}
 });
+
+Template.carousel.events({
+	'click .item': function (e) {
+		console.log('carousel: ' + e);
+	}
+});
