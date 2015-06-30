@@ -21,6 +21,48 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+// _partTypeList allows us to use the part_type template to filter different part configurations
+// depending on the context within which it is used.
+var _partTypeList = {
+	'newPart': [
+		{value: 'plants', friendlyName: 'Plants', checked: 'checked'},
+		{value: 'groundcovers', friendlyName: 'Groundcovers'},
+		{value: 'borders', friendlyName: 'Borders'},
+		{value: 'pavers', friendlyName: 'Pavers'},
+		{value: 'irrigation', friendlyName: 'Irrigation'},
+		{value: 'lighting', friendlyName: 'Lighting'},
+		{value: 'decorative', friendlyName: 'Decorative'},
+		{value: 'other', friendlyName: 'Other'}
+	],
+	'favoriteParts': [
+		{value: 'plants', friendlyName: 'Plants'},
+		{value: 'groundcovers', friendlyName: 'Groundcovers'},
+		{value: 'borders', friendlyName: 'Borders'},
+		{value: 'pavers', friendlyName: 'Pavers'},
+		{value: 'irrigation', friendlyName: 'Irrigation'},
+		{value: 'lighting', friendlyName: 'Lighting'},
+		{value: 'decorative', friendlyName: 'Decorative'},
+		{value: 'all', friendlyName: 'All', checked: 'checked'}
+	],
+	'parts': [
+		{value: 'plants', friendlyName: 'Plants', checked: 'checked'},
+		{value: 'groundcovers', friendlyName: 'Groundcovers'},
+		{value: 'borders', friendlyName: 'Borders'},
+		{value: 'pavers', friendlyName: 'Pavers'},
+		{value: 'irrigation', friendlyName: 'Irrigation'},
+		{value: 'lighting', friendlyName: 'Lighting'},
+		{value: 'decorative', friendlyName: 'Decorative'},
+		{value: 'other', friendlyName: 'Other'}
+	]
+};
+
+Template.part_type.helpers({
+	// Template must set the context when instantiating this template fragment
+	partsList: function () {
+		return _partTypeList[this.context];
+	}
+});
+
 Template.require_signin.events({
 	'click #dismiss-alert': function () {
 		// Clear all targets, go to splash on all dismisses

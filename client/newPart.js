@@ -37,7 +37,8 @@ Template.newPart.events({
 		console.log( 'partMode: ' + partMode.get());
 	},
 	'click #dismiss-part': function () {
-		console.log('dismiss-part');
+		var val = Utils.getRadioVal(document.getElementById('parts-select'), 'part-type');
+		console.log('dismiss-part: ' + val);
 	}
 });
 
