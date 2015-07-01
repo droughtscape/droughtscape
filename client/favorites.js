@@ -23,6 +23,9 @@
  */
 
 Template.favorites.helpers({
+	myLawns: function () {
+		return {type: 'myLawns', subType: 'none'};
+	},
 	hasFavorites: function () {
 		var user = Meteor.user();
 		var userEmail = user.emails[0].address;

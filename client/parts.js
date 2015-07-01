@@ -35,6 +35,12 @@ Template.parts.onDestroyed(function () {
 	NavConfig.popRightBar();
 });
 
+Template.parts.helpers({
+	partsMode: function () {
+		return {type: "parts", subType: partMode.get()};
+	}
+});
+
 Template.parts.events({
 	'click #plants-mwd-top-50': function () {
 		window.open('http://bewaterwise.com/pdf/50_Faves.pdf', '_blank');

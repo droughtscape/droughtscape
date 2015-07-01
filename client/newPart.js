@@ -39,6 +39,12 @@ Template.newPart.events({
 	'click #dismiss-part': function () {
 		var val = Utils.getRadioVal(document.getElementById('parts-select'), 'part-type');
 		console.log('dismiss-part: ' + val);
+		Session.set('renderView', 'parts');
+	},
+	'click #create-part': function () {
+		var val = Utils.getRadioVal(document.getElementById('parts-select'), 'part-type');
+		console.log('create-part: ' + val);
+		Session.set('renderView', 'parts');
 	}
 });
 

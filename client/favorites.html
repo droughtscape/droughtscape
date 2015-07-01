@@ -1,7 +1,7 @@
 <template name="favorites">
     {{#if currentUser}}
         {{#if hasFavorites}}
-            {{> carousel context="myLawns"}}
+            {{> carousel context=myLawns}}
         {{else}}
             <h1>No Favorites found</h1>
         {{/if}}
