@@ -36,16 +36,11 @@ Template.favoriteParts.helpers({
 		return {type: "favoriteParts", subType: partMode.get()};
 	},
 	selected: function () {
-		return partMode.get();
+		return partMode;
 	}
 });
 
 Template.favoriteParts.events({
-	'click .part-select': function (e) {
-		var clickedButton = e.currentTarget;
-		partMode.set(clickedButton.value);
-		console.log( 'partMode: ' + partMode.get());
-	},
 	'click #signin': function () {
 		Session.set('renderView', 'signin');
 	},

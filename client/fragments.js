@@ -73,7 +73,15 @@ var _getPartTypeList = function _getPartTypeList (partType, selected) {
 Template.part_type.helpers({
 	// Template must set the context when instantiating this template fragment
 	partsList: function () {
-		return _getPartTypeList(this.context, this.selected);
+		return _getPartTypeList(this.context, this.selected.get());
+	}
+});
+
+Template.part_type.events({
+	'click .part-select': function (e, template) {
+		var clickedButton = e.currentTarget;
+		template.data.selected.set(clickedButton.id);
+		console.log( 'data.selected: ' + template.data.selected.get());
 	}
 });
 

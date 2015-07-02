@@ -32,7 +32,7 @@ Template.newPart.helpers({
 		return {type: "newParts", subType: partMode.get()};
 	},
 	selected: function () {
-		return partMode.get();
+		return partMode;
 	}
 });
 
@@ -40,11 +40,6 @@ Template.newPart.helpers({
 // Where <string> := "parts" | "newPart" | ...
 // The event comes from a subtemplate part_type
 Template.newPart.events({
-	'click .part-select': function (e) {
-		var clickedButton = e.currentTarget;
-		partMode.set(clickedButton.value);
-		console.log( 'partMode: ' + partMode.get());
-	},
 	'click #dismiss-part': function () {
 		var val = Utils.getRadioVal(document.getElementById('parts-select'), 'part-type');
 		console.log('dismiss-part: ' + val);
