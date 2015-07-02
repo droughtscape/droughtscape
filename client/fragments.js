@@ -24,7 +24,7 @@
 // _partTypeList allows us to use the part_type template to filter different part configurations
 // depending on the context within which it is used.
 var _partTypeList = {
-	'newPart': [
+	'newPart':  [
 		{value: 'plants', friendlyName: 'Plants', checked: 'checked'},
 		{value: 'groundcovers', friendlyName: 'Groundcovers'},
 		{value: 'borders', friendlyName: 'Borders'},
@@ -46,7 +46,7 @@ var _partTypeList = {
 	],
 	'parts': [
 		{value: 'plants', friendlyName: 'Plants', checked: 'checked'},
-		{value: 'groundcovers', friendlyName: 'Groundcovers'},
+		{value: 'groundcovers', friendlyName: 'Groundcovers', checked: ''},
 		{value: 'borders', friendlyName: 'Borders'},
 		{value: 'pavers', friendlyName: 'Pavers'},
 		{value: 'irrigation', friendlyName: 'Irrigation'},
@@ -56,10 +56,24 @@ var _partTypeList = {
 	]
 };
 
+var _getPartTypeList = function _getPartTypeList (partType, selected) {
+	var partsList = _partTypeList[partType];
+	for (var part in partsList) {
+		var partItem = partsList[part];
+		if (partItem.value === selected) {
+			partItem.checked = 'checked';
+		}
+		else {
+			delete partItem.checked;
+		}
+	}
+	return partsList;
+};
+
 Template.part_type.helpers({
 	// Template must set the context when instantiating this template fragment
 	partsList: function () {
-		return _partTypeList[this.context];
+		return _getPartTypeList(this.context, this.selected);
 	}
 });
 

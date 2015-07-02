@@ -2,7 +2,7 @@
     <hr>
 	{{#if currentUser}}
 		favoriteParts
-        {{> part_type context="favoriteParts"}}
+        {{> part_type context="favoriteParts" selected=selected}}
 	{{else}}
         <div class="center-align valign-wrapper">
             <div id="alert-card" class="row">

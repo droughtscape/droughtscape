@@ -38,6 +38,9 @@ Template.parts.onDestroyed(function () {
 Template.parts.helpers({
 	partsMode: function () {
 		return {type: "parts", subType: partMode.get()};
+	},
+	selected: function () {
+		return partMode.get();
 	}
 });
 

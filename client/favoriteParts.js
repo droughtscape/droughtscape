@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+var partMode = new ReactiveVar('all');
 
 Template.favoriteParts.onCreated(function () {
 	NavConfig.pushRightBar('rightBar', 'parts');
@@ -30,7 +31,21 @@ Template.favoriteParts.onDestroyed(function () {
 	NavConfig.popRightBar();
 });
 
+Template.favoriteParts.helpers({
+	partsMode: function () {
+		return {type: "favoriteParts", subType: partMode.get()};
+	},
+	selected: function () {
+		return partMode.get();
+	}
+});
+
 Template.favoriteParts.events({
+	'click .part-select': function (e) {
+		var clickedButton = e.currentTarget;
+		partMode.set(clickedButton.value);
+		console.log( 'partMode: ' + partMode.get());
+	},
 	'click #signin': function () {
 		Session.set('renderView', 'signin');
 	},

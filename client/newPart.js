@@ -27,13 +27,22 @@ Template.newPart.onCreated(function () {
 	NavConfig.pushRightBar('rightBar', 'parts');
 });
 
+Template.newPart.helpers({
+	partsMode: function () {
+		return {type: "newParts", subType: partMode.get()};
+	},
+	selected: function () {
+		return partMode.get();
+	}
+});
+
 // Expect this template event to be invoked with context=<string>
 // Where <string> := "parts" | "newPart" | ...
 // The event comes from a subtemplate part_type
 Template.newPart.events({
 	'click .part-select': function (e) {
 		var clickedButton = e.currentTarget;
-		partMode.set(clickedButton.id);
+		partMode.set(clickedButton.value);
 		console.log( 'partMode: ' + partMode.get());
 	},
 	'click #dismiss-part': function () {
