@@ -33,6 +33,33 @@ Template.newPart.helpers({
 	},
 	selected: function () {
 		return partMode;
+	},
+	createItemTemplate: function () {
+		var template = Template.createOther;
+		switch (partMode.get()) {
+		case 'plants':
+			template = Template.createPlant;
+			break;
+		case 'groundcovers':
+			template = Template.createGroundcover;
+			break;
+		case 'borders':
+			template = Template.createBorder;
+			break;
+		case 'pavers':
+			template = Template.createPaver;
+			break;
+		case 'irrigation':
+			template = Template.createIrrigation;
+			break;
+		case 'lighting':
+			template = Template.createLighting;
+			break;
+		case 'decorative':
+			template = Template.createDecorative;
+			break;
+		}
+		return template;
 	}
 });
 
@@ -40,7 +67,7 @@ Template.newPart.helpers({
 // Where <string> := "parts" | "newPart" | ...
 // The event comes from a subtemplate part_type
 Template.newPart.events({
-	'click #dismiss-part': function () {
+	'click #cancel-part': function () {
 		var val = Utils.getRadioVal(document.getElementById('parts-select'), 'part-type');
 		console.log('dismiss-part: ' + val);
 		Session.set('renderView', 'parts');

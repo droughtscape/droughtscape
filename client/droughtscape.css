@@ -69,3 +69,7 @@ div.container {
     width: 100%;
     height: auto;
 }
+
+.parts-select input[type="radio"]:checked + label {
+    color: teal;
+}

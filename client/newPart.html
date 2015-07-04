@@ -1,6 +1,117 @@
 <template name="newPart">
     <label for="part_type" style="font-size:160%">Part Type</label>
-	{{> part_type context="newPart" selected=selected}}
-    <a id="dismiss-part" class="waves-effect waves-light btn">Dismiss</a>
+    {{> part_type context="newPart" selected=selected}}
+    {{> createItemTemplate}}
     <a id="create-part" class="waves-effect waves-light btn">Create</a>
+    <a id="cancel-part" class="waves-effect waves-light btn">Cancel</a>
+</template>
+
+<template name="testInput">
+    <div class="row">
+        <form class="col s12">
+            <div class="row">
+                <div class="input-field col s6">
+                    <input id="part_name" type="text" class="validate">
+                    <label for="part_name">Part Name</label>
+                </div>
+                <div class="input-field col s6">
+                    <input id="last_name" type="text" class="validate">
+                    <label for="last_name">Last Name</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col s12">
+                    <input id="password" type="password" class="validate">
+                    <label for="password">Password</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col s12">
+                    <input id="email" type="email" class="validate">
+                    <label for="email">Email</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col s12">
+                    <input id="favorite-color" type="text" class="validate">
+                    <label for="favorite-color">Favorite Color</label>
+                </div>
+            </div>
+        </form>
+    </div>
+</template>
+
+<template name="createPlant">
+    <h2>Create Plant</h2>
+
+    <div class="row">
+        <form class="col s12">
+            <div class="row">
+                <div class="input-field col s6">
+                    <input id="plant_name" type="text" class="validate">
+                    <label for="plant_name">Plant Name</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col s6">
+                    <input id="color" type="text" class="validate">
+                    <label for="color">Plant color</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col s12">
+                    <input id="description" type="text" class="validate">
+                    <label for="description">Description</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col s6">
+                    <p class="range-field">
+                        <input type="range" id="water_requirement" min="0" max="100">
+                        <label for="water_requirement">Watering Needs</label>
+                    </p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col s6">
+                    <input id="adult_height" type="text" class="validate">
+                    <label for="adult_height">Adult Height</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col s6">
+                    <input id="adult_area" type="text" class="validate">
+                    <label for="adult_area">Adult Area</label>
+                </div>
+            </div>
+        </form>
+    </div>
+</template>
+
+<template name="createGroundcover">
+    <h2>Create Groundcover</h2>
+</template>
+
+<template name="createBorder">
+    <h2>Create Border</h2>
+</template>
+
+<template name="createPaver">
+    <h2>Create Paver</h2>
+</template>
+
+<template name="createIrrigation">
+    <h2>Create Irrigation</h2>
+</template>
+
+<template name="createLighting">
+    <h2>Create Lighting</h2>
+</template>
+
+<template name="createDecorative">
+    <h2>Create Decorative</h2>
+</template>
+
+<template name="createOther">
+    <h2>Create Other</h2>
 </template>
