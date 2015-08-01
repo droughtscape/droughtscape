@@ -1,20 +1,35 @@
-#carousel {
+#carousel-slide {
     border:   1px solid black;
     width:    800px;
     height:   400px;
     position: relative;
-    top:      100px;
+    top:      200px;
     left:     100px;
 }
 
-#carousel div {
+#carousel-slide div {
     width:    400px;
     height:   400px;
 }
 
-.slick-slide {
-    width: 400px;
+/*
+ * Here we use the id if the div to set some enclosing values
+ * for the slide area, border, top offset, left offset, overall width
+ */
+#test-slide {
+    border:     1px solid black;
+    top:        100px;
+    left:       50px;
+    width:      800px;
 }
+
+/* width here in .slick-slide defines the width of the
+ * individual cell
+ */
+.slick-slide {
+    width: 100px;
+}
+
 .slick-prev:before, .slick-next:before {
     color:    silver;
 }

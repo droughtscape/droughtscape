@@ -12,10 +12,11 @@
  */
 
 Template.slick_slider.rendered = function () {
-	$('#carousel').slick({
+	$('.multiple-items').slick({
 		dots: true,
 		arrows: true,
 		slidesToShow: 2,
+		slidesToScroll: 1,
 		variableWidth: true
 	});
 };
