@@ -28,6 +28,7 @@ Template.test_slider_add.rendered = function () {
 		slidesToShow: 3,
 		slidesToScroll: 3
 	});
+	$('.add-remove').slick('slickAdd','<div class="fubarItem"><img src="http://lorempixel.com/580/250/nature/1" width="100%" height="100%" /></div>');
 	$('.js-add-slide').on('click', function() {
 		console.log('test_slider_add: js-add-slide: slideIndex: ' + slideIndex);
 		slideIndex++;
