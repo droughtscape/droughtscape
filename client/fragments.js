@@ -21,59 +21,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-// _partTypeList allows us to use the part_type template to filter different part configurations
-// depending on the context within which it is used.
-var _partTypeList = {
-	'newPart':  [
-		{value: 'plants', friendlyName: 'Plants', checked: 'checked'},
-		{value: 'groundcovers', friendlyName: 'Groundcovers'},
-		{value: 'borders', friendlyName: 'Borders'},
-		{value: 'pavers', friendlyName: 'Pavers'},
-		{value: 'irrigation', friendlyName: 'Irrigation'},
-		{value: 'lighting', friendlyName: 'Lighting'},
-		{value: 'decorative', friendlyName: 'Decorative'},
-		{value: 'other', friendlyName: 'Other'}
-	],
-	'favoriteParts': [
-		{value: 'plants', friendlyName: 'Plants'},
-		{value: 'groundcovers', friendlyName: 'Groundcovers'},
-		{value: 'borders', friendlyName: 'Borders'},
-		{value: 'pavers', friendlyName: 'Pavers'},
-		{value: 'irrigation', friendlyName: 'Irrigation'},
-		{value: 'lighting', friendlyName: 'Lighting'},
-		{value: 'decorative', friendlyName: 'Decorative'},
-		{value: 'all', friendlyName: 'All', checked: 'checked'}
-	],
-	'parts': [
-		{value: 'plants', friendlyName: 'Plants', checked: 'checked'},
-		{value: 'groundcovers', friendlyName: 'Groundcovers', checked: ''},
-		{value: 'borders', friendlyName: 'Borders'},
-		{value: 'pavers', friendlyName: 'Pavers'},
-		{value: 'irrigation', friendlyName: 'Irrigation'},
-		{value: 'lighting', friendlyName: 'Lighting'},
-		{value: 'decorative', friendlyName: 'Decorative'},
-		{value: 'other', friendlyName: 'Other'}
-	]
-};
-
-var _getPartTypeList = function _getPartTypeList (partType, selected) {
-	var partsList = _partTypeList[partType];
-	for (var part in partsList) {
-		var partItem = partsList[part];
-		if (partItem.value === selected) {
-			partItem.checked = 'checked';
-		}
-		else {
-			delete partItem.checked;
-		}
-	}
-	return partsList;
-};
 
 Template.part_type.helpers({
 	// Template must set the context when instantiating this template fragment
 	partsList: function () {
-		return _getPartTypeList(this.context, this.selected.get());
+		return PartTypeData.getPartTypeList(this.context, this.selected.get());
 	}
 });
 
@@ -82,6 +34,10 @@ Template.part_type.events({
 		var clickedButton = e.currentTarget;
 		template.data.selected.set(clickedButton.id);
 		console.log( 'data.selected: ' + template.data.selected.get());
+		var callback = PartTypeData.getPartTypeCallback(template.data.context);
+		if (callback) {
+			callback(template.data.selected.get());
+		}
 	}
 });
 

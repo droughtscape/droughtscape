@@ -36,12 +36,14 @@ Template.slickcarousel.helpers({
 		//});
 		Session.set('carouselMode',this.context.type);
 		Session.set('carouselSubMode',this.context.subType);
-		Meteor.defer(setupSlick());
 		return CarouselData.getCarouselData({type: Session.get('carouselMode'), subType: Session.get('carouselSubMode')});
 	}
 });
 
 Template.slickcarousel.events({
+	'click .part-select': function(e, template) {
+		console.log('slickcarousel .part-select');
+	},
 	'click .js-add-slide': function (e) {
 		slideIndex++;
 		//$('.multiple-items').slick('slickAdd','&lt;div&gt;&lt;h3&gt;' + slideIndex + '&lt;/h3&gt;&lt;/div&gt;');
@@ -49,7 +51,7 @@ Template.slickcarousel.events({
 	},
 	'click .item': function (e) {
 		console.log('carousel: ' + e);
-		$('.add-remove').slick('slickAdd','&lt;div&gt;&lt;h3&gt;' + 1 + '&lt;/h3&gt;&lt;/div&gt;');
+		$('.add-remove').slick('slickAdd','<div><h3>' + slideIndex + '</h3></div>');
 	}
 });
 
