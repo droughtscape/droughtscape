@@ -1,0 +1,11 @@
+<template name="slickcarousel">
+    <div id="slick-carousel" class="carousel multiple-items">
+      {{#each items}}
+        {{>slickImg}}
+      {{/each}}
+    </div>
+</template>
+
+<template name="slickImg">
+    <div id={{id}}><img src={{src}} alt={{alt}} width="100%" height="100%" >{{id}}</div>
+</template>
