@@ -21,6 +21,8 @@ var setupSlick = function setupSlick () {
 	});
 };
 
+var slideIndex = 0;
+
 Template.slickcarousel.rendered = function () {
 	setupSlick();
 };
@@ -40,8 +42,14 @@ Template.slickcarousel.helpers({
 });
 
 Template.slickcarousel.events({
+	'click .js-add-slide': function (e) {
+		slideIndex++;
+		//$('.multiple-items').slick('slickAdd','&lt;div&gt;&lt;h3&gt;' + slideIndex + '&lt;/h3&gt;&lt;/div&gt;');
+		$('.multiple-items').slick('slickAdd','<div><h3>' + slideIndex + '</h3></div>');
+	},
 	'click .item': function (e) {
 		console.log('carousel: ' + e);
+		$('.add-remove').slick('slickAdd','&lt;div&gt;&lt;h3&gt;' + 1 + '&lt;/h3&gt;&lt;/div&gt;');
 	}
 });
 

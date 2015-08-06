@@ -20,3 +20,32 @@ Template.slick_slider.rendered = function () {
 		variableWidth: true
 	});
 };
+
+var slideIndex = 0;
+
+Template.test_slider_add.rendered = function () {
+	$('.add-remove').slick({
+		slidesToShow: 3,
+		slidesToScroll: 3
+	});
+	$('.js-add-slide').on('click', function() {
+		console.log('test_slider_add: js-add-slide: slideIndex: ' + slideIndex);
+		slideIndex++;
+		//$('.add-remove').slick('slickAdd','<div><h3>' + slideIndex + '</h3></div>');
+		$('.add-remove').slick('slickAdd','<div class="fubarItem"><img src="http://lorempixel.com/580/250/nature/1" width="100%" height="100%" /></div>');
+	});
+
+	$('.js-remove-slide').on('click', function() {
+		$('.add-remove').slick('slickRemove',slideIndex - 1);
+		if (slideIndex !== 0){
+			slideIndex--;
+		}
+	});
+};
+
+Template.test_slider_add.events({
+	'click .fubarItem': function (e) {
+		console.log('test_slider_add: click');
+		$('.add-remove').slick('slickAdd','<div class="fubarItem"><img src="http://lorempixel.com/580/250/nature/1" width="100%" height="100%" /></div>');
+	}
+});
