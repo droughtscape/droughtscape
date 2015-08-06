@@ -1,7 +1,7 @@
 #carousel-slide {
     border:   1px solid black;
     width:    800px;
-    height:   400px;
+    height:   200px;
     position: relative;
     top:      200px;
     left:     100px;
@@ -21,13 +21,16 @@
     top:        100px;
     left:       50px;
     width:      800px;
+    height:     100px;
 }
 
 #fubar-slide {
+    position: relative;
     border:     2px solid red;
-    top:        300px;
+    top:        100px;
     left:       100px;
     width:      600px;
+    height:     200px;
 }
 
 /* width here in .slick-slide defines the width of the

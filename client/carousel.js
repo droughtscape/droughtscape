@@ -26,6 +26,11 @@ Session.setDefault('carouselSubMode', '');
 Template.carousel.onRendered(function () {
 	var options = CarouselData.getCarouselFormat(this.data.context);
 	this.$("#owl-carousel").owlCarousel(options);
+	var self = this;
+	this.autorun(function() {
+		var options = CarouselData.getCarouselFormat(self.data.context);
+		self.$("#owl-carousel").owlCarousel(options);
+	});
 });
 
 Template.carousel.helpers({
