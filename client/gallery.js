@@ -21,7 +21,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
+var handleCarouselMessages = function handleCarouselMessages (message) {
+	console.log('handleCarouselMessages');
+	switch (message.type) {
+	case 'rendered':
+		$('.slick-carousel').slick('slickAdd','<div class="carouselItem"><img src="http://lorempixel.com/580/250/nature/1" width="100%" height="100%" /></div>');
+		break;
+	}
+};
+
+var unsubscribe = null;
+
 Template.gallery.onRendered(function () {
 });
+
+Template.gallery.created = function () {
+	unsubscribe = MBus.subscribe('slickcarousel', handleCarouselMessages);
+};
+
+Template.gallery.destroyed = function () {
+	unsubscribe.remove();
+};
+
 Template.gallery.events({
 });

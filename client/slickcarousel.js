@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 var setupSlick = function setupSlick () {
-	$('.multiple-items').slick({
+	$('.slick-carousel').slick({
 		dots: true,
 		arrows: true,
 		slidesToShow: 2,
@@ -35,15 +35,17 @@ var slideIndex = 0;
 
 Template.slickcarousel.rendered = function () {
 	setupSlick();
+	MBus.publish('slickcarousel', 'rendered', null);
+	//$('.slick-carousel').slick('slickAdd','<div class="carouselItem"><img src="http://lorempixel.com/580/250/nature/1" width="100%" height="100%" /></div>');
+};
+
+Template.slickcarousel.created = function () {
+	console.log('slickcarousel.created');
 };
 
 Template.slickcarousel.helpers({
 	items : function () {
 		console.log('items');
-		//$('#owl-carousel').data.reinit(CarouselData.getCarouselFormat(this.context));
-		//Meteor.defer(function () {
-		//	$('#owl-carousel').data.reinit(CarouselData.getCarouselFormat(this.context));
-		//});
 		Session.set('carouselMode',this.context.type);
 		Session.set('carouselSubMode',this.context.subType);
 		return CarouselData.getCarouselData({type: Session.get('carouselMode'), subType: Session.get('carouselSubMode')});
@@ -51,17 +53,9 @@ Template.slickcarousel.helpers({
 });
 
 Template.slickcarousel.events({
-	'click .part-select': function(e, template) {
-		console.log('slickcarousel .part-select');
-	},
-	'click .js-add-slide': function (e) {
-		slideIndex++;
-		//$('.multiple-items').slick('slickAdd','&lt;div&gt;&lt;h3&gt;' + slideIndex + '&lt;/h3&gt;&lt;/div&gt;');
-		$('.multiple-items').slick('slickAdd','<div><h3>' + slideIndex + '</h3></div>');
-	},
-	'click .item': function (e) {
-		console.log('carousel: ' + e);
-		$('.add-remove').slick('slickAdd','<div><h3>' + slideIndex + '</h3></div>');
+	'click .carouselItem': function (e) {
+		console.log('slick-carousel: ' + e);
+		$('.slick-carousel').slick('slickAdd','<div class="carouselItem"><img src="http://lorempixel.com/580/250/nature/1" width="100%" height="100%" /></div>');
 	}
 });
 
