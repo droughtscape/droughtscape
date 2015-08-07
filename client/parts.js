@@ -29,6 +29,9 @@ var handlePartTypeMessages = function handlePartTypeMessages (message) {
 		switch (message.type) {
 		case 'selected':
 			console.log('handlePartTypeMessages[' + message.topic + ']: ' + message.type + ' --> ' + message.value);
+			// clear carousel
+			$('.slick-carousel').slick('slickRemove', 0, false, true);
+			$('.slick-carousel').slick('slickAdd','<div class="carouselItem"><img src="http://lorempixel.com/580/250/nature/1" width="100%" height="100%" /></div>');
 			break;
 		}
 	}
