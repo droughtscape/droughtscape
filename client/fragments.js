@@ -25,6 +25,8 @@
 Template.part_type.helpers({
 	// Template must set the context when instantiating this template fragment
 	partsList: function () {
+		var topic = 'PartType:' + this.context;
+		MBus.publish(topic, 'selected', this.selected.get());
 		return PartTypeData.getPartTypeList(this.context, this.selected.get());
 	}
 });
@@ -32,12 +34,8 @@ Template.part_type.helpers({
 Template.part_type.events({
 	'click .part-select': function (e, template) {
 		var clickedButton = e.currentTarget;
+		// selected is reactive so partsList helper will fire as a result
 		template.data.selected.set(clickedButton.id);
-		console.log( 'data.selected: ' + template.data.selected.get());
-		var callback = PartTypeData.getPartTypeCallback(template.data.context);
-		if (callback) {
-			callback(template.data.selected.get());
-		}
 	}
 });
 

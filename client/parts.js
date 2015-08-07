@@ -24,21 +24,33 @@
 
 var partMode = new ReactiveVar('plants');
 
-var handlePartTypeSelection = function handlePartTypeSelection (selection) {
-	console.log('handlePartTypeSelection, selection: ' + selection);
+var handlePartTypeMessages = function handlePartTypeMessages (message) {
+	if (MBus.validateMessage(message)) {
+		switch (message.type) {
+		case 'selected':
+			console.log('handlePartTypeMessages[' + message.topic + ']: ' + message.type + ' --> ' + message.value);
+			break;
+		}
+	}
+	else {
+		console.log('handlePartTypeMessages:ERROR, invalid message');
+	}
 };
+
+var unsubscribe = null;
+
 // Not sure why this works but onCreated and onDestroyed are called whenever the 
 // navBar button PARTS is clicked which sets the renderView Session variable.
 // I guess that since these are "subtemplates", the get created anew every time, similar to a route.
 // In any case, this is the desired effect.
 Template.parts.onCreated(function () {
 	NavConfig.pushRightBar('rightBar', 'parts');
-	PartTypeData.setPartTypeCallback('parts', handlePartTypeSelection);
+	unsubscribe = MBus.subscribe('PartType:parts', handlePartTypeMessages)
 });
 
 Template.parts.onDestroyed(function () {
 	NavConfig.popRightBar();
-	PartTypeData.setPartTypeCallback('parts', null);
+	unsubscribe.remove();
 });
 
 Template.parts.helpers({
