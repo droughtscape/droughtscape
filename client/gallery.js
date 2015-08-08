@@ -26,7 +26,7 @@ var handleCarouselMessages = function handleCarouselMessages (message) {
 	console.log('handleCarouselMessages');
 	switch (message.type) {
 	case 'rendered':
-		$('#slick-carousel').slick('slickAdd','<div class="carouselItem"><img src="http://lorempixel.com/580/250/nature/1" width="100%" height="100%" /></div>');
+		$('#gallery-carousel').slick('slickAdd','<div class="carouselItem"><img src="http://lorempixel.com/580/250/nature/1" width="100%" height="100%" /></div>');
 		break;
 	}
 };

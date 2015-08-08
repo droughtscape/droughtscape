@@ -10,6 +10,22 @@
     height:     100px;
 }
 
+#gallery-carousel {
+    border:     1px solid blue;
+    top:        50px;
+    left:       50px;
+    width:      800px;
+    height:     100px;
+}
+
+#parts-carousel {
+    border:     1px solid green;
+    top:        50px;
+    left:       50px;
+    width:      800px;
+    height:     100px;
+}
+
 /* width here in .slick-slide defines the width of the
  * individual cell
  */

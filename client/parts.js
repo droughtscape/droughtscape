@@ -30,8 +30,10 @@ var handlePartTypeMessages = function handlePartTypeMessages (message) {
 		case 'selected':
 			console.log('handlePartTypeMessages[' + message.topic + ']: ' + message.type + ' --> ' + message.value);
 			// clear carousel
-			$('.slick-carousel').slick('slickRemove', 0, false, true);
-			$('.slick-carousel').slick('slickAdd','<div class="carouselItem"><img src="http://lorempixel.com/580/250/nature/1" width="100%" height="100%" /></div>');
+			Meteor.defer(function () {
+				$('#parts-carousel').slick('slickRemove', 0, false, true);
+				$('#parts-carousel').slick('slickAdd','<div class="carouselItem"><img src="http://lorempixel.com/580/250/nature/1" width="100%" height="100%" /></div>');
+			});
 			break;
 		}
 	}
@@ -42,6 +44,9 @@ var handlePartTypeMessages = function handlePartTypeMessages (message) {
 
 var unsubscribe = null;
 
+Template.parts.rendered = function () {
+	console.log('Template.parts.rendered');
+};
 // Not sure why this works but onCreated and onDestroyed are called whenever the 
 // navBar button PARTS is clicked which sets the renderView Session variable.
 // I guess that since these are "subtemplates", the get created anew every time, similar to a route.
