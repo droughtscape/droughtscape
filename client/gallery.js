@@ -37,13 +37,15 @@ var unsubscribe = null;
 Template.gallery.onRendered(function () {
 });
 
-Template.gallery.created = function () {
+Template.gallery.onCreated(function () {
+	// Support carousel lifecycle.  Subscribe returns the ability to unsubscribe.
 	unsubscribe = MBus.subscribe('carousel', handleCarouselMessages);
-};
+});
 
-Template.gallery.destroyed = function () {
+Template.gallery.onDestroyed(function () {
+	// Support carousel lifecycle
 	unsubscribe.remove();
-};
+});
 
 Template.gallery.events({
 });

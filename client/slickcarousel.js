@@ -37,19 +37,15 @@ var setupSlick = function setupSlick () {
 
 var slideIndex = 0;
 
-Template.slickcarousel.rendered = function () {
+Template.slickcarousel.onRendered(function () {
 	setupSlick();
-	MBus.publish('slickcarousel', 'rendered', null);
+	MBus.publish('slickcarousel', 'onRendered', null);
 	//$('.slick-carousel').slick('slickAdd','<div class="carouselItem"><img src="http://lorempixel.com/580/250/nature/1" width="100%" height="100%" /></div>');
-};
-
-Template.slickcarousel.onCreated(function () {
-	//setupSlick();
 });
 
-Template.slickcarousel.created = function () {
-	console.log('slickcarousel.created');
-};
+Template.slickcarousel.onCreated(function () {
+	console.log('slickcarousel.onCreated');
+});
 
 Template.slickcarousel.helpers({
 	items : function () {

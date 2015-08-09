@@ -27,8 +27,26 @@
 // Implementors of carousel must support the following messages:
 //   render - render setup
 //   clear - clear all images from carousel - {carousel: <carouselId>}
-//   add - add an image to carousel {carousel: <carouselId>, img: [<url of image>]}
+//   add - add an array of images to carousel {carousel: <carouselId>, img: [<url of image>]}
 //   even-click - click on carousel item
+// Users of carousel should subscribe to 'carousel' and handle
+// the rendered message.
+// Each unique carousel should have a unique html element id
+// User lifecycle:
+//   onCreated - MBus.subscribe
+//   onDestroyed - remove
+//   Example:
+//   onCreated -
+//	   var unsubscribe = MBus.subscribe('carousel', handleCarouselMessages);
+//   onDestroyed - 
+//     unsubscribe.remove(); // to remove the subscription
+// User messages:
+//   Inbound -
+//     rendered - indicating the carousel is rendered and ready
+//   Outbound - 
+//     clear - clear all images from the carousel
+//       MBus.publish('carousel', 'clear', {carousel: <carouselElementId>});
+//     add - add an array of images to carousel {carousel: <carouselId>, img: [<url of image>]}
 Session.setDefault('carouselMode', '');
 Session.setDefault('carouselSubMode', '');
 Template.carousel.onRendered(function () {

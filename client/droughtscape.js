@@ -99,14 +99,14 @@ var _renderContent = function _renderContent() {
 	}
 };
 
-Template.home.rendered = function () {
+Template.home.onRendered(function () {
 	$(document).ready(function () {
 		console.log('ready');
 		$(".button-collapse").sideNav();
 		$('.modal-trigger').leanModal();
 	});
 	_renderContent();
-};
+});
 
 Template.home.events({
 	//'click #aboutbtn': function () {
