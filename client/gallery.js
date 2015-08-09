@@ -26,7 +26,8 @@ var handleCarouselMessages = function handleCarouselMessages (message) {
 	console.log('handleCarouselMessages');
 	switch (message.type) {
 	case 'rendered':
-		$('#gallery-carousel').slick('slickAdd','<div class="carouselItem"><img src="http://lorempixel.com/580/250/nature/1" width="100%" height="100%" /></div>');
+		MBus.publish('carousel', 'clear', {carousel: '#gallery-carousel'});
+		MBus.publish('carousel', 'add', {carousel: '#gallery-carousel', imgArray: ['http://lorempixel.com/580/250/nature/1']});
 		break;
 	}
 };
@@ -37,7 +38,7 @@ Template.gallery.onRendered(function () {
 });
 
 Template.gallery.created = function () {
-	unsubscribe = MBus.subscribe('slickcarousel', handleCarouselMessages);
+	unsubscribe = MBus.subscribe('carousel', handleCarouselMessages);
 };
 
 Template.gallery.destroyed = function () {

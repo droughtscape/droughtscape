@@ -23,10 +23,14 @@
  */
 var setupSlick = function setupSlick () {
 	$('.slick-carousel').slick({
+		infinite: false,
 		dots: true,
 		arrows: true,
-		slidesToShow: 2,
-		slidesToScroll: 1,
+		//centerMode: true,
+		//centerPadding: '60px',
+		//slidesToShow: 3,
+		//adaptiveHeight: true,
+		slidesToScroll: 3,
 		variableWidth: true
 	});
 };
@@ -38,6 +42,10 @@ Template.slickcarousel.rendered = function () {
 	MBus.publish('slickcarousel', 'rendered', null);
 	//$('.slick-carousel').slick('slickAdd','<div class="carouselItem"><img src="http://lorempixel.com/580/250/nature/1" width="100%" height="100%" /></div>');
 };
+
+Template.slickcarousel.onCreated(function () {
+	//setupSlick();
+});
 
 Template.slickcarousel.created = function () {
 	console.log('slickcarousel.created');

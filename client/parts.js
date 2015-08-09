@@ -23,6 +23,27 @@
  */
 
 var partMode = new ReactiveVar('plants');
+// Build a parameterized name we can use both for html and jquery (JQ)
+var partsCarouselId = 'parts-carousel';
+var partsCarouselIdElt = '#' + partsCarouselId;
+
+var setSelectedCarouselImages = function setSelectedCarouselImages (carouselId, selection) {
+	MBus.publish('carousel', 'clear', {carousel: partsCarouselIdElt});
+	switch (selection) {
+	case 'irrigation':
+		MBus.publish('carousel', 'add', {carousel: partsCarouselIdElt, imgArray: [
+			'http://lorempixel.com/580/250/nature/1',
+			'http://lorempixel.com/580/250/nature/2',
+			'http://lorempixel.com/580/250/nature/3',
+			'http://lorempixel.com/580/250/nature/4',
+			'http://lorempixel.com/580/250/nature/5'
+		]});
+		break;
+	default:
+		MBus.publish('carousel', 'add', {carousel: partsCarouselIdElt, imgArray: ['http://lorempixel.com/580/250/nature/1']});
+		break;
+	}
+};
 
 var handlePartTypeMessages = function handlePartTypeMessages (message) {
 	if (MBus.validateMessage(message)) {
@@ -31,8 +52,7 @@ var handlePartTypeMessages = function handlePartTypeMessages (message) {
 			console.log('handlePartTypeMessages[' + message.topic + ']: ' + message.type + ' --> ' + message.value);
 			// clear carousel
 			Meteor.defer(function () {
-				$('#parts-carousel').slick('slickRemove', 0, false, true);
-				$('#parts-carousel').slick('slickAdd','<div class="carouselItem"><img src="http://lorempixel.com/580/250/nature/1" width="100%" height="100%" /></div>');
+				setSelectedCarouselImages(partsCarouselIdElt, message.value);
 			});
 			break;
 		}
@@ -62,6 +82,9 @@ Template.parts.onDestroyed(function () {
 });
 
 Template.parts.helpers({
+	partsCarouselId: function () {
+		return partsCarouselId;
+	},
 	partsMode: function () {
 		return {type: "parts", subType: partMode.get()};
 	},
@@ -76,6 +99,6 @@ Template.parts.events({
 	},
 	'click #turf-terminators-plant-catalog': function () {
 		window.open('http://turfterminators.com/how-turf-terminators-works/plant-and-groundcover-catalog/', '_blank');
-	},
+	}
 });
 

@@ -21,26 +21,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-// Generic carousel template
-// Emits render message.
-// Implementors of carousel must emit rendered when complete
-// Implementors of carousel must support the following messages:
-//   render - render setup
-//   clear - clear all images from carousel - {carousel: <carouselId>}
-//   add - add an image to carousel {carousel: <carouselId>, img: [<url of image>]}
-//   even-click - click on carousel item
-Session.setDefault('carouselMode', '');
-Session.setDefault('carouselSubMode', '');
-Template.carousel.onRendered(function () {
-	// This just starts the render initialization.
-	// The actual component will do any implementation specific setup
-	// and then emit the rendered message
-	MBus.publish('carousel', 'render', null);
-});
+/*
+ * Here we use the id of the div to set some enclosing values
+ * for the slide area, border, top offset, left offset, overall width
+ */
+#slick-carousel {
+    border:     1px solid black;
+    top:        50px;
+    left:       50px;
+    width:      800px;
+    height:     100px;
+}
 
-Template.carousel.events({
-	'click .carouselItem': function (e) {
-		console.log('carousel: ' + e);
-		MBus.publish('carousel', 'event-click', e);
-	}
-});
+#gallery-carousel {
+    border:     1px solid blue;
+    top:        50px;
+    left:       50px;
+    width:      800px;
+    height:     100px;
+}
+
+#parts-carousel {
+    border:     1px solid green;
+    top:        50px;
+    left:       50px;
+    width:      800px;
+    height:     50px;
+}
