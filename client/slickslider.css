@@ -36,9 +36,11 @@
 /* width here in .slick-slide defines the width of the
  * individual cell
  */
+/*
 .slick-slide {
     width: 100px;
 }
+*/
 
 .slick-prev:before, .slick-next:before {
     color:    silver;

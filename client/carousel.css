@@ -38,7 +38,7 @@
     top:        50px;
     left:       50px;
     width:      800px;
-    height:     100px;
+    /*height:     100px;*/
 }
 
 #parts-carousel {
@@ -46,5 +46,9 @@
     top:        50px;
     left:       50px;
     width:      800px;
-    height:     50px;
+    /*height:     50px;*/
+}
+
+.carouselItem {
+    height: 100px;
 }

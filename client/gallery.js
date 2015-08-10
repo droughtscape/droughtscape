@@ -27,7 +27,7 @@ var handleCarouselMessages = function handleCarouselMessages (message) {
 	switch (message.type) {
 	case 'rendered':
 		MBus.publish('carousel', 'clear', {carousel: '#gallery-carousel'});
-		MBus.publish('carousel', 'add', {carousel: '#gallery-carousel', imgArray: ['http://lorempixel.com/580/250/nature/1']});
+		MBus.publish('carousel', 'add', {carousel: '#gallery-carousel', imgWidth: '300px', imgHeight: '200px', imgArray: ['http://lorempixel.com/580/250/nature/1']});
 		break;
 	}
 };
@@ -47,5 +47,15 @@ Template.gallery.onDestroyed(function () {
 	unsubscribe.remove();
 });
 
+var testItem = 1;
 Template.gallery.events({
+	'click .carouselItem': function (e) {
+		console.log('Template.gallery.events - carousel: ' + e);
+		testItem++;
+		if (testItem > 5) {
+			testItem = 1;
+		}
+		var img = 'http://lorempixel.com/580/250/nature/' + testItem;
+		MBus.publish('carousel', 'add', {carousel: '#gallery-carousel', imgWidth: '300px', imgHeight: '200px', imgArray: [img]});
+	}
 });

@@ -46,7 +46,7 @@
 //   Outbound - 
 //     clear - clear all images from the carousel
 //       MBus.publish('carousel', 'clear', {carousel: <carouselElementId>});
-//     add - add an array of images to carousel {carousel: <carouselId>, img: [<url of image>]}
+//     add - add an array of images to carousel {carousel: <carouselId>, imgHeight: <optional height>, imgWidth: <optional width>, imgArray: [<url of image>]}
 Session.setDefault('carouselMode', '');
 Session.setDefault('carouselSubMode', '');
 Template.carousel.onRendered(function () {
@@ -57,8 +57,8 @@ Template.carousel.onRendered(function () {
 });
 
 Template.carousel.events({
-	'click .carouselItem': function (e) {
-		console.log('carousel: ' + e);
-		MBus.publish('carousel', 'event-click', e);
-	}
+	//'click .carouselItem': function (e) {
+	//	console.log('carousel: ' + e);
+	//	MBus.publish('carousel', 'event-click', e);
+	//}
 });

@@ -31,7 +31,8 @@ var setSelectedCarouselImages = function setSelectedCarouselImages (carouselId, 
 	MBus.publish('carousel', 'clear', {carousel: partsCarouselIdElt});
 	switch (selection) {
 	case 'irrigation':
-		MBus.publish('carousel', 'add', {carousel: partsCarouselIdElt, imgArray: [
+		MBus.publish('carousel', 'add', {carousel: partsCarouselIdElt, imgWidth: '200px', imgHeight: '200px', 
+			imgArray: [
 			'http://lorempixel.com/580/250/nature/1',
 			'http://lorempixel.com/580/250/nature/2',
 			'http://lorempixel.com/580/250/nature/3',
@@ -40,7 +41,7 @@ var setSelectedCarouselImages = function setSelectedCarouselImages (carouselId, 
 		]});
 		break;
 	default:
-		MBus.publish('carousel', 'add', {carousel: partsCarouselIdElt, imgArray: ['http://lorempixel.com/580/250/nature/1']});
+		MBus.publish('carousel', 'add', {carousel: partsCarouselIdElt, imgWidth: '200px', imgHeight: '200px', imgArray: ['http://lorempixel.com/580/250/nature/1']});
 		break;
 	}
 };
