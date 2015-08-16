@@ -37,7 +37,9 @@
     border:     1px solid blue;
     top:        50px;
     left:       50px;
-    width:      800px;
+    /* Use this to allow gallery to fit enclosing div */
+    width:      calc(100% - 100px);
+    /*width:      800px;*/
     /*height:     100px;*/
 }
 
@@ -45,7 +47,7 @@
     border:     1px solid green;
     top:        50px;
     left:       50px;
-    width:      800px;
+    width:      calc(100% - 100px);
     /*height:     50px;*/
 }
 
