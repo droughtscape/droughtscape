@@ -22,12 +22,37 @@
  * THE SOFTWARE.
  */
 var partMode = new ReactiveVar('all');
+var favoritePartsCarouselId = 'favorite-parts-carousel';
+var favoritePartsCarouselIdElt = '#' + favoritePartsCarouselId;
+
+var setSelectedCarouselImages = function setSelectedCarouselImages (carouselId, selection) {
+	MBus.publish('carousel', 'clear', {carousel: favoritePartsCarouselIdElt});
+	switch (selection) {
+	case 'irrigation':
+		MBus.publish('carousel', 'add', {carousel: favoritePartsCarouselIdElt, imgWidth: '200px', imgHeight: '200px',
+			imgArray: [
+				'http://lorempixel.com/580/250/nature/1',
+				'http://lorempixel.com/580/250/nature/2',
+				'http://lorempixel.com/580/250/nature/3',
+				'http://lorempixel.com/580/250/nature/4',
+				'http://lorempixel.com/580/250/nature/5'
+			]});
+		break;
+	default:
+		MBus.publish('carousel', 'add', {carousel: favoritePartsCarouselIdElt, imgWidth: '200px', imgHeight: '200px', imgArray: ['http://lorempixel.com/580/250/nature/1']});
+		break;
+	}
+};
 
 var handlePartTypeMessages = function handlePartTypeMessages (message) {
 	if (MBus.validateMessage(message)) {
 		switch (message.type) {
 		case 'selected':
 			console.log('handlePartTypeMessagess[' + message.topic + ']: ' + message.type + ' --> ' + message.value);
+			// init carousel
+			Meteor.defer(function () {
+				setSelectedCarouselImages(favoritePartsCarouselIdElt, message.value);
+			});
 			break;
 		}
 	}
@@ -49,6 +74,9 @@ Template.favoriteParts.onDestroyed(function () {
 });
 
 Template.favoriteParts.helpers({
+	carouselId: function () {
+		return favoritePartsCarouselId;
+	},
 	partsMode: function () {
 		return {type: "favoriteParts", subType: partMode.get()};
 	},

@@ -51,7 +51,7 @@ var handlePartTypeMessages = function handlePartTypeMessages (message) {
 		switch (message.type) {
 		case 'selected':
 			console.log('handlePartTypeMessages[' + message.topic + ']: ' + message.type + ' --> ' + message.value);
-			// clear carousel
+			// init carousel
 			Meteor.defer(function () {
 				setSelectedCarouselImages(partsCarouselIdElt, message.value);
 			});
@@ -65,9 +65,6 @@ var handlePartTypeMessages = function handlePartTypeMessages (message) {
 
 var unsubscribe = null;
 
-Template.parts.onRendered(function () {
-	console.log('Template.parts.onRendered');
-});
 // Not sure why this works but onCreated and onDestroyed are called whenever the 
 // navBar button PARTS is clicked which sets the renderView Session variable.
 // I guess that since these are "subtemplates", the get created anew every time, similar to a route.
@@ -85,7 +82,7 @@ Template.parts.onDestroyed(function () {
 });
 
 Template.parts.helpers({
-	partsCarouselId: function () {
+	carouselId: function () {
 		return partsCarouselId;
 	},
 	partsMode: function () {

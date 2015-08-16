@@ -22,35 +22,38 @@
  * THE SOFTWARE.
  */
 /*
- * Here we use the id of the div to set some enclosing values
+ * Here we use the id of the div to set some enclosing values for specific carousels
  * for the slide area, border, top offset, left offset, overall width
  */
-#slick-carousel {
-    border:     1px solid black;
-    top:        50px;
-    left:       50px;
-    width:      800px;
-    height:     100px;
-}
-
 #gallery-carousel {
     border:     1px solid blue;
     top:        50px;
     left:       50px;
     /* Use this to allow gallery to fit enclosing div */
     width:      calc(100% - 100px);
-    /*width:      800px;*/
-    /*height:     100px;*/
 }
 
 #parts-carousel {
     border:     1px solid green;
     top:        50px;
     left:       50px;
+    /* Use this to allow gallery to fit enclosing div */
     width:      calc(100% - 100px);
-    /*height:     50px;*/
+}
+
+#favorite-parts-carousel {
+    border:     1px solid red;
+    top:        50px;
+    left:       50px;
+    /* Use this to allow gallery to fit enclosing div */
+    width:      calc(100% - 100px);
 }
 
 .carouselItem {
     height: 100px;
+}
+
+/* this is important to get scroll arrows visible, by default, white */
+.slick-prev:before, .slick-next:before {
+    color:red !important;
 }

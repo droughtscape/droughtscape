@@ -21,6 +21,3 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-Template.slider.onRendered(function () {
-	$('.slider').slider({full_width: true});
-});

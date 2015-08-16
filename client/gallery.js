@@ -22,20 +22,20 @@
  * THE SOFTWARE.
  */
 
+var galleryCarouselId = 'gallery-carousel';
+var galleryCarouselIdElt = '#' + galleryCarouselId;
+
 var handleCarouselMessages = function handleCarouselMessages (message) {
 	console.log('handleCarouselMessages');
 	switch (message.type) {
 	case 'rendered':
-		MBus.publish('carousel', 'clear', {carousel: '#gallery-carousel'});
-		MBus.publish('carousel', 'add', {carousel: '#gallery-carousel', imgWidth: '300px', imgHeight: '200px', imgArray: ['http://lorempixel.com/580/250/nature/1']});
+		MBus.publish('carousel', 'clear', {carousel: galleryCarouselIdElt});
+		MBus.publish('carousel', 'add', {carousel: galleryCarouselIdElt, imgWidth: '300px', imgHeight: '200px', imgArray: ['http://lorempixel.com/580/250/nature/1']});
 		break;
 	}
 };
 
 var unsubscribe = null;
-
-Template.gallery.onRendered(function () {
-});
 
 Template.gallery.onCreated(function () {
 	// Support carousel lifecycle.  Subscribe returns the ability to unsubscribe.
@@ -45,6 +45,12 @@ Template.gallery.onCreated(function () {
 Template.gallery.onDestroyed(function () {
 	// Support carousel lifecycle
 	unsubscribe.remove();
+});
+
+Template.gallery.helpers({
+	carouselId: function () {
+		return galleryCarouselId;
+	}
 });
 
 var testItem = 1;
