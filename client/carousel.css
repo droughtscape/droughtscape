@@ -30,6 +30,8 @@
     top:        50px;
     left:       50px;
     /* Use this to allow gallery to fit enclosing div */
+    width:      -webkit-calc(100% - 100px);
+    width:      -moz-calc(100% - 100px);
     width:      calc(100% - 100px);
 }
 
@@ -38,6 +40,8 @@
     top:        50px;
     left:       50px;
     /* Use this to allow gallery to fit enclosing div */
+    width:      -webkit-calc(100% - 100px);
+    width:      -moz-calc(100% - 100px);
     width:      calc(100% - 100px);
 }
 
@@ -46,6 +50,8 @@
     top:        50px;
     left:       50px;
     /* Use this to allow gallery to fit enclosing div */
+    width:      -webkit-calc(100% - 100px);
+    width:      -moz-calc(100% - 100px);
     width:      calc(100% - 100px);
 }
 
