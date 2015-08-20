@@ -50,6 +50,10 @@ Template.gallery.onDestroyed(function () {
 Template.gallery.helpers({
 	carouselId: function () {
 		return galleryCarouselId;
+	},
+	galleryMode: function () {
+		// Currently, return a null context for the carousel
+		return null;
 	}
 });
 
