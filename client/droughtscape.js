@@ -35,6 +35,8 @@ Session.setDefault('rightBarConfig', 'home');
 // The renderView Session variable controls what the render area template is currently
 // set to.  We use this to avoid routing.
 Session.setDefault('renderView', 'splash');
+// Admin rights of logged in user
+Session.setDefault('adminRights', false);
 
 Meteor.startup(function () {
 	// Dynamically resize content when window resizes.
@@ -45,6 +47,7 @@ Meteor.startup(function () {
 			_renderContent();
 		});
 	});
+	Accounts.onLogin(SignInUtils.getAdminRights);
 });
 
 if (typeof THREE !== 'undefined') {

@@ -61,12 +61,27 @@ SignInUtils = (function () {
 		_isAdmin(userName, hasAdminResult);
 	};
 	
+	var getAdminRights = function getAdminRights () {
+		console.log('getAdminRights: ENTRY');
+		// Server side isAdmin
+		Meteor.call('isAdmin', function (error, result) {
+			if (error) {
+				alert('Error');
+			}
+			else {
+				console.log('getAdminRights: return from server: ' + result);
+				Session.set('adminRights', result);
+			}
+		});
+	};
+	
 	return {
 		pushRenderViewTarget: pushRenderViewTarget,
 		popRenderViewTarget: popRenderViewTarget,
 		clearRenderViewTargets: clearRenderViewTargets,
 		getUserName: getUserName,
-		hasAdminRights: hasAdminRights
+		hasAdminRights: hasAdminRights,
+		getAdminRights: getAdminRights
 	};
 })();
 
