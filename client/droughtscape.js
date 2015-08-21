@@ -36,7 +36,7 @@ Session.setDefault('rightBarConfig', 'home');
 // set to.  We use this to avoid routing.
 Session.setDefault('renderView', 'splash');
 // Admin rights of logged in user
-Session.setDefault('adminRights', false);
+Session.setDefault('adminRights', undefined);
 
 Meteor.startup(function () {
 	// Dynamically resize content when window resizes.
@@ -48,6 +48,11 @@ Meteor.startup(function () {
 		});
 	});
 	Accounts.onLogin(SignInUtils.getAdminRights);
+	Meteor.autorun(function () {
+		if (!Meteor.userId()) {
+			Session.set('adminRights', undefined);
+		}
+	});
 });
 
 if (typeof THREE !== 'undefined') {

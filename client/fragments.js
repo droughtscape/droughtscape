@@ -50,5 +50,12 @@ Template.require_signin.events({
 Template.display_user.helpers({
 	userName: function () {
 		return SignInUtils.getUserName();
+	},
+	userColor: function () {
+		var color = 'black';
+		if (Session.get('adminRights')) {
+			color = 'red';
+		}
+		return 'color: ' + color;
 	}
 });

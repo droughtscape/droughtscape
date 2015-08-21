@@ -42,18 +42,24 @@ SignInUtils = (function () {
 	};
 	
 	var _isAdmin = function _isAdmin (userName, hasAdminResult) {
-		var isAdminResult = false;
-		// Server side isAdmin
-		Meteor.call('isAdmin', function (error, result) {
-			if (error) {
-				alert('Error');
-			}
-			else {
-				console.log('return from server: ' + result);
-				isAdminResult = result;
-			}
-			hasAdminResult(isAdminResult);
-		});
+		// See if we have a valid value, if not go get one from server, else just return valid value
+		if (!Session.get('adminRights')) {
+			var isAdminResult = false;
+			// Server side isAdmin
+			Meteor.call('isAdmin', function (error, result) {
+				if (error) {
+					alert('Error');
+				}
+				else {
+					console.log('return from server: ' + result);
+					isAdminResult = result;
+				}
+				hasAdminResult(isAdminResult);
+			});
+		}
+		else {
+			hasAdminResult(Session.get('adminRights'));
+		}
 	};
 	
 	var hasAdminRights = function hasAdminRights (hasAdminResult) {
@@ -63,16 +69,23 @@ SignInUtils = (function () {
 	
 	var getAdminRights = function getAdminRights () {
 		console.log('getAdminRights: ENTRY');
-		// Server side isAdmin
-		Meteor.call('isAdmin', function (error, result) {
-			if (error) {
-				alert('Error');
-			}
-			else {
-				console.log('getAdminRights: return from server: ' + result);
-				Session.set('adminRights', result);
-			}
-		});
+		// See if we have a valid value, if not go get one from server and set into the session variable
+		if (!Session.get('adminRights')) {
+			console.log('getAdminRights:adminRights is undefined, call isAdmin');
+			// Server side isAdmin
+			Meteor.call('isAdmin', function (error, result) {
+				if (error) {
+					alert('Error');
+				}
+				else {
+					console.log('getAdminRights: return from server: ' + result);
+					Session.set('adminRights', result);
+				}
+			});
+		}
+		else {
+			console.log('getAdminRights:adminRights is defined: ' + Session.get('adminRights'));
+		}
 	};
 	
 	return {
