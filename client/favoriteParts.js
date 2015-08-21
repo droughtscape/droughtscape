@@ -78,6 +78,10 @@ Template.favoriteParts.helpers({
 		return favoritePartsCarouselId;
 	},
 	partsMode: function () {
+		console.log('id: ' + Meteor.userId() + ', username: ' + SignInUtils.getUserName());
+		SignInUtils.hasAdminRights(function(result) {
+			console.log('isAdmin: ' + result);
+		});
 		return {type: "favoriteParts", subType: partMode.get()};
 	},
 	selected: function () {
