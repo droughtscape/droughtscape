@@ -21,15 +21,43 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-var _admins = ['kelvin.ishigo@gmail.com'];
+
+Admins = new Mongo.Collection('admins');
+
+Meteor.startup(function () {
+		// Create a default admin
+		if (Admins.find({}).count() === 0) {
+			Admins.insert({
+				'admin' : 'kelvin.ishigo@gmail.com'
+			});
+			console.log('Admins.count: ' + Admins.find({}).count());
+		}
+		var admins = Admins.find({}).fetch();
+		console.log('Admins: admins: ' + admins);
+	}
+);
 
 var getUserName = function getUserName () {
 	var user = Meteor.user();
 	return user && user.emails ? user.emails[0].address : "";
 };
 
-var _isAdmin = function _isAdmin (userName) {
-	return (userName && _admins.indexOf(userName) >= 0)
+var getAdmins = function getAdmins () {
+	return Admins.find({}).fetch();
+};
+
+var _isAdmin = function _isAdmin(userName) {
+	var admins = getAdmins();
+	var isAdmin = false;
+	if (userName) {
+		for (var i = 0, len = admins.length; i < len; ++i) {
+			if (userName === admins[i].admin) {
+				isAdmin = true;
+				break;
+			}
+		}
+	}
+	return isAdmin;
 };
 
 Meteor.methods({
@@ -37,6 +65,16 @@ Meteor.methods({
 		var userName = getUserName();
 		console.log('isAdmin: hello: user: ' + userName + ', admin: ' + _isAdmin(userName));
 		return _isAdmin(userName);
-		//console.log('isAdmin: id: ' + Meteor.userId);
+	},
+	'insertAdmin': function insertAdmin (newAdmin) {
+		// Only allowed if caller is an admin
+		if (_isAdmin(getUserName())) {
+			Admins.insert({
+				'admin' : newAdmin
+			});
+		}
+		else {
+			console.log('SECURITY: inappropriate attempt to insertAdmin: newAdmin: ' + newAdmin + ' -- from: ' + getUserName());
+		}
 	}
 });
