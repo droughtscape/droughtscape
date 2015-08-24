@@ -49,7 +49,11 @@ Meteor.startup(function () {
 	});
 	Accounts.onLogin(SignInUtils.getAdminRights);
 	Meteor.autorun(function () {
-		if (!Meteor.userId()) {
+		if (Meteor.userId()) {
+			// we are logged in, find out if we are admin
+			SignInUtils.getAdminRights();
+		}
+		else {
 			Session.set('adminRights', undefined);
 		}
 	});

@@ -70,7 +70,7 @@ SignInUtils = (function () {
 	var getAdminRights = function getAdminRights () {
 		console.log('getAdminRights: ENTRY');
 		// See if we have a valid value, if not go get one from server and set into the session variable
-		if (!Session.get('adminRights')) {
+		if (Session.get('adminRights') === undefined) {
 			console.log('getAdminRights:adminRights is undefined, call isAdmin');
 			// Server side isAdmin
 			Meteor.call('isAdmin', function (error, result) {
@@ -80,6 +80,8 @@ SignInUtils = (function () {
 				else {
 					console.log('getAdminRights: return from server: ' + result);
 					Session.set('adminRights', result);
+					// Test security, validated
+					//Meteor.call('insertAdmin', 'fubar@gmail.com');
 				}
 			});
 		}
