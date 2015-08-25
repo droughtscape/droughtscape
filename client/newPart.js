@@ -49,6 +49,9 @@ Template.newPart.helpers({
 		case 'pavers':
 			template = Template.createPaver;
 			break;
+		case 'largerocks':
+			template = Template.createLargeRock;
+			break;
 		case 'irrigation':
 			template = Template.createIrrigation;
 			break;
