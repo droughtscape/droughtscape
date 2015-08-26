@@ -185,3 +185,46 @@ Template.measure_lawn.events({
 		}
 	}
 });
+
+var unsubscribe = null;
+var shapeLawnCarouselId = 'shape-lawn-carousel';
+var shapeLawnCarouselIdElt = '#' + shapeLawnCarouselId;
+
+var handleLawnShapeMessages = function handleLawnShapeMessages (message) {
+	if (MBus.validateMessage(message)) {
+		switch (message.type) {
+		case 'rendered':
+			console.log('handleLawnShapeMessages[' + message.topic + ']: ' + message.type + ' --> ' + message.value);
+			MBus.publish('carousel', 'clear', {carousel: shapeLawnCarouselIdElt});
+			MBus.publish('carousel', 'add', {carousel: shapeLawnCarouselIdElt, imgWidth: '300px', imgHeight: '200px', imgArray: [{id: 'rectangle', img:'rectangle.png'}]});
+			MBus.publish('carousel', 'add', {carousel: shapeLawnCarouselIdElt, imgWidth: '300px', imgHeight: '200px', imgArray: [{id: 'corner', img:'corner.png'}]});
+			break;
+		}
+	}
+	else {
+		console.log('handleLawnShapeMessages:ERROR, invalid message');
+	}
+};
+
+Template.shape_lawn.onCreated(function () {
+	unsubscribe = MBus.subscribe('carousel', handleLawnShapeMessages);
+});
+
+Template.shape_lawn.onDestroyed(function () {
+	unsubscribe.remove();
+});
+
+Template.shape_lawn.helpers({
+	carouselId: function () {
+		return shapeLawnCarouselId;
+	},
+	lawnMode: function () {
+		return {type: "lawnShapes", subType: null};
+	}
+});
+
+Template.shape_lawn.events({
+	'click .carouselItem': function (e) {
+		console.log('Template.shape_lawn.events - item: ' + e.target.id);
+	}
+});

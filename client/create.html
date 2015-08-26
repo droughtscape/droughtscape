@@ -1,7 +1,8 @@
 <template name="create">
     {{#if currentUser}}
         {{> display_user}}
-        {{> measure_lawn}}
+        {{> shape_lawn}}
+        <!--{{> measure_lawn}}-->
     {{else}}
         {{> require_signin message=signInMessage}}
     {{/if}}
@@ -129,4 +130,9 @@
             You can use this site to figure out lawn size by measuring just the lawn instead of the <br>
             entire property.</p>
     </div>
+</template>
+
+<template name="shape_lawn">
+    <h1>Choose a lawn shape</h1>
+    {{> carousel id=carouselId context=lawnMode}}
 </template>

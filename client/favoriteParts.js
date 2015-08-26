@@ -48,7 +48,7 @@ var handlePartTypeMessages = function handlePartTypeMessages (message) {
 	if (MBus.validateMessage(message)) {
 		switch (message.type) {
 		case 'selected':
-			console.log('handlePartTypeMessagess[' + message.topic + ']: ' + message.type + ' --> ' + message.value);
+			console.log('handlePartTypeMessages[' + message.topic + ']: ' + message.type + ' --> ' + message.value);
 			// init carousel
 			Meteor.defer(function () {
 				setSelectedCarouselImages(favoritePartsCarouselIdElt, message.value);
@@ -65,7 +65,7 @@ var unsubscribe = null;
 
 Template.favoriteParts.onCreated(function () {
 	NavConfig.pushRightBar('rightBar', 'parts');
-	unsubscribe = MBus.subscribe('PartType:favoriteParts', handlePartTypeMessages)
+	unsubscribe = MBus.subscribe('PartType:favoriteParts', handlePartTypeMessages);
 });
 
 Template.favoriteParts.onDestroyed(function () {
