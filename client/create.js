@@ -198,6 +198,7 @@ var handleLawnShapeMessages = function handleLawnShapeMessages (message) {
 			MBus.publish('carousel', 'clear', {carousel: shapeLawnCarouselIdElt});
 			MBus.publish('carousel', 'add', {carousel: shapeLawnCarouselIdElt, imgWidth: '300px', imgHeight: '200px', imgArray: [{id: 'rectangle', img:'rectangle.png'}]});
 			MBus.publish('carousel', 'add', {carousel: shapeLawnCarouselIdElt, imgWidth: '300px', imgHeight: '200px', imgArray: [{id: 'corner', img:'corner.png'}]});
+			MBus.publish('carousel', 'add', {carousel: shapeLawnCarouselIdElt, imgWidth: '300px', imgHeight: '200px', imgArray: [{id: 'custom', img:'custom.png'}]});
 			break;
 		}
 	}
