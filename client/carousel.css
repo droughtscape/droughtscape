@@ -26,7 +26,7 @@
  * for the slide area, border, top offset, left offset, overall width
  */
 #gallery-carousel {
-    border:     1px solid blue;
+    /*border:     1px solid blue;*/
     top:        50px;
     left:       50px;
     /* Use this to allow gallery to fit enclosing div */
@@ -36,7 +36,7 @@
 }
 
 #parts-carousel {
-    border:     1px solid green;
+    /*border:     1px solid green;*/
     top:        50px;
     left:       50px;
     /* Use this to allow gallery to fit enclosing div */
@@ -46,7 +46,7 @@
 }
 
 #favorite-parts-carousel {
-    border:     1px solid red;
+    /*border:     1px solid red;*/
     top:        50px;
     left:       50px;
     /* Use this to allow gallery to fit enclosing div */
@@ -56,7 +56,7 @@
 }
 
 #shape-lawn-carousel {
-    border:     1px solid black;
+    /*border:     1px solid black;*/
     top:        50px;
     left:       50px;
     /* Use this to allow gallery to fit enclosing div */
@@ -72,4 +72,10 @@
 /* this is important to get scroll arrows visible, by default, white */
 .slick-prev:before, .slick-next:before {
     color:red !important;
+}
+
+.slick-current {
+    border-style: solid;
+    border-width: 5px;
+    color:limegreen;
 }
