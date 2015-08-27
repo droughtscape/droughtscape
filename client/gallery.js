@@ -52,8 +52,7 @@ Template.gallery.helpers({
 		return galleryCarouselId;
 	},
 	galleryMode: function () {
-		// Currently, return a null context for the carousel
-		return null;
+		return {type: "gallery", subType: null};
 	}
 });
 
