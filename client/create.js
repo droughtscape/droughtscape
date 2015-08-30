@@ -221,11 +221,26 @@ Template.shape_lawn.helpers({
 	},
 	lawnMode: function () {
 		return {type: "lawnShapes", subType: null};
+	},
+	lawnDataDisplay: function () {
+		return lawnDataDisplay;
 	}
 });
 
 Template.shape_lawn.events({
 	'click .carouselItem': function (e) {
 		console.log('Template.shape_lawn.events - item: ' + e.target.id);
+	},
+	'click #shape-lawn-cancel': function (e) {
+		console.log('Template.shape_lawn.events cancel: ' + e.target.id);
+		Session.set('renderView', 'splash');
+	},
+	'click #shape-lawn-accept': function (e) {
+		console.log('Template.shape_lawn.events accept: ' + e.target.id);
+		var inputElt = document.getElementById('lawn_name');
+		if (inputElt) {
+			console.log('Template.shape_lawn.events lawnName: ' + inputElt.value);
+			lawnData.name = inputElt.value;
+		}
 	}
 });

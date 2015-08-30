@@ -8,27 +8,28 @@
     {{/if}}
 </template>
 
-<template name="name_lawn">
-    <h2>Name your new lawn</h2>
-
-    <div class="row">
-        <form>
-            <div class="input-field col s6">
-                <input value= {{lawnDataDisplay.name}} id="lawn_name" type="text" class="validate">
-                <label class="active" for="lawn_name">Lawn Name</label>
-            </div>
-        </form>
-        <button id="lawn-create" class="btn waves-effect waves-light" type="submit" name="action">Create New Lawn
-            <i class="mdi-content-send right"></i>
-        </button>
-    </div>
-    <hr>
-    <h3>Open existing lawn</h3>
-
-</template>
-
 <template name="open_lawn">
     open lawn
+</template>
+
+<template name="name_lawn">
+    <div id="modal-name" class="modal">
+        <div class="modal-content">
+            <h4>Name your new lawn</h4>
+            <div class="row">
+                <form>
+                    <div class="input-field col s6">
+                        <input value= {{lawnDataDisplay.name}} id="lawn_name" type="text" class="validate">
+                        <label class="active" for="lawn_name">Lawn Name</label>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <a href="#!" id="name-lawn" class=" modal-action modal-close waves-effect waves-green btn-flat">Create New Lawn</a>
+            <a href="#!" id="open-lawn" class=" modal-action modal-close waves-effect waves-green btn-flat">Open Existing Lawn</a>
+        </div>
+    </div>
 </template>
 
 <template name="measure_lawn">
@@ -133,6 +134,20 @@
 </template>
 
 <template name="shape_lawn">
-    <h1>Choose a lawn shape</h1>
-    {{> carousel id=carouselId context=lawnMode}}
+    <h4>Name your new lawn</h4>
+    <div class="row">
+        <form>
+            <div class="input-field col s6">
+                <input value= {{lawnDataDisplay.name}} id="lawn_name" type="text" class="validate">
+                <label class="active" for="lawn_name">Lawn Name</label>
+            </div>
+        </form>
+    </div>
+    <h4>Choose a lawn shape</h4>
+        {{> carousel id=carouselId context=lawnMode}}
+    <div class="shape-lawn-buttons-x center-align" style="margin-top: 100px">
+            <hr>
+            <div id="shape-lawn-cancel" class="waves-effect waves-light btn">Cancel</div>
+            <div id="shape-lawn-accept" class="waves-effect waves-light btn">Accept</div>
+    </div>
 </template>
