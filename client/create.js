@@ -32,15 +32,22 @@ var lawnDataEnglish = {widthFeet: 0, widthInches: 0, lengthFeet: 0, lengthInches
 var lawnDataDisplay = {name: 'MyLawn', w1: 0, w2: 0, l1: 0, l2: 0, s: 0};
 Session.setDefault('computedArea', 0);
 Session.setDefault('currentLawn', 'MyLawn');
+var currentCreateState = new ReactiveVar('shape_lawn');
 
 Template.create.onCreated(function(){
 	console.log('Template.create.onCreated');
 	Session.set('computedArea', 0);
+	// On initial entry reset the state to shape_lawn
+	currentCreateState.set('shape_lawn');
 });
 
 Template.create.helpers({
 	signInMessage: function () {
 		return 'Sign in so we can track your design(s)';
+	},
+	currentCreate: function () {
+		// Use a reactive state to figure out where we are
+		return currentCreateState.get();
 	}
 });
 
@@ -241,6 +248,7 @@ Template.shape_lawn.events({
 		if (inputElt) {
 			console.log('Template.shape_lawn.events lawnName: ' + inputElt.value);
 			lawnData.name = inputElt.value;
+			currentCreateState.set('open_lawn');
 		}
 	}
 });

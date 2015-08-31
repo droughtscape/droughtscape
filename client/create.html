@@ -1,7 +1,9 @@
 <template name="create">
     {{#if currentUser}}
         {{> display_user}}
-        {{> shape_lawn}}
+        <!-- Use this dynamic template here so we can change the render area as we track the state of lawn create -->
+        {{> Template.dynamic template=currentCreate}}
+        <!--{{> shape_lawn}}-->
         <!--{{> measure_lawn}}-->
     {{else}}
         {{> require_signin message=signInMessage}}
