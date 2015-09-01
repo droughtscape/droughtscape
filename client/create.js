@@ -256,3 +256,44 @@ Template.shape_lawn.events({
 		}
 	}
 });
+
+// build_lawn stuff
+var buildLawnUnsubscribe;
+var buildLawnTemplateCarouselId = 'build-lawn-template-carousel';
+var buildLawnTemplateCarouselIdElt = '#' + buildLawnTemplateCarouselId;
+
+var handleBuildLawnTemplateMessages = function handleBuildLawnTemplateMessages (message) {
+	if (MBus.validateMessage(message)) {
+		switch (message.type) {
+		case 'rendered':
+			console.log('handleBuildLawnTemplateMessages[' + message.topic + ']: ' + message.type + ' --> ' + message.value);
+			MBus.publish('carousel', 'clear', {carousel: buildLawnTemplateCarouselIdElt});
+			// Here we will use a filter based on standard shapes to select a set of templates
+			// What about custom shape?  Nothing to filter => no templates
+			MBus.publish('carousel', 'add', {carousel: buildLawnTemplateCarouselIdElt, imgWidth: '300px', imgHeight: '200px', imgArray: [{id: 'rectangle', img:'rectangle.png'}]});
+			MBus.publish('carousel', 'add', {carousel: buildLawnTemplateCarouselIdElt, imgWidth: '300px', imgHeight: '200px', imgArray: [{id: 'corner', img:'corner.png'}]});
+			MBus.publish('carousel', 'add', {carousel: buildLawnTemplateCarouselIdElt, imgWidth: '300px', imgHeight: '200px', imgArray: [{id: 'custom', img:'custom.png'}]});
+			break;
+		}
+	}
+	else {
+		console.log('handleBuildLawnTemplateMessages:ERROR, invalid message');
+	}
+};
+
+Template.build_lawn.onCreated(function () {
+	buildLawnUnsubscribe = MBus.subscribe('carousel', handleBuildLawnTemplateMessages);
+});
+
+Template.build_lawn.onDestroyed(function() {
+	buildLawnUnsubscribe.remove();
+});
+
+Template.build_lawn.helpers({
+	carouselId: function () {
+		return buildLawnTemplateCarouselId;
+	},
+	lawnTemplateMode: function () {
+		return {type: 'buildLawnTemplates', subType: null};
+	}
+});

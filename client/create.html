@@ -119,4 +119,7 @@
 
 <template name="build_lawn">
     <h4>Build your lawn: {{lawnData.name}}</h4>
+    <h4>Templates</h4>
+    {{> carousel id=carouselId context=lawnTemplateMode}}
+    <h4>Begin</h4>
 </template>
