@@ -34,5 +34,8 @@
 </template>
 
 <template name="display_user">
-    <h6 style={{userColor}}>User:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{userName}}</h6>
+    <div style="display: table">
+        <div style="display: table-cell; width: 100px">User:</div>
+        <div style="display: table-cell; {{userColor}}">{{userName}}</div>
+    </div>
 </template>
