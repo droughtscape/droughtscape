@@ -15,7 +15,9 @@
 </template>
 
 <template name="measure_lawn">
-    <h2>Measure your lawn : {{lawnName}}</h2>
+    <h6>Lawn Name:&nbsp;&nbsp;&nbsp;&nbsp;{{lawnName}}</h6>
+    <h6>Basic Shape:&nbsp;&nbsp;&nbsp;{{lawnData.shapeName}}</h6>
+    <h2>Measure your lawn</h2>
     <form action="#">
         <input class="unit-select" name="unit-type" type="radio" id="English" checked="checked"/>
         <label for="English">English</label>
@@ -108,9 +110,9 @@
             </div>
         </form>
     </div>
-    <h4>Choose a lawn shape</h4>
+    <h4 align="center">Choose a lawn shape</h4>
         {{> carousel id=carouselId context=lawnMode}}
-    <div class="shape-lawn-buttons-x center-align" style="margin-top: 100px">
+    <div class="shape-lawn-buttons center-align" style="margin-top: 100px">
             <hr>
             <div id="shape-lawn-cancel" class="waves-effect waves-light btn">Cancel</div>
             <div id="shape-lawn-accept" class="waves-effect waves-light btn">Accept</div>
@@ -118,8 +120,10 @@
 </template>
 
 <template name="build_lawn">
-    <h4>Build your lawn: {{lawnData.name}}</h4>
-    <h4>Templates</h4>
+    <h6>Lawn Name:&nbsp;&nbsp;&nbsp;&nbsp;{{lawnData.name}}</h6>
+    <h6>Basic Shape:&nbsp;&nbsp;&nbsp;{{lawnData.shapeName}}</h6>
+    <h4>Design your lawn</h4>
+    <h5 align="center">Predefined Lawn Designs</h5>
     {{> carousel id=carouselId context=lawnTemplateMode}}
     <h4>Begin</h4>
 </template>

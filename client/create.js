@@ -27,7 +27,7 @@
 // convert back out to the current setting.  Valid settings: English, Metric
 Session.setDefault('userUnitsOfMeasure', 'English');
 
-var lawnData = {name: 'MyLawn', width: 0, length: 0, slope: 0};
+var lawnData = {name: 'MyLawn', shapeName: 'rectangle', width: 0, length: 0, slope: 0};
 var lawnDataEnglish = {widthFeet: 0, widthInches: 0, lengthFeet: 0, lengthInches: 0, slopeInches: 0};
 var lawnDataDisplay = {name: 'MyLawn', w1: 0, w2: 0, l1: 0, l2: 0, s: 0};
 Session.setDefault('computedArea', 0);
@@ -78,6 +78,9 @@ Template.measure_lawn.helpers({
 	},
 	lawnName: function () {
 		return Session.get('currentLawn');
+	},
+	lawnData: function () {
+		return lawnData;
 	},
 	lawnDataDisplay: function () {
 		// Fill in appropriately
@@ -240,6 +243,7 @@ Template.shape_lawn.helpers({
 Template.shape_lawn.events({
 	'click .carouselItem': function (e) {
 		console.log('Template.shape_lawn.events - item: ' + e.target.id);
+		lawnData.shapeName = e.target.id;
 	},
 	'click #shape-lawn-cancel': function (e) {
 		console.log('Template.shape_lawn.events cancel: ' + e.target.id);
@@ -292,6 +296,12 @@ Template.build_lawn.onDestroyed(function() {
 Template.build_lawn.helpers({
 	carouselId: function () {
 		return buildLawnTemplateCarouselId;
+	},
+	lawnName: function () {
+		return Session.get('currentLawn');
+	},
+	lawnData: function () {
+		return lawnData;
 	},
 	lawnTemplateMode: function () {
 		return {type: 'buildLawnTemplates', subType: null};
