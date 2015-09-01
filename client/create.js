@@ -69,6 +69,15 @@ Template.create.events({
 	}
 });
 
+Template.lawn_info.helpers({
+	lawnData: function () {
+		return lawnData;
+	},
+	userName: function () {
+		return SignInUtils.getUserName();
+	}
+});
+
 Template.measure_lawn.helpers({
 	unitsOfMeasure: function () {
 		return (Session.get('userUnitsOfMeasure') === 'English') ? 'Feet and Inches' : 'Meters';

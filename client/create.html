@@ -1,10 +1,7 @@
 <template name="create">
     {{#if currentUser}}
-        {{> display_user}}
         <!-- Use this dynamic template here so we can change the render area as we track the state of lawn create -->
         {{> Template.dynamic template=currentCreate}}
-        <!--{{> shape_lawn}}-->
-        <!--{{> measure_lawn}}-->
     {{else}}
         {{> require_signin message=signInMessage}}
     {{/if}}
@@ -14,9 +11,25 @@
     open lawn
 </template>
 
+<template name="lawn_info">
+    <div style="display: table">
+        <div style="display: table-row">
+            <div style="display: table-cell;">User:&nbsp;&nbsp;</div>
+            <div style="display: table-cell;">{{userName}}</div>
+        </div>
+        <div style="display: table-row">
+            <div style="display: table-cell;">Lawn Name:&nbsp;&nbsp;</div>
+            <div style="display: table-cell;">{{lawnData.name}}</div>
+        </div>
+        <div style="display: table-row">
+            <div style="display: table-cell;">Basic Shape:&nbsp;&nbsp;</div>
+            <div style="display: table-cell;">{{lawnData.shapeName}}</div>
+        </div>
+    </div>
+</template>
+
 <template name="measure_lawn">
-    <h6>Lawn Name:&nbsp;&nbsp;&nbsp;&nbsp;{{lawnName}}</h6>
-    <h6>Basic Shape:&nbsp;&nbsp;&nbsp;{{lawnData.shapeName}}</h6>
+    {{> lawn_info}}
     <h2>Measure your lawn</h2>
     <form action="#">
         <input class="unit-select" name="unit-type" type="radio" id="English" checked="checked"/>
@@ -101,6 +114,7 @@
 </template>
 
 <template name="shape_lawn">
+    {{> display_user}}
     <h4>Name your new lawn</h4>
     <div class="row">
         <form>
@@ -120,8 +134,7 @@
 </template>
 
 <template name="build_lawn">
-    <h6>Lawn Name:&nbsp;&nbsp;&nbsp;&nbsp;{{lawnData.name}}</h6>
-    <h6>Basic Shape:&nbsp;&nbsp;&nbsp;{{lawnData.shapeName}}</h6>
+    {{> lawn_info}}
     <h4>Design your lawn</h4>
     <h5 align="center">Predefined Lawn Designs</h5>
     {{> carousel id=carouselId context=lawnTemplateMode}}
