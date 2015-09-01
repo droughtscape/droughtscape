@@ -37,8 +37,16 @@ var currentCreateState = new ReactiveVar('shape_lawn');
 Template.create.onCreated(function(){
 	console.log('Template.create.onCreated');
 	Session.set('computedArea', 0);
+	console.log('history.state: ' + history.state);
+	window.onbeforeunload = function () {
+		return 'Your work will be lost';
+	};
 	// On initial entry reset the state to shape_lawn
 	currentCreateState.set('shape_lawn');
+});
+
+Template.create.onDestroyed(function () {
+	window.onbeforeunload = null;
 });
 
 Template.create.helpers({
@@ -58,12 +66,6 @@ Template.create.events({
 	},
 	'click #lawn-create': function () {
 		lawnData.name = lawnDataDisplay.name;
-	}
-});
-
-Template.name_lawn.helpers({
-	lawnDataDisplay: function () {
-		return lawnDataDisplay;
 	}
 });
 
@@ -107,7 +109,7 @@ Template.measure_lawn.helpers({
 });
 
 Template.measure_lawn.onRendered(function () {
-	$('#modal-name').openModal();
+	//$('#modal-name').openModal();
 });
 
 var _insertFirstItem = function _insertFirstItem (userEmail, lawnData) {
@@ -190,6 +192,7 @@ Template.measure_lawn.events({
 			// No users so add us here
 			_insertFirstItem(userEmail, lawnData);
 		}
+		currentCreateState.set('build_lawn');
 	}
 });
 
@@ -248,7 +251,8 @@ Template.shape_lawn.events({
 		if (inputElt) {
 			console.log('Template.shape_lawn.events lawnName: ' + inputElt.value);
 			lawnData.name = inputElt.value;
-			currentCreateState.set('open_lawn');
+			Session.set('currentLawn', lawnData.name);
+			currentCreateState.set('measure_lawn');
 		}
 	}
 });

@@ -14,45 +14,8 @@
     open lawn
 </template>
 
-<template name="name_lawn">
-    <div id="modal-name" class="modal">
-        <div class="modal-content">
-            <h4>Name your new lawn</h4>
-            <div class="row">
-                <form>
-                    <div class="input-field col s6">
-                        <input value= {{lawnDataDisplay.name}} id="lawn_name" type="text" class="validate">
-                        <label class="active" for="lawn_name">Lawn Name</label>
-                    </div>
-                </form>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <a href="#!" id="name-lawn" class=" modal-action modal-close waves-effect waves-green btn-flat">Create New Lawn</a>
-            <a href="#!" id="open-lawn" class=" modal-action modal-close waves-effect waves-green btn-flat">Open Existing Lawn</a>
-        </div>
-    </div>
-</template>
-
 <template name="measure_lawn">
     <h2>Measure your lawn : {{lawnName}}</h2>
-    <div id="modal-name" class="modal">
-        <div class="modal-content">
-            <h4>Name your new lawn</h4>
-            <div class="row">
-                <form>
-                    <div class="input-field col s6">
-                        <input value= {{lawnDataDisplay.name}} id="lawn_name" type="text" class="validate">
-                        <label class="active" for="lawn_name">Lawn Name</label>
-                    </div>
-                </form>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <a href="#!" id="name-lawn" class=" modal-action modal-close waves-effect waves-green btn-flat">Create New Lawn</a>
-            <a href="#!" id="open-lawn" class=" modal-action modal-close waves-effect waves-green btn-flat">Open Existing Lawn</a>
-        </div>
-    </div>
     <form action="#">
         <input class="unit-select" name="unit-type" type="radio" id="English" checked="checked"/>
         <label for="English">English</label>
@@ -152,4 +115,8 @@
             <div id="shape-lawn-cancel" class="waves-effect waves-light btn">Cancel</div>
             <div id="shape-lawn-accept" class="waves-effect waves-light btn">Accept</div>
     </div>
+</template>
+
+<template name="build_lawn">
+    <h4>Build your lawn: {{lawnData.name}}</h4>
 </template>
