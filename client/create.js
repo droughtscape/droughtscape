@@ -153,6 +153,13 @@ var _updateLawns = function _updateLawns (myLawns, lawn) {
 };
 
 Template.measure_lawn.events({
+	'click #measure-lawn-cancel': function () {
+		Session.set('renderView', 'splash');
+	},
+	'click #measure-lawn-back': function () {
+		Session.set('renderView', 'shape_lawn');
+		//currentCreateState.set('measure_lawn');
+	},
 	'click #name-lawn': function () {
 		lawnData.name = document.getElementById('lawn_name').value;
 		Session.set('currentLawn', lawnData.name);
