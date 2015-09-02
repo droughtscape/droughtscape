@@ -69,7 +69,7 @@ Template.rightBar.events({
 			break;
 		default:
 			if (NavConfig.validateRightBarId(Session.get('rightBarConfig'), id)) {
-				Session.set('renderView', event.currentTarget.id);
+				Session.set('renderView', id);
 			}
 			break;
 		}

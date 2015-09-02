@@ -72,7 +72,14 @@ var getPosition = Utils.getPosition;
 
 Template.home.onCreated(function () {
 	Session.set('renderView', 'splash');
+	window.onbeforeunload = function () {
+		return 'Your work will be lost';
+	};
 	NavConfig.pushRightBar('rightBar', 'home');
+});
+
+Template.home.onDestroyed(function () {
+	window.onbeforeunload = null;
 });
 
 Template.home.helpers({

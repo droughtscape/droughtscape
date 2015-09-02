@@ -27,7 +27,7 @@
 // convert back out to the current setting.  Valid settings: English, Metric
 Session.setDefault('userUnitsOfMeasure', 'English');
 
-var lawnData = {name: 'MyLawn', shapeName: 'rectangle', width: 0, length: 0, slope: 0};
+var lawnData = {name: 'MyLawn', shapeName: 'rectangle', quickTemplate: 'none', width: 0, length: 0, slope: 0};
 var lawnDataEnglish = {widthFeet: 0, widthInches: 0, lengthFeet: 0, lengthInches: 0, slopeInches: 0};
 var lawnDataDisplay = {name: 'MyLawn', w1: 0, w2: 0, l1: 0, l2: 0, s: 0};
 Session.setDefault('computedArea', 0);
@@ -36,27 +36,34 @@ var currentCreateState = new ReactiveVar('shape_lawn');
 
 Template.create.onCreated(function(){
 	console.log('Template.create.onCreated');
+	//NavConfig.pushRightBar('rightBar', 'parts');
+	// Cannot set onbeforeunload here since when we transition to shape_lawn,
+	// we call create.onDestroyed would immediately unload.  Best place so far
+	// is in the home.onCreated, home.onDestroyed template since that contains the renderView
+	//window.onbeforeunload = function () {
+	//	return 'Your work will be lost';
+	//};
 	Session.set('computedArea', 0);
 	console.log('history.state: ' + history.state);
-	window.onbeforeunload = function () {
-		return 'Your work will be lost';
-	};
 	// On initial entry reset the state to shape_lawn
-	currentCreateState.set('shape_lawn');
+	if (Meteor.userId()) {
+		Session.set('renderView', 'shape_lawn');
+	}
+	//currentCreateState.set('shape_lawn');
 });
 
 Template.create.onDestroyed(function () {
-	window.onbeforeunload = null;
+	//window.onbeforeunload = null;
 });
 
 Template.create.helpers({
 	signInMessage: function () {
 		return 'Sign in so we can track your design(s)';
-	},
+	}/*,
 	currentCreate: function () {
 		// Use a reactive state to figure out where we are
 		return currentCreateState.get();
-	}
+	}*/
 });
 
 Template.create.events({
@@ -204,7 +211,8 @@ Template.measure_lawn.events({
 			// No users so add us here
 			_insertFirstItem(userEmail, lawnData);
 		}
-		currentCreateState.set('build_lawn');
+		Session.set('renderView', 'build_lawn');
+		//currentCreateState.set('build_lawn');
 	}
 });
 
@@ -230,6 +238,7 @@ var handleLawnShapeMessages = function handleLawnShapeMessages (message) {
 };
 
 Template.shape_lawn.onCreated(function () {
+	lawnData.shapeName='rectangle';
 	unsubscribe = MBus.subscribe('carousel', handleLawnShapeMessages);
 });
 
@@ -265,7 +274,8 @@ Template.shape_lawn.events({
 			console.log('Template.shape_lawn.events lawnName: ' + inputElt.value);
 			lawnData.name = inputElt.value;
 			Session.set('currentLawn', lawnData.name);
-			currentCreateState.set('measure_lawn');
+			Session.set('renderView', 'measure_lawn');
+			//currentCreateState.set('measure_lawn');
 		}
 	}
 });
@@ -283,9 +293,9 @@ var handleBuildLawnTemplateMessages = function handleBuildLawnTemplateMessages (
 			MBus.publish('carousel', 'clear', {carousel: buildLawnTemplateCarouselIdElt});
 			// Here we will use a filter based on standard shapes to select a set of templates
 			// What about custom shape?  Nothing to filter => no templates
-			MBus.publish('carousel', 'add', {carousel: buildLawnTemplateCarouselIdElt, imgWidth: '300px', imgHeight: '200px', imgArray: [{id: 'rectangle', img:'rectangle.png'}]});
-			MBus.publish('carousel', 'add', {carousel: buildLawnTemplateCarouselIdElt, imgWidth: '300px', imgHeight: '200px', imgArray: [{id: 'corner', img:'corner.png'}]});
-			MBus.publish('carousel', 'add', {carousel: buildLawnTemplateCarouselIdElt, imgWidth: '300px', imgHeight: '200px', imgArray: [{id: 'custom', img:'custom.png'}]});
+			MBus.publish('carousel', 'add', {carousel: buildLawnTemplateCarouselIdElt, imgWidth: '300px', imgHeight: '200px', imgArray: [{id: 'none', img:'rectangle.png'}]});
+			MBus.publish('carousel', 'add', {carousel: buildLawnTemplateCarouselIdElt, imgWidth: '300px', imgHeight: '200px', imgArray: [{id: 'template1', img:'corner.png'}]});
+			MBus.publish('carousel', 'add', {carousel: buildLawnTemplateCarouselIdElt, imgWidth: '300px', imgHeight: '200px', imgArray: [{id: 'template2', img:'custom.png'}]});
 			break;
 		}
 	}
@@ -315,4 +325,37 @@ Template.build_lawn.helpers({
 	lawnTemplateMode: function () {
 		return {type: 'buildLawnTemplates', subType: null};
 	}
+});
+
+Template.build_lawn.events ({
+	'click .carouselItem': function (e) {
+		lawnData.quickTemplate = e.target.id;
+	},
+	'click #build-lawn-cancel': function () {
+		Session.set('renderView', 'splash');
+	},
+	'click #build-lawn-back': function () {
+		Session.set('renderView', 'measure_lawn');
+		//currentCreateState.set('measure_lawn');
+	},
+	'click #build-lawn-accept': function () {
+		Session.set('renderView', 'layout_lawn');
+		//currentCreateState.set('layout_lawn');
+	}
+});
+
+Template.layout_lawn.onCreated(function () {
+	NavConfig.pushRightBar('rightBar', 'layout_lawn');
+});
+
+Template.layout_lawn.onDestroyed(function () {
+	NavConfig.popRightBar();
+});
+
+Template.render_lawn.onCreated(function () {
+	NavConfig.pushRightBar('rightBar', 'render_lawn');
+});
+
+Template.render_lawn.onDestroyed(function () {
+	NavConfig.popRightBar();
 });

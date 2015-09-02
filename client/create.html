@@ -1,7 +1,16 @@
-<template name="create">
+<template name="createx">
     {{#if currentUser}}
         <!-- Use this dynamic template here so we can change the render area as we track the state of lawn create -->
         {{> Template.dynamic template=currentCreate}}
+    {{else}}
+        {{> require_signin message=signInMessage}}
+    {{/if}}
+</template>
+
+<template name="create">
+    {{#if currentUser}}
+        <!-- Use this dynamic template here so we can change the render area as we track the state of lawn create -->
+        {{> shape_lawn}}
     {{else}}
         {{> require_signin message=signInMessage}}
     {{/if}}
@@ -136,5 +145,20 @@
     <h4>Design your lawn</h4>
     <h5 align="center">Predefined Lawn Designs</h5>
     {{> carousel id=carouselId context=lawnTemplateMode}}
-    <h4>Begin</h4>
+    <div class="build-lawn-buttons center-align" style="margin-top: 100px">
+        <hr>
+        <div id="build-lawn-cancel" class="waves-effect waves-light btn">Cancel</div>
+        <div id="build-lawn-back" class="waves-effect waves-light btn">Back</div>
+        <div id="build-lawn-accept" class="waves-effect waves-light btn">Accept</div>
+    </div>
+</template>
+
+<template name="layout_lawn">
+    {{> lawn_info}}
+    <h2 align="center">Layout Lawn</h2>
+</template>
+
+<template name="render_lawn">
+    {{> lawn_info}}
+    <h2 align="center">Render Lawn</h2>
 </template>
