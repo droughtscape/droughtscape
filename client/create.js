@@ -387,6 +387,9 @@ Template.finish_lawn.events({
 	'click #finish-lawn-cancel': function () {
 		Session.set('renderView', 'splash');
 	},
+	'click #finish-lawn-back': function () {
+		Session.set('renderView', 'layout_lawn');
+	},
 	'click #finish-lawn-accept': function () {
 		Session.set('renderView', 'create');
 	}

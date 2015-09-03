@@ -170,9 +170,15 @@
     <h2 align="center">Select Parts</h2>
 </template>
 
+<template name="summarize_lawn">
+    <h3>Lawn Summary</h3>
+</template>
+
 <template name="finish_lawn">
     {{> lawn_info}}
     <h2 align="center">Finish Lawn</h2>
+    {{> summarize_lawn}}
     <div id="finish-lawn-cancel" class="waves-effect waves-light btn">Cancel</div>
+    <div id="finish-lawn-back" class="waves-effect waves-light btn">Back</div>
     <div id="finish-lawn-accept" class="waves-effect waves-light btn">Accept</div>
 </template>
