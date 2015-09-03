@@ -366,3 +366,28 @@ Template.render_lawn.onCreated(function () {
 Template.render_lawn.onDestroyed(function () {
 	NavConfig.popRightBar();
 });
+
+Template.select_parts.onCreated(function () {
+	NavConfig.pushRightBar('rightBar', 'select_parts');
+});
+
+Template.select_parts.onDestroyed(function () {
+	NavConfig.popRightBar();
+});
+
+Template.finish_lawn.onCreated(function () {
+	NavConfig.pushRightBar('rightBar', 'finish_lawn');
+});
+
+Template.finish_lawn.onDestroyed(function () {
+	NavConfig.popRightBar();
+});
+
+Template.finish_lawn.events({
+	'click #finish-lawn-cancel': function () {
+		Session.set('renderView', 'splash');
+	},
+	'click #finish-lawn-accept': function () {
+		Session.set('renderView', 'create');
+	}
+});
