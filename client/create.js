@@ -351,16 +351,28 @@ Template.build_lawn.events ({
 	}
 });
 
+var pixiRenderer = null;
+
 Template.layout_lawn.onCreated(function () {
 	NavConfig.pushRightBar('rightBar', 'layout_lawn');
+	if (pixiRenderer === null) {
+		pixiRenderer = new PIXI.autoDetectRenderer(800, 600);
+	}
+	console.log('layout_lawn.onCreated, pixiRenderer: ' + pixiRenderer);
 });
 
 Template.layout_lawn.onDestroyed(function () {
 	NavConfig.popRightBar();
 });
 
+var threeScene = null;
+
 Template.render_lawn.onCreated(function () {
 	NavConfig.pushRightBar('rightBar', 'render_lawn');
+	if (threeScene === null) {
+		threeScene = new THREE.Scene();
+	}
+	console.log('render_lawn.onCreated, threeScene: ' + threeScene);
 });
 
 Template.render_lawn.onDestroyed(function () {

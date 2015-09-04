@@ -59,14 +59,6 @@ Meteor.startup(function () {
 	});
 });
 
-if (typeof THREE !== 'undefined') {
-	var scene = new THREE.Scene();
-	console.log('THREE: scene: ' + scene);
-}
-else {
-	console.log('THREE is undefined');
-}
-
 // Shorten call chain
 var getPosition = Utils.getPosition;
 
