@@ -351,18 +351,45 @@ Template.build_lawn.events ({
 	}
 });
 
+var pixiContainer = null;
 var pixiRenderer = null;
+var pixiAnimate = function pixiAnimate () {
+	requestAnimationFrame(pixiAnimate);
+	watersave.rotation += 0.1
+	pixiRenderer.render(pixiContainer);
+};
+
+// Test stuff
+var texture = PIXI.Texture.fromImage('../public/watersave.jpg');
+var watersave = new PIXI.Sprite(texture);
+watersave.anchor.x = 0.5;
+watersave.anchor.y = 0.5;
+watersave.position.x = 200;
+watersave.position.y = 200;
 
 Template.layout_lawn.onCreated(function () {
 	NavConfig.pushRightBar('rightBar', 'layout_lawn');
-	if (pixiRenderer === null) {
-		pixiRenderer = new PIXI.autoDetectRenderer(800, 600);
-	}
-	console.log('layout_lawn.onCreated, pixiRenderer: ' + pixiRenderer);
 });
 
 Template.layout_lawn.onDestroyed(function () {
 	NavConfig.popRightBar();
+});
+
+Template.layout_lawn.onRendered(function () {
+	if (pixiContainer === null) {
+		pixiContainer = new PIXI.Container();
+		pixiContainer.addChild(watersave);
+	}
+	if (pixiRenderer === null) {
+		var layout = document.getElementById('layout-canvas');
+		pixiRenderer = PIXI.autoDetectRenderer(512,
+			384,
+			{view:layout}
+		);
+		document.body.appendChild(pixiRenderer.view);
+		requestAnimationFrame(pixiAnimate);
+	}
+	console.log('layout_lawn.onRendered, pixiRenderer: ' + pixiRenderer);
 });
 
 var threeScene = null;
