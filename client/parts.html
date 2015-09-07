@@ -2,13 +2,16 @@
     <hr>
     {{> part_type context="parts" selected=selected}}
     <hr>
-	{{> carousel id=carouselId context=partsMode}}
-    <div class="parts-links">
-        <hr>
-        <a id="plants-mwd-top-50" class="waves-effect waves-light btn"><i class="mdi-file-cloud left"></i>Metropolitan Water
-            Districts "50 Favorites"</a>
-        <a id="turf-terminators-plant-catalog" class="waves-effect waves-light btn">
-            <i class="mdi-file-cloud left"></i>TurfTerminators Drought Tolerant Catalog"</a>
-    </div>
+    {{> carousel id=carouselId context=partsMode}}
+    {{#if notCreateMode}}
+        <div class="parts-links">
+            <hr>
+            <a id="plants-mwd-top-50" class="waves-effect waves-light btn"><i class="mdi-file-cloud left"></i>Metropolitan
+                Water
+                Districts "50 Favorites"</a>
+            <a id="turf-terminators-plant-catalog" class="waves-effect waves-light btn">
+                <i class="mdi-file-cloud left"></i>TurfTerminators Drought Tolerant Catalog"</a>
+        </div>
+    {{/if}}
 </template> 
 

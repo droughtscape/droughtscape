@@ -70,7 +70,12 @@ var unsubscribe = null;
 // I guess that since these are "subtemplates", the get created anew every time, similar to a route.
 // In any case, this is the desired effect.
 Template.parts.onCreated(function () {
-	NavConfig.pushRightBar('rightBar', 'parts');
+	if (CreateLawnData.getCurrentLawn()) {
+		NavConfig.pushRightBar('rightBar', 'select_parts');
+	}
+	else {
+		NavConfig.pushRightBar('rightBar', 'parts');
+	}
 	// Support carousel lifecycle.  Subscribe returns the ability to unsubscribe.
 	unsubscribe = MBus.subscribe('PartType:parts', handlePartTypeMessages)
 });
@@ -90,6 +95,10 @@ Template.parts.helpers({
 	},
 	selected: function () {
 		return partMode;
+	},
+	notCreateMode: function () {
+		var currentLawn = CreateLawnData.getCurrentLawn();
+		return currentLawn === null;
 	}
 });
 

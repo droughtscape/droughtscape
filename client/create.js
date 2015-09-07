@@ -27,11 +27,11 @@
 // convert back out to the current setting.  Valid settings: English, Metric
 Session.setDefault('userUnitsOfMeasure', 'English');
 
-var lawnData = {name: 'MyLawn', shapeName: 'rectangle', quickTemplate: 'none', width: 0, length: 0, slope: 0};
+//var lawnData = {name: 'MyLawn', shapeName: 'rectangle', quickTemplate: 'none', width: 0, length: 0, slope: 0};
 var lawnDataEnglish = {widthFeet: 0, widthInches: 0, lengthFeet: 0, lengthInches: 0, slopeInches: 0};
 var lawnDataDisplay = {name: 'MyLawn', w1: 0, w2: 0, l1: 0, l2: 0, s: 0};
 Session.setDefault('computedArea', 0);
-Session.setDefault('currentLawn', 'MyLawn');
+//Session.setDefault('currentLawn', '');
 var currentCreateState = new ReactiveVar('shape_lawn');
 
 Template.create.onCreated(function(){
@@ -72,13 +72,13 @@ Template.create.events({
 		Session.set('renderView', 'signin');
 	},
 	'click #lawn-create': function () {
-		lawnData.name = lawnDataDisplay.name;
+		CreateLawnData.lawnData.name = lawnDataDisplay.name;
 	}
 });
 
 Template.lawn_info.helpers({
 	lawnData: function () {
-		return lawnData;
+		return CreateLawnData.lawnData;
 	},
 	userName: function () {
 		return SignInUtils.getUserName();
@@ -92,34 +92,31 @@ Template.measure_lawn.helpers({
 	unitsOfMeasureAre: function (unitString) {
 		return Session.get('userUnitsOfMeasure') === unitString;
 	},
-	lawnName: function () {
-		return Session.get('currentLawn');
-	},
 	lawnData: function () {
-		return lawnData;
+		return CreateLawnData.lawnData;
 	},
 	lawnDataDisplay: function () {
 		// Fill in appropriately
 		if (Session.get('userUnitsOfMeasure') === 'English') {
 			// feet, inches
-			var fi = Utils.convertMetersToFeetInches(lawnData.width);
+			var fi = Utils.convertMetersToFeetInches(CreateLawnData.lawnData.width);
 			lawnDataDisplay.w1 = fi.feet;
 			lawnDataDisplay.w2 = fi.inches;
-			fi = Utils.convertMetersToFeetInches(lawnData.length);
+			fi = Utils.convertMetersToFeetInches(CreateLawnData.lawnData.length);
 			lawnDataDisplay.l1 = fi.feet;
 			lawnDataDisplay.l2 = fi.inches;
-			lawnDataDisplay.s = Math.round(Utils.convertMetersToInches(lawnData.slope));
+			lawnDataDisplay.s = Math.round(Utils.convertMetersToInches(CreateLawnData.lawnData.slope));
 		}
 		else {
 			// meters
-			lawnDataDisplay.w1 = lawnData.width;
-			lawnDataDisplay.l1 = lawnData.length;
-			lawnDataDisplay.s = lawnData.slope;
+			lawnDataDisplay.w1 = CreateLawnData.lawnData.width;
+			lawnDataDisplay.l1 = CreateLawnData.lawnData.length;
+			lawnDataDisplay.s = CreateLawnData.lawnData.slope;
 		}
 		return lawnDataDisplay;
 	},
 	computedArea: function () {
-		Session.set('computedArea', Number(lawnData.width) * Number(lawnData.length));
+		Session.set('computedArea', Number(CreateLawnData.lawnData.width) * Number(CreateLawnData.lawnData.length));
 		var sqMeters = Session.get('computedArea');
 		var sqInches = Utils.convertMetersToInches(sqMeters);
 		var sqFeet = sqInches / 12.0;
@@ -133,7 +130,7 @@ Template.measure_lawn.onRendered(function () {
 
 var _insertFirstItem = function _insertFirstItem (userEmail, lawnData) {
 	var item = {user: userEmail, myLawns: []};
-	item.myLawns.push(lawnData);
+	item.myLawns.push(CreateLawnData.lawnData);
 	DroughtscapeUsers.insert(item);
 };
 
@@ -161,8 +158,7 @@ Template.measure_lawn.events({
 		//currentCreateState.set('measure_lawn');
 	},
 	'click #name-lawn': function () {
-		lawnData.name = document.getElementById('lawn_name').value;
-		Session.set('currentLawn', lawnData.name);
+		CreateLawnData.lawnData.name = document.getElementById('lawn_name').value;
 	},
 	'click #open-lawn': function () {
 		Session.set('renderView', 'favorites');
@@ -174,19 +170,19 @@ Template.measure_lawn.events({
 	'click #lawn-measure': function (e) {
 		console.log('lawn-measure clicked');
 		if (Session.get('userUnitsOfMeasure') === 'English') {
-			lawnData.width = Utils.convertEnglishToMeters(document.getElementById('lawn_width_feet').value,
+			CreateLawnData.lawnData.width = Utils.convertEnglishToMeters(document.getElementById('lawn_width_feet').value,
 				document.getElementById('lawn_width_inches').value);
-			lawnData.length = Utils.convertEnglishToMeters(document.getElementById('lawn_length_feet').value,
+			CreateLawnData.lawnData.length = Utils.convertEnglishToMeters(document.getElementById('lawn_length_feet').value,
 				document.getElementById('lawn_length_inches').value);
-			lawnData.slope = Utils.convertEnglishToMeters(0, document.getElementById('lawn_slope_inches').value);
+			CreateLawnData.lawnData.slope = Utils.convertEnglishToMeters(0, document.getElementById('lawn_slope_inches').value);
 		}
 		else {
-			lawnData.width = document.getElementById('lawn_width_meters').value;
-			lawnData.length = document.getElementById('lawn_length_meters').value;
-			lawnData.slope = document.getElementById('lawn_slope_meters').value;
+			CreateLawnData.lawnData.width = document.getElementById('lawn_width_meters').value;
+			CreateLawnData.lawnData.length = document.getElementById('lawn_length_meters').value;
+			CreateLawnData.lawnData.slope = document.getElementById('lawn_slope_meters').value;
 		}
-		Session.set('computedArea', Number(lawnData.width) * Number(lawnData.length));
-		console.log('lawnData: ' + lawnData);
+		Session.set('computedArea', Number(CreateLawnData.lawnData.width) * Number(CreateLawnData.lawnData.length));
+		console.log('lawnData: ' + CreateLawnData.lawnData);
 
 		var user = Meteor.user();
 		var userEmail = user.emails[0].address;
@@ -201,14 +197,14 @@ Template.measure_lawn.events({
 					if (!dsUsersArray[i].myLawns) {
 						dsUsersArray[i].myLawns = [];
 					}
-					_updateLawns(dsUsersArray[i].myLawns, lawnData);
+					_updateLawns(dsUsersArray[i].myLawns, CreateLawnData.lawnData);
 					updated = dsUsersArray[i];
 					break;
 				}
 			}
 			if (!updated) {
 				// user not found, add
-				_insertFirstItem(userEmail, lawnData);
+				_insertFirstItem(userEmail, CreateLawnData.lawnData);
 			}
 			else {
 				DroughtscapeUsers.update(updated._id, updated);
@@ -216,7 +212,7 @@ Template.measure_lawn.events({
 		}
 		else {
 			// No users so add us here
-			_insertFirstItem(userEmail, lawnData);
+			_insertFirstItem(userEmail, CreateLawnData.lawnData);
 		}
 		Session.set('renderView', 'build_lawn');
 		//currentCreateState.set('build_lawn');
@@ -245,7 +241,7 @@ var handleLawnShapeMessages = function handleLawnShapeMessages (message) {
 };
 
 Template.shape_lawn.onCreated(function () {
-	lawnData.shapeName='rectangle';
+	CreateLawnData.lawnData.shapeName='rectangle';
 	unsubscribe = MBus.subscribe('carousel', handleLawnShapeMessages);
 });
 
@@ -260,15 +256,15 @@ Template.shape_lawn.helpers({
 	lawnMode: function () {
 		return {type: "lawnShapes", subType: null};
 	},
-	lawnDataDisplay: function () {
-		return lawnDataDisplay;
+	lawnData: function () {
+		return CreateLawnData.lawnData;
 	}
 });
 
 Template.shape_lawn.events({
 	'click .carouselItem': function (e) {
 		console.log('Template.shape_lawn.events - item: ' + e.target.id);
-		lawnData.shapeName = e.target.id;
+		CreateLawnData.lawnData.shapeName = e.target.id;
 	},
 	'click #shape-lawn-cancel': function (e) {
 		console.log('Template.shape_lawn.events cancel: ' + e.target.id);
@@ -279,8 +275,7 @@ Template.shape_lawn.events({
 		var inputElt = document.getElementById('lawn_name');
 		if (inputElt) {
 			console.log('Template.shape_lawn.events lawnName: ' + inputElt.value);
-			lawnData.name = inputElt.value;
-			Session.set('currentLawn', lawnData.name);
+			CreateLawnData.lawnData.name = inputElt.value;
 			Session.set('renderView', 'measure_lawn');
 			//currentCreateState.set('measure_lawn');
 		}
@@ -323,11 +318,8 @@ Template.build_lawn.helpers({
 	carouselId: function () {
 		return buildLawnTemplateCarouselId;
 	},
-	lawnName: function () {
-		return Session.get('currentLawn');
-	},
 	lawnData: function () {
-		return lawnData;
+		return CreateLawnData.lawnData;
 	},
 	lawnTemplateMode: function () {
 		return {type: 'buildLawnTemplates', subType: null};
@@ -336,7 +328,7 @@ Template.build_lawn.helpers({
 
 Template.build_lawn.events ({
 	'click .carouselItem': function (e) {
-		lawnData.quickTemplate = e.target.id;
+		CreateLawnData.lawnData.quickTemplate = e.target.id;
 	},
 	'click #build-lawn-cancel': function () {
 		Session.set('renderView', 'splash');
@@ -347,10 +339,13 @@ Template.build_lawn.events ({
 	},
 	'click #build-lawn-accept': function () {
 		Session.set('renderView', 'layout_lawn');
+		CreateLawnData.setCurrentLawn();
+		//Session.set('currentLawn', CreateLawnData.lawnData);
 		//currentCreateState.set('layout_lawn');
 	}
 });
 
+/*
 var pixiContainer = null;
 var pixiRenderer = null;
 var pixiAnimate = function pixiAnimate () {
@@ -360,7 +355,7 @@ var pixiAnimate = function pixiAnimate () {
 };
 
 // Test stuff
-var texture = PIXI.Texture.fromImage('../public/watersave.jpg');
+var texture = PIXI.Texture.fromImage('watersave.jpg');
 var watersave = new PIXI.Sprite(texture);
 watersave.anchor.x = 0.5;
 watersave.anchor.y = 0.5;
@@ -386,13 +381,14 @@ Template.layout_lawn.onRendered(function () {
 			384,
 			{view:layout}
 		);
-		document.body.appendChild(pixiRenderer.view);
+		//document.body.appendChild(pixiRenderer.view);
 		requestAnimationFrame(pixiAnimate);
 	}
 	console.log('layout_lawn.onRendered, pixiRenderer: ' + pixiRenderer);
 });
 
-var threeScene = null;
+*/
+/*var threeScene = null;
 
 Template.render_lawn.onCreated(function () {
 	NavConfig.pushRightBar('rightBar', 'render_lawn');
@@ -404,7 +400,7 @@ Template.render_lawn.onCreated(function () {
 
 Template.render_lawn.onDestroyed(function () {
 	NavConfig.popRightBar();
-});
+});*/
 
 Template.select_parts.onCreated(function () {
 	NavConfig.pushRightBar('rightBar', 'select_parts');
@@ -425,11 +421,13 @@ Template.finish_lawn.onDestroyed(function () {
 Template.finish_lawn.events({
 	'click #finish-lawn-cancel': function () {
 		Session.set('renderView', 'splash');
+		CreateLawnData.clearCurrentLawn();
 	},
 	'click #finish-lawn-back': function () {
 		Session.set('renderView', 'layout_lawn');
 	},
 	'click #finish-lawn-accept': function () {
 		Session.set('renderView', 'create');
+		CreateLawnData.clearCurrentLawn();
 	}
 });
