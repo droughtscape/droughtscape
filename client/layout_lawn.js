@@ -21,6 +21,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+// For layout, we use pixijs since we want a true 2D view to simplify the layout.
+// We will use a top view, looking down on the lawn area from above to simplify
+// the actual layout activity.
 var pixiContainer = null;
 var pixiRenderer = null;
 var runAnimation = false;

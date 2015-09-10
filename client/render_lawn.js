@@ -21,6 +21,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+// For a rendered view, we will use a true 3D engine so that we can move the
+// camera around so the user can see what the droughtscape will look like.
+// We will use a perspective camera.
 var threeScene = null;
 var threeRenderer = null;
 var threeCamera = null;
