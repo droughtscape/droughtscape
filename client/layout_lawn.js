@@ -72,8 +72,11 @@ Template.layout_lawn.onRendered(function () {
 	// => every time we enter onRendered(), pixiRenderer should be null
 	if (pixiRenderer === null) {
 		var layout = document.getElementById('layout-canvas');
-		pixiRenderer = PIXI.autoDetectRenderer(512,
-			384,
+		var layoutContainer = document.getElementById('layout-div-container');
+		var width = (layoutContainer) ? layoutContainer.clientWidth : 800;
+		var height = (layoutContainer) ? layoutContainer.clientHeight : 600;
+		pixiRenderer = PIXI.autoDetectRenderer(width,
+			height,
 			{view:layout}
 		);
 		//document.body.appendChild(pixiRenderer.view);
