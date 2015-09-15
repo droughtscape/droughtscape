@@ -62,6 +62,7 @@ var render = function render () {
 
 var testMode = true;
 Template.render_lawn.onRendered(function () {
+	var geometry, material;
 	if (testMode) {
 		if (threeScene === null) {
 			threeScene = new THREE.Scene();
@@ -75,8 +76,8 @@ Template.render_lawn.onRendered(function () {
 		//renderer.setSize(window.innerWidth, window.innerHeight);
 		//document.body.appendChild(renderer.domElement);
 
-		var geometry = new THREE.BoxGeometry( 1, 1, 1 );
-		var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+		geometry = new THREE.BoxGeometry( 10, 1, 1 );
+		material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
 		cube = new THREE.Mesh( geometry, material );
 		threeScene.add( cube );
 
@@ -96,8 +97,8 @@ Template.render_lawn.onRendered(function () {
 			//var render = document.getElementById('render-canvas');
 			//render.appendChild(threeRenderer.domElement);
 			//document.body.appendChild(threeRenderer.domElement);
-			var geometry = new THREE.BoxGeometry( 1, 1, 1 );
-			var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+			geometry = new THREE.BoxGeometry( 1, 1, 1 );
+			material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
 			cube = new THREE.Mesh( geometry, material );
 			threeScene.add( cube );
 			threeCamera.position.z = 5;

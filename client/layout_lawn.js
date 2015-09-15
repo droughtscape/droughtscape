@@ -30,7 +30,7 @@ var runAnimation = false;
 var pixiAnimate = function pixiAnimate () {
 	if (runAnimation) {
 		requestAnimationFrame(pixiAnimate);
-		watersave.rotation += 0.1
+		watersave.rotation += 0.1;
 		pixiRenderer.render(pixiContainer);
 	}
 	else {
@@ -59,6 +59,11 @@ Template.layout_lawn.onDestroyed(function () {
 });
 
 Template.layout_lawn.onRendered(function () {
+	var lawnShape = CreateLawnData.createLawnShape('rectangle', [{width: 100, length: 200, slope: 0.2}]);
+	var lawnShape2 = CreateLawnData.createRectLawnShape(100, 200, 0.2);
+	lawnShape.printMe();
+	lawnShape2.printMe();
+	
 	// The pixiContainer state is kept between entries here but
 	// must be managed at a meta level above the create context so that we
 	// can distinguish between:
