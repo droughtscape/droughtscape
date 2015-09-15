@@ -167,7 +167,7 @@ Template.measure_lawn.events({
 		var clickedButton = e.currentTarget;
 		Session.set('userUnitsOfMeasure', clickedButton.id);
 	},
-	'click #lawn-measure': function (e) {
+	'click #lawn-measure': function () {
 		console.log('lawn-measure clicked');
 		if (Session.get('userUnitsOfMeasure') === 'English') {
 			CreateLawnData.lawnData.width = Utils.convertEnglishToMeters(document.getElementById('lawn_width_feet').value,
@@ -241,7 +241,7 @@ var handleLawnShapeMessages = function handleLawnShapeMessages (message) {
 };
 
 Template.shape_lawn.onCreated(function () {
-	CreateLawnData.lawnData.shapeName='rectangle';
+	CreateLawnData.createLawnShapeTemplate('rectangle');
 	unsubscribe = MBus.subscribe('carousel', handleLawnShapeMessages);
 });
 
@@ -264,7 +264,7 @@ Template.shape_lawn.helpers({
 Template.shape_lawn.events({
 	'click .carouselItem': function (e) {
 		console.log('Template.shape_lawn.events - item: ' + e.target.id);
-		CreateLawnData.lawnData.shapeName = e.target.id;
+		CreateLawnData.createLawnShapeTemplate(e.target.id);
 	},
 	'click #shape-lawn-cancel': function (e) {
 		console.log('Template.shape_lawn.events cancel: ' + e.target.id);
