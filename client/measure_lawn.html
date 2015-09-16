@@ -9,6 +9,20 @@
     </form>
     <hr>
     {{> Template.dynamic template=measureLawnShape}}
+    <hr>
+    <div id="measure-lawn-cancel" class="waves-effect waves-light btn">Cancel</div>
+    <div id="measure-lawn-back" class="waves-effect waves-light btn">Back</div>
+    <button id="lawn-measure" class="btn waves-effect waves-light" type="submit" name="action">Accept
+        <i class="mdi-content-send right"></i>
+    </button>
+    <hr>
+    <div>
+        <a href="http://www.findlotsize.com/" target="_blank">Use FindLotSize.com</a>
+
+        <p>FindLotSize is a site which allows you to find and measure the size of property. <br>
+            You can use this site to figure out lawn size by measuring just the lawn instead of the <br>
+            entire property.</p>
+    </div>
 </template>
 
 <template name="measure_lawn_rectangle">
@@ -74,18 +88,5 @@
         </div>
     {{/if}}
     <div>Computed Area: {{computedArea}}</div>
-    <div id="measure-lawn-cancel" class="waves-effect waves-light btn">Cancel</div>
-    <div id="measure-lawn-back" class="waves-effect waves-light btn">Back</div>
-    <button id="lawn-measure" class="btn waves-effect waves-light" type="submit" name="action">Accept
-        <i class="mdi-content-send right"></i>
-    </button>
-    <hr>
-    <div>
-        <a href="http://www.findlotsize.com/" target="_blank">Use FindLotSize.com</a>
-
-        <p>FindLotSize is a site which allows you to find and measure the size of property. <br>
-            You can use this site to figure out lawn size by measuring just the lawn instead of the <br>
-            entire property.</p>
-    </div>
 </template>
 

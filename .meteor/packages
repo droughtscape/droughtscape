@@ -8,7 +8,6 @@ meteor-platform
 autopublish
 insecure
 iron:router
-materialize:materialize
 accounts-password
 limemakers:three
 reactive-var
@@ -17,3 +16,4 @@ useraccounts:materialize
 udondan:slick
 jquery
 fds:pixijs
+materialize:materialize@=0.97.0
