@@ -148,9 +148,10 @@ var handleBuildLawnTemplateMessages = function handleBuildLawnTemplateMessages (
 			MBus.publish('carousel', 'clear', {carousel: buildLawnTemplateCarouselIdElt});
 			// Here we will use a filter based on standard shapes to select a set of templates
 			// What about custom shape?  Nothing to filter => no templates
-			MBus.publish('carousel', 'add', {carousel: buildLawnTemplateCarouselIdElt, imgWidth: '300px', imgHeight: '200px', imgArray: [{id: 'none', img:'rectangle.png'}]});
-			MBus.publish('carousel', 'add', {carousel: buildLawnTemplateCarouselIdElt, imgWidth: '300px', imgHeight: '200px', imgArray: [{id: 'template1', img:'corner.png'}]});
-			MBus.publish('carousel', 'add', {carousel: buildLawnTemplateCarouselIdElt, imgWidth: '300px', imgHeight: '200px', imgArray: [{id: 'template2', img:'custom.png'}]});
+			MBus.publish('carousel', 'add', {carousel: buildLawnTemplateCarouselIdElt, imgWidth: '300px', imgHeight: '200px', imgArray: [{id: 'none', img:'custom.png'}]});
+			MBus.publish('carousel', 'add', {carousel: buildLawnTemplateCarouselIdElt, imgWidth: '300px', imgHeight: '200px', imgArray: [{id: 'template1', img:'template1.jpg'}]});
+			MBus.publish('carousel', 'add', {carousel: buildLawnTemplateCarouselIdElt, imgWidth: '300px', imgHeight: '200px', imgArray: [{id: 'template2', img:'template2.png'}]});
+			MBus.publish('carousel', 'add', {carousel: buildLawnTemplateCarouselIdElt, imgWidth: '300px', imgHeight: '200px', imgArray: [{id: 'template3', img:'template3.jpg'}]});
 			break;
 		}
 	}
