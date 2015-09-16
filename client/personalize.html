@@ -32,6 +32,21 @@
                         <label for="favorite-color">Favorite Color</label>
                     </div>
                 </div>
+                <div class="row">
+                    <form action="#">Preferred Unit of Measure
+                        <input class="unit-select" name="unit-type" type="radio" id="English" {{englishDefault}}/>
+                        <label for="English">English</label>
+                        <input class="unit-select" name="unit-type" type="radio" id="Metric" {{metricDefault}}/>
+                        <label for="Metric">Metric</label>
+                    </form>
+<!--
+
+                    <div class="input-field col s12">
+                        <input id="preferred-units" type="text" class="validate">
+                        <label for="preferred-units">Preferred Units (English, Metric)</label>
+                    </div>
+-->
+                </div>
             </form>
         </div>
 	{{else}}

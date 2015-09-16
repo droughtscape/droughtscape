@@ -33,10 +33,22 @@ Template.personalize.onDestroyed(function () {
 Template.personalize.helpers({
 	signInMessage: function () {
 		return 'Personalization allows droughtscape to more closely tailor the design to match your preferences';
+	},
+	englishDefault: function () {
+		var units = Session.get('userUnitsOfMeasure');
+		return (units === 'English') ? 'checked' : '';
+	},
+	metricDefault: function () {
+		var units = Session.get('userUnitsOfMeasure');
+		return (units === 'Metric') ? 'checked' : '';
 	}
 });
 
 Template.personalize.events({
+	'click .unit-select': function (e) {
+		var clickedButton = e.currentTarget;
+		Session.set('userUnitsOfMeasure', clickedButton.id);
+	},
 	'click #signin': function () {
 		SignInUtils.pushRenderViewTarget('personalize');
 		Session.set('renderView', 'signin');
