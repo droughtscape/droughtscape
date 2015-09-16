@@ -44,16 +44,23 @@ var _updateLawns = function _updateLawns(myLawns, lawn) {
 	}
 };
 
+var _updateShapeDims;
+
 Template.measure_lawn.helpers({
 	measureLawnShape: function () {
 		var lawnTemplate = null;
 		switch (CreateLawnData.lawnData.shape.shapeType) {
 		case 'rectangle':
-			lawnTemplate = 'measure_lawn_rectangle';
+			_updateShapeDims = _updateRectDims;
+			lawnTemplate = 'measure_rectangle_lawn';
 			break;
 		case 'corner':
+			_updateShapeDims = _updateCornerDims;
+			lawnTemplate = 'measure_corner_lawn';
 			break;
 		case 'custom':
+			_updateShapeDims = _updateCustomDims;
+			lawnTemplate = 'measure_custom_lawn';
 			break;
 		}
 		return lawnTemplate;
@@ -88,7 +95,7 @@ Template.measure_lawn.events({
 	},
 	'click #lawn-measure': function () {
 		console.log('lawn-measure clicked');
-		_updateRectDims();
+		_updateShapeDims();
 		console.log('lawnData: ' + CreateLawnData.lawnData);
 
 		var user = Meteor.user();
@@ -148,7 +155,7 @@ var _updateRectDims = function _updateRectDims () {
 	Session.set('computedArea', Number(rectDims.width) * Number(rectDims.length));
 };
 
-Template.measure_lawn_rectangle.helpers({
+Template.measure_rectangle_lawn.helpers({
 	unitsOfMeasure: function () {
 		return (Session.get('userUnitsOfMeasure') === 'English') ? 'Feet and Inches' : 'Meters';
 	},
@@ -189,10 +196,17 @@ Template.measure_lawn_rectangle.helpers({
 	}
 });
 
-Template.measure_lawn_rectangle.events({
+Template.measure_rectangle_lawn.events({
 	'change .input-field': function () {
 		console.log('input-field change event');
-		_updateRectDims();
+		_updateShapeDims();
 	}
 });
 
+var _updateCornerDims = function _updateCornerDims () {
+	// TBD
+};
+
+var _updateCustomDims = function _updateCustomDims () {
+	// TBD
+};
