@@ -27,12 +27,9 @@
 // convert back out to the current setting.  Valid settings: English, Metric
 Session.setDefault('userUnitsOfMeasure', 'English');
 
-//var lawnData = {name: 'MyLawn', shapeName: 'rectangle', quickTemplate: 'none', width: 0, length: 0, slope: 0};
-var lawnDataEnglish = {widthFeet: 0, widthInches: 0, lengthFeet: 0, lengthInches: 0, slopeInches: 0};
-var lawnDataDisplay = {name: 'MyLawn', w1: 0, w2: 0, l1: 0, l2: 0, s: 0};
 Session.setDefault('computedArea', 0);
 //Session.setDefault('currentLawn', '');
-var currentCreateState = new ReactiveVar('shape_lawn');
+//var currentCreateState = new ReactiveVar('shape_lawn');
 
 Template.create.onCreated(function(){
 	console.log('Template.create.onCreated');
@@ -59,163 +56,19 @@ Template.create.onDestroyed(function () {
 Template.create.helpers({
 	signInMessage: function () {
 		return 'Sign in so we can track your design(s)';
-	}/*,
-	currentCreate: function () {
-		// Use a reactive state to figure out where we are
-		return currentCreateState.get();
-	}*/
+	}
 });
 
 Template.create.events({
 	'click #signin': function () {
 		SignInUtils.pushRenderViewTarget('create');
 		Session.set('renderView', 'signin');
-	},
-	'click #lawn-create': function () {
-		CreateLawnData.lawnData.name = lawnDataDisplay.name;
 	}
 });
 
 Template.lawn_info.helpers({
 	lawnData: function () {
 		return CreateLawnData.lawnData;
-	},
-	userName: function () {
-		return SignInUtils.getUserName();
-	}
-});
-
-Template.measure_lawn.helpers({
-	unitsOfMeasure: function () {
-		return (Session.get('userUnitsOfMeasure') === 'English') ? 'Feet and Inches' : 'Meters';
-	},
-	unitsOfMeasureAre: function (unitString) {
-		return Session.get('userUnitsOfMeasure') === unitString;
-	},
-	lawnData: function () {
-		return CreateLawnData.lawnData;
-	},
-	lawnDataDisplay: function () {
-		// Fill in appropriately
-		if (Session.get('userUnitsOfMeasure') === 'English') {
-			// feet, inches
-			var fi = Utils.convertMetersToFeetInches(CreateLawnData.lawnData.width);
-			lawnDataDisplay.w1 = fi.feet;
-			lawnDataDisplay.w2 = fi.inches;
-			fi = Utils.convertMetersToFeetInches(CreateLawnData.lawnData.length);
-			lawnDataDisplay.l1 = fi.feet;
-			lawnDataDisplay.l2 = fi.inches;
-			lawnDataDisplay.s = Math.round(Utils.convertMetersToInches(CreateLawnData.lawnData.slope));
-		}
-		else {
-			// meters
-			lawnDataDisplay.w1 = CreateLawnData.lawnData.width;
-			lawnDataDisplay.l1 = CreateLawnData.lawnData.length;
-			lawnDataDisplay.s = CreateLawnData.lawnData.slope;
-		}
-		return lawnDataDisplay;
-	},
-	computedArea: function () {
-		Session.set('computedArea', Number(CreateLawnData.lawnData.width) * Number(CreateLawnData.lawnData.length));
-		var sqMeters = Session.get('computedArea');
-		var sqInches = Utils.convertMetersToInches(sqMeters);
-		var sqFeet = sqInches / 12.0;
-		return (Session.get('userUnitsOfMeasure') === 'English') ? Math.round(sqFeet) + ' sq ft' : Math.round(sqMeters) + ' sq m';
-	}
-});
-
-Template.measure_lawn.onRendered(function () {
-	//$('#modal-name').openModal();
-});
-
-var _insertFirstItem = function _insertFirstItem (userEmail, lawnData) {
-	var item = {user: userEmail, myLawns: []};
-	item.myLawns.push(CreateLawnData.lawnData);
-	DroughtscapeUsers.insert(item);
-};
-
-var _updateLawns = function _updateLawns (myLawns, lawn) {
-	var lawnUpdated = false;
-	for (var i= 0, len= myLawns.length; i<len; ++i) {
-		// if lawn is already present, just update any values
-		if (myLawns[i].name === lawn.name) {
-			myLawns[i] = lawn;
-			lawnUpdated = true;
-		}
-	}
-	if (!lawnUpdated) {
-		// Not found, just push it
-		myLawns.push(lawn);
-	}
-};
-
-Template.measure_lawn.events({
-	'click #measure-lawn-cancel': function () {
-		Session.set('renderView', 'splash');
-	},
-	'click #measure-lawn-back': function () {
-		Session.set('renderView', 'shape_lawn');
-		//currentCreateState.set('measure_lawn');
-	},
-	'click #name-lawn': function () {
-		CreateLawnData.lawnData.name = document.getElementById('lawn_name').value;
-	},
-	'click #open-lawn': function () {
-		Session.set('renderView', 'favorites');
-	},
-	'click .unit-select': function (e) {
-		var clickedButton = e.currentTarget;
-		Session.set('userUnitsOfMeasure', clickedButton.id);
-	},
-	'click #lawn-measure': function () {
-		console.log('lawn-measure clicked');
-		if (Session.get('userUnitsOfMeasure') === 'English') {
-			CreateLawnData.lawnData.width = Utils.convertEnglishToMeters(document.getElementById('lawn_width_feet').value,
-				document.getElementById('lawn_width_inches').value);
-			CreateLawnData.lawnData.length = Utils.convertEnglishToMeters(document.getElementById('lawn_length_feet').value,
-				document.getElementById('lawn_length_inches').value);
-			CreateLawnData.lawnData.slope = Utils.convertEnglishToMeters(0, document.getElementById('lawn_slope_inches').value);
-		}
-		else {
-			CreateLawnData.lawnData.width = document.getElementById('lawn_width_meters').value;
-			CreateLawnData.lawnData.length = document.getElementById('lawn_length_meters').value;
-			CreateLawnData.lawnData.slope = document.getElementById('lawn_slope_meters').value;
-		}
-		Session.set('computedArea', Number(CreateLawnData.lawnData.width) * Number(CreateLawnData.lawnData.length));
-		console.log('lawnData: ' + CreateLawnData.lawnData);
-
-		var user = Meteor.user();
-		var userEmail = user.emails[0].address;
-		// See if we already have a profile, if so, look for myLawns, if not create one
-		var dsUsers = DroughtscapeUsers.find({});
-		var dsUsersArray = dsUsers.fetch();
-		if (dsUsersArray.length > 0) {
-			var updated = null;
-			for (var i= 0, len= dsUsersArray.length; i < len; ++i) {
-				if (dsUsersArray[i].user === userEmail) {
-					// found us, update
-					if (!dsUsersArray[i].myLawns) {
-						dsUsersArray[i].myLawns = [];
-					}
-					_updateLawns(dsUsersArray[i].myLawns, CreateLawnData.lawnData);
-					updated = dsUsersArray[i];
-					break;
-				}
-			}
-			if (!updated) {
-				// user not found, add
-				_insertFirstItem(userEmail, CreateLawnData.lawnData);
-			}
-			else {
-				DroughtscapeUsers.update(updated._id, updated);
-			}
-		}
-		else {
-			// No users so add us here
-			_insertFirstItem(userEmail, CreateLawnData.lawnData);
-		}
-		Session.set('renderView', 'build_lawn');
-		//currentCreateState.set('build_lawn');
 	}
 });
 
@@ -344,63 +197,6 @@ Template.build_lawn.events ({
 		//currentCreateState.set('layout_lawn');
 	}
 });
-
-/*
-var pixiContainer = null;
-var pixiRenderer = null;
-var pixiAnimate = function pixiAnimate () {
-	requestAnimationFrame(pixiAnimate);
-	watersave.rotation += 0.1
-	pixiRenderer.render(pixiContainer);
-};
-
-// Test stuff
-var texture = PIXI.Texture.fromImage('watersave.jpg');
-var watersave = new PIXI.Sprite(texture);
-watersave.anchor.x = 0.5;
-watersave.anchor.y = 0.5;
-watersave.position.x = 200;
-watersave.position.y = 200;
-
-Template.layout_lawn.onCreated(function () {
-	NavConfig.pushRightBar('rightBar', 'layout_lawn');
-});
-
-Template.layout_lawn.onDestroyed(function () {
-	NavConfig.popRightBar();
-});
-
-Template.layout_lawn.onRendered(function () {
-	if (pixiContainer === null) {
-		pixiContainer = new PIXI.Container();
-		pixiContainer.addChild(watersave);
-	}
-	if (pixiRenderer === null) {
-		var layout = document.getElementById('layout-canvas');
-		pixiRenderer = PIXI.autoDetectRenderer(512,
-			384,
-			{view:layout}
-		);
-		//document.body.appendChild(pixiRenderer.view);
-		requestAnimationFrame(pixiAnimate);
-	}
-	console.log('layout_lawn.onRendered, pixiRenderer: ' + pixiRenderer);
-});
-
-*/
-/*var threeScene = null;
-
-Template.render_lawn.onCreated(function () {
-	NavConfig.pushRightBar('rightBar', 'render_lawn');
-	if (threeScene === null) {
-		threeScene = new THREE.Scene();
-	}
-	console.log('render_lawn.onCreated, threeScene: ' + threeScene);
-});
-
-Template.render_lawn.onDestroyed(function () {
-	NavConfig.popRightBar();
-});*/
 
 Template.select_parts.onCreated(function () {
 	NavConfig.pushRightBar('rightBar', 'select_parts');

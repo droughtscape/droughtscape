@@ -1,0 +1,91 @@
+<template name="measure_lawn">
+    {{> lawn_info}}
+    <h2>Measure your lawn</h2>
+    <form action="#">
+        <input class="unit-select" name="unit-type" type="radio" id="English" {{englishDefault}}/>
+        <label for="English">English</label>
+        <input class="unit-select" name="unit-type" type="radio" id="Metric" {{metricDefault}}/>
+        <label for="Metric">Metric</label>
+    </form>
+    <hr>
+    {{> Template.dynamic template=measureLawnShape}}
+</template>
+
+<template name="measure_lawn_rectangle">
+    <p>Lawn Width in {{unitsOfMeasure}} - Side to side distance</p>
+
+    <p>Lawn Length in {{unitsOfMeasure}} - Distance from front of lawn closest to street to lawn closest to
+        house</p>
+
+    <p>Slope in {{unitsOfMeasure}} - height change from front to back or side to side</p>
+    {{#if unitsOfMeasureAre 'English'}}
+        <div class="row">
+            <form class="col s12">
+                <div class="row">
+                    <div class="input-field col s2">
+                        <input value= {{lawnDataDisplay.w1}} id="lawn_width_feet" type="number" class="validate">
+                        <label class="active" for="lawn_width_feet">Lawn Width Feet</label>
+                    </div>
+                    <div class="input-field col s2">
+                        <input value={{lawnDataDisplay.w2}} id="lawn_width_inches" type="number" class="validate">
+                        <label class="active" for="lawn_width_inches">Lawn Width Inches</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s2">
+                        <input value= {{lawnDataDisplay.l1}} id="lawn_length_feet" type="number" class="validate">
+                        <label class="active" for="lawn_length_feet">Lawn Length Feet</label>
+                    </div>
+                    <div class="input-field col s2">
+                        <input value={{lawnDataDisplay.l2}} id="lawn_length_inches" type="number" class="validate">
+                        <label class="active" for="lawn_length_inches">Lawn Length Inches</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s2">
+                        <input value={{lawnDataDisplay.s}} id="lawn_slope_inches" type="number" class="validate">
+                        <label class="active" for="lawn_slope_inches">Lawn Slope Inches</label>
+                    </div>
+                </div>
+            </form>
+        </div>
+    {{else}}
+        <div class="row">
+            <form class="col s12">
+                <div class="row">
+                    <div class="input-field col s2">
+                        <input value={{lawnDataDisplay.w1}} id="lawn_width_meters" type="number" class="validate">
+                        <label class="active" for="lawn_width_meters">Lawn Width {{unitsOfMeasure}}</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s2">
+                        <input value={{lawnDataDisplay.l1}} id="lawn_length_meters" type="number" class="validate">
+                        <label class="active" for="lawn_length_meters">Lawn Length {{unitsOfMeasure}}</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s2">
+                        <input value={{lawnDataDisplay.s}} id="lawn_slope_meters" type="number" class="validate">
+                        <label class="active" for="lawn_slope_meters">Lawn Slope {{unitsOfMeasure}}</label>
+                    </div>
+                </div>
+            </form>
+        </div>
+    {{/if}}
+    <div>Computed Area: {{computedArea}}</div>
+    <div id="measure-lawn-cancel" class="waves-effect waves-light btn">Cancel</div>
+    <div id="measure-lawn-back" class="waves-effect waves-light btn">Back</div>
+    <button id="lawn-measure" class="btn waves-effect waves-light" type="submit" name="action">Accept
+        <i class="mdi-content-send right"></i>
+    </button>
+    <hr>
+    <div>
+        <a href="http://www.findlotsize.com/" target="_blank">Use FindLotSize.com</a>
+
+        <p>FindLotSize is a site which allows you to find and measure the size of property. <br>
+            You can use this site to figure out lawn size by measuring just the lawn instead of the <br>
+            entire property.</p>
+    </div>
+</template>
+
