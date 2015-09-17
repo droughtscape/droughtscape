@@ -23,15 +23,43 @@
  */
 var getPosition = Utils.getPosition;
 
-Meteor.startup(function () {
-	// Dynamically resize rightBar height when window resizes.
-	// Just use the Meteor.defer() so that the DOM is fully
-	// rendered before we adjust
-	window.addEventListener('resize', function () {
-		Meteor.defer(function () {
-			_renderRightBar();
-		});
-	});
+/**
+ * _renderRightBar function
+ * Dynamically adjusts the height of the rightBar part of the app to fit the visible window less the footer (if any)
+ */
+var _renderRightBar = function _renderRightBar () {
+	var rightNav = document.getElementById('rightNav');
+	if (rightNav) {
+		var footer = document.getElementById('page-footer');
+		var footerHeight = (footer) ? footer.offsetHeight : 0;
+		var rightNavPos = getPosition(rightNav);
+		var rightNavHeight = (window.innerHeight - footerHeight) - rightNavPos.y;
+		rightNav.style.height = rightNavHeight + 'px';
+		var bottomDiv = document.getElementById('bottom-nav');
+		var aboutbtn = document.getElementById("about");
+		// magic space to get the bottom-nav into a good position relative to the bottom of the content
+		var magicSpacing = 45;
+		var bottomTop = rightNavPos.y + (rightNavHeight - (bottomDiv.offsetHeight + aboutbtn.offsetHeight + magicSpacing));
+		var spacer = document.getElementById('spacer');
+		var spacerPos = getPosition(spacer);
+		spacer.style.height = bottomTop - spacerPos.y + 'px';
+	}
+};
+
+/**
+ * _handleResizeEvent function to handle the resize event.
+ * Dynamically resize rightBar height when window resizes.
+ * Just use the Meteor.defer() so that the DOM is fully
+ * rendered before we call _renderRightBar()
+ */
+var _handleResizeEvent = Utils.createDeferredFunction(_renderRightBar);
+
+Template.rightBar.onCreated(function () {
+	window.addEventListener('resize', _handleResizeEvent);
+});
+
+Template.rightBar.onDestroyed(function () {
+	window.removeEventListener('resize', _handleResizeEvent);
 });
 
 Template.rightBar.onRendered(function () {
@@ -76,25 +104,4 @@ Template.rightBar.events({
 	}
 });
 
-/**
- * _renderRightBar function
- * Dynamically adjusts the height of the rightBar part of the app to fit the visible window less the footer (if any)
- */
-var _renderRightBar = function _renderRightBar () {
-	var rightNav = document.getElementById('rightNav');
-	if (rightNav) {
-		var footer = document.getElementById('page-footer');
-		var footerHeight = (footer) ? footer.offsetHeight : 0;
-		var rightNavPos = getPosition(rightNav);
-		var rightNavHeight = (window.innerHeight - footerHeight) - rightNavPos.y;
-		rightNav.style.height = rightNavHeight + 'px';
-		var bottomDiv = document.getElementById('bottom-nav');
-		var aboutbtn = document.getElementById("about");
-		// magic space to get the bottom-nav into a good position relative to the bottom of the content
-		var magicSpacing = 45;
-		var bottomTop = rightNavPos.y + (rightNavHeight - (bottomDiv.offsetHeight + aboutbtn.offsetHeight + magicSpacing));
-		var spacer = document.getElementById('spacer');
-		var spacerPos = getPosition(spacer);
-		spacer.style.height = bottomTop - spacerPos.y + 'px';
-	}
-};
+

@@ -46,9 +46,27 @@ watersave.anchor.y = 0.5;
 watersave.position.x = 200;
 watersave.position.y = 200;
 
+/**
+ * _renderLayout function to redraw the layout
+ * typically called from Meteor.defer so that window dimensions
+ * are already finalized and usable for scaling
+ */
+var _renderLayout = function _renderLayout () {
+	
+};
+
+/**
+ * _handleResizeEvent function to handle the resize event.
+ * Dynamically resize rightBar height when window resizes.
+ * Just use the Meteor.defer() so that the DOM is fully
+ * rendered before we call _renderRightBar()
+ */
+var _handleResizeEvent = Utils.createDeferredFunction(_renderLayout);
+
 Template.layout_lawn.onCreated(function () {
 	NavConfig.pushRightBar('rightBar', 'layout_lawn');
 	runAnimation = true;
+	window.addEventListener('resize', _handleResizeEvent);
 });
 
 Template.layout_lawn.onDestroyed(function () {
@@ -56,13 +74,12 @@ Template.layout_lawn.onDestroyed(function () {
 	// Have to stop animation and renderer
 	runAnimation = false;
 	pixiRenderer = null;
+	window.removeEventListener('resize', _handleResizeEvent);
 });
 
 Template.layout_lawn.onRendered(function () {
-	var lawnShape = CreateLawnData.createLawnShape('rectangle', [{width: 100, length: 200, slope: 0.2}]);
-	var lawnShape2 = CreateLawnData.createRectLawnShape(100, 200, 0.2);
+	var lawnShape = CreateLawnData.lawnData.shape;
 	lawnShape.printMe();
-	lawnShape2.printMe();
 	
 	// The pixiContainer state is kept between entries here but
 	// must be managed at a meta level above the create context so that we

@@ -38,15 +38,31 @@ Session.setDefault('renderView', 'splash');
 // Admin rights of logged in user
 Session.setDefault('adminRights', undefined);
 
+/**
+ * _renderContent function
+ * Dynamically adjusts the content part of the app to fit the visible window less the footer (if any)
+ */
+var _renderContent = function _renderContent() {
+	var content = document.getElementById("content");
+	if (content) {
+		var footer = document.getElementById('page-footer');
+		var footerHeight = (footer) ? footer.offsetHeight : 0;
+		var contentPos = getPosition(content);
+		var contentHeight = (window.innerHeight - footerHeight) - contentPos.y;
+		content.style.height = contentHeight + 'px';
+		//console.log('content: ' + content + ', w x h: ' + screen.width + ':' + screen.height);
+		var render = document.getElementById('render');
+		render.style.height = contentHeight + 'px';
+	}
+};
+
+var _handleResizeEvent = Utils.createDeferredFunction(_renderContent);
+
 Meteor.startup(function () {
 	// Dynamically resize content when window resizes.
 	// Just use the Meteor.defer() so that the DOM is fully
 	// rendered before we adjust
-	window.addEventListener('resize', function () {
-		Meteor.defer(function () {
-			_renderContent();
-		});
-	});
+	window.addEventListener('resize', _handleResizeEvent);
 	Accounts.onLogin(SignInUtils.getAdminRights);
 	Meteor.autorun(function () {
 		if (Meteor.userId()) {
@@ -91,24 +107,6 @@ Template.home.helpers({
 		return Session.get('rightBar');
 	}
 });
-
-/**
- * _renderContent function
- * Dynamically adjusts the content part of the app to fit the visible window less the footer (if any)
- */
-var _renderContent = function _renderContent() {
-	var content = document.getElementById("content");
-	if (content) {
-		var footer = document.getElementById('page-footer');
-		var footerHeight = (footer) ? footer.offsetHeight : 0;
-		var contentPos = getPosition(content);
-		var contentHeight = (window.innerHeight - footerHeight) - contentPos.y;
-		content.style.height = contentHeight + 'px';
-		//console.log('content: ' + content + ', w x h: ' + screen.width + ':' + screen.height);
-		var render = document.getElementById('render');
-		render.style.height = contentHeight + 'px';
-	}
-};
 
 Template.home.onRendered(function () {
 	$(document).ready(function () {
