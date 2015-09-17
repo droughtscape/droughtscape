@@ -39,3 +39,11 @@
         <div style="display: table-cell; {{userColor}}">{{userName}}</div>
     </div>
 </template>
+
+<!--Allow positioning a toast centered within a enclosing div-->
+<template name="toaster">
+    <div id="toast-container" style="position: relative; top: {{offset}}; margin: 0 auto; height: auto; width: 400px; align-self: center">
+
+    </div>
+</template>
+

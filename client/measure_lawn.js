@@ -44,6 +44,11 @@ var _updateLawns = function _updateLawns(myLawns, lawn) {
 	}
 };
 
+/**
+ * _updateShapeDims function var with the generic behavior to update shape dimensions
+ * as appropriate to the given shape.  We assign shape specific functions to this
+ * @return {boolean} true if ok, false if there is a problem
+ */
 var _updateShapeDims;
 
 Template.measure_lawn.helpers({
@@ -95,41 +100,46 @@ Template.measure_lawn.events({
 	},
 	'click #lawn-measure': function () {
 		console.log('lawn-measure clicked');
-		_updateShapeDims();
 		console.log('lawnData: ' + CreateLawnData.lawnData);
-
-		var user = Meteor.user();
-		var userEmail = user.emails[0].address;
-		// See if we already have a profile, if so, look for myLawns, if not create one
-		var dsUsers = DroughtscapeUsers.find({});
-		var dsUsersArray = dsUsers.fetch();
-		if (dsUsersArray.length > 0) {
-			var updated = null;
-			for (var i = 0, len = dsUsersArray.length; i < len; ++i) {
-				if (dsUsersArray[i].user === userEmail) {
-					// found us, update
-					if (!dsUsersArray[i].myLawns) {
-						dsUsersArray[i].myLawns = [];
+		if (_updateShapeDims()) {
+			var user = Meteor.user();
+			var userEmail = user.emails[0].address;
+			// See if we already have a profile, if so, look for myLawns, if not create one
+			var dsUsers = DroughtscapeUsers.find({});
+			var dsUsersArray = dsUsers.fetch();
+			if (dsUsersArray.length > 0) {
+				var updated = null;
+				for (var i = 0, len = dsUsersArray.length; i < len; ++i) {
+					if (dsUsersArray[i].user === userEmail) {
+						// found us, update
+						if (!dsUsersArray[i].myLawns) {
+							dsUsersArray[i].myLawns = [];
+						}
+						_updateLawns(dsUsersArray[i].myLawns, CreateLawnData.lawnData);
+						updated = dsUsersArray[i];
+						break;
 					}
-					_updateLawns(dsUsersArray[i].myLawns, CreateLawnData.lawnData);
-					updated = dsUsersArray[i];
-					break;
+				}
+				if (!updated) {
+					// user not found, add
+					_insertFirstItem(userEmail, CreateLawnData.lawnData);
+				}
+				else {
+					DroughtscapeUsers.update(updated._id, updated);
 				}
 			}
-			if (!updated) {
-				// user not found, add
+			else {
+				// No users so add us here
 				_insertFirstItem(userEmail, CreateLawnData.lawnData);
 			}
-			else {
-				DroughtscapeUsers.update(updated._id, updated);
-			}
+			Session.set('renderView', 'build_lawn');
+			//currentCreateState.set('build_lawn');
 		}
 		else {
-			// No users so add us here
-			_insertFirstItem(userEmail, CreateLawnData.lawnData);
+			// send an alert toast and stay here.  If the user wants to abort or go back, 
+			// they can use the appropriate buttons
+			Materialize.toast('Zero width or length!', 3000, 'rounded red-text');
 		}
-		Session.set('renderView', 'build_lawn');
-		//currentCreateState.set('build_lawn');
 	}
 });
 
@@ -138,6 +148,10 @@ var _getRectDims = function _getRectDims() {
 	return rectShape.edgeArray[0];
 };
 
+/**
+ * _updateRectDims function specific to rectangular lawns, updates shape dimensions
+ * @return {boolean} true if ok, false if there is a problem, like 0 width, 0 length
+ */
 var _updateRectDims = function _updateRectDims () {
 	var rectDims = _getRectDims();
 	if (Session.get('userUnitsOfMeasure') === 'English') {
@@ -153,6 +167,7 @@ var _updateRectDims = function _updateRectDims () {
 		rectDims.slope = document.getElementById('lawn_slope_meters').value;
 	}
 	Session.set('computedArea', Number(rectDims.width) * Number(rectDims.length));
+	return !(rectDims.width == 0 || rectDims.length == 0);
 };
 
 Template.measure_rectangle_lawn.helpers({
@@ -205,8 +220,10 @@ Template.measure_rectangle_lawn.events({
 
 var _updateCornerDims = function _updateCornerDims () {
 	// TBD
+	return false;
 };
 
 var _updateCustomDims = function _updateCustomDims () {
 	// TBD
+	return false;
 };
