@@ -27,6 +27,10 @@
 var pixiContainer = null;
 var pixiRenderer = null;
 var runAnimation = false;
+/**
+ * pixiAnimate function to furnish animation energy using requestAnimationFrame()
+ * Currently this just animates a test case.
+ */
 var pixiAnimate = function pixiAnimate () {
 	if (runAnimation) {
 		requestAnimationFrame(pixiAnimate);
