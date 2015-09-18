@@ -63,6 +63,18 @@ var render = function render () {
 var testMode = true;
 Template.render_lawn.onRendered(function () {
 	var geometry, material;
+	var infoContainer = document.getElementById('info-container');
+	var offset = infoContainer.offsetTop + infoContainer.clientHeight;
+	var renderCanvas = document.getElementById('render-canvas');
+	var renderContainer = document.getElementById('render-div-container');
+	var width = (renderContainer) ? renderContainer.clientWidth : 800;
+	var height = (renderContainer) ? renderContainer.clientHeight : 600;
+	height -= offset;
+	console.log('BEFORE renderCanvas.height: ' + renderCanvas.height);
+	renderCanvas.height = height;
+	renderCanvas.width = width;
+	console.log('AFTER renderCanvas.height: ' + renderCanvas.height);
+	
 	if (testMode) {
 		if (threeScene === null) {
 			threeScene = new THREE.Scene();
@@ -94,7 +106,6 @@ Template.render_lawn.onRendered(function () {
 			threeScene = new THREE.Scene();
 			//threeScene.add(threeCamera);
 			//threeRenderer.setSize(WIDTH, HEIGHT);
-			//var render = document.getElementById('render-canvas');
 			//render.appendChild(threeRenderer.domElement);
 			//document.body.appendChild(threeRenderer.domElement);
 			geometry = new THREE.BoxGeometry( 1, 1, 1 );
