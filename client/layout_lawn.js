@@ -85,6 +85,9 @@ Template.layout_lawn.onRendered(function () {
 	var lawnShape = CreateLawnData.lawnData.shape;
 	lawnShape.printMe();
 	
+	var infoContainer = document.getElementById('info-container');
+	var offset = infoContainer.offsetTop + infoContainer.clientHeight;
+	
 	// The pixiContainer state is kept between entries here but
 	// must be managed at a meta level above the create context so that we
 	// can distinguish between:
@@ -101,13 +104,16 @@ Template.layout_lawn.onRendered(function () {
 		var layoutContainer = document.getElementById('layout-div-container');
 		var width = (layoutContainer) ? layoutContainer.clientWidth : 800;
 		var height = (layoutContainer) ? layoutContainer.clientHeight : 600;
+		height -= offset;
 		pixiRenderer = PIXI.autoDetectRenderer(width,
 			height,
 			{view:layout}
 		);
-		//document.body.appendChild(pixiRenderer.view);
 		requestAnimationFrame(pixiAnimate);
 	}
+	// By here the pixiRenderer is set and has the correct pixel render area
+	var dims = CreateLawnData.lawnData.shape.dims;
+	var bestFit = Utils.computeLayoutFrame(dims.width, dims.length, pixiRenderer.width, pixiRenderer.height);
 	console.log('layout_lawn.onRendered, pixiRenderer: ' + pixiRenderer);
 });
 

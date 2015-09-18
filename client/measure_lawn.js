@@ -145,7 +145,7 @@ Template.measure_lawn.events({
 
 var _getRectDims = function _getRectDims() {
 	var rectShape = CreateLawnData.lawnData.shape;
-	return rectShape.edgeArray[0];
+	return rectShape.dims;
 };
 
 /**
