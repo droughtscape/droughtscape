@@ -40,9 +40,27 @@ var threeAnimate = function threeAnimate () {
 	}
 };
 
+/**
+ * _renderRender function to redraw the render
+ * typically called from Meteor.defer so that window dimensions
+ * are already finalized and usable for scaling
+ */
+var _renderRender = function _renderRender () {
+	
+};
+
+/**
+ * _handleResizeEvent function to handle the resize event.
+ * Dynamically resize rightBar height when window resizes.
+ * Just use the Meteor.defer() so that the DOM is fully
+ * rendered before we call _renderRightBar()
+ */
+var _handleResizeEvent = Utils.createDeferredFunction(_renderRender);
+
 Template.render_lawn.onCreated(function () {
 	NavConfig.pushRightBar('rightBar', 'render_lawn');
 	runAnimation = true;
+	window.addEventListener('resize', _handleResizeEvent);
 });
 
 Template.render_lawn.onDestroyed(function () {
@@ -51,8 +69,13 @@ Template.render_lawn.onDestroyed(function () {
 	threeRenderer = null;
 	threeScene = null;
 	runAnimation = false
+	window.removeEventListener('resize', _handleResizeEvent);
 });
 
+/**
+ * render function to furnish animation energy using requestAnimationFrame()
+ * Currently this just animates a test case.
+ */
 var render = function render () {
 	requestAnimationFrame( render );
 	cube.rotation.x += 0.1;
@@ -61,19 +84,20 @@ var render = function render () {
 };
 
 var testMode = true;
+
 Template.render_lawn.onRendered(function () {
 	var geometry, material;
 	var infoContainer = document.getElementById('info-container');
+	// compute offset occupied by the infoContainer
 	var offset = infoContainer.offsetTop + infoContainer.clientHeight;
 	var renderCanvas = document.getElementById('render-canvas');
 	var renderContainer = document.getElementById('render-div-container');
 	var width = (renderContainer) ? renderContainer.clientWidth : 800;
 	var height = (renderContainer) ? renderContainer.clientHeight : 600;
+	// adjust canvas height by offset to account for infoContainer 
 	height -= offset;
-	console.log('BEFORE renderCanvas.height: ' + renderCanvas.height);
 	renderCanvas.height = height;
 	renderCanvas.width = width;
-	console.log('AFTER renderCanvas.height: ' + renderCanvas.height);
 	
 	if (testMode) {
 		if (threeScene === null) {
