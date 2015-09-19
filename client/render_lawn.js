@@ -68,7 +68,7 @@ Template.render_lawn.onDestroyed(function () {
 	threeCamera = null;
 	threeRenderer = null;
 	threeScene = null;
-	runAnimation = false
+	runAnimation = false;
 	window.removeEventListener('resize', _handleResizeEvent);
 });
 
@@ -84,6 +84,15 @@ var render = function render () {
 };
 
 var testMode = true;
+
+/**
+ * getRenderer function to return proper WebGL or Canvas renderer, setting the passed in canvas into the renderer
+ * @param {object} canvas html canvas to use
+ * @returns {object} Appropriate threejs renderer
+ */
+var getRenderer = function getRenderer (canvas) {
+	return Detector.webgl? new THREE.WebGLRenderer({canvas: canvas}): new THREE.CanvasRenderer({canvas: canvas});
+};
 
 Template.render_lawn.onRendered(function () {
 	var geometry, material;
@@ -107,7 +116,7 @@ Template.render_lawn.onRendered(function () {
 			threeCamera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR);
 		}
 		if (threeRenderer === null) {
-			threeRenderer = new THREE.WebGLRenderer({canvas: document.getElementById('render-canvas')});
+			threeRenderer = getRenderer(renderCanvas);
 		}
 		//renderer.setSize(window.innerWidth, window.innerHeight);
 		//document.body.appendChild(renderer.domElement);
@@ -123,7 +132,7 @@ Template.render_lawn.onRendered(function () {
 	}
 	else {
 		if (threeRenderer === null) {
-			threeRenderer = new THREE.WebGLRenderer({canvas: document.getElementById('render-canvas')});
+			threeRenderer = getRenderer(renderCanvas);
 			threeCamera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR);
 		}
 		if (threeScene === null) {
