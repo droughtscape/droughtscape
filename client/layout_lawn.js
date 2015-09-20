@@ -50,6 +50,7 @@ watersave.anchor.y = 0.5;
 watersave.position.x = 200;
 watersave.position.y = 200;
 var layoutFrame = new PixiLayout.LayoutFrame();
+var testMode = false;
 
 /**
  * _renderLayout function to redraw the layout
@@ -95,8 +96,13 @@ Template.layout_lawn.onRendered(function () {
 	// 1. entering a new lawn create/open sequence
 	// 2. bouncing between layout/render of the current lawn sequence
 	if (pixiContainer === null) {
-		pixiContainer = new PIXI.Container();
-		pixiContainer.addChild(watersave);
+		if (!testMode) {
+			pixiContainer = layoutFrame.getLayoutFrame();
+		}
+		else {
+			pixiContainer = new PIXI.Container();
+			pixiContainer.addChild(watersave);
+		}
 	}
 	// See onDestroyed() which is stopping animation and clearing pixiRenderer
 	// => every time we enter onRendered(), pixiRenderer should be null

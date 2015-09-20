@@ -30,9 +30,9 @@ PixiLayout = (function () {
 		FitTypeY:	2
 	};
 	var _colorTextures = {};
-	function _getTexture(color) {
+	var _getTexture = function _getTexture(color) {
 		if(_colorTextures[color] === undefined) {
-			var canvas = document.createElement('canvas')
+			var canvas = document.createElement('canvas');
 			canvas.width = 1;
 			canvas.height = 1;
 			ctx = canvas.getContext('2d');
@@ -46,6 +46,8 @@ PixiLayout = (function () {
 		return _colorTextures[color];
 	};
 	var _rectangle = function _rectangle( x, y, width, height, backgroundColor, borderColor, borderWidth ) {
+		console.log('PixiLayout._rectangle(' + x + ', ' + y + ', ' + width + ', ' + height +
+			', ' + backgroundColor + ', ' + borderColor + ', ' + borderWidth);
 		var box = new PIXI.Container();
 		var border = new PIXI.Sprite(_getTexture(borderColor));
 		border.width = width;
@@ -67,22 +69,33 @@ PixiLayout = (function () {
 	 * LayoutFrame class furnishing the basic framing data/methods
 	 */
 	var LayoutFrame = function LayoutFrame () {
+		var self = this;
+		self.layoutFrame = _rectangle(100, 100, 100, 100, 0xFFFFFF, 0xFF0000, 10);
+		/**
+		 * gets the PIXI layoutFrame
+		 * @memberof PixiLayout
+		 * @method getLayoutFrame
+		 * @return {object} pixi layout frame container
+		 */
+		LayoutFrame.prototype.getLayoutFrame = function getLayoutFrame () {
+			return self.layoutFrame;
+		};
 		/**
 		 * zooms the frame
 		 * @memberof PixiLayout
 		 * @method zoom
 		 * @param {number} scale scale factor to zoom
 		 */		
-		LayoutFrame.prototype.zoom = function (scale) { console.log('LayoutFrame.prototype.zoom: ' + scale);};
+		LayoutFrame.prototype.zoom = function zoom (scale) { console.log('LayoutFrame.prototype.zoom: ' + scale);};
 		/**
 		 * fits the frame
 		 * @memberof PixiLayout
 		 * @method fit
 		 * @param {number} fitMode type of fit for the frame acceptable values FitType 
 		 */
-		LayoutFrame.prototype.fit = function (fitMode) {
+		LayoutFrame.prototype.fit = function fit (fitMode) {
 			console.log('LayoutFrame.prototype.fit: ' + fitMode);
-			var box = _rectangle(0,0,100,100,0xFFFFFF, 0x000000, 10);
+			//var box = _rectangle(0,0,100,100,0xFFFFFF, 0x000000, 10);
 		};
 		/**
 		 * pans the frame
@@ -91,7 +104,7 @@ PixiLayout = (function () {
 		 * @param {number} dx amount to shift in x
 		 * @param {number} dy amount to shift in y
 		 */
-		LayoutFrame.prototype.pan = function (dx, dy) {};
+		LayoutFrame.prototype.pan = function pan (dx, dy) {};
 	};
 	
 	return {
