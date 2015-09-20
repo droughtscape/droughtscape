@@ -49,6 +49,7 @@ watersave.anchor.x = 0.5;
 watersave.anchor.y = 0.5;
 watersave.position.x = 200;
 watersave.position.y = 200;
+var layoutFrame = new PixiLayout.LayoutFrame();
 
 /**
  * _renderLayout function to redraw the layout
@@ -56,7 +57,7 @@ watersave.position.y = 200;
  * are already finalized and usable for scaling
  */
 var _renderLayout = function _renderLayout () {
-	
+	layoutFrame.fit(PixiLayout.FitType.FitTypeXY);
 };
 
 /**
