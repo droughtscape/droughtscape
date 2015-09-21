@@ -29,6 +29,10 @@ PixiLayout = (function () {
 		FitTypeX:	1,
 		FitTypeY:	2
 	};
+	var _pixiRenderer = null;
+	var _setRenderer = function _setRenderer(pixiRenderer) {
+		_pixiRenderer = pixiRenderer;
+	};
 	var _colorTextures = {};
 	var _getTexture = function _getTexture(color) {
 		if(_colorTextures[color] === undefined) {
@@ -45,15 +49,18 @@ PixiLayout = (function () {
 		}
 		return _colorTextures[color];
 	};
+	var border;
+	var background;
+	
 	var _rectangle = function _rectangle( x, y, width, height, backgroundColor, borderColor, borderWidth ) {
 		console.log('PixiLayout._rectangle(' + x + ', ' + y + ', ' + width + ', ' + height +
 			', ' + backgroundColor + ', ' + borderColor + ', ' + borderWidth);
 		var box = new PIXI.Container();
-		var border = new PIXI.Sprite(_getTexture(borderColor));
+		border = new PIXI.Sprite(_getTexture(borderColor));
 		border.width = width;
 		border.height = height;
 		box.addChild(border);
-		var background = new PIXI.Sprite(_getTexture(backgroundColor));
+		background = new PIXI.Sprite(_getTexture(backgroundColor));
 		background.width = width - 2 * borderWidth;
 		background.height = height - 2 * borderWidth;
 		background.position.x = borderWidth;
@@ -64,13 +71,37 @@ PixiLayout = (function () {
 		return box;
 	};
 	
+	var _modifyRectangle = function _modifyRectangle(rectangle, x, y, width, height, borderWidth) {
+		border.width = width;
+		border.height = height;
+		background.width = width - 2 * borderWidth;
+		background.height = height - 2 * borderWidth;
+		background.position.x = borderWidth;
+		background.position.y = borderWidth;
+		rectangle.position.x = x;
+		rectangle.position.y = y;
+	};
+	
+	var _rectanglex = function ( x, y, width, height, backgroundColor, borderColor, borderWidth ) {
+		console.log('PixiLayout._rectangle(' + x + ', ' + y + ', ' + width + ', ' + height +
+			', ' + backgroundColor + ', ' + borderColor + ', ' + borderWidth);
+		var box = new PIXI.Graphics();
+		box.lineStyle(borderWidth, borderColor, 1.0);
+		box.moveTo(0,0);
+		box.lineTo(200,0);
+		box.lineTo(200,100);
+		box.lineTo(0,100);
+		box.lineTo(0,0);
+		return box;
+	};
+	
 	/**
 	 * @namespace PixiLayout
 	 * LayoutFrame class furnishing the basic framing data/methods
 	 */
 	var LayoutFrame = function LayoutFrame () {
 		var self = this;
-		self.layoutFrame = _rectangle(100, 100, 100, 100, 0xFFFFFF, 0xFF0000, 10);
+		self.layoutFrame = _rectangle(0, 0, 100, 100, 0xFFFFFF, 0xFF0000, 10);
 		/**
 		 * gets the PIXI layoutFrame
 		 * @memberof PixiLayout
@@ -95,6 +126,17 @@ PixiLayout = (function () {
 		 */
 		LayoutFrame.prototype.fit = function fit (fitMode) {
 			console.log('LayoutFrame.prototype.fit: ' + fitMode);
+			if (false &&_pixiRenderer) {
+				var dims = CreateLawnData.lawnData.shape.dims;
+				var bestFit = Utils.computeLayoutFrame(dims.width, dims.length, _pixiRenderer.width, _pixiRenderer.height);
+				self.layoutFrame.width = bestFit.width;
+				self.layoutFrame.height = bestFit.height;
+			}
+			else {
+				_modifyRectangle(self.layoutFrame, 0, 0, (border.width === 200) ? 100 : 200, 300, 4);
+				//border.width = (border.width === 200) ? 100 : 200;
+				//self.layoutFrame.graphicsData[0].shape.points[2] = 400;
+			}
 			//var box = _rectangle(0,0,100,100,0xFFFFFF, 0x000000, 10);
 		};
 		/**
@@ -109,6 +151,7 @@ PixiLayout = (function () {
 	
 	return {
 		FitType: FitType,
+		setRenderer: _setRenderer,
 		LayoutFrame: LayoutFrame
 	};
 })();

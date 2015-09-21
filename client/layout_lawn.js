@@ -116,9 +116,12 @@ Template.layout_lawn.onRendered(function () {
 			height,
 			{view:layout}
 		);
+		PixiLayout.setRenderer(pixiRenderer);
+		// By here the pixiRenderer is set and has the correct pixel render area
+		_renderLayout();
+		
 		requestAnimationFrame(pixiAnimate);
 	}
-	// By here the pixiRenderer is set and has the correct pixel render area
 	var dims = CreateLawnData.lawnData.shape.dims;
 	var bestFit = Utils.computeLayoutFrame(dims.width, dims.length, pixiRenderer.width, pixiRenderer.height);
 	console.log('layout_lawn.onRendered, pixiRenderer: ' + pixiRenderer);
