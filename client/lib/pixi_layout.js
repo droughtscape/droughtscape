@@ -51,7 +51,7 @@ PixiLayout = (function () {
 	};
 	var border;
 	var background;
-	
+
 	var _rectangle = function _rectangle( x, y, width, height, backgroundColor, borderColor, borderWidth ) {
 		console.log('PixiLayout._rectangle(' + x + ', ' + y + ', ' + width + ', ' + height +
 			', ' + backgroundColor + ', ' + borderColor + ', ' + borderWidth);
@@ -70,7 +70,7 @@ PixiLayout = (function () {
 		box.position.y = y;
 		return box;
 	};
-	
+
 	var _modifyRectangle = function _modifyRectangle(rectangle, x, y, width, height, borderWidth) {
 		border.width = width;
 		border.height = height;
@@ -81,7 +81,7 @@ PixiLayout = (function () {
 		rectangle.position.x = x;
 		rectangle.position.y = y;
 	};
-	
+
 	var _rectanglex = function ( x, y, width, height, backgroundColor, borderColor, borderWidth ) {
 		console.log('PixiLayout._rectangle(' + x + ', ' + y + ', ' + width + ', ' + height +
 			', ' + backgroundColor + ', ' + borderColor + ', ' + borderWidth);
@@ -94,7 +94,7 @@ PixiLayout = (function () {
 		box.lineTo(0,0);
 		return box;
 	};
-	
+
 	/**
 	 * @namespace PixiLayout
 	 * LayoutFrame class furnishing the basic framing data/methods
@@ -116,21 +116,35 @@ PixiLayout = (function () {
 		 * @memberof PixiLayout
 		 * @method zoom
 		 * @param {number} scale scale factor to zoom
-		 */		
+		 */
 		LayoutFrame.prototype.zoom = function zoom (scale) { console.log('LayoutFrame.prototype.zoom: ' + scale);};
 		/**
 		 * fits the frame
 		 * @memberof PixiLayout
 		 * @method fit
-		 * @param {number} fitMode type of fit for the frame acceptable values FitType 
+		 * @param {number} fitMode type of fit for the frame acceptable values FitType
 		 */
 		LayoutFrame.prototype.fit = function fit (fitMode) {
 			console.log('LayoutFrame.prototype.fit: ' + fitMode);
-			if (false &&_pixiRenderer) {
+			if (_pixiRenderer) {
 				var dims = CreateLawnData.lawnData.shape.dims;
-				var bestFit = Utils.computeLayoutFrame(dims.width, dims.length, _pixiRenderer.width, _pixiRenderer.height);
-				self.layoutFrame.width = bestFit.width;
-				self.layoutFrame.height = bestFit.height;
+				switch (fitMode) {
+				case PixiLayout.FitType.FitTypeXY:
+					var bestFit = Utils.computeLayoutFrame(dims.width, dims.length, _pixiRenderer.width, _pixiRenderer.height);
+					_modifyRectangle(self.layoutFrame, 0, 0, bestFit.widthPixels, bestFit.lengthPixels, 4);
+					break;
+				case PixiLayout.FitType.FitTypeX:
+					var lengthPixels = (dims.length * _pixiRenderer.width) / dims.width;
+					_modifyRectangle(self.layoutFrame, 0, 0, _pixiRenderer.width, lengthPixels, 4);
+					break;
+				case PixiLayout.FitType.FitTypeY:
+					var widthPixels = (dims.width * _pixiRenderer.height) / dims.length;
+					_modifyRectangle(self.layoutFrame, 0, 0, widthPixels, _pixiRenderer.height, 4);
+					break;
+				default :
+					// error, no effect
+					break;
+				}
 			}
 			else {
 				_modifyRectangle(self.layoutFrame, 0, 0, (border.width === 200) ? 100 : 200, 300, 4);

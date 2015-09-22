@@ -51,14 +51,27 @@ watersave.position.x = 200;
 watersave.position.y = 200;
 var layoutFrame = new PixiLayout.LayoutFrame();
 var testMode = false;
-
+var testFit = true;
+var defaultFitMode = PixiLayout.FitType.FitTypeXY;
 /**
  * _renderLayout function to redraw the layout
  * typically called from Meteor.defer so that window dimensions
  * are already finalized and usable for scaling
  */
 var _renderLayout = function _renderLayout () {
-	layoutFrame.fit(PixiLayout.FitType.FitTypeXY);
+	layoutFrame.fit(defaultFitMode);
+	if (testFit) {
+		switch (defaultFitMode) {
+		case PixiLayout.FitType.FitTypeX:
+			defaultFitMode = PixiLayout.FitType.FitTypeY;
+			break;
+		case PixiLayout.FitType.FitTypeXY:
+			defaultFitMode = PixiLayout.FitType.FitTypeX;
+			break;
+		case PixiLayout.FitType.FitTypeY:
+			defaultFitMode = PixiLayout.FitType.FitTypeXY;
+		}
+	}
 };
 
 /**
