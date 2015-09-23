@@ -51,6 +51,14 @@ var _updateLawns = function _updateLawns(myLawns, lawn) {
  */
 var _updateShapeDims;
 
+Template.measure_lawn.onCreated(function () {
+	NavConfig.pushEmptyRightBar();
+});
+
+Template.measure_lawn.onDestroyed(function () {
+	NavConfig.popRightBar();
+});
+
 Template.measure_lawn.helpers({
 	measureLawnShape: function () {
 		var lawnTemplate = null;

@@ -51,7 +51,7 @@ watersave.position.x = 200;
 watersave.position.y = 200;
 var layoutFrame = new PixiLayout.LayoutFrame();
 var testMode = false;
-var testFit = true;
+var testFit = false;
 var defaultFitMode = PixiLayout.FitType.FitTypeXY;
 /**
  * _renderLayout function to redraw the layout
@@ -135,8 +135,6 @@ Template.layout_lawn.onRendered(function () {
 		
 		requestAnimationFrame(pixiAnimate);
 	}
-	var dims = CreateLawnData.lawnData.shape.dims;
-	var bestFit = Utils.computeLayoutFrame(dims.width, dims.length, pixiRenderer.width, pixiRenderer.height);
 	console.log('layout_lawn.onRendered, pixiRenderer: ' + pixiRenderer);
 });
 

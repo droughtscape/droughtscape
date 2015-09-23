@@ -33,7 +33,6 @@ Session.setDefault('computedArea', 0);
 
 Template.create.onCreated(function(){
 	console.log('Template.create.onCreated');
-	//NavConfig.pushRightBar('rightBar', 'parts');
 	// Cannot set onbeforeunload here since when we transition to shape_lawn,
 	// we call create.onDestroyed would immediately unload.  Best place so far
 	// is in the home.onCreated, home.onDestroyed template since that contains the renderView
@@ -95,10 +94,13 @@ var handleLawnShapeMessages = function handleLawnShapeMessages (message) {
 
 Template.shape_lawn.onCreated(function () {
 	CreateLawnData.createLawnShapeTemplate('rectangle');
+	// remove right bar from this frame
+	NavConfig.pushEmptyRightBar();
 	unsubscribe = MBus.subscribe('carousel', handleLawnShapeMessages);
 });
 
 Template.shape_lawn.onDestroyed(function () {
+	NavConfig.popRightBar();
 	unsubscribe.remove();
 });
 
@@ -161,10 +163,12 @@ var handleBuildLawnTemplateMessages = function handleBuildLawnTemplateMessages (
 };
 
 Template.build_lawn.onCreated(function () {
+	NavConfig.pushEmptyRightBar();
 	buildLawnUnsubscribe = MBus.subscribe('carousel', handleBuildLawnTemplateMessages);
 });
 
 Template.build_lawn.onDestroyed(function() {
+	NavConfig.popRightBar();
 	buildLawnUnsubscribe.remove();
 });
 

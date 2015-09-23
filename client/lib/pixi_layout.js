@@ -82,19 +82,6 @@ PixiLayout = (function () {
 		rectangle.position.y = y;
 	};
 
-	var _rectanglex = function ( x, y, width, height, backgroundColor, borderColor, borderWidth ) {
-		console.log('PixiLayout._rectangle(' + x + ', ' + y + ', ' + width + ', ' + height +
-			', ' + backgroundColor + ', ' + borderColor + ', ' + borderWidth);
-		var box = new PIXI.Graphics();
-		box.lineStyle(borderWidth, borderColor, 1.0);
-		box.moveTo(0,0);
-		box.lineTo(200,0);
-		box.lineTo(200,100);
-		box.lineTo(0,100);
-		box.lineTo(0,0);
-		return box;
-	};
-
 	/**
 	 * @namespace PixiLayout
 	 * LayoutFrame class furnishing the basic framing data/methods
@@ -127,31 +114,40 @@ PixiLayout = (function () {
 		LayoutFrame.prototype.fit = function fit (fitMode) {
 			console.log('LayoutFrame.prototype.fit: ' + fitMode);
 			if (_pixiRenderer) {
+				// set some locals and set defaults
+				var pixiRenderWidth = _pixiRenderer.width;
+				var pixiRenderHeight = _pixiRenderer.height;
 				var dims = CreateLawnData.lawnData.shape.dims;
+				var x = 0, y = 0;
+				var bestFit = {widthPixels: pixiRenderWidth, lengthPixels: pixiRenderHeight};
+				// based on fitMode, adjust values, then modify the fitted frame
 				switch (fitMode) {
 				case PixiLayout.FitType.FitTypeXY:
-					var bestFit = Utils.computeLayoutFrame(dims.width, dims.length, _pixiRenderer.width, _pixiRenderer.height);
-					_modifyRectangle(self.layoutFrame, 0, 0, bestFit.widthPixels, bestFit.lengthPixels, 4);
+					bestFit = Utils.computeLayoutFrame(dims.width, dims.length, pixiRenderWidth, pixiRenderHeight);
+					// center layout frame in renderer
+					x = (pixiRenderWidth - bestFit.widthPixels)/2;
+					y = (pixiRenderHeight - bestFit.lengthPixels)/2;
 					break;
 				case PixiLayout.FitType.FitTypeX:
-					var lengthPixels = (dims.length * _pixiRenderer.width) / dims.width;
-					_modifyRectangle(self.layoutFrame, 0, 0, _pixiRenderer.width, lengthPixels, 4);
+					bestFit.lengthPixels = (dims.length * pixiRenderWidth) / dims.width;
+					// center layout frame in renderer
+					y = (pixiRenderHeight - lengthPixels)/2;
 					break;
 				case PixiLayout.FitType.FitTypeY:
-					var widthPixels = (dims.width * _pixiRenderer.height) / dims.length;
-					_modifyRectangle(self.layoutFrame, 0, 0, widthPixels, _pixiRenderer.height, 4);
+					bestFit.widthPixels = (dims.width * pixiRenderHeight) / dims.length;
+					// center layout frame in renderer
+					x = (pixiRenderWidth - widthPixels)/2;
 					break;
 				default :
 					// error, no effect
 					break;
 				}
+				_modifyRectangle(self.layoutFrame, x, y, bestFit.widthPixels, bestFit.lengthPixels, 4);
 			}
 			else {
-				_modifyRectangle(self.layoutFrame, 0, 0, (border.width === 200) ? 100 : 200, 300, 4);
-				//border.width = (border.width === 200) ? 100 : 200;
-				//self.layoutFrame.graphicsData[0].shape.points[2] = 400;
+				// really an error since there is no renderer but just in case we get invoked too soon noop this
+				//_modifyRectangle(self.layoutFrame, 0, 0, (border.width === 200) ? 100 : 200, 300, 4);
 			}
-			//var box = _rectangle(0,0,100,100,0xFFFFFF, 0x000000, 10);
 		};
 		/**
 		 * pans the frame

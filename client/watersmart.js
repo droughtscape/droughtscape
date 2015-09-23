@@ -54,7 +54,7 @@ var tickleCenterMe = function tickleCenterMe () {
 };
 
 Template.watersmart.onCreated(function () {
-	NavConfig.pushRightBar('', '');
+	NavConfig.pushEmptyRightBar();
 });
 
 Template.watersmart.onDestroyed(function () {
