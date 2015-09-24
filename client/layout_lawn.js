@@ -27,6 +27,8 @@
 var pixiContainer = null;
 var pixiRenderer = null;
 var runAnimation = false;
+Session.setDefault('gridEnabled', true);
+
 /**
  * pixiAnimate function to furnish animation energy using requestAnimationFrame()
  * Currently this just animates a test case.
@@ -136,5 +138,40 @@ Template.layout_lawn.onRendered(function () {
 		requestAnimationFrame(pixiAnimate);
 	}
 	console.log('layout_lawn.onRendered, pixiRenderer: ' + pixiRenderer);
+});
+
+var _settings = {gridEnabled: Session.get('gridEnabled')};
+
+Template.layout_settings.onCreated(function () {
+	NavConfig.pushEmptyRightBar();
+});
+
+Template.layout_settings.onDestroyed(function () {
+	NavConfig.popRightBar();
+});
+
+Template.layout_settings.helpers({
+	gridStateOn: function () {
+		return (Session.get('gridEnabled')) ? 'checked' : '';
+	},
+	gridStateOff: function () {
+		return (Session.get('gridEnabled')) ? '' : 'checked';
+	}
+});
+
+Template.layout_settings.events({
+	'click #grid-on': function () {
+		_settings.gridEnabled = true;
+	},
+	'click #grid-off': function () {
+		_settings.gridEnabled = false;
+	},
+	'click #layout-settings-cancel': function () {
+		Session.set('renderView', 'layout_lawn');
+	},
+	'click #layout-settings-accept': function () {
+		Session.set('gridEnabled', _settings.gridEnabled);
+		Session.set('renderView', 'layout_lawn');
+	}
 });
 
