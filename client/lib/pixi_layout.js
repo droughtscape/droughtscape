@@ -51,6 +51,7 @@ PixiLayout = (function () {
 	};
 	var border;
 	var background;
+	var grid;
 
 	var _rectangle = function _rectangle( x, y, width, height, backgroundColor, borderColor, borderWidth ) {
 		console.log('PixiLayout._rectangle(' + x + ', ' + y + ', ' + width + ', ' + height +
@@ -66,6 +67,9 @@ PixiLayout = (function () {
 		background.position.x = borderWidth;
 		background.position.y = borderWidth;
 		box.addChild(background);
+		// gridding?
+		grid = new PIXI.Graphics();
+		box.addChild(grid);
 		box.position.x = x;
 		box.position.y = y;
 		return box;
@@ -157,6 +161,24 @@ PixiLayout = (function () {
 		 * @param {number} dy amount to shift in y
 		 */
 		LayoutFrame.prototype.pan = function pan (dx, dy) {};
+		/**
+		 * draws a grid with xy spacing in the frame.  spacing is in cm
+		 * @memberof PixiLayout
+		 * @method drawGrid
+		 * @param {number} spacing - grid spacing in cm
+		 */
+		LayoutFrame.prototype.drawGrid = function drawGrid (spacing) {
+			// pixel positions
+			var startX = background.position.x;
+			var startY = background.position.y;
+			var gridPixelSpacing = 10;
+			// real world coords
+			var gridStartX = 0, gridStartY = 0;
+			grid.beginFill(0x00FF00);
+			for (var i= 0, stop = 100; i < stop; i += gridPixelSpacing) {
+				grid.drawCircle(startX + i, startY, 1);
+			}
+		}
 	};
 	
 	return {
