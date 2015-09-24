@@ -28,6 +28,8 @@ var pixiContainer = null;
 var pixiRenderer = null;
 var runAnimation = false;
 Session.setDefault('gridEnabled', true);
+// this is always in cm
+Session.setDefault('gridSpacing', 24);
 
 /**
  * pixiAnimate function to furnish animation energy using requestAnimationFrame()
@@ -140,10 +142,18 @@ Template.layout_lawn.onRendered(function () {
 	console.log('layout_lawn.onRendered, pixiRenderer: ' + pixiRenderer);
 });
 
-var _settings = {gridEnabled: Session.get('gridEnabled')};
+var _settings = {
+	gridEnabled: Session.get('gridEnabled'),
+	gridSpacing: Session.get('gridSpacing'),
+	gridUnits: (Session.get('userUnitsOfMeasure') === 'English') ? 'inches' : 'cm'
+};
 
 Template.layout_settings.onCreated(function () {
 	NavConfig.pushEmptyRightBar();
+	_settings.gridEnabled = Session.get('gridEnabled');
+	_settings.gridSpacing = Session.get('gridSpacing');
+	_settings.gridUnits = (Session.get('userUnitsOfMeasure') === 'English') ? 'inches' : 'cm'
+
 });
 
 Template.layout_settings.onDestroyed(function () {
@@ -151,6 +161,12 @@ Template.layout_settings.onDestroyed(function () {
 });
 
 Template.layout_settings.helpers({
+	gridDataDisplay: function () {
+		return _settings.gridSpacing;
+	},
+	gridUnits: function () {
+		return _settings.gridUnits;
+	},
 	gridStateOn: function () {
 		return (Session.get('gridEnabled')) ? 'checked' : '';
 	},
@@ -171,6 +187,12 @@ Template.layout_settings.events({
 	},
 	'click #layout-settings-accept': function () {
 		Session.set('gridEnabled', _settings.gridEnabled);
+		var temp = document.getElementById('grid-spacing').value;
+		if (_settings.gridUnits === 'inches') {
+			// convert to cm
+			temp = Utils.convertEnglishToMeters(0, temp);
+		}
+		Session.set('gridSpacing', temp);
 		Session.set('renderView', 'layout_lawn');
 	}
 });

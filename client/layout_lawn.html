@@ -8,12 +8,22 @@
 <template name="layout_settings">
     {{> lawn_info}}
     Settings
-    <form action="#">
-        <input class="grid-select" name="unit-type" type="radio" id="grid-on" {{gridStateOn}}/>
-        <label for="grid-on">Grid On</label>
-        <input class="grid-select" name="unit-type" type="radio" id="grid-off" {{gridStateOff}}/>
-        <label for="grid-off">Grid Off</label>
-    </form>    <hr>
+    <hr>
+    <div class="row">
+        <form action="#">
+            <input class="grid-select" name="unit-type" type="radio" id="grid-on" {{gridStateOn}}/>
+            <label for="grid-on">Grid On</label>
+            <input class="grid-select" name="unit-type" type="radio" id="grid-off" {{gridStateOff}}/>
+            <label for="grid-off">Grid Off</label>
+        </form>
+    </div>
+    <div class="row">
+        <div class="input-field col s2">
+            <input value= {{gridDataDisplay}} id="grid-spacing" type="number" class="validate">
+            <label class="active" for="grid-spacing">Grid Spacing {{gridUnits}}</label>
+        </div>
+    </div>
+    <hr>
     <div id="layout-settings-cancel" class="waves-effect waves-light btn">Cancel</div>
     <div id="layout-settings-accept" class="waves-effect waves-light btn">Accept</div>
 </template>
