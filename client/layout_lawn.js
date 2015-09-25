@@ -40,7 +40,9 @@ var pixiAnimate = function pixiAnimate () {
 		requestAnimationFrame(pixiAnimate);
 		watersave.rotation += 0.1;
 		pixiRenderer.render(pixiContainer);
-		layoutFrame.drawGrid(Session.get('gridSpacing'));
+		var gridEnabled = Session.get('gridEnabled');
+		console.log('gridEnabled: ' + gridEnabled);
+		layoutFrame.drawGrid(Session.get('gridEnabled'), Session.get('gridSpacing'));
 	}
 	else {
 		console.log('pixiAnimate: stopping animation');
@@ -153,7 +155,7 @@ Template.layout_settings.onCreated(function () {
 	NavConfig.pushEmptyRightBar();
 	_settings.gridEnabled = Session.get('gridEnabled');
 	_settings.gridSpacing = Session.get('gridSpacing');
-	_settings.gridUnits = (Session.get('userUnitsOfMeasure') === 'English') ? 'inches' : 'cm'
+	_settings.gridUnits = (Session.get('userUnitsOfMeasure') === 'English') ? 'inches' : 'cm';
 
 });
 
@@ -166,7 +168,8 @@ Template.layout_settings.helpers({
 		return _settings.gridSpacing;
 	},
 	gridUnits: function () {
-		return _settings.gridUnits;
+		var units = _settings.gridUnits;
+		return (Session.get('userUnitsOfMeasure') === 'English') ? Utils.convertMetersToInches(units) : units;
 	},
 	gridStateOn: function () {
 		return (Session.get('gridEnabled')) ? 'checked' : '';
@@ -192,6 +195,7 @@ Template.layout_settings.events({
 		if (_settings.gridUnits === 'inches') {
 			// convert to cm
 			temp = Utils.convertEnglishToMeters(0, temp);
+			temp *= 100;
 		}
 		Session.set('gridSpacing', temp);
 		Session.set('renderView', 'layout_lawn');

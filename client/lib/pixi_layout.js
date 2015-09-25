@@ -165,18 +165,28 @@ PixiLayout = (function () {
 		 * draws a grid with xy spacing in the frame.  spacing is in cm
 		 * @memberof PixiLayout
 		 * @method drawGrid
+		 * @param {boolean} gridEnabled - draw or clear grid
 		 * @param {number} spacing - grid spacing in cm
 		 */
-		LayoutFrame.prototype.drawGrid = function drawGrid (spacing) {
+		LayoutFrame.prototype.drawGrid = function drawGrid (gridEnabled, spacing) {
 			// pixel positions
 			var startX = background.position.x;
 			var startY = background.position.y;
-			var gridPixelSpacing = 10;
-			// real world coords
-			var gridStartX = 0, gridStartY = 0;
-			grid.beginFill(0x00FF00);
-			for (var i= 0, stop = 100; i < stop; i += gridPixelSpacing) {
-				grid.drawCircle(startX + i, startY, 1);
+			if (gridEnabled) {
+				var gridPixelSpacing = 10;
+				// real world coords
+				var gridStartX = 0, gridStartY = 0;
+				grid.beginFill(0x00FF00);
+				for (var i= 0, stop = 100; i < stop; i += gridPixelSpacing) {
+					grid.drawCircle(startX + i, startY, 1);
+				}
+			}
+			else {
+				// clear the grid
+				grid.beginFill(0xFF0000);
+				for (i= 0, stop = 100; i < stop; i += gridPixelSpacing) {
+					grid.drawCircle(startX + i, startY, 1);
+				}
 			}
 		}
 	};
