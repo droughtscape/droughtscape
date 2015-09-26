@@ -164,12 +164,14 @@ Template.layout_settings.onDestroyed(function () {
 });
 
 Template.layout_settings.helpers({
-	gridDataDisplay: function () {
-		return _settings.gridSpacing;
+	gridSpacing: function () {
+		var spacing = _settings.gridSpacing;
+		spacing = (Session.get('userUnitsOfMeasure') === 'English') ? Utils.convertMetersToInches(spacing/100) : spacing;
+		spacing = Math.round(spacing);
+		return spacing;
 	},
 	gridUnits: function () {
-		var units = _settings.gridUnits;
-		return (Session.get('userUnitsOfMeasure') === 'English') ? Utils.convertMetersToInches(units) : units;
+		return (Session.get('userUnitsOfMeasure') === 'English') ? 'inches' : 'cm';
 	},
 	gridStateOn: function () {
 		return (Session.get('gridEnabled')) ? 'checked' : '';

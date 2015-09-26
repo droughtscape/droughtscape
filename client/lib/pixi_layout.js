@@ -178,15 +178,13 @@ PixiLayout = (function () {
 				var gridStartX = 0, gridStartY = 0;
 				grid.beginFill(0x00FF00);
 				for (var i= 0, stop = 100; i < stop; i += gridPixelSpacing) {
-					grid.drawCircle(startX + i, startY, 1);
+					grid.drawCircle(startX + i, startY + 10, 1);
 				}
 			}
 			else {
 				// clear the grid
-				grid.beginFill(0xFF0000);
-				for (i= 0, stop = 100; i < stop; i += gridPixelSpacing) {
-					grid.drawCircle(startX + i, startY, 1);
-				}
+				grid.beginFill(0xFFFFFF);
+				grid.drawRect(startX, startY, background.width, background.height);
 			}
 		}
 	};
