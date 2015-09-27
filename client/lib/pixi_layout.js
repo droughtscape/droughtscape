@@ -52,6 +52,11 @@ PixiLayout = (function () {
 	var border;
 	var background;
 	var grid;
+	
+	var _gridEnabled = false;
+	var _gridSpacing;
+	
+	var _scaleRealToPixel;
 
 	var _rectangle = function _rectangle( x, y, width, height, backgroundColor, borderColor, borderWidth ) {
 		console.log('PixiLayout._rectangle(' + x + ', ' + y + ', ' + width + ', ' + height +
@@ -75,6 +80,16 @@ PixiLayout = (function () {
 		return box;
 	};
 
+	/**
+	 * _modifyRectangle function - Does the heavy lifting for fit, scale to modify the frame
+	 * Also draws any gridding
+	 * @param {object} rectangle - rectangle of type created by _rectangle, really a LayoutFrame type data
+	 * @param {number} x - x pixel position of frame - Allows centering
+	 * @param {number} y - y pixel position of frame - Allows centering
+	 * @param {number} width - pixel width of frame
+	 * @param {number} height - pixel height of frame
+	 * @param {number} borderWidth - pixel width of border
+	 */
 	var _modifyRectangle = function _modifyRectangle(rectangle, x, y, width, height, borderWidth) {
 		border.width = width;
 		border.height = height;
@@ -84,7 +99,50 @@ PixiLayout = (function () {
 		background.position.y = borderWidth;
 		rectangle.position.x = x;
 		rectangle.position.y = y;
+		// Safest to use the real session variables to determine grid
+		_gridEnabled = Session.get('gridEnabled');
+		_gridSpacing = Session.get('gridSpacing');
+		_drawGrid(_gridEnabled, _gridSpacing);
 	};
+
+	/**
+	 * _setGridEnabled function - Allows us to optimize setting local grid control
+	 * without having to examine Session variables
+	 * @param {boolean} gridEnabled - draw or clear grid
+	 * @param {number} gridSpacing - grid spacing in cm
+	 */
+	var _setGridEnabled = function _setGridEnabled (gridEnabled, gridSpacing) {
+		_gridEnabled = gridEnabled;
+		_gridSpacing = (gridEnabled) ? gridSpacing : 0;
+	};
+
+	/**
+	 * _drawGrid function - draws a grid with xy spacing in the frame.  spacing is in cm
+	 * @param {boolean} gridEnabled - draw or clear grid
+	 * @param {number} gridSpacing - grid spacing in cm
+	 */
+	var _drawGrid = function _drawGrid (gridEnabled, gridSpacing) {
+		console.log('_drawGrid: ENTRY');
+		// Clear the grid before we draw it so we don't accumulate graphics
+		// Always clear since it handles the !gridEnabled case too.
+		grid.clear();
+		if (gridEnabled) {
+			console.log('_drawGrid, drawing grid');
+			// pixel positions
+			var startX = background.position.x;
+			var startY = background.position.y;
+			// spacing parameter is in cm, convert to pixels
+			var gridPixelSpacing = (gridSpacing / 100) * _scaleRealToPixel;
+			// Set grid point color to teal
+			grid.beginFill(0x009688);
+			for (var row= 0, lastRow = background.height; row < lastRow; row += gridPixelSpacing) {
+				for (var i= 0, stop = background.width; i < stop; i += gridPixelSpacing) {
+					grid.drawCircle(startX + i, startY + row, 1);
+				}
+			}
+		}
+	};
+
 
 	/**
 	 * @namespace PixiLayout
@@ -146,6 +204,7 @@ PixiLayout = (function () {
 					// error, no effect
 					break;
 				}
+				_scaleRealToPixel = bestFit.lengthPixels / dims.length;
 				_modifyRectangle(self.layoutFrame, x, y, bestFit.widthPixels, bestFit.lengthPixels, 4);
 			}
 			else {
@@ -161,37 +220,12 @@ PixiLayout = (function () {
 		 * @param {number} dy amount to shift in y
 		 */
 		LayoutFrame.prototype.pan = function pan (dx, dy) {};
-		/**
-		 * draws a grid with xy spacing in the frame.  spacing is in cm
-		 * @memberof PixiLayout
-		 * @method drawGrid
-		 * @param {boolean} gridEnabled - draw or clear grid
-		 * @param {number} spacing - grid spacing in cm
-		 */
-		LayoutFrame.prototype.drawGrid = function drawGrid (gridEnabled, spacing) {
-			// pixel positions
-			var startX = background.position.x;
-			var startY = background.position.y;
-			if (gridEnabled) {
-				var gridPixelSpacing = 10;
-				// real world coords
-				var gridStartX = 0, gridStartY = 0;
-				grid.beginFill(0x00FF00);
-				for (var i= 0, stop = 100; i < stop; i += gridPixelSpacing) {
-					grid.drawCircle(startX + i, startY + 10, 1);
-				}
-			}
-			else {
-				// clear the grid
-				grid.beginFill(0xFFFFFF);
-				grid.drawRect(startX, startY, background.width, background.height);
-			}
-		}
 	};
 	
 	return {
 		FitType: FitType,
 		setRenderer: _setRenderer,
+		setGridEnabled: _setGridEnabled,
 		LayoutFrame: LayoutFrame
 	};
 })();

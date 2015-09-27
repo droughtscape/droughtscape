@@ -40,9 +40,6 @@ var pixiAnimate = function pixiAnimate () {
 		requestAnimationFrame(pixiAnimate);
 		watersave.rotation += 0.1;
 		pixiRenderer.render(pixiContainer);
-		var gridEnabled = Session.get('gridEnabled');
-		console.log('gridEnabled: ' + gridEnabled);
-		layoutFrame.drawGrid(Session.get('gridEnabled'), Session.get('gridSpacing'));
 	}
 	else {
 		console.log('pixiAnimate: stopping animation');
