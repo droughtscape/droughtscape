@@ -57,21 +57,30 @@ PixiLayout = (function () {
 	var _gridSpacing;
 	
 	var _scaleRealToPixel;
+	var drawBackground = true;
 
 	var _rectangle = function _rectangle( x, y, width, height, backgroundColor, borderColor, borderWidth ) {
 		console.log('PixiLayout._rectangle(' + x + ', ' + y + ', ' + width + ', ' + height +
 			', ' + backgroundColor + ', ' + borderColor + ', ' + borderWidth);
 		var box = new PIXI.Container();
-		border = new PIXI.Sprite(_getTexture(borderColor));
-		border.width = width;
-		border.height = height;
-		box.addChild(border);
-		background = new PIXI.Sprite(_getTexture(backgroundColor));
-		background.width = width - 2 * borderWidth;
-		background.height = height - 2 * borderWidth;
-		background.position.x = borderWidth;
-		background.position.y = borderWidth;
-		box.addChild(background);
+		if (drawBackground) {
+			// When drawing, background will contain the drawn border
+			// as well as the background
+			background = new PIXI.Graphics();
+			box.addChild(background);
+		}
+		else {
+			border = new PIXI.Sprite(_getTexture(borderColor));
+			border.width = width;
+			border.height = height;
+			box.addChild(border);
+			background = new PIXI.Sprite(_getTexture(backgroundColor));
+			background.width = width - 2 * borderWidth;
+			background.height = height - 2 * borderWidth;
+			background.position.x = borderWidth;
+			background.position.y = borderWidth;
+			box.addChild(background);
+		}
 		// gridding?
 		grid = new PIXI.Graphics();
 		box.addChild(grid);
@@ -91,12 +100,28 @@ PixiLayout = (function () {
 	 * @param {number} borderWidth - pixel width of border
 	 */
 	var _modifyRectangle = function _modifyRectangle(rectangle, x, y, width, height, borderWidth) {
-		border.width = width;
-		border.height = height;
-		background.width = width - 2 * borderWidth;
-		background.height = height - 2 * borderWidth;
-		background.position.x = borderWidth;
-		background.position.y = borderWidth;
+		if (drawBackground) {
+			background.clear();
+			// Now store positional info into background, even though we still have to explicitly draw
+			background.innerWidth = width - (2 * borderWidth);
+			background.innerHeight = height - (2 * borderWidth);
+			background.innerX = borderWidth;
+			background.innerY = borderWidth;
+			background.position.x = 0;
+			background.position.y = 0;
+			background.beginFill(0xFF0000);
+			background.drawRect(0, 0, width, height);
+			background.beginFill(0xFFFFFF);
+			background.drawRect(borderWidth, borderWidth, background.innerWidth, background.innerHeight);
+		}
+		else {
+			border.width = width;
+			border.height = height;
+			background.width = width - 2 * borderWidth;
+			background.height = height - 2 * borderWidth;
+			background.position.x = borderWidth;
+			background.position.y = borderWidth;
+		}
 		rectangle.position.x = x;
 		rectangle.position.y = y;
 		// Safest to use the real session variables to determine grid
@@ -135,8 +160,20 @@ PixiLayout = (function () {
 			var gridPixelSpacing = (gridSpacing / 100) * _scaleRealToPixel;
 			// Set grid point color to teal
 			grid.beginFill(0x009688);
-			for (var row= 0, lastRow = background.height; row < lastRow; row += gridPixelSpacing) {
-				for (var i= 0, stop = background.width; i < stop; i += gridPixelSpacing) {
+			var innerHeight;
+			var innerWidth;
+			if (drawBackground) {
+				innerWidth = background.innerWidth;
+				innerHeight = background.innerHeight;
+				startX = background.innerX;
+				startY = background.innerY;
+			}
+			else {
+				innerHeight = background.height;
+				innerWidth = background.width;
+			}
+			for (var row= 0, lastRow = innerHeight; row < lastRow; row += gridPixelSpacing) {
+				for (var i= 0, stop = innerWidth; i < stop; i += gridPixelSpacing) {
 					grid.drawCircle(startX + i, startY + row, 1);
 				}
 			}
