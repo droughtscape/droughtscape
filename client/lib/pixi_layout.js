@@ -52,6 +52,7 @@ PixiLayout = (function () {
 	var border;
 	var background;
 	var grid;
+	var houseText;
 	
 	var _gridEnabled = false;
 	var _gridSpacing;
@@ -86,6 +87,9 @@ PixiLayout = (function () {
 		box.addChild(grid);
 		box.position.x = x;
 		box.position.y = y;
+		// text to orient lawn to house
+		houseText = new PIXI.Text('house');
+		box.addChild(houseText);
 		return box;
 	};
 
@@ -128,6 +132,8 @@ PixiLayout = (function () {
 		_gridEnabled = Session.get('gridEnabled');
 		_gridSpacing = Session.get('gridSpacing');
 		_drawGrid(_gridEnabled, _gridSpacing);
+		houseText.x = x + (width/2);
+		houseText.y = borderWidth;
 	};
 
 	/**

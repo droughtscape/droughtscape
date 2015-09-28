@@ -106,7 +106,7 @@ Template.measure_lawn.events({
 		var clickedButton = e.currentTarget;
 		Session.set('userUnitsOfMeasure', clickedButton.id);
 	},
-	'click #lawn-measure': function () {
+	'click #measure-lawn-accept': function () {
 		console.log('lawn-measure clicked');
 		console.log('lawnData: ' + CreateLawnData.lawnData);
 		if (_updateShapeDims()) {
