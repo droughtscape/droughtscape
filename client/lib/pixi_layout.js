@@ -53,6 +53,7 @@ PixiLayout = (function () {
 	var background;
 	var grid;
 	var houseText;
+	var curbText;
 	
 	var _gridEnabled = false;
 	var _gridSpacing;
@@ -90,6 +91,8 @@ PixiLayout = (function () {
 		// text to orient lawn to house
 		houseText = new PIXI.Text('house');
 		box.addChild(houseText);
+		curbText = new PIXI.Text('curb');
+		box.addChild(curbText);
 		return box;
 	};
 
@@ -132,8 +135,12 @@ PixiLayout = (function () {
 		_gridEnabled = Session.get('gridEnabled');
 		_gridSpacing = Session.get('gridSpacing');
 		_drawGrid(_gridEnabled, _gridSpacing);
-		houseText.x = x + (width/2);
+		// center text horizontally, stick to top and bottom, house and curb respectively
+		let midX = width / 2;
+		houseText.x = midX - (houseText.width / 2);
 		houseText.y = borderWidth;
+		curbText.x = midX - (curbText.width / 2);
+		curbText.y = background.height - curbText.height;
 	};
 
 	/**
