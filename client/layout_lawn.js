@@ -63,6 +63,14 @@ var defaultFitMode = PixiLayout.FitType.FitTypeXY;
  * are already finalized and usable for scaling
  */
 var _renderLayout = function _renderLayout () {
+	var layoutContainer = document.getElementById('layout-div-container');
+	var width = (layoutContainer) ? layoutContainer.clientWidth : 800;
+	var height = (layoutContainer) ? layoutContainer.clientHeight : 600;
+	console.log('_renderLayout: width: ' + width + ', height: ' + height);
+	if (pixiRenderer) {
+		pixiRenderer.resize(width, height);
+		console.log('_renderLayout: resize: ');
+	}
 	layoutFrame.fit(defaultFitMode);
 	if (testFit) {
 		switch (defaultFitMode) {
