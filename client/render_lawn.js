@@ -46,7 +46,20 @@ var threeAnimate = function threeAnimate () {
  * are already finalized and usable for scaling
  */
 var _renderRender = function _renderRender () {
-	
+	var renderContainer = document.getElementById('render-div-container');
+	var width;
+	var height;
+	if (renderContainer) {
+		width = renderContainer.clientWidth;
+		height = renderContainer.clientHeight;
+	}
+	else {
+		width = 800;
+		height = 600;
+	}
+	var renderCanvas = document.getElementById('render-canvas');
+	renderCanvas.height = height;
+	renderCanvas.width = width;
 };
 
 /**
