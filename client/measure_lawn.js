@@ -52,10 +52,12 @@ var _updateLawns = function _updateLawns(myLawns, lawn) {
 var _updateShapeDims;
 
 Template.measure_lawn.onCreated(function () {
+	NavConfig.pushNavBar('create');
 	NavConfig.pushEmptyRightBar();
 });
 
 Template.measure_lawn.onDestroyed(function () {
+	NavConfig.popNavBar();
 	NavConfig.popRightBar();
 });
 

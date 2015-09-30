@@ -95,11 +95,17 @@ var handleLawnShapeMessages = function handleLawnShapeMessages (message) {
 Template.shape_lawn.onCreated(function () {
 	CreateLawnData.createLawnShapeTemplate('rectangle');
 	// remove right bar from this frame
+	NavConfig.pushNavBar('create');
 	NavConfig.pushEmptyRightBar();
 	unsubscribe = MBus.subscribe('carousel', handleLawnShapeMessages);
 });
 
+Template.shape_lawn.onRendered(function () {
+	$(".dropdown-button").dropdown();
+});
+
 Template.shape_lawn.onDestroyed(function () {
+	NavConfig.popNavBar();
 	NavConfig.popRightBar();
 	unsubscribe.remove();
 });
@@ -163,11 +169,13 @@ var handleBuildLawnTemplateMessages = function handleBuildLawnTemplateMessages (
 };
 
 Template.build_lawn.onCreated(function () {
+	NavConfig.pushNavBar('create');
 	NavConfig.pushEmptyRightBar();
 	buildLawnUnsubscribe = MBus.subscribe('carousel', handleBuildLawnTemplateMessages);
 });
 
 Template.build_lawn.onDestroyed(function() {
+	NavConfig.popNavBar();
 	NavConfig.popRightBar();
 	buildLawnUnsubscribe.remove();
 });

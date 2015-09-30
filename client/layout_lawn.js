@@ -95,12 +95,14 @@ var _renderLayout = function _renderLayout () {
 var _handleResizeEvent = Utils.createDeferredFunction(_renderLayout);
 
 Template.layout_lawn.onCreated(function () {
+	NavConfig.pushNavBar('layout');
 	NavConfig.pushRightBar('rightBar', 'layout_lawn');
 	runAnimation = true;
 	window.addEventListener('resize', _handleResizeEvent);
 });
 
 Template.layout_lawn.onDestroyed(function () {
+	NavConfig.popNavBar();
 	NavConfig.popRightBar();
 	// Have to stop animation and renderer
 	runAnimation = false;
@@ -109,6 +111,9 @@ Template.layout_lawn.onDestroyed(function () {
 });
 
 Template.layout_lawn.onRendered(function () {
+	// Start dropdowns
+	$(".dropdown-button").dropdown();
+
 	var lawnShape = CreateLawnData.lawnData.shape;
 	lawnShape.printMe();
 	

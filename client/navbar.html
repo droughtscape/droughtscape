@@ -5,35 +5,67 @@
             <!--<a href="watersave.jpg" class="brand-logo right">watersave.jpg</a>-->
             <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="mdi-navigation-menu"></i></a>
             <ul class="left hide-on-med-and-down">
-				{{#each navButtons}}
-					{{> navButton}}
-				{{/each}}
-				<!--{{> atNavButton}}-->
+                {{#each navButtons}}
+                    <!--
+					We use a dynamic template w/o helper here.  Just embed buttonType into the
+					button object to specify the desired button template.  We do this so we can 
+					have buttons and dropdowns and others (not yet foreseen) in the
+					navbar.  A helper function was initially used but this seems to work and will
+					avoid the need for javascript code.  If we need more sophistication, switch to helper
+					=> See templates navButton, dropdownButton and javascript NavConfig._navBarConfigs
+					-->
+                    {{> Template.dynamic template=buttonType}}
+                {{/each}}
                 {{> atNavItem}}
             </ul>
             <ul class="side-nav" id="mobile-demo">
-				{{#each navButtons}}
-					{{> navButton}}
-				{{/each}}
-				{{> atNavItem}}
-           </ul>
+                {{#each navButtons}}
+                    {{> Template.dynamic template=buttonType}}
+                {{/each}}
+                {{> atNavItem}}
+            </ul>
         </div>
     </nav>
 </template>
 
 <template name="navButton">
-    <li><a id="{{name}}" class="teal-text" style="font-size: 1.25rem">
+    <li><a id="{{name}}" class="nav-button teal-text" style="font-size: 1.25rem">
         <i class={{class}}></i>{{friendlyName}}</a></li>
+</template>
 
-<!--
-    <li><a id={{name}} class="waves-effect waves-light btn-large">
-        <i class={{class}}></i>{{friendlyName}}</a></li>
--->
+<template name="dropdownButton">
+    <li><a id="{{name}}" class="dropdown-button teal-text" href="#!" style="font-size: 1.25rem"
+           data-activates={{dataActivates}}>{{friendlyName}}<i class={{class}}></i></a>
+        {{> dropdownData}}
+    </li>
+</template>
 
+<template name="dropdownData">
+    <ul id={{dataActivates}} class="dropdown-content">
+        {{#each dropdownTags}}
+            <!--
+            We use a dynamic template w/o helper here.  Just embed tagType into the
+            dropdownTags [] object to specify the template.  We do this so we can 
+            distinguish between tag and divider and others (not yet foreseen) in the
+            dropdown.  I had problems using a helper here so I did it statically with
+            data.  
+            => See dropdownTag and dropdownDivider below as well as NavConfig._navBarConfigs
+            -->
+            {{> Template.dynamic template=tagType}}
+        {{/each}}
+    </ul>
+</template>
+
+<template name="dropdownTag">
+    <li><a href="#!">{{tagName}}</a></li>
+</template>
+
+<template name="dropdownDivider">
+    <li class="divider"></li>
 </template>
 
 <template name="atNavItem">
-    <li><a id="at-nav-item" class="{{loginColor}}" style="font-size: 1.25rem">
+    <li><a id="at-nav-item" class="signin-button {{loginColor}}" style="font-size: 1.25rem">
         <i class={{loginIcon}}></i>{{text}}</a></li>
 </template>
 

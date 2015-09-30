@@ -37,6 +37,7 @@ Template.navBar.onRendered(function () {
 		signin.style.lineHeight = '56px';
 		signin.fontSize = '1.6rem';
 	}
+	$(".dropdown-button").dropdown();
 });
 
 // From useraccounts_materialize.js
@@ -70,8 +71,25 @@ Template.navBar.helpers({
 });
 
 Template.navBar.events({
+	'click .dropdown-button': function () {
+		console.log('dropdown');
+	},
+	'click .brand-logo': function () {
+		Session.set('renderView', 'splash');
+		// dispatch a resize event to force rendering of the home page
+		// Even if size doesn't change
+		window.dispatchEvent(new Event('resize'));
+	},
+	'click .signin-button': function () {
+		if (!Meteor.userId()) {
+			Session.set('renderView', 'signin');
+		}
+		else {
+			AccountsTemplates.logout();
+		}
+	},
 	// We follow the convention that the currentTarget.id is the renderView target template
-	'click': function (event) {
+	'click .nav-button': function (event) {
 		console.log('Template.navBar.events: ' + event);
 		//Session.set('renderView', event.currentTarget.id);
 		var id = event.currentTarget.id;
@@ -99,3 +117,4 @@ Template.navBar.events({
 		window.dispatchEvent(new Event('resize'));
 	}
 });
+

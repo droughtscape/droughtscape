@@ -83,6 +83,7 @@ Template.home.onCreated(function () {
 	window.onbeforeunload = function () {
 		return 'Your work will be lost';
 	};
+	NavConfig.pushNavBar('home');
 	NavConfig.pushRightBar('rightBar', 'home');
 });
 
