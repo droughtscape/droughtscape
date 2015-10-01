@@ -62,9 +62,6 @@ Template.atNavItem.helpers({
 Template.atNavItem.events(AccountsTemplates.atNavButtonEvents);
 
 Template.navBar.helpers({
-	//dynamicButton: function () {
-	//	return this.buttonType;
-	//},
 	navButtons: function () {
 		// The nav bar is a singleton per "page" so we use a global
 		// Session variable: navBarConfig which can by dynamically
@@ -74,8 +71,11 @@ Template.navBar.helpers({
 });
 
 Template.navBar.events({
-	'click .dropdown-button': function () {
-		console.log('dropdown');
+	'click .dropdownTag': function (event) {
+		console.log('dropdownTag: ' + event);
+	},
+	'click .dropdown-button': function (event) {
+		console.log('dropdown: ' + event);
 	},
 	'click .brand-logo': function () {
 		Session.set('renderView', 'splash');

@@ -34,22 +34,22 @@
 
 <template name="dropdownData">
     <ul id={{dataActivates}} class="dropdown-content">
+        <!--
+		We use a dynamic template w/o helper here.  Just embed tagType into the
+		dropdownTags [] object to specify the template.  We do this so we can 
+		distinguish between tag and divider and others (not yet foreseen) in the
+		dropdown.  I had problems using a helper here so I did it statically with
+		data.  
+		=> See dropdownTag and dropdownDivider below as well as NavConfig._navBarConfigs
+		-->
         {{#each dropdownTags}}
-            <!--
-            We use a dynamic template w/o helper here.  Just embed tagType into the
-            dropdownTags [] object to specify the template.  We do this so we can 
-            distinguish between tag and divider and others (not yet foreseen) in the
-            dropdown.  I had problems using a helper here so I did it statically with
-            data.  
-            => See dropdownTag and dropdownDivider below as well as NavConfig._navBarConfigs
-            -->
             {{> Template.dynamic template=tagType}}
         {{/each}}
     </ul>
 </template>
 
 <template name="dropdownTag">
-    <li><a href="#!">{{tagName}}</a></li>
+    <li><a class="dropdownTag" data-parent={{dataActivates}} href="#!">{{tagName}}</a></li>
 </template>
 
 <template name="dropdownDivider">
