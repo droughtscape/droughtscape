@@ -60,6 +60,11 @@ PixiLayout = (function () {
 	
 	var _scaleRealToPixel;
 	var drawBackground = true;
+	
+	// Mouse support
+	var _mouseover = function _mouseover () {
+		console.log('mouseover');
+	};
 
 	var _rectangle = function _rectangle( x, y, width, height, backgroundColor, borderColor, borderWidth ) {
 		console.log('PixiLayout._rectangle(' + x + ', ' + y + ', ' + width + ', ' + height +
@@ -67,9 +72,8 @@ PixiLayout = (function () {
 		var box = new PIXI.Container();
 		// Set interactivity
 		box.interactive = true;
-		box.mouseover = function () {
-			console.log('mouseover');
-		};
+		box.mouseover = _mouseover;
+		
 		if (drawBackground) {
 			// When drawing, background will contain the drawn border
 			// as well as the background
