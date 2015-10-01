@@ -62,6 +62,9 @@ Template.atNavItem.helpers({
 Template.atNavItem.events(AccountsTemplates.atNavButtonEvents);
 
 Template.navBar.helpers({
+	//dynamicButton: function () {
+	//	return this.buttonType;
+	//},
 	navButtons: function () {
 		// The nav bar is a singleton per "page" so we use a global
 		// Session variable: navBarConfig which can by dynamically

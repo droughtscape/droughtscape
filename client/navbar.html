@@ -6,21 +6,13 @@
             <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="mdi-navigation-menu"></i></a>
             <ul class="left hide-on-med-and-down">
                 {{#each navButtons}}
-                    <!--
-					We use a dynamic template w/o helper here.  Just embed buttonType into the
-					button object to specify the desired button template.  We do this so we can 
-					have buttons and dropdowns and others (not yet foreseen) in the
-					navbar.  A helper function was initially used but this seems to work and will
-					avoid the need for javascript code.  If we need more sophistication, switch to helper
-					=> See templates navButton, dropdownButton and javascript NavConfig._navBarConfigs
-					-->
                     {{> Template.dynamic template=buttonType}}
                 {{/each}}
                 {{> atNavItem}}
             </ul>
             <ul class="side-nav" id="mobile-demo">
                 {{#each navButtons}}
-                    {{> Template.dynamic template=buttonType}}
+                    {{> navButton}}
                 {{/each}}
                 {{> atNavItem}}
             </ul>
@@ -30,12 +22,12 @@
 
 <template name="navButton">
     <li><a id="{{name}}" class="nav-button teal-text" style="font-size: 1.25rem">
-        <i class={{class}}></i>{{friendlyName}}</a></li>
+        <i class={{icon}}></i>{{friendlyName}}</a></li>
 </template>
 
 <template name="dropdownButton">
     <li><a id="{{name}}" class="dropdown-button teal-text" href="#!" style="font-size: 1.25rem"
-           data-activates={{dataActivates}}>{{friendlyName}}<i class={{class}}></i></a>
+           data-activates={{dataActivates}}>{{friendlyName}}<i class={{icon}}></i></a>
         {{> dropdownData}}
     </li>
 </template>
