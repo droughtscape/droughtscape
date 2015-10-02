@@ -113,7 +113,7 @@ Template.signin.events({
 	'click #dismiss-sign-in': function () {
 		// Clear all targets, go to splash on all dismisses
 		SignInUtils.clearRenderViewTargets();
-		Session.set(Constants.renderView, 'splash');
+		Session.set(Constants.renderView, Constants.splash);
 	},
 	'click #at-btn': function () {
 		Session.set(Constants.renderView, SignInUtils.popRenderViewTarget());

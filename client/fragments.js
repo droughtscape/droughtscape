@@ -43,7 +43,7 @@ Template.require_signin.events({
 	'click #dismiss-alert': function () {
 		// Clear all targets, go to splash on all dismisses
 		SignInUtils.clearRenderViewTargets();
-		Session.set(Constants.renderView, 'splash');
+		Session.set(Constants.renderView, Constants.splash);
 	}
 });
 

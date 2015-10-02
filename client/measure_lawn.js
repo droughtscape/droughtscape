@@ -92,17 +92,17 @@ Template.measure_lawn.helpers({
 
 Template.measure_lawn.events({
 	'click #measure-lawn-cancel': function () {
-		Session.set(Constants.renderView, 'splash');
+		Session.set(Constants.renderView, Constants.splash);
 	},
 	'click #measure-lawn-back': function () {
-		Session.set(Constants.renderView, 'shape_lawn');
+		Session.set(Constants.renderView, Constants.shape_lawn);
 		//currentCreateState.set('measure_lawn');
 	},
 	'click #name-lawn': function () {
 		CreateLawnData.lawnData.name = document.getElementById('lawn_name').value;
 	},
 	'click #open-lawn': function () {
-		Session.set(Constants.renderView, 'favorites');
+		Session.set(Constants.renderView, Constants.favorites);
 	},
 	'click .unit-select': function (e) {
 		var clickedButton = e.currentTarget;
@@ -142,7 +142,7 @@ Template.measure_lawn.events({
 				// No users so add us here
 				_insertFirstItem(userEmail, CreateLawnData.lawnData);
 			}
-			Session.set(Constants.renderView, 'build_lawn');
+			Session.set(Constants.renderView, Constants.build_lawn);
 			//currentCreateState.set('build_lawn');
 		}
 		else {
@@ -164,7 +164,7 @@ var _getRectDims = function _getRectDims() {
  */
 var _updateRectDims = function _updateRectDims () {
 	var rectDims = _getRectDims();
-	if (Session.get(Constants.userUnitsOfMeasure) === 'English') {
+	if (Session.get(Constants.userUnitsOfMeasure) === Constants.English) {
 		rectDims.width = Utils.convertEnglishToMeters(document.getElementById('lawn_width_feet').value,
 			document.getElementById('lawn_width_inches').value);
 		rectDims.length = Utils.convertEnglishToMeters(document.getElementById('lawn_length_feet').value,
@@ -182,7 +182,7 @@ var _updateRectDims = function _updateRectDims () {
 
 Template.measure_rectangle_lawn.helpers({
 	unitsOfMeasure: function () {
-		return (Session.get(Constants.userUnitsOfMeasure) === 'English') ? 'Feet and Inches' : 'Meters';
+		return (Session.get(Constants.userUnitsOfMeasure) === Constants.English) ? 'Feet and Inches' : 'Meters';
 	},
 	unitsOfMeasureAre: function (unitString) {
 		return Session.get(Constants.userUnitsOfMeasure) === unitString;
@@ -193,7 +193,7 @@ Template.measure_rectangle_lawn.helpers({
 	lawnDataDisplay: function () {
 		// Fill in appropriately
 		var rectDims = _getRectDims();
-		if (Session.get(Constants.userUnitsOfMeasure) === 'English') {
+		if (Session.get(Constants.userUnitsOfMeasure) === Constants.English) {
 			// feet, inches
 			var fi = Utils.convertMetersToFeetInches(rectDims.width);
 			lawnDataDisplay.w1 = fi.feet;
@@ -217,7 +217,7 @@ Template.measure_rectangle_lawn.helpers({
 		var sqMeters = Session.get(Constants.computedArea);
 		var sqInches = Utils.convertMetersToInches(sqMeters);
 		var sqFeet = sqInches / 12.0;
-		return (Session.get(Constants.userUnitsOfMeasure) === 'English') ? Math.round(sqFeet) + ' sq ft' : Math.round(sqMeters) + ' sq m';
+		return (Session.get(Constants.userUnitsOfMeasure) === Constants.English) ? Math.round(sqFeet) + ' sq ft' : Math.round(sqMeters) + ' sq m';
 	}
 });
 

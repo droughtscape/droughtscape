@@ -97,7 +97,7 @@ Template.watersmarttipcard.helpers({
 
 Template.watersmarttipcard.events({
 	'click #dismiss-watersmart-btn': function () {
-		Session.set(Constants.renderView,'home');
+		Session.set(Constants.renderView, Constants.home);
 	},
 	'click #next-tip-btn': function () {
 		if (tipsArray && tipsArray.length > 0) {

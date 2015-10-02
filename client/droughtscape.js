@@ -22,19 +22,19 @@
  * THE SOFTWARE.
  */
 Router.map(function () {
-	this.route('home', {path: '/'});
+	this.route(Constants.home, {path: '/'});
 });
 // The navBarConfig Session variable controls contents of the navBar
 // => see navconfig.js
-Session.setDefault(Constants.navBarConfig, 'home');
+Session.setDefault(Constants.navBarConfig, Constants.home);
 // The rightBar Session variable controls presence or absence of the rightBar
-Session.setDefault(Constants.rightBar, 'rightBar');
+Session.setDefault(Constants.rightBar, Constants.rightBar);
 // The rightBarConfig Session variable controls contents of the rightBar (if present)
 // => see navconfig.js
-Session.setDefault(Constants.rightBarConfig, 'home');
+Session.setDefault(Constants.rightBarConfig, Constants.home);
 // The renderView Session variable controls what the render area template is currently
 // set to.  We use this to avoid routing.
-Session.setDefault(Constants.renderView, 'splash');
+Session.setDefault(Constants.renderView, Constants.splash);
 // Admin rights of logged in user
 Session.setDefault(Constants.adminRights, undefined);
 
@@ -79,12 +79,12 @@ Meteor.startup(function () {
 var getPosition = Utils.getPosition;
 
 Template.home.onCreated(function () {
-	Session.set(Constants.renderView, 'splash');
+	Session.set(Constants.renderView, Constants.splash);
 	window.onbeforeunload = function () {
 		return 'Your work will be lost';
 	};
-	NavConfig.pushNavBar('home');
-	NavConfig.pushRightBar('rightBar', 'home');
+	NavConfig.pushNavBar(Constants.home);
+	NavConfig.pushRightBar(Constants.rightBar, Constants.home);
 });
 
 Template.home.onDestroyed(function () {

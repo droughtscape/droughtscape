@@ -78,14 +78,14 @@ Template.navBar.events({
 		console.log('dropdown: ' + event);
 	},
 	'click .brand-logo': function () {
-		Session.set(Constants.renderView, 'splash');
+		Session.set(Constants.renderView, Constants.splash);
 		// dispatch a resize event to force rendering of the home page
 		// Even if size doesn't change
 		window.dispatchEvent(new Event('resize'));
 	},
 	'click .signin-button': function () {
 		if (!Meteor.userId()) {
-			Session.set(Constants.renderView, 'signin');
+			Session.set(Constants.renderView, Constants.signin);
 		}
 		else {
 			AccountsTemplates.logout();
@@ -97,19 +97,19 @@ Template.navBar.events({
 		var id = event.currentTarget.id;
 		switch (id) {
 		case 'droughtscapelogo':
-			Session.set(Constants.renderView, 'splash');
+			Session.set(Constants.renderView, Constants.splash);
 			break;
 		case 'at-nav-item':
 		case 'at-nav-button':
 			if (!Meteor.userId()) {
-				Session.set(Constants.renderView, 'signin');
+				Session.set(Constants.renderView, Constants.signin);
 			}
 			else {
 				AccountsTemplates.logout();
 			}			
 			break;
 		default:
-			if (NavConfig.validateNavBarId(Session.get('navBarConfig'), id)) {
+			if (NavConfig.validateNavBarId(Session.get(Constants.navBarConfig), id)) {
 				Session.set(Constants.renderView, event.currentTarget.id);
 			}
 			break;

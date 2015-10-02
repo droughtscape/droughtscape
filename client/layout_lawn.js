@@ -158,14 +158,14 @@ Template.layout_lawn.onRendered(function () {
 var _settings = {
 	gridEnabled: Session.get(Constants.gridEnabled),
 	gridSpacing: Session.get(Constants.gridSpacing),
-	gridUnits: (Session.get(Constants.userUnitsOfMeasure) === 'English') ? 'inches' : 'cm'
+	gridUnits: (Session.get(Constants.userUnitsOfMeasure) === Constants.English) ? 'inches' : 'cm'
 };
 
 Template.layout_settings.onCreated(function () {
 	NavConfig.pushEmptyRightBar();
 	_settings.gridEnabled = Session.get(Constants.gridEnabled);
 	_settings.gridSpacing = Session.get(Constants.gridSpacing);
-	_settings.gridUnits = (Session.get(Constants.userUnitsOfMeasure) === 'English') ? 'inches' : 'cm';
+	_settings.gridUnits = (Session.get(Constants.userUnitsOfMeasure) === Constants.English) ? 'inches' : 'cm';
 
 });
 
@@ -176,12 +176,12 @@ Template.layout_settings.onDestroyed(function () {
 Template.layout_settings.helpers({
 	gridSpacing: function () {
 		var spacing = _settings.gridSpacing;
-		spacing = (Session.get(Constants.userUnitsOfMeasure) === 'English') ? Utils.convertMetersToInches(spacing/100) : spacing;
+		spacing = (Session.get(Constants.userUnitsOfMeasure) === Constants.English) ? Utils.convertMetersToInches(spacing/100) : spacing;
 		spacing = Math.round(spacing);
 		return spacing;
 	},
 	gridUnits: function () {
-		return (Session.get(Constants.userUnitsOfMeasure) === 'English') ? 'inches' : 'cm';
+		return (Session.get(Constants.userUnitsOfMeasure) === Constants.English) ? 'inches' : 'cm';
 	},
 	gridStateOn: function () {
 		return (Session.get(Constants.gridEnabled)) ? 'checked' : '';
@@ -199,7 +199,7 @@ Template.layout_settings.events({
 		_settings.gridEnabled = false;
 	},
 	'click #layout-settings-cancel': function () {
-		Session.set(Constants.renderView, 'layout_lawn');
+		Session.set(Constants.renderView, Constants.layout_lawn);
 	},
 	'click #layout-settings-accept': function () {
 		Session.set(Constants.gridEnabled, _settings.gridEnabled);
@@ -210,7 +210,7 @@ Template.layout_settings.events({
 			temp *= 100;
 		}
 		Session.set(Constants.gridSpacing, temp);
-		Session.set(Constants.renderView, 'layout_lawn');
+		Session.set(Constants.renderView, Constants.layout_lawn);
 	}
 });
 

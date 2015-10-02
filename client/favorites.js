@@ -45,7 +45,7 @@ Template.favorites.helpers({
 
 Template.favorites.events({
 	'click #signin': function () {
-		SignInUtils.pushRenderViewTarget('favorites');
-		Session.set(Constants.renderView, 'signin');
+		SignInUtils.pushRenderViewTarget(Constants.favorites);
+		Session.set(Constants.renderView, Constants.signin);
 	}
 });

@@ -26,10 +26,10 @@ var favoritePartsCarouselId = 'favorite-parts-carousel';
 var favoritePartsCarouselIdElt = '#' + favoritePartsCarouselId;
 
 var setSelectedCarouselImages = function setSelectedCarouselImages (carouselId, selection) {
-	MBus.publish('carousel', 'clear', {carousel: favoritePartsCarouselIdElt});
+	MBus.publish(Constants.mbus_carousel, 'clear', {carousel: favoritePartsCarouselIdElt});
 	switch (selection) {
 	case 'irrigation':
-		MBus.publish('carousel', 'add', {carousel: favoritePartsCarouselIdElt, imgWidth: '200px', imgHeight: '200px',
+		MBus.publish(Constants.mbus_carousel, 'add', {carousel: favoritePartsCarouselIdElt, imgWidth: '200px', imgHeight: '200px',
 			imgArray: [
 				'http://lorempixel.com/580/250/nature/1',
 				'http://lorempixel.com/580/250/nature/2',
@@ -39,7 +39,7 @@ var setSelectedCarouselImages = function setSelectedCarouselImages (carouselId, 
 			]});
 		break;
 	default:
-		MBus.publish('carousel', 'add', {carousel: favoritePartsCarouselIdElt, imgWidth: '200px', imgHeight: '200px', imgArray: ['http://lorempixel.com/580/250/nature/1']});
+		MBus.publish(Constants.mbus_carousel, 'add', {carousel: favoritePartsCarouselIdElt, imgWidth: '200px', imgHeight: '200px', imgArray: ['http://lorempixel.com/580/250/nature/1']});
 		break;
 	}
 };
@@ -65,7 +65,7 @@ var unsubscribe = null;
 
 Template.favoriteParts.onCreated(function () {
 	NavConfig.pushRightBar('rightBar', 'parts');
-	unsubscribe = MBus.subscribe('PartType:favoriteParts', handlePartTypeMessages);
+	unsubscribe = MBus.subscribe(Const.mbus_favoriteParts, handlePartTypeMessages);
 });
 
 Template.favoriteParts.onDestroyed(function () {
@@ -91,9 +91,9 @@ Template.favoriteParts.helpers({
 
 Template.favoriteParts.events({
 	'click #signin': function () {
-		Session.set(Constants.renderView, 'signin');
+		Session.set(Constants.renderView, Constants.signin);
 	},
 	'click #dismiss-alert': function () {
-		Session.set(Constants.renderView, 'parts');
+		Session.set(Constants.renderView, Constants.parts);
 	}
 });

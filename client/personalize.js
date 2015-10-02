@@ -50,7 +50,7 @@ Template.personalize.events({
 		Session.set(Constants.userUnitsOfMeasure, clickedButton.id);
 	},
 	'click #signin': function () {
-		SignInUtils.pushRenderViewTarget('personalize');
-		Session.set(Constants.renderView, 'signin');
+		SignInUtils.pushRenderViewTarget(Constants.personalize);
+		Session.set(Constants.renderView, Constants.signin);
 	}
 });
