@@ -25,11 +25,9 @@
 // Units of measure global setting to work across any create submenus.
 // Note, within the system, we will translate to metric and do all calculations in metric and
 // convert back out to the current setting.  Valid settings: English, Metric
-Session.setDefault('userUnitsOfMeasure', 'English');
+Session.setDefault(Constants.userUnitsOfMeasure, 'English');
 
-Session.setDefault('computedArea', 0);
-//Session.setDefault('currentLawn', '');
-//var currentCreateState = new ReactiveVar('shape_lawn');
+Session.setDefault(Constants.computedArea, 0);
 
 Template.create.onCreated(function(){
 	console.log('Template.create.onCreated');
@@ -39,11 +37,11 @@ Template.create.onCreated(function(){
 	//window.onbeforeunload = function () {
 	//	return 'Your work will be lost';
 	//};
-	Session.set('computedArea', 0);
+	Session.set(Constants.computedArea, 0);
 	console.log('history.state: ' + history.state);
 	// On initial entry reset the state to shape_lawn
 	if (Meteor.userId()) {
-		Session.set('renderView', 'shape_lawn');
+		Session.set(Constants.renderView, 'shape_lawn');
 	}
 	//currentCreateState.set('shape_lawn');
 });
@@ -61,7 +59,7 @@ Template.create.helpers({
 Template.create.events({
 	'click #signin': function () {
 		SignInUtils.pushRenderViewTarget('create');
-		Session.set('renderView', 'signin');
+		Session.set(Constants.renderView, 'signin');
 	}
 });
 
@@ -129,7 +127,7 @@ Template.shape_lawn.events({
 	},
 	'click #shape-lawn-cancel': function (e) {
 		console.log('Template.shape_lawn.events cancel: ' + e.target.id);
-		Session.set('renderView', 'splash');
+		Session.set(Constants.renderView, 'splash');
 	},
 	'click #shape-lawn-accept': function (e) {
 		console.log('Template.shape_lawn.events accept: ' + e.target.id);
@@ -137,7 +135,7 @@ Template.shape_lawn.events({
 		if (inputElt) {
 			console.log('Template.shape_lawn.events lawnName: ' + inputElt.value);
 			CreateLawnData.lawnData.name = inputElt.value;
-			Session.set('renderView', 'measure_lawn');
+			Session.set(Constants.renderView, 'measure_lawn');
 			//currentCreateState.set('measure_lawn');
 		}
 	}
@@ -197,14 +195,14 @@ Template.build_lawn.events ({
 		CreateLawnData.lawnData.quickTemplate = e.target.id;
 	},
 	'click #build-lawn-cancel': function () {
-		Session.set('renderView', 'splash');
+		Session.set(Constants.renderView, 'splash');
 	},
 	'click #build-lawn-back': function () {
-		Session.set('renderView', 'measure_lawn');
+		Session.set(Constants.renderView, 'measure_lawn');
 		//currentCreateState.set('measure_lawn');
 	},
 	'click #build-lawn-accept': function () {
-		Session.set('renderView', 'layout_lawn');
+		Session.set(Constants.renderView, 'layout_lawn');
 		CreateLawnData.setCurrentLawn();
 		//Session.set('currentLawn', CreateLawnData.lawnData);
 		//currentCreateState.set('layout_lawn');
@@ -212,7 +210,7 @@ Template.build_lawn.events ({
 });
 
 Template.select_parts.onCreated(function () {
-	NavConfig.pushRightBar('rightBar', 'select_parts');
+	NavConfig.pushRightBar(Constants.rightBar, 'select_parts');
 });
 
 Template.select_parts.onDestroyed(function () {
@@ -220,7 +218,7 @@ Template.select_parts.onDestroyed(function () {
 });
 
 Template.finish_lawn.onCreated(function () {
-	NavConfig.pushRightBar('rightBar', 'finish_lawn');
+	NavConfig.pushRightBar(Constants.rightBar, 'finish_lawn');
 });
 
 Template.finish_lawn.onDestroyed(function () {
@@ -229,14 +227,14 @@ Template.finish_lawn.onDestroyed(function () {
 
 Template.finish_lawn.events({
 	'click #finish-lawn-cancel': function () {
-		Session.set('renderView', 'splash');
+		Session.set(Constants.renderView, 'splash');
 		CreateLawnData.clearCurrentLawn();
 	},
 	'click #finish-lawn-back': function () {
-		Session.set('renderView', 'layout_lawn');
+		Session.set(Constants.renderView, 'layout_lawn');
 	},
 	'click #finish-lawn-accept': function () {
-		Session.set('renderView', 'create');
+		Session.set(Constants.renderView, 'create');
 		CreateLawnData.clearCurrentLawn();
 	}
 });

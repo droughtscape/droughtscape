@@ -47,8 +47,8 @@
 //     clear - clear all images from the carousel
 //       MBus.publish('carousel', 'clear', {carousel: <carouselElementId>});
 //     add - add an array of images to carousel {carousel: <carouselId>, imgHeight: <optional height>, imgWidth: <optional width>, imgArray: [<url of image>]}
-Session.setDefault('carouselMode', '');
-Session.setDefault('carouselSubMode', '');
+Session.setDefault(Constants.carouselMode, '');
+Session.setDefault(Constants.carouselSubMode, '');
 Template.carousel.onRendered(function () {
 	// This just starts the render initialization.
 	// The actual component will do any implementation specific setup

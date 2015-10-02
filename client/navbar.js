@@ -66,7 +66,7 @@ Template.navBar.helpers({
 		// The nav bar is a singleton per "page" so we use a global
 		// Session variable: navBarConfig which can by dynamically
 		// set when different templates are loaded to allow configuration
-		return NavConfig.getNavBarConfig(Session.get('navBarConfig'));
+		return NavConfig.getNavBarConfig(Session.get(Constants.navBarConfig));
 	}
 });
 
@@ -78,14 +78,14 @@ Template.navBar.events({
 		console.log('dropdown: ' + event);
 	},
 	'click .brand-logo': function () {
-		Session.set('renderView', 'splash');
+		Session.set(Constants.renderView, 'splash');
 		// dispatch a resize event to force rendering of the home page
 		// Even if size doesn't change
 		window.dispatchEvent(new Event('resize'));
 	},
 	'click .signin-button': function () {
 		if (!Meteor.userId()) {
-			Session.set('renderView', 'signin');
+			Session.set(Constants.renderView, 'signin');
 		}
 		else {
 			AccountsTemplates.logout();
@@ -94,16 +94,15 @@ Template.navBar.events({
 	// We follow the convention that the currentTarget.id is the renderView target template
 	'click .nav-button': function (event) {
 		console.log('Template.navBar.events: ' + event);
-		//Session.set('renderView', event.currentTarget.id);
 		var id = event.currentTarget.id;
 		switch (id) {
 		case 'droughtscapelogo':
-			Session.set('renderView', 'splash');
+			Session.set(Constants.renderView, 'splash');
 			break;
 		case 'at-nav-item':
 		case 'at-nav-button':
 			if (!Meteor.userId()) {
-				Session.set('renderView', 'signin');
+				Session.set(Constants.renderView, 'signin');
 			}
 			else {
 				AccountsTemplates.logout();
@@ -111,7 +110,7 @@ Template.navBar.events({
 			break;
 		default:
 			if (NavConfig.validateNavBarId(Session.get('navBarConfig'), id)) {
-				Session.set('renderView', event.currentTarget.id);
+				Session.set(Constants.renderView, event.currentTarget.id);
 			}
 			break;
 		}

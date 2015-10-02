@@ -26,17 +26,17 @@ Router.map(function () {
 });
 // The navBarConfig Session variable controls contents of the navBar
 // => see navconfig.js
-Session.setDefault('navBarConfig', 'home');
+Session.setDefault(Constants.navBarConfig, 'home');
 // The rightBar Session variable controls presence or absence of the rightBar
-Session.setDefault('rightBar', 'rightBar');
+Session.setDefault(Constants.rightBar, 'rightBar');
 // The rightBarConfig Session variable controls contents of the rightBar (if present)
 // => see navconfig.js
-Session.setDefault('rightBarConfig', 'home');
+Session.setDefault(Constants.rightBarConfig, 'home');
 // The renderView Session variable controls what the render area template is currently
 // set to.  We use this to avoid routing.
-Session.setDefault('renderView', 'splash');
+Session.setDefault(Constants.renderView, 'splash');
 // Admin rights of logged in user
-Session.setDefault('adminRights', undefined);
+Session.setDefault(Constants.adminRights, undefined);
 
 /**
  * _renderContent function
@@ -70,7 +70,7 @@ Meteor.startup(function () {
 			SignInUtils.getAdminRights();
 		}
 		else {
-			Session.set('adminRights', undefined);
+			Session.set(Constants.adminRights, undefined);
 		}
 	});
 });
@@ -79,7 +79,7 @@ Meteor.startup(function () {
 var getPosition = Utils.getPosition;
 
 Template.home.onCreated(function () {
-	Session.set('renderView', 'splash');
+	Session.set(Constants.renderView, 'splash');
 	window.onbeforeunload = function () {
 		return 'Your work will be lost';
 	};
@@ -95,7 +95,7 @@ Template.home.helpers({
 	dynamicTemplate: function () {
 		// Contents of session variable renderView will 
 		// fill the content area
-		return Session.get('renderView');
+		return Session.get(Constants.renderView);
 	},
 	dynamicRightBar: function () {
 		// The right bar is an optional bar but is a singleton
@@ -105,7 +105,7 @@ Template.home.helpers({
 		// or the empty string to remove the rightBar from that context.
 		// The exact buttons on the bar are programmed via the rightBarConfig
 		// global Session variable and that is handled within the right bar component
-		return Session.get('rightBar');
+		return Session.get(Constants.rightBar);
 	}
 });
 
@@ -119,8 +119,5 @@ Template.home.onRendered(function () {
 });
 
 Template.home.events({
-	//'click #aboutbtn': function () {
-	//	Session.set('renderView', 'about');
-	//}
 });
 

@@ -43,7 +43,7 @@ Template.require_signin.events({
 	'click #dismiss-alert': function () {
 		// Clear all targets, go to splash on all dismisses
 		SignInUtils.clearRenderViewTargets();
-		Session.set('renderView', 'splash');
+		Session.set(Constants.renderView, 'splash');
 	}
 });
 
@@ -53,7 +53,7 @@ Template.display_user.helpers({
 	},
 	userColor: function () {
 		var color = 'black';
-		if (Session.get('adminRights')) {
+		if (Session.get(Constants.adminRights)) {
 			color = 'red';
 		}
 		return 'color: ' + color;

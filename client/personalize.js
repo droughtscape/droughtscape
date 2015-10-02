@@ -35,11 +35,11 @@ Template.personalize.helpers({
 		return 'Personalization allows droughtscape to more closely tailor the design to match your preferences';
 	},
 	englishDefault: function () {
-		var units = Session.get('userUnitsOfMeasure');
+		var units = Session.get(Constants.userUnitsOfMeasure);
 		return (units === 'English') ? 'checked' : '';
 	},
 	metricDefault: function () {
-		var units = Session.get('userUnitsOfMeasure');
+		var units = Session.get(Constants.userUnitsOfMeasure);
 		return (units === 'Metric') ? 'checked' : '';
 	}
 });
@@ -47,10 +47,10 @@ Template.personalize.helpers({
 Template.personalize.events({
 	'click .unit-select': function (e) {
 		var clickedButton = e.currentTarget;
-		Session.set('userUnitsOfMeasure', clickedButton.id);
+		Session.set(Constants.userUnitsOfMeasure, clickedButton.id);
 	},
 	'click #signin': function () {
 		SignInUtils.pushRenderViewTarget('personalize');
-		Session.set('renderView', 'signin');
+		Session.set(Constants.renderView, 'signin');
 	}
 });

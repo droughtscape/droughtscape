@@ -91,9 +91,9 @@ Template.favoriteParts.helpers({
 
 Template.favoriteParts.events({
 	'click #signin': function () {
-		Session.set('renderView', 'signin');
+		Session.set(Constants.renderView, 'signin');
 	},
 	'click #dismiss-alert': function () {
-		Session.set('renderView', 'parts');
+		Session.set(Constants.renderView, 'parts');
 	}
 });

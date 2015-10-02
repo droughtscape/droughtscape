@@ -72,7 +72,7 @@ Template.rightBar.helpers({
 	dynamicTemplate: function () {
 		// Contents of session variable renderView will 
 		// fill the content area
-		return Session.get('renderView');
+		return Session.get(Constants.renderView);
 	},
 	rightButtons: function () {
 		// Key off navBarConfig, defer recalculating dom measurements until
@@ -81,7 +81,7 @@ Template.rightBar.helpers({
 		Meteor.defer(function () {
 			_renderRightBar();
 		});
-		return NavConfig.getRightBarConfig(Session.get('rightBarConfig'));
+		return NavConfig.getRightBarConfig(Session.get(Constants.rightBarConfig));
 	}
 });
 
@@ -89,15 +89,14 @@ Template.rightBar.events({
 	// We follow the convention that the currentTarget.id is the renderView target template
 	'click': function (event) {
 		console.log('Template.rightBar.events: ' + event);
-		//Session.set('renderView', event.currentTarget.id);
 		var id = event.currentTarget.id;
 		switch (id) {
 		case 'about':
-			Session.set('renderView', event.currentTarget.id);
+			Session.set(Constants.renderView, event.currentTarget.id);
 			break;
 		default:
-			if (NavConfig.validateRightBarId(Session.get('rightBarConfig'), id)) {
-				Session.set('renderView', id);
+			if (NavConfig.validateRightBarId(Session.get(Constants.rightBarConfig), id)) {
+				Session.set(Constants.renderView, id);
 			}
 			break;
 		}

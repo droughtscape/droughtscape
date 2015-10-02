@@ -146,8 +146,8 @@ PixiLayout = (function () {
 		rectangle.position.x = x;
 		rectangle.position.y = y;
 		// Safest to use the real session variables to determine grid
-		_gridEnabled = Session.get('gridEnabled');
-		_gridSpacing = Session.get('gridSpacing');
+		_gridEnabled = Session.get(Constants.gridEnabled);
+		_gridSpacing = Session.get(Constants.gridSpacing);
 		_drawGrid(_gridEnabled, _gridSpacing);
 		// center text horizontally, stick to top and bottom, house and curb respectively
 		let midX = width / 2;

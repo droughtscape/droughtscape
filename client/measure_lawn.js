@@ -81,32 +81,32 @@ Template.measure_lawn.helpers({
 		return lawnTemplate;
 	},
 	englishDefault: function () {
-		var units = Session.get('userUnitsOfMeasure');
+		var units = Session.get(Constants.userUnitsOfMeasure);
 		return (units === 'English') ? 'checked' : '';
 	},
 	metricDefault: function () {
-		var units = Session.get('userUnitsOfMeasure');
+		var units = Session.get(Constants.userUnitsOfMeasure);
 		return (units === 'Metric') ? 'checked' : '';
 	}
 });
 
 Template.measure_lawn.events({
 	'click #measure-lawn-cancel': function () {
-		Session.set('renderView', 'splash');
+		Session.set(Constants.renderView, 'splash');
 	},
 	'click #measure-lawn-back': function () {
-		Session.set('renderView', 'shape_lawn');
+		Session.set(Constants.renderView, 'shape_lawn');
 		//currentCreateState.set('measure_lawn');
 	},
 	'click #name-lawn': function () {
 		CreateLawnData.lawnData.name = document.getElementById('lawn_name').value;
 	},
 	'click #open-lawn': function () {
-		Session.set('renderView', 'favorites');
+		Session.set(Constants.renderView, 'favorites');
 	},
 	'click .unit-select': function (e) {
 		var clickedButton = e.currentTarget;
-		Session.set('userUnitsOfMeasure', clickedButton.id);
+		Session.set(Constants.userUnitsOfMeasure, clickedButton.id);
 	},
 	'click #measure-lawn-accept': function () {
 		console.log('lawn-measure clicked');
@@ -142,7 +142,7 @@ Template.measure_lawn.events({
 				// No users so add us here
 				_insertFirstItem(userEmail, CreateLawnData.lawnData);
 			}
-			Session.set('renderView', 'build_lawn');
+			Session.set(Constants.renderView, 'build_lawn');
 			//currentCreateState.set('build_lawn');
 		}
 		else {
@@ -164,7 +164,7 @@ var _getRectDims = function _getRectDims() {
  */
 var _updateRectDims = function _updateRectDims () {
 	var rectDims = _getRectDims();
-	if (Session.get('userUnitsOfMeasure') === 'English') {
+	if (Session.get(Constants.userUnitsOfMeasure) === 'English') {
 		rectDims.width = Utils.convertEnglishToMeters(document.getElementById('lawn_width_feet').value,
 			document.getElementById('lawn_width_inches').value);
 		rectDims.length = Utils.convertEnglishToMeters(document.getElementById('lawn_length_feet').value,
@@ -176,16 +176,16 @@ var _updateRectDims = function _updateRectDims () {
 		rectDims.length = document.getElementById('lawn_length_meters').value;
 		rectDims.slope = document.getElementById('lawn_slope_meters').value;
 	}
-	Session.set('computedArea', Number(rectDims.width) * Number(rectDims.length));
+	Session.set(Constants.computedArea, Number(rectDims.width) * Number(rectDims.length));
 	return !(rectDims.width == 0 || rectDims.length == 0);
 };
 
 Template.measure_rectangle_lawn.helpers({
 	unitsOfMeasure: function () {
-		return (Session.get('userUnitsOfMeasure') === 'English') ? 'Feet and Inches' : 'Meters';
+		return (Session.get(Constants.userUnitsOfMeasure) === 'English') ? 'Feet and Inches' : 'Meters';
 	},
 	unitsOfMeasureAre: function (unitString) {
-		return Session.get('userUnitsOfMeasure') === unitString;
+		return Session.get(Constants.userUnitsOfMeasure) === unitString;
 	},
 	lawnData: function () {
 		return CreateLawnData.lawnData;
@@ -193,7 +193,7 @@ Template.measure_rectangle_lawn.helpers({
 	lawnDataDisplay: function () {
 		// Fill in appropriately
 		var rectDims = _getRectDims();
-		if (Session.get('userUnitsOfMeasure') === 'English') {
+		if (Session.get(Constants.userUnitsOfMeasure) === 'English') {
 			// feet, inches
 			var fi = Utils.convertMetersToFeetInches(rectDims.width);
 			lawnDataDisplay.w1 = fi.feet;
@@ -213,11 +213,11 @@ Template.measure_rectangle_lawn.helpers({
 	},
 	computedArea: function () {
 		var rectDims = _getRectDims();
-		Session.set('computedArea', Number(rectDims.width) * Number(rectDims.length));
-		var sqMeters = Session.get('computedArea');
+		Session.set(Constants.computedArea, Number(rectDims.width) * Number(rectDims.length));
+		var sqMeters = Session.get(Constants.computedArea);
 		var sqInches = Utils.convertMetersToInches(sqMeters);
 		var sqFeet = sqInches / 12.0;
-		return (Session.get('userUnitsOfMeasure') === 'English') ? Math.round(sqFeet) + ' sq ft' : Math.round(sqMeters) + ' sq m';
+		return (Session.get(Constants.userUnitsOfMeasure) === 'English') ? Math.round(sqFeet) + ' sq ft' : Math.round(sqMeters) + ' sq m';
 	}
 });
 

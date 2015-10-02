@@ -43,7 +43,7 @@ SignInUtils = (function () {
 	
 	var _isAdmin = function _isAdmin (userName, hasAdminResult) {
 		// See if we have a valid value, if not go get one from server, else just return valid value
-		if (!Session.get('adminRights')) {
+		if (!Session.get(Constants.adminRights)) {
 			var isAdminResult = false;
 			// Server side isAdmin
 			Meteor.call('isAdmin', function (error, result) {
@@ -58,7 +58,7 @@ SignInUtils = (function () {
 			});
 		}
 		else {
-			hasAdminResult(Session.get('adminRights'));
+			hasAdminResult(Session.get(Constants.adminRights));
 		}
 	};
 	
@@ -70,7 +70,7 @@ SignInUtils = (function () {
 	var getAdminRights = function getAdminRights () {
 		console.log('getAdminRights: ENTRY');
 		// See if we have a valid value, if not go get one from server and set into the session variable
-		if (Session.get('adminRights') === undefined) {
+		if (Session.get(Constants.adminRights) === undefined) {
 			console.log('getAdminRights:adminRights is undefined, call isAdmin');
 			// Server side isAdmin
 			Meteor.call('isAdmin', function (error, result) {
@@ -79,14 +79,14 @@ SignInUtils = (function () {
 				}
 				else {
 					console.log('getAdminRights: return from server: ' + result);
-					Session.set('adminRights', result);
+					Session.set(Constants.adminRights, result);
 					// Test security, validated
 					//Meteor.call('insertAdmin', 'fubar@gmail.com');
 				}
 			});
 		}
 		else {
-			console.log('getAdminRights:adminRights is defined: ' + Session.get('adminRights'));
+			console.log('getAdminRights:adminRights is defined: ' + Session.get(Constants.adminRights));
 		}
 	};
 	
@@ -113,9 +113,9 @@ Template.signin.events({
 	'click #dismiss-sign-in': function () {
 		// Clear all targets, go to splash on all dismisses
 		SignInUtils.clearRenderViewTargets();
-		Session.set('renderView', 'splash');
+		Session.set(Constants.renderView, 'splash');
 	},
 	'click #at-btn': function () {
-		Session.set('renderView', SignInUtils.popRenderViewTarget());
+		Session.set(Constants.renderView, SignInUtils.popRenderViewTarget());
 	}
 });

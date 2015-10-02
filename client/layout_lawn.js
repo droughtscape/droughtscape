@@ -27,9 +27,9 @@
 var pixiContainer = null;
 var pixiRenderer = null;
 var runAnimation = false;
-Session.setDefault('gridEnabled', true);
+Session.setDefault(Constants.gridEnabled, true);
 // this is always in cm
-Session.setDefault('gridSpacing', 24);
+Session.setDefault(Constants.gridSpacing, 24);
 
 /**
  * pixiAnimate function to furnish animation energy using requestAnimationFrame()
@@ -156,16 +156,16 @@ Template.layout_lawn.onRendered(function () {
 });
 
 var _settings = {
-	gridEnabled: Session.get('gridEnabled'),
-	gridSpacing: Session.get('gridSpacing'),
-	gridUnits: (Session.get('userUnitsOfMeasure') === 'English') ? 'inches' : 'cm'
+	gridEnabled: Session.get(Constants.gridEnabled),
+	gridSpacing: Session.get(Constants.gridSpacing),
+	gridUnits: (Session.get(Constants.userUnitsOfMeasure) === 'English') ? 'inches' : 'cm'
 };
 
 Template.layout_settings.onCreated(function () {
 	NavConfig.pushEmptyRightBar();
-	_settings.gridEnabled = Session.get('gridEnabled');
-	_settings.gridSpacing = Session.get('gridSpacing');
-	_settings.gridUnits = (Session.get('userUnitsOfMeasure') === 'English') ? 'inches' : 'cm';
+	_settings.gridEnabled = Session.get(Constants.gridEnabled);
+	_settings.gridSpacing = Session.get(Constants.gridSpacing);
+	_settings.gridUnits = (Session.get(Constants.userUnitsOfMeasure) === 'English') ? 'inches' : 'cm';
 
 });
 
@@ -176,18 +176,18 @@ Template.layout_settings.onDestroyed(function () {
 Template.layout_settings.helpers({
 	gridSpacing: function () {
 		var spacing = _settings.gridSpacing;
-		spacing = (Session.get('userUnitsOfMeasure') === 'English') ? Utils.convertMetersToInches(spacing/100) : spacing;
+		spacing = (Session.get(Constants.userUnitsOfMeasure) === 'English') ? Utils.convertMetersToInches(spacing/100) : spacing;
 		spacing = Math.round(spacing);
 		return spacing;
 	},
 	gridUnits: function () {
-		return (Session.get('userUnitsOfMeasure') === 'English') ? 'inches' : 'cm';
+		return (Session.get(Constants.userUnitsOfMeasure) === 'English') ? 'inches' : 'cm';
 	},
 	gridStateOn: function () {
-		return (Session.get('gridEnabled')) ? 'checked' : '';
+		return (Session.get(Constants.gridEnabled)) ? 'checked' : '';
 	},
 	gridStateOff: function () {
-		return (Session.get('gridEnabled')) ? '' : 'checked';
+		return (Session.get(Constants.gridEnabled)) ? '' : 'checked';
 	}
 });
 
@@ -199,18 +199,18 @@ Template.layout_settings.events({
 		_settings.gridEnabled = false;
 	},
 	'click #layout-settings-cancel': function () {
-		Session.set('renderView', 'layout_lawn');
+		Session.set(Constants.renderView, 'layout_lawn');
 	},
 	'click #layout-settings-accept': function () {
-		Session.set('gridEnabled', _settings.gridEnabled);
+		Session.set(Constants.gridEnabled, _settings.gridEnabled);
 		var temp = document.getElementById('grid-spacing').value;
 		if (_settings.gridUnits === 'inches') {
 			// convert to cm
 			temp = Utils.convertEnglishToMeters(0, temp);
 			temp *= 100;
 		}
-		Session.set('gridSpacing', temp);
-		Session.set('renderView', 'layout_lawn');
+		Session.set(Constants.gridSpacing, temp);
+		Session.set(Constants.renderView, 'layout_lawn');
 	}
 });
 
