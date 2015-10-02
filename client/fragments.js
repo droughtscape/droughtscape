@@ -26,7 +26,7 @@ Template.part_type.helpers({
 	// Template must set the context when instantiating this template fragment
 	partsList: function () {
 		var topic = 'PartType:' + this.context;
-		MBus.publish(topic, 'selected', this.selected.get());
+		MBus.publish(topic, Constants.mbus_selected, this.selected.get());
 		return PartTypeData.getPartTypeList(this.context, this.selected.get());
 	}
 });

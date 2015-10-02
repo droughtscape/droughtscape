@@ -28,10 +28,10 @@ var partsCarouselId = 'parts-carousel';
 var partsCarouselIdElt = '#' + partsCarouselId;
 
 var setSelectedCarouselImages = function setSelectedCarouselImages (carouselId, selection) {
-	MBus.publish(Constants.mbus_carousel, 'clear', {carousel: partsCarouselIdElt});
+	MBus.publish(Constants.mbus_carousel, Constants.mbus_clear, {carousel: partsCarouselIdElt});
 	switch (selection) {
 	case 'irrigation':
-		MBus.publish(Constants.mbus_carousel, 'add', {carousel: partsCarouselIdElt, imgWidth: '200px', imgHeight: '200px', 
+		MBus.publish(Constants.mbus_carousel, Constants.mbus_add, {carousel: partsCarouselIdElt, imgWidth: '200px', imgHeight: '200px', 
 			imgArray: [
 			'http://lorempixel.com/580/250/nature/1',
 			'http://lorempixel.com/580/250/nature/2',
@@ -41,7 +41,7 @@ var setSelectedCarouselImages = function setSelectedCarouselImages (carouselId, 
 		]});
 		break;
 	default:
-		MBus.publish(Constants.mbus_carousel, 'add', {carousel: partsCarouselIdElt, imgWidth: '200px', imgHeight: '200px', imgArray: ['http://lorempixel.com/580/250/nature/1']});
+		MBus.publish(Constants.mbus_carousel, Constants.mbus_add, {carousel: partsCarouselIdElt, imgWidth: '200px', imgHeight: '200px', imgArray: ['http://lorempixel.com/580/250/nature/1']});
 		break;
 	}
 };

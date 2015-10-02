@@ -78,10 +78,10 @@ var handleLawnShapeMessages = function handleLawnShapeMessages (message) {
 		switch (message.type) {
 		case 'rendered':
 			console.log('handleLawnShapeMessages[' + message.topic + ']: ' + message.type + ' --> ' + message.value);
-			MBus.publish(Constants.mbus_carousel, 'clear', {carousel: shapeLawnCarouselIdElt});
-			MBus.publish(Constants.mbus_carousel, 'add', {carousel: shapeLawnCarouselIdElt, imgWidth: '300px', imgHeight: '200px', imgArray: [{id: 'rectangle', img:'rectangle.png'}]});
-			MBus.publish(Constants.mbus_carousel, 'add', {carousel: shapeLawnCarouselIdElt, imgWidth: '300px', imgHeight: '200px', imgArray: [{id: 'corner', img:'corner.png'}]});
-			MBus.publish(Constants.mbus_carousel, 'add', {carousel: shapeLawnCarouselIdElt, imgWidth: '300px', imgHeight: '200px', imgArray: [{id: 'custom', img:'custom.png'}]});
+			MBus.publish(Constants.mbus_carousel, Constants.mbus_clear, {carousel: shapeLawnCarouselIdElt});
+			MBus.publish(Constants.mbus_carousel, Constants.mbus_add, {carousel: shapeLawnCarouselIdElt, imgWidth: '300px', imgHeight: '200px', imgArray: [{id: 'rectangle', img:'rectangle.png'}]});
+			MBus.publish(Constants.mbus_carousel, Constants.mbus_add, {carousel: shapeLawnCarouselIdElt, imgWidth: '300px', imgHeight: '200px', imgArray: [{id: 'corner', img:'corner.png'}]});
+			MBus.publish(Constants.mbus_carousel, Constants.mbus_add, {carousel: shapeLawnCarouselIdElt, imgWidth: '300px', imgHeight: '200px', imgArray: [{id: 'custom', img:'custom.png'}]});
 			break;
 		}
 	}
@@ -151,13 +151,13 @@ var handleBuildLawnTemplateMessages = function handleBuildLawnTemplateMessages (
 		switch (message.type) {
 		case 'rendered':
 			console.log('handleBuildLawnTemplateMessages[' + message.topic + ']: ' + message.type + ' --> ' + message.value);
-			MBus.publish(Constants.mbus_carousel, 'clear', {carousel: buildLawnTemplateCarouselIdElt});
+			MBus.publish(Constants.mbus_carousel, Constants.mbus_clear, {carousel: buildLawnTemplateCarouselIdElt});
 			// Here we will use a filter based on standard shapes to select a set of templates
 			// What about custom shape?  Nothing to filter => no templates
-			MBus.publish(Constants.mbus_carousel, 'add', {carousel: buildLawnTemplateCarouselIdElt, imgWidth: '300px', imgHeight: '200px', imgArray: [{id: 'none', img:'custom.png'}]});
-			MBus.publish(Constants.mbus_carousel, 'add', {carousel: buildLawnTemplateCarouselIdElt, imgWidth: '300px', imgHeight: '200px', imgArray: [{id: 'template1', img:'template1.jpg'}]});
-			MBus.publish(Constants.mbus_carousel, 'add', {carousel: buildLawnTemplateCarouselIdElt, imgWidth: '300px', imgHeight: '200px', imgArray: [{id: 'template2', img:'template2.png'}]});
-			MBus.publish(Constants.mbus_carousel, 'add', {carousel: buildLawnTemplateCarouselIdElt, imgWidth: '300px', imgHeight: '200px', imgArray: [{id: 'template3', img:'template3.jpg'}]});
+			MBus.publish(Constants.mbus_carousel, Constants.mbus_add, {carousel: buildLawnTemplateCarouselIdElt, imgWidth: '300px', imgHeight: '200px', imgArray: [{id: 'none', img:'custom.png'}]});
+			MBus.publish(Constants.mbus_carousel, Constants.mbus_add, {carousel: buildLawnTemplateCarouselIdElt, imgWidth: '300px', imgHeight: '200px', imgArray: [{id: 'template1', img:'template1.jpg'}]});
+			MBus.publish(Constants.mbus_carousel, Constants.mbus_add, {carousel: buildLawnTemplateCarouselIdElt, imgWidth: '300px', imgHeight: '200px', imgArray: [{id: 'template2', img:'template2.png'}]});
+			MBus.publish(Constants.mbus_carousel, Constants.mbus_add, {carousel: buildLawnTemplateCarouselIdElt, imgWidth: '300px', imgHeight: '200px', imgArray: [{id: 'template3', img:'template3.jpg'}]});
 			break;
 		}
 	}
