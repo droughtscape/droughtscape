@@ -156,13 +156,14 @@ PixiLayout = (function () {
 		if (!_isSame(p1, p2)) {
 			selectBox.clear();
 			// Draw outline of final box
-			let {x, y, w, h} = _computeRect(p1, p2);
+			selectBox.currentBox = _computeRect(p1, p2);
 			selectBox.beginFill(0xFF0000, 0.5);
-			selectBox.drawRect(x, y, w, h);
+			selectBox.drawRect(selectBox.currentBox.x, selectBox.currentBox.y, selectBox.currentBox.w, selectBox.currentBox.h);
 		}
 		else {
 			selectBox.beginFill(0xFF0000);
 			selectBox.drawCircle(p1.x, p1.y, 3);
+			selectBox.currentBox = {x: p1.x, y: p1.y, w: 0, h: 0};
 		}
 	};
 
