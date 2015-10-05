@@ -77,14 +77,14 @@ PixiLayout = (function () {
 	 * _mouseout function - callback from PIXI.InteractiveManager on mouse entering render area
 	 */
 	var _mouseover = function _mouseover () {
-		console.log('_mouseover');
+		//console.log('_mouseover');
 	};
 
 	/**
 	 * _mouseout function - callback from PIXI.InteractiveManager on mouse leaving render area
 	 */
 	var _mouseout = function _mouseout () {
-		console.log('_mouseout');
+		//console.log('_mouseout');
 	};
 
 	/**
@@ -96,6 +96,7 @@ PixiLayout = (function () {
 		//console.log('_mousedown: ' + currentMouseLoc.x + ', ' + currentMouseLoc.y);
 		// Starting mouse interactivity, set mousemove
 		interactionData.target.mousemove = _mousemove;
+		_enableSelectBox(true);
 		selectBox.clear();
 		selectBox.startSelect = {x: currentMouseLoc.x, y: currentMouseLoc.y};
 		//console.log('_mousedown: x: ' + selectBox.startSelect.x + ', y: ' + selectBox.startSelect.y + 
@@ -139,6 +140,15 @@ PixiLayout = (function () {
 		}
 		
 		return {x: ulx, y: uly, w: lrx - ulx, h: lry - uly};
+	};
+
+	/**
+	 * _enableSelectBox function - enable/disable the graphic selectBox.  Used to avoid any
+	 * timing issues when switching between windows
+	 * @param {boolean} enable - true to turn on, false to turn off..
+	 */
+	var _enableSelectBox = function _enableSelectBox (enable) {
+		selectBox.visible = enable;
 	};
 
 	/**
@@ -240,6 +250,7 @@ PixiLayout = (function () {
 		box.addChild(curbText);
 		// Selection box
 		selectBox = new PIXI.Graphics();
+		selectBox.visible = false;
 		box.addChild(selectBox);
 		return box;
 	};
@@ -426,6 +437,7 @@ PixiLayout = (function () {
 		FitType: FitType,
 		setRenderer: _setRenderer,
 		setGridEnabled: _setGridEnabled,
+		enableSelectBox: _enableSelectBox,
 		LayoutFrame: LayoutFrame
 	};
 })();

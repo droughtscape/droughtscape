@@ -107,6 +107,9 @@ Template.layout_lawn.onDestroyed(function () {
 	// Have to stop animation and renderer
 	runAnimation = false;
 	pixiRenderer = null;
+	// disable select box on exit to handle timing issues when this template is 
+	// reentered.  We reenable on first mouse down which ensures graphic state is ok
+	PixiLayout.enableSelectBox(false);
 	window.removeEventListener('resize', _handleResizeEvent);
 });
 
