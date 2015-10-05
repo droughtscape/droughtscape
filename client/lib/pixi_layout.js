@@ -52,6 +52,7 @@ PixiLayout = (function () {
 	var border;
 	var background;
 	var grid;
+	var selectBox;
 	var houseText;
 	var curbText;
 	
@@ -62,14 +63,138 @@ PixiLayout = (function () {
 	var drawBackground = true;
 	
 	// Mouse/touch support
-	var _mouseover = function _mouseover () {
-		console.log('mouseover');
-	};
-	
-	var _mouseout = function _mouseout () {
-		console.log('mouseout');
+	/**
+	 * _computeRelativeMouseLocation function - returns point location relative to background by
+	 *  computing offset point from background to _pixiRenderer
+	 * @param {object} absPt - object, point {x, y} - location relative to _pixiRenderer
+	 * @return {object} - point relative to background
+	 */
+	var _computeRelativeMouseLocation = function _computeRelativeMouseLocation (absPt) {
+		return {x: absPt.x - _pixiRenderer.bgndOffX, y: absPt.y - _pixiRenderer.bgndOffY};
 	};
 
+	/**
+	 * _mouseout function - callback from PIXI.InteractiveManager on mouse entering render area
+	 */
+	var _mouseover = function _mouseover () {
+		console.log('_mouseover');
+	};
+
+	/**
+	 * _mouseout function - callback from PIXI.InteractiveManager on mouse leaving render area
+	 */
+	var _mouseout = function _mouseout () {
+		console.log('_mouseout');
+	};
+
+	/**
+	 * _mousedown function - callback from PIXI.InteractiveManager on mouse button down
+	 * @param {object} interactionData - object, contains current point relative to render surface
+	 */
+	var _mousedown = function _mousedown (interactionData) {
+		var currentMouseLoc = _computeRelativeMouseLocation(interactionData.data.global);
+		//console.log('_mousedown: ' + currentMouseLoc.x + ', ' + currentMouseLoc.y);
+		// Starting mouse interactivity, set mousemove
+		interactionData.target.mousemove = _mousemove;
+		selectBox.clear();
+		selectBox.startSelect = {x: currentMouseLoc.x, y: currentMouseLoc.y};
+		//console.log('_mousedown: x: ' + selectBox.startSelect.x + ', y: ' + selectBox.startSelect.y + 
+		//	', background.x: ' + background.innerX + ', background.y: ' + background.innerY);
+		selectBox.currentBox = null;
+	};
+
+	/**
+	 * _isSame function - determines if two points are identical
+	 * @param {object} p1 - object, point {x, y}
+	 * @param {object} p2 - object, point {x, y}
+	 * @return {boolean} - true if same
+	 */
+	var _isSame = function _isSame (p1, p2) {
+		return p1.x === p2.x && p1.y === p2.y;
+	};
+
+	/**
+	 * _computeRect function - takes two arbitrary points and computes {ulx, uly, w, h)
+	 * @param {object} p1 - object, point {x, y}
+	 * @param {object} p2 - object, point {x, y}
+	 * @return {object} - {x: ulx, y: uly, w: lrx - ulx, h: lry - uly}
+	 */
+	var _computeRect = function _computeRect (p1, p2) {
+		var ulx, uly, lrx, lry;
+		if (p1.x < p2.x) {
+			ulx = p1.x;
+			lrx = p2.x;
+		}
+		else {
+			ulx = p2.x;
+			lrx = p1.x;
+		}
+		if (p1.y < p2.y) {
+			uly = p1.y;
+			lry = p2.y;
+		}
+		else {
+			uly = p2.y;
+			lry = p1.y;
+		}
+		
+		return {x: ulx, y: uly, w: lrx - ulx, h: lry - uly};
+	};
+
+	/**
+	 * _mouseup function - callback from PIXI.InteractiveManager on mouse button up
+	 * @param {object} interactionData - object, contains current point relative to render surface
+	 */
+	var _mouseup = function _mouseup (interactionData) {
+		var p1 = selectBox.startSelect;
+		var p2 = _computeRelativeMouseLocation(interactionData.data.global);
+		//console.log('console: ' + p2);
+		// Clear the mousemove function since we are exiting mouse sensitivity
+		interactionData.target.mousemove = null;
+		// if we are still on startSelect point, just do a point select
+		// otherwise, draw the box
+		if (!_isSame(p1, p2)) {
+			selectBox.clear();
+			// Draw outline of final box
+			let {x, y, w, h} = _computeRect(p1, p2);
+			selectBox.beginFill(0xFF0000, 0.5);
+			selectBox.drawRect(x, y, w, h);
+		}
+		else {
+			selectBox.beginFill(0xFF0000);
+			selectBox.drawCircle(p1.x, p1.y, 3);
+		}
+	};
+
+	/**
+	 * _mousemove function - callback from PIXI.InteractiveManager on mouse motion
+	 * @param {object} interactionData - object, contains current point relative to render surface
+	 */
+	var _mousemove = function _mousemove (interactionData) {
+		var p1 = selectBox.startSelect;
+		var p2 = _computeRelativeMouseLocation(interactionData.data.global);
+		//console.log('_mousemove: ' + p2);
+		// Make sure we moved off of startSelect
+		if (!_isSame(p1, p2)) {
+			// Clear last box
+			selectBox.clear();
+			// Draw outline of final box
+			let {x, y, w, h} = _computeRect(p1, p2);
+			selectBox.beginFill(0xFF0000, 0.5);
+			selectBox.drawRect(x, y, w, h);
+		}
+	};
+
+	/**
+	 * _rectangle function - Creates initial rectangle
+	 * @param {number} x - x pixel position of frame - Allows centering
+	 * @param {number} y - y pixel position of frame - Allows centering
+	 * @param {number} width - pixel width of frame
+	 * @param {number} height - pixel height of frame
+	 * @param {number} backgroundColor - Color of background, e.g. 0xFFFFFF (white)
+	 * @param {number} borderColor - Color of border, e.g. 0xFF0000 (red)
+	 * @param {number} borderWidth - pixel width of border
+	 */
 	var _rectangle = function _rectangle( x, y, width, height, backgroundColor, borderColor, borderWidth ) {
 		console.log('PixiLayout._rectangle(' + x + ', ' + y + ', ' + width + ', ' + height +
 			', ' + backgroundColor + ', ' + borderColor + ', ' + borderWidth);
@@ -78,6 +203,9 @@ PixiLayout = (function () {
 		box.interactive = true;
 		box.mouseover = _mouseover;
 		box.mouseout = _mouseout;
+		box.mousedown = _mousedown;
+		box.mouseup = _mouseup;
+		//box.mousemove = _mousemove;
 		
 		if (drawBackground) {
 			// When drawing, background will contain the drawn border
@@ -107,6 +235,9 @@ PixiLayout = (function () {
 		box.addChild(houseText);
 		curbText = new PIXI.Text('curb');
 		box.addChild(curbText);
+		// Selection box
+		selectBox = new PIXI.Graphics();
+		box.addChild(selectBox);
 		return box;
 	};
 
@@ -155,6 +286,8 @@ PixiLayout = (function () {
 		houseText.y = borderWidth;
 		curbText.x = midX - (curbText.width / 2);
 		curbText.y = background.height - curbText.height;
+		_pixiRenderer.bgndOffX = x;
+		_pixiRenderer.bgndOffY = y;
 	};
 
 	/**
