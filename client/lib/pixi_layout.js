@@ -55,6 +55,7 @@ PixiLayout = (function () {
 	var _selectBox;
 	var _houseText;
 	var _curbText;
+	var _parts;
 	
 	var _gridEnabled = false;
 	var _gridSpacing;
@@ -248,6 +249,9 @@ PixiLayout = (function () {
 		box.addChild(_houseText);
 		_curbText = new PIXI.Text('curb');
 		box.addChild(_curbText);
+		// Parts
+		_parts = new PIXI.Container();
+		box.addChild(_parts);
 		// Selection box
 		_selectBox = new PIXI.Graphics();
 		_selectBox.visible = false;
