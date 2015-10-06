@@ -49,18 +49,18 @@ PixiLayout = (function () {
 		}
 		return _colorTextures[color];
 	};
-	var border;
-	var background;
-	var grid;
-	var selectBox;
-	var houseText;
-	var curbText;
+	var _border;
+	var _background;
+	var _grid;
+	var _selectBox;
+	var _houseText;
+	var _curbText;
 	
 	var _gridEnabled = false;
 	var _gridSpacing;
 	
 	var _scaleRealToPixel;
-	var drawBackground = true;
+	var _drawBackground = true;
 	
 	// Mouse/touch support
 	/**
@@ -97,11 +97,11 @@ PixiLayout = (function () {
 		// Starting mouse interactivity, set mousemove
 		interactionData.target.mousemove = _mousemove;
 		_enableSelectBox(true);
-		selectBox.clear();
-		selectBox.startSelect = {x: currentMouseLoc.x, y: currentMouseLoc.y};
-		//console.log('_mousedown: x: ' + selectBox.startSelect.x + ', y: ' + selectBox.startSelect.y + 
+		_selectBox.clear();
+		_selectBox.startSelect = {x: currentMouseLoc.x, y: currentMouseLoc.y};
+		//console.log('_mousedown: x: ' + _selectBox.startSelect.x + ', y: ' + _selectBox.startSelect.y + 
 		//	', background.x: ' + background.innerX + ', background.y: ' + background.innerY);
-		selectBox.currentBox = null;
+		_selectBox.currentBox = null;
 	};
 
 	/**
@@ -143,12 +143,12 @@ PixiLayout = (function () {
 	};
 
 	/**
-	 * _enableSelectBox function - enable/disable the graphic selectBox.  Used to avoid any
+	 * _enableSelectBox function - enable/disable the graphic _selectBox.  Used to avoid any
 	 * timing issues when switching between windows
 	 * @param {boolean} enable - true to turn on, false to turn off..
 	 */
 	var _enableSelectBox = function _enableSelectBox (enable) {
-		selectBox.visible = enable;
+		_selectBox.visible = enable;
 	};
 
 	/**
@@ -156,7 +156,7 @@ PixiLayout = (function () {
 	 * @param {object} interactionData - object, contains current point relative to render surface
 	 */
 	var _mouseup = function _mouseup (interactionData) {
-		var p1 = selectBox.startSelect;
+		var p1 = _selectBox.startSelect;
 		var p2 = _computeRelativeMouseLocation(interactionData.data.global);
 		//console.log('console: ' + p2);
 		// Clear the mousemove function since we are exiting mouse sensitivity
@@ -164,18 +164,18 @@ PixiLayout = (function () {
 		// if we are still on startSelect point, just do a point select
 		// otherwise, draw the box
 		if (!_isSame(p1, p2)) {
-			selectBox.clear();
+			_selectBox.clear();
 			// Draw outline of final box
 			// Store the final box as the select box
-			selectBox.currentBox = _computeRect(p1, p2);
-			selectBox.beginFill(0xFF0000, 0.5);
-			selectBox.drawRect(selectBox.currentBox.x, selectBox.currentBox.y, selectBox.currentBox.w, selectBox.currentBox.h);
+			_selectBox.currentBox = _computeRect(p1, p2);
+			_selectBox.beginFill(0xFF0000, 0.5);
+			_selectBox.drawRect(_selectBox.currentBox.x, _selectBox.currentBox.y, _selectBox.currentBox.w, _selectBox.currentBox.h);
 		}
 		else {
-			selectBox.beginFill(0xFF0000);
-			selectBox.drawCircle(p1.x, p1.y, 3);
+			_selectBox.beginFill(0xFF0000);
+			_selectBox.drawCircle(p1.x, p1.y, 3);
 			// Store a select point, indicate with w, h == 0
-			selectBox.currentBox = {x: p1.x, y: p1.y, w: 0, h: 0};
+			_selectBox.currentBox = {x: p1.x, y: p1.y, w: 0, h: 0};
 		}
 	};
 
@@ -184,17 +184,17 @@ PixiLayout = (function () {
 	 * @param {object} interactionData - object, contains current point relative to render surface
 	 */
 	var _mousemove = function _mousemove (interactionData) {
-		var p1 = selectBox.startSelect;
+		var p1 = _selectBox.startSelect;
 		var p2 = _computeRelativeMouseLocation(interactionData.data.global);
 		//console.log('_mousemove: ' + p2);
 		// Make sure we moved off of startSelect
 		if (!_isSame(p1, p2)) {
 			// Clear last box
-			selectBox.clear();
+			_selectBox.clear();
 			// Draw outline of final box
 			let {x, y, w, h} = _computeRect(p1, p2);
-			selectBox.beginFill(0xFF0000, 0.5);
-			selectBox.drawRect(x, y, w, h);
+			_selectBox.beginFill(0xFF0000, 0.5);
+			_selectBox.drawRect(x, y, w, h);
 		}
 	};
 
@@ -220,38 +220,38 @@ PixiLayout = (function () {
 		box.mouseup = _mouseup;
 		//box.mousemove = _mousemove;
 		
-		if (drawBackground) {
+		if (_drawBackground) {
 			// When drawing, background will contain the drawn border
 			// as well as the background
-			background = new PIXI.Graphics();
-			box.addChild(background);
+			_background = new PIXI.Graphics();
+			box.addChild(_background);
 		}
 		else {
-			border = new PIXI.Sprite(_getTexture(borderColor));
-			border.width = width;
-			border.height = height;
-			box.addChild(border);
-			background = new PIXI.Sprite(_getTexture(backgroundColor));
-			background.width = width - 2 * borderWidth;
-			background.height = height - 2 * borderWidth;
-			background.position.x = borderWidth;
-			background.position.y = borderWidth;
-			box.addChild(background);
+			_border = new PIXI.Sprite(_getTexture(borderColor));
+			_border.width = width;
+			_border.height = height;
+			box.addChild(_border);
+			_background = new PIXI.Sprite(_getTexture(backgroundColor));
+			_background.width = width - 2 * borderWidth;
+			_background.height = height - 2 * borderWidth;
+			_background.position.x = borderWidth;
+			_background.position.y = borderWidth;
+			box.addChild(_background);
 		}
 		// gridding?
-		grid = new PIXI.Graphics();
-		box.addChild(grid);
+		_grid = new PIXI.Graphics();
+		box.addChild(_grid);
 		box.position.x = x;
 		box.position.y = y;
 		// text to orient lawn to house
-		houseText = new PIXI.Text('house');
-		box.addChild(houseText);
-		curbText = new PIXI.Text('curb');
-		box.addChild(curbText);
+		_houseText = new PIXI.Text('house');
+		box.addChild(_houseText);
+		_curbText = new PIXI.Text('curb');
+		box.addChild(_curbText);
 		// Selection box
-		selectBox = new PIXI.Graphics();
-		selectBox.visible = false;
-		box.addChild(selectBox);
+		_selectBox = new PIXI.Graphics();
+		_selectBox.visible = false;
+		box.addChild(_selectBox);
 		return box;
 	};
 
@@ -266,49 +266,49 @@ PixiLayout = (function () {
 	 * @param {number} borderWidth - pixel width of border
 	 */
 	var _modifyRectangle = function _modifyRectangle(rectangle, x, y, width, height, borderWidth) {
-		if (drawBackground) {
-			background.clear();
+		if (_drawBackground) {
+			_background.clear();
 			// Now store positional info into background, even though we still have to explicitly draw
-			background.innerWidth = width - (2 * borderWidth);
-			background.innerHeight = height - (2 * borderWidth);
-			background.innerX = borderWidth;
-			background.innerY = borderWidth;
-			background.position.x = 0;
-			background.position.y = 0;
-			background.beginFill(0xFF0000);
-			background.drawRect(0, 0, width, height);
-			background.beginFill(0xFFFFFF);
-			background.drawRect(borderWidth, borderWidth, background.innerWidth, background.innerHeight);
+			_background.innerWidth = width - (2 * borderWidth);
+			_background.innerHeight = height - (2 * borderWidth);
+			_background.innerX = borderWidth;
+			_background.innerY = borderWidth;
+			_background.position.x = 0;
+			_background.position.y = 0;
+			_background.beginFill(0xFF0000);
+			_background.drawRect(0, 0, width, height);
+			_background.beginFill(0xFFFFFF);
+			_background.drawRect(borderWidth, borderWidth, _background.innerWidth, _background.innerHeight);
 		}
 		else {
-			border.width = width;
-			border.height = height;
-			background.width = width - 2 * borderWidth;
-			background.height = height - 2 * borderWidth;
-			background.position.x = borderWidth;
-			background.position.y = borderWidth;
+			_border.width = width;
+			_border.height = height;
+			_background.width = width - 2 * borderWidth;
+			_background.height = height - 2 * borderWidth;
+			_background.position.x = borderWidth;
+			_background.position.y = borderWidth;
 		}
 		rectangle.position.x = x;
 		rectangle.position.y = y;
-		// Safest to use the real session variables to determine grid
+		// Safest to use the real session variables to determine _grid
 		_gridEnabled = Session.get(Constants.gridEnabled);
 		_gridSpacing = Session.get(Constants.gridSpacing);
 		_drawGrid(_gridEnabled, _gridSpacing);
 		// center text horizontally, stick to top and bottom, house and curb respectively
 		let midX = width / 2;
-		houseText.x = midX - (houseText.width / 2);
-		houseText.y = borderWidth;
-		curbText.x = midX - (curbText.width / 2);
-		curbText.y = background.height - curbText.height;
+		_houseText.x = midX - (_houseText.width / 2);
+		_houseText.y = borderWidth;
+		_curbText.x = midX - (_curbText.width / 2);
+		_curbText.y = _background.height - _curbText.height;
 		_pixiRenderer.bgndOffX = x;
 		_pixiRenderer.bgndOffY = y;
 	};
 
 	/**
-	 * _setGridEnabled function - Allows us to optimize setting local grid control
+	 * _setGridEnabled function - Allows us to optimize setting local _grid control
 	 * without having to examine Session variables
-	 * @param {boolean} gridEnabled - draw or clear grid
-	 * @param {number} gridSpacing - grid spacing in cm
+	 * @param {boolean} gridEnabled - draw or clear _grid
+	 * @param {number} gridSpacing - _grid spacing in cm
 	 */
 	var _setGridEnabled = function _setGridEnabled (gridEnabled, gridSpacing) {
 		_gridEnabled = gridEnabled;
@@ -316,39 +316,39 @@ PixiLayout = (function () {
 	};
 
 	/**
-	 * _drawGrid function - draws a grid with xy spacing in the frame.  spacing is in cm
-	 * @param {boolean} gridEnabled - draw or clear grid
-	 * @param {number} gridSpacing - grid spacing in cm
+	 * _drawGrid function - draws a _grid with xy spacing in the frame.  spacing is in cm
+	 * @param {boolean} gridEnabled - draw or clear _grid
+	 * @param {number} gridSpacing - _grid spacing in cm
 	 */
 	var _drawGrid = function _drawGrid (gridEnabled, gridSpacing) {
 		console.log('_drawGrid: ENTRY');
-		// Clear the grid before we draw it so we don't accumulate graphics
+		// Clear the _grid before we draw it so we don't accumulate graphics
 		// Always clear since it handles the !gridEnabled case too.
-		grid.clear();
+		_grid.clear();
 		if (gridEnabled) {
-			console.log('_drawGrid, drawing grid');
+			console.log('_drawGrid, drawing _grid');
 			// pixel positions
-			var startX = background.position.x;
-			var startY = background.position.y;
+			var startX = _background.position.x;
+			var startY = _background.position.y;
 			// spacing parameter is in cm, convert to pixels
 			var gridPixelSpacing = (gridSpacing / 100) * _scaleRealToPixel;
-			// Set grid point color to teal
-			grid.beginFill(0x009688);
+			// Set _grid point color to teal
+			_grid.beginFill(0x009688);
 			var innerHeight;
 			var innerWidth;
-			if (drawBackground) {
-				innerWidth = background.innerWidth;
-				innerHeight = background.innerHeight;
-				startX = background.innerX;
-				startY = background.innerY;
+			if (_drawBackground) {
+				innerWidth = _background.innerWidth;
+				innerHeight = _background.innerHeight;
+				startX = _background.innerX;
+				startY = _background.innerY;
 			}
 			else {
-				innerHeight = background.height;
-				innerWidth = background.width;
+				innerHeight = _background.height;
+				innerWidth = _background.width;
 			}
 			for (var row= 0, lastRow = innerHeight; row < lastRow; row += gridPixelSpacing) {
 				for (var i= 0, stop = innerWidth; i < stop; i += gridPixelSpacing) {
-					grid.drawCircle(startX + i, startY + row, 1);
+					_grid.drawCircle(startX + i, startY + row, 1);
 				}
 			}
 		}
