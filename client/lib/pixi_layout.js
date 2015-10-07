@@ -149,6 +149,11 @@ PixiLayout = (function () {
 	}
 
 	var testAbstractPart = new TestAbstractPart();
+	
+	var _mouseupHandler = null;
+	var _setMouseupHandler = function _setMouseupHandler (handler) {
+		_mouseupHandler = handler;
+	};
 
 	/**
 	 * _mouseup function - callback from PIXI.InteractiveManager on mouse button up
@@ -177,7 +182,10 @@ PixiLayout = (function () {
 			// Store a select point, indicate with w, h == 0
 			_selectBox.currentBox = {x: p1.x, y: p1.y, w: 0, h: 0};
 			//let layoutPart = new LayoutPart(testAbstractPart);
-			_createLayoutPart(testAbstractPart, p1.x, p1.y);
+			//_createLayoutPart(testAbstractPart, p1.x, p1.y);
+			if (_mouseupHandler) {
+				_mouseupHandler(p1);
+			}
 			//_addTestItem(p1.x, p1.y, 100, 100);
 			console.log('mouseup: xreal: ' + p1.x * _scalePixelToReal + ', yreal: ' + p1.y * _scalePixelToReal);
 		}
@@ -414,7 +422,7 @@ PixiLayout = (function () {
 		/**
 		 * Creates a PIXI.Sprite instance
 		 * @method createPixiSprite with pixel width and height
-		 * @returns {PIXI.Sprite}
+		 * @returns {object} - PIXI.Sprite
 		 */
 		createPixiSprite () {
 			let sprite = new PIXI.Sprite(this.pixiTexture);
@@ -534,6 +542,7 @@ PixiLayout = (function () {
 		LayoutFrame: LayoutFrame,
 		LayoutPart: LayoutPart,
 		createLayoutPart: _createLayoutPart,
+		setMouseupHandler: _setMouseupHandler,
 		addTestItem: _addTestItem
 	};
 })();

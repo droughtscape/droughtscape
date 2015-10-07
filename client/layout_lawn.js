@@ -57,6 +57,31 @@ var layoutFrame = new PixiLayout.LayoutFrame();
 var testMode = false;
 var testFit = false;
 var defaultFitMode = PixiLayout.FitType.FitTypeXY;
+
+/**
+ * @var {array} _lawnParts - current working set of lawn parts
+ */
+var _lawnParts = null;
+
+class TestAbstractPartLL {
+	constructor () {
+		// dimensions in meters
+		this.width = .50;
+		this.height = .50;
+		this.url = 'watersave.jpg';
+	}
+
+	getWidth () { return this.width; }
+	getHeight () { return this.height; }
+	getImageUrl () { return this.url; }
+}
+
+var testAbstractPart = new TestAbstractPartLL();
+
+var _testHandler = function _testHandler (pixelPt) {
+	PixiLayout.createLayoutPart(testAbstractPart, pixelPt.x, pixelPt.y);
+};
+
 /**
  * _renderLayout function to redraw the layout
  * typically called from Meteor.defer so that window dimensions
@@ -72,6 +97,8 @@ var _renderLayout = function _renderLayout () {
 		console.log('_renderLayout: resize: ');
 	}
 	layoutFrame.fit(defaultFitMode);
+	// Test mousehandler
+	PixiLayout.setMouseupHandler(_testHandler);
 	if (testFit) {
 		switch (defaultFitMode) {
 		case PixiLayout.FitType.FitTypeX:
