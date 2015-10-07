@@ -22,47 +22,30 @@
  * THE SOFTWARE.
  */
 PixiLayout = (function () {
-	
+
 	/** @enum {number} */
 	this.FitType = {
-		FitTypeXY:	0,
-		FitTypeX:	1,
-		FitTypeY:	2
+		FitTypeXY: 0,
+		FitTypeX: 1,
+		FitTypeY: 2
 	};
 	var _pixiRenderer = null;
 	var _setRenderer = function _setRenderer(pixiRenderer) {
 		_pixiRenderer = pixiRenderer;
 	};
-	var _colorTextures = {};
-	var _getTexture = function _getTexture(color) {
-		if(_colorTextures[color] === undefined) {
-			var canvas = document.createElement('canvas');
-			canvas.width = 1;
-			canvas.height = 1;
-			ctx = canvas.getContext('2d');
-			ctx.fillStyle = '#' + color.toString(16);
-			ctx.beginPath();
-			ctx.rect(0,0,1,1);
-			ctx.fill();
-			ctx.closePath();
-			_colorTextures[color] = PIXI.Texture.fromCanvas(canvas);
-		}
-		return _colorTextures[color];
-	};
-	var _border;
 	var _background;
 	var _grid;
 	var _selectBox;
 	var _houseText;
 	var _curbText;
 	var _parts;
-	
+
 	var _gridEnabled = false;
 	var _gridSpacing;
-	
+
 	var _scaleRealToPixel;
-	var _drawBackground = true;
-	
+	var _scalePixelToReal;
+
 	// Mouse/touch support
 	/**
 	 * _computeRelativeMouseLocation function - returns point location relative to background by
@@ -70,21 +53,21 @@ PixiLayout = (function () {
 	 * @param {object} absPt - object, point {x, y} - location relative to _pixiRenderer
 	 * @return {object} - point relative to background
 	 */
-	var _computeRelativeMouseLocation = function _computeRelativeMouseLocation (absPt) {
+	var _computeRelativeMouseLocation = function _computeRelativeMouseLocation(absPt) {
 		return {x: absPt.x - _pixiRenderer.bgndOffX, y: absPt.y - _pixiRenderer.bgndOffY};
 	};
 
 	/**
 	 * _mouseout function - callback from PIXI.InteractiveManager on mouse entering render area
 	 */
-	var _mouseover = function _mouseover () {
+	var _mouseover = function _mouseover() {
 		//console.log('_mouseover');
 	};
 
 	/**
 	 * _mouseout function - callback from PIXI.InteractiveManager on mouse leaving render area
 	 */
-	var _mouseout = function _mouseout () {
+	var _mouseout = function _mouseout() {
 		//console.log('_mouseout');
 	};
 
@@ -92,7 +75,7 @@ PixiLayout = (function () {
 	 * _mousedown function - callback from PIXI.InteractiveManager on mouse button down
 	 * @param {object} interactionData - object, contains current point relative to render surface
 	 */
-	var _mousedown = function _mousedown (interactionData) {
+	var _mousedown = function _mousedown(interactionData) {
 		var currentMouseLoc = _computeRelativeMouseLocation(interactionData.data.global);
 		//console.log('_mousedown: ' + currentMouseLoc.x + ', ' + currentMouseLoc.y);
 		// Starting mouse interactivity, set mousemove
@@ -111,7 +94,7 @@ PixiLayout = (function () {
 	 * @param {object} p2 - object, point {x, y}
 	 * @return {boolean} - true if same
 	 */
-	var _isSame = function _isSame (p1, p2) {
+	var _isSame = function _isSame(p1, p2) {
 		return p1.x === p2.x && p1.y === p2.y;
 	};
 
@@ -121,7 +104,7 @@ PixiLayout = (function () {
 	 * @param {object} p2 - object, point {x, y}
 	 * @return {object} - {x: ulx, y: uly, w: lrx - ulx, h: lry - uly}
 	 */
-	var _computeRect = function _computeRect (p1, p2) {
+	var _computeRect = function _computeRect(p1, p2) {
 		var ulx, uly, lrx, lry;
 		if (p1.x < p2.x) {
 			ulx = p1.x;
@@ -139,7 +122,7 @@ PixiLayout = (function () {
 			uly = p2.y;
 			lry = p1.y;
 		}
-		
+
 		return {x: ulx, y: uly, w: lrx - ulx, h: lry - uly};
 	};
 
@@ -148,7 +131,7 @@ PixiLayout = (function () {
 	 * timing issues when switching between windows
 	 * @param {boolean} enable - true to turn on, false to turn off..
 	 */
-	var _enableSelectBox = function _enableSelectBox (enable) {
+	var _enableSelectBox = function _enableSelectBox(enable) {
 		_selectBox.visible = enable;
 	};
 
@@ -156,7 +139,7 @@ PixiLayout = (function () {
 	 * _mouseup function - callback from PIXI.InteractiveManager on mouse button up
 	 * @param {object} interactionData - object, contains current point relative to render surface
 	 */
-	var _mouseup = function _mouseup (interactionData) {
+	var _mouseup = function _mouseup(interactionData) {
 		var p1 = _selectBox.startSelect;
 		var p2 = _computeRelativeMouseLocation(interactionData.data.global);
 		//console.log('console: ' + p2);
@@ -174,9 +157,12 @@ PixiLayout = (function () {
 		}
 		else {
 			_selectBox.beginFill(0xFF0000);
+			p1 = _snapToGrid(p1.x, p1.y);
 			_selectBox.drawCircle(p1.x, p1.y, 3);
 			// Store a select point, indicate with w, h == 0
 			_selectBox.currentBox = {x: p1.x, y: p1.y, w: 0, h: 0};
+			_addTestItem(p1.x, p1.y, 100, 100);
+			console.log('mouseup: xreal: ' + p1.x * _scalePixelToReal + ', yreal: ' + p1.y * _scalePixelToReal);
 		}
 	};
 
@@ -184,7 +170,7 @@ PixiLayout = (function () {
 	 * _mousemove function - callback from PIXI.InteractiveManager on mouse motion
 	 * @param {object} interactionData - object, contains current point relative to render surface
 	 */
-	var _mousemove = function _mousemove (interactionData) {
+	var _mousemove = function _mousemove(interactionData) {
 		var p1 = _selectBox.startSelect;
 		var p2 = _computeRelativeMouseLocation(interactionData.data.global);
 		//console.log('_mousemove: ' + p2);
@@ -209,7 +195,7 @@ PixiLayout = (function () {
 	 * @param {number} borderColor - Color of border, e.g. 0xFF0000 (red)
 	 * @param {number} borderWidth - pixel width of border
 	 */
-	var _rectangle = function _rectangle( x, y, width, height, backgroundColor, borderColor, borderWidth ) {
+	var _rectangle = function _rectangle(x, y, width, height, backgroundColor, borderColor, borderWidth) {
 		console.log('PixiLayout._rectangle(' + x + ', ' + y + ', ' + width + ', ' + height +
 			', ' + backgroundColor + ', ' + borderColor + ', ' + borderWidth);
 		var box = new PIXI.Container();
@@ -219,26 +205,11 @@ PixiLayout = (function () {
 		box.mouseout = _mouseout;
 		box.mousedown = _mousedown;
 		box.mouseup = _mouseup;
-		//box.mousemove = _mousemove;
-		
-		if (_drawBackground) {
-			// When drawing, background will contain the drawn border
-			// as well as the background
-			_background = new PIXI.Graphics();
-			box.addChild(_background);
-		}
-		else {
-			_border = new PIXI.Sprite(_getTexture(borderColor));
-			_border.width = width;
-			_border.height = height;
-			box.addChild(_border);
-			_background = new PIXI.Sprite(_getTexture(backgroundColor));
-			_background.width = width - 2 * borderWidth;
-			_background.height = height - 2 * borderWidth;
-			_background.position.x = borderWidth;
-			_background.position.y = borderWidth;
-			box.addChild(_background);
-		}
+
+		// When drawing, background will contain the drawn border
+		// as well as the background
+		_background = new PIXI.Graphics();
+		box.addChild(_background);
 		// gridding?
 		_grid = new PIXI.Graphics();
 		box.addChild(_grid);
@@ -270,28 +241,20 @@ PixiLayout = (function () {
 	 * @param {number} borderWidth - pixel width of border
 	 */
 	var _modifyRectangle = function _modifyRectangle(rectangle, x, y, width, height, borderWidth) {
-		if (_drawBackground) {
-			_background.clear();
-			// Now store positional info into background, even though we still have to explicitly draw
-			_background.innerWidth = width - (2 * borderWidth);
-			_background.innerHeight = height - (2 * borderWidth);
-			_background.innerX = borderWidth;
-			_background.innerY = borderWidth;
-			_background.position.x = 0;
-			_background.position.y = 0;
-			_background.beginFill(0xFF0000);
-			_background.drawRect(0, 0, width, height);
-			_background.beginFill(0xFFFFFF);
-			_background.drawRect(borderWidth, borderWidth, _background.innerWidth, _background.innerHeight);
-		}
-		else {
-			_border.width = width;
-			_border.height = height;
-			_background.width = width - 2 * borderWidth;
-			_background.height = height - 2 * borderWidth;
-			_background.position.x = borderWidth;
-			_background.position.y = borderWidth;
-		}
+		_background.clear();
+		// Now store positional info into background, even though we still have to explicitly draw
+		_background.innerWidth = width - (2 * borderWidth);
+		_background.innerHeight = height - (2 * borderWidth);
+		_background.innerX = borderWidth;
+		_background.innerY = borderWidth;
+		_background.width = width;
+		_background.height = height;
+		_background.position.x = 0;
+		_background.position.y = 0;
+		_background.beginFill(0xFF0000);
+		_background.drawRect(0, 0, width, height);
+		_background.beginFill(0xFFFFFF);
+		_background.drawRect(borderWidth, borderWidth, _background.innerWidth, _background.innerHeight);
 		rectangle.position.x = x;
 		rectangle.position.y = y;
 		// Safest to use the real session variables to determine _grid
@@ -314,7 +277,7 @@ PixiLayout = (function () {
 	 * @param {boolean} gridEnabled - draw or clear _grid
 	 * @param {number} gridSpacing - _grid spacing in cm
 	 */
-	var _setGridEnabled = function _setGridEnabled (gridEnabled, gridSpacing) {
+	var _setGridEnabled = function _setGridEnabled(gridEnabled, gridSpacing) {
 		_gridEnabled = gridEnabled;
 		_gridSpacing = (gridEnabled) ? gridSpacing : 0;
 	};
@@ -324,7 +287,7 @@ PixiLayout = (function () {
 	 * @param {boolean} gridEnabled - draw or clear _grid
 	 * @param {number} gridSpacing - _grid spacing in cm
 	 */
-	var _drawGrid = function _drawGrid (gridEnabled, gridSpacing) {
+	var _drawGrid = function _drawGrid(gridEnabled, gridSpacing) {
 		console.log('_drawGrid: ENTRY');
 		// Clear the _grid before we draw it so we don't accumulate graphics
 		// Always clear since it handles the !gridEnabled case too.
@@ -340,22 +303,52 @@ PixiLayout = (function () {
 			_grid.beginFill(0x009688);
 			var innerHeight;
 			var innerWidth;
-			if (_drawBackground) {
+			let gridInBorder = false;
+			if (gridInBorder) {
 				innerWidth = _background.innerWidth;
 				innerHeight = _background.innerHeight;
 				startX = _background.innerX;
 				startY = _background.innerY;
 			}
 			else {
-				innerHeight = _background.height;
 				innerWidth = _background.width;
+				innerHeight = _background.height;
+				startX = _background.position.x;
+				startY = _background.position.y;
 			}
-			for (var row= 0, lastRow = innerHeight; row < lastRow; row += gridPixelSpacing) {
-				for (var i= 0, stop = innerWidth; i < stop; i += gridPixelSpacing) {
+			for (var row = 0, lastRow = innerHeight; row < lastRow; row += gridPixelSpacing) {
+				for (var i = 0, stop = innerWidth; i < stop; i += gridPixelSpacing) {
 					_grid.drawCircle(startX + i, startY + row, 1);
 				}
 			}
 		}
+	};
+
+	/**
+	 * _snapToGrid function - snaps the xy pixel coordinate to a grid point if _gridEnabled
+	 * if not _gridEnabled, just return original coordinates
+	 * @param {number} xPixel - x position to snap
+	 * @param {number} yPixel - x position to snap
+	 * @return {object} - {x, y} snapped points or raw points
+	 */
+	var _snapToGrid = function _snapToGrid(xPixel, yPixel) {
+		if (_gridEnabled) {
+			let gridPixelSpacing = (_gridSpacing / 100.0) * _scaleRealToPixel;
+			xPixel = Math.round(xPixel / gridPixelSpacing) * gridPixelSpacing;
+			yPixel = Math.round(yPixel / gridPixelSpacing) * gridPixelSpacing;
+		}
+		return {x: xPixel, y: yPixel};
+	};
+
+	var _addTestItem = function _addTestItem(x, y, w, h) {
+		let texture = PIXI.Texture.fromImage('custom.png');
+		let item = new PIXI.Sprite(texture);
+		item.x = x - (w / 2);
+		item.y = y - (h / 2);
+		item.width = w;
+		item.height = h;
+
+		_parts.addChild(item);
 	};
 
 
@@ -363,7 +356,7 @@ PixiLayout = (function () {
 	 * @namespace PixiLayout
 	 * LayoutFrame class furnishing the basic framing data/methods
 	 */
-	var LayoutFrame = function LayoutFrame () {
+	var LayoutFrame = function LayoutFrame() {
 		var self = this;
 		self.layoutFrame = _rectangle(0, 0, 100, 100, 0xFFFFFF, 0xFF0000, 10);
 		/**
@@ -372,7 +365,7 @@ PixiLayout = (function () {
 		 * @method getLayoutFrame
 		 * @return {object} pixi layout frame container
 		 */
-		LayoutFrame.prototype.getLayoutFrame = function getLayoutFrame () {
+		LayoutFrame.prototype.getLayoutFrame = function getLayoutFrame() {
 			return self.layoutFrame;
 		};
 		/**
@@ -381,14 +374,16 @@ PixiLayout = (function () {
 		 * @method zoom
 		 * @param {number} scale scale factor to zoom
 		 */
-		LayoutFrame.prototype.zoom = function zoom (scale) { console.log('LayoutFrame.prototype.zoom: ' + scale);};
+		LayoutFrame.prototype.zoom = function zoom(scale) {
+			console.log('LayoutFrame.prototype.zoom: ' + scale);
+		};
 		/**
 		 * fits the frame
 		 * @memberof PixiLayout
 		 * @method fit
 		 * @param {number} fitMode type of fit for the frame acceptable values FitType
 		 */
-		LayoutFrame.prototype.fit = function fit (fitMode) {
+		LayoutFrame.prototype.fit = function fit(fitMode) {
 			console.log('LayoutFrame.prototype.fit: ' + fitMode);
 			if (_pixiRenderer) {
 				// set some locals and set defaults
@@ -402,24 +397,25 @@ PixiLayout = (function () {
 				case PixiLayout.FitType.FitTypeXY:
 					bestFit = Utils.computeLayoutFrame(dims.width, dims.length, pixiRenderWidth, pixiRenderHeight);
 					// center layout frame in renderer
-					x = (pixiRenderWidth - bestFit.widthPixels)/2;
-					y = (pixiRenderHeight - bestFit.lengthPixels)/2;
+					x = (pixiRenderWidth - bestFit.widthPixels) / 2;
+					y = (pixiRenderHeight - bestFit.lengthPixels) / 2;
 					break;
 				case PixiLayout.FitType.FitTypeX:
 					bestFit.lengthPixels = (dims.length * pixiRenderWidth) / dims.width;
 					// center layout frame in renderer
-					y = (pixiRenderHeight - lengthPixels)/2;
+					y = (pixiRenderHeight - lengthPixels) / 2;
 					break;
 				case PixiLayout.FitType.FitTypeY:
 					bestFit.widthPixels = (dims.width * pixiRenderHeight) / dims.length;
 					// center layout frame in renderer
-					x = (pixiRenderWidth - widthPixels)/2;
+					x = (pixiRenderWidth - widthPixels) / 2;
 					break;
 				default :
 					// error, no effect
 					break;
 				}
 				_scaleRealToPixel = bestFit.lengthPixels / dims.length;
+				_scalePixelToReal = 1.0 / _scaleRealToPixel;
 				_modifyRectangle(self.layoutFrame, x, y, bestFit.widthPixels, bestFit.lengthPixels, 4);
 			}
 			else {
@@ -434,14 +430,16 @@ PixiLayout = (function () {
 		 * @param {number} dx amount to shift in x
 		 * @param {number} dy amount to shift in y
 		 */
-		LayoutFrame.prototype.pan = function pan (dx, dy) {};
+		LayoutFrame.prototype.pan = function pan(dx, dy) {
+		};
 	};
-	
+
 	return {
 		FitType: FitType,
 		setRenderer: _setRenderer,
 		setGridEnabled: _setGridEnabled,
 		enableSelectBox: _enableSelectBox,
-		LayoutFrame: LayoutFrame
+		LayoutFrame: LayoutFrame,
+		addTestItem: _addTestItem
 	};
 })();
