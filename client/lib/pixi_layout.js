@@ -350,6 +350,30 @@ PixiLayout = (function () {
 
 		_parts.addChild(item);
 	};
+	
+	class LayoutPart {
+		constructor (abstractPart) {
+			this.abstractPart = abstractPart;
+			// real world coordinates
+			this.x = 0;
+			this.y = 0;
+			//this.width = abstractPart.width;
+			//this.height = abstractPart.height;
+			//this.imageUrl = abstractPart.imageUrl;
+		}
+		
+		createPixiSprite () {
+			let texture = PIXI.Texture.fromImage(this.abstractPart.imageUrl);
+			let sprite = new PIXI.Sprite(texture);
+			sprite.width = this.abstractPart.width * _scaleRealToPixel;
+			sprite.height = this.abstractPart.height * _scaleRealToPixel;
+			return sprite;
+		}
+	}
+
+	var _createLayoutPart = function _createLayoutPart () {
+		
+	};
 
 
 	/**
