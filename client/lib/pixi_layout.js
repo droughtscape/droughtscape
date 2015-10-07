@@ -135,6 +135,21 @@ PixiLayout = (function () {
 		_selectBox.visible = enable;
 	};
 
+	class TestAbstractPart {
+		constructor () {
+			// dimensions in meters
+			this.width = .24;
+			this.height = .24;
+			this.url = 'custom.png';
+		}
+
+		getWidth () { return this.width; }
+		getHeight () { return this.height; }
+		getImageUrl () { return this.url; }
+	}
+
+	var testAbstractPart = new TestAbstractPart();
+
 	/**
 	 * _mouseup function - callback from PIXI.InteractiveManager on mouse button up
 	 * @param {object} interactionData - object, contains current point relative to render surface
@@ -161,7 +176,9 @@ PixiLayout = (function () {
 			_selectBox.drawCircle(p1.x, p1.y, 3);
 			// Store a select point, indicate with w, h == 0
 			_selectBox.currentBox = {x: p1.x, y: p1.y, w: 0, h: 0};
-			_addTestItem(p1.x, p1.y, 100, 100);
+			//let layoutPart = new LayoutPart(testAbstractPart);
+			_createLayoutPart(testAbstractPart, p1.x, p1.y);
+			//_addTestItem(p1.x, p1.y, 100, 100);
 			console.log('mouseup: xreal: ' + p1.x * _scalePixelToReal + ', yreal: ' + p1.y * _scalePixelToReal);
 		}
 	};
@@ -350,31 +367,82 @@ PixiLayout = (function () {
 
 		_parts.addChild(item);
 	};
-	
+
+	/**
+	 * LayoutPart class
+	 * @class LayoutPart
+	 */
 	class LayoutPart {
+		/**
+		 * LayoutPart constructor
+		 * @constructs LayoutClass
+		 * @param {object} abstractPart - This should be common across all instances of this part 
+		 */
 		constructor (abstractPart) {
+			/**
+			 * @member {object} abstractPart - save the passed in parameter
+			 */
 			this.abstractPart = abstractPart;
 			// real world coordinates
-			this.x = 0;
-			this.y = 0;
-			//this.width = abstractPart.width;
-			//this.height = abstractPart.height;
-			//this.imageUrl = abstractPart.imageUrl;
+			/**
+			 * @member {number} x - real world x position
+			 */
+			this.x = 0.0;
+			/**
+			 * @member {number} y - real world y position
+			 */
+			this.y = 0.0;
+			/**
+			 * @member {number} width - real world width in meters
+			 */
+			this.width = abstractPart.getWidth();
+			/**
+			 * @member {number} height - real world height in meters
+			 */
+			this.height = abstractPart.getHeight();
+			/**
+			 * @member {string} imageUrl - image to display in layout mode
+			 */
+			this.imageUrl = abstractPart.getImageUrl();
+			/**
+			 * @member {object} pixiTexture - pixi texture is common for all instances of the part
+			 * Note, while ES6 classes do not allow static class variables, PIXI's texture cache prevents redundant textures
+			 */
+			this.pixiTexture = PIXI.Texture.fromImage(this.imageUrl);
 		}
-		
+
+		/**
+		 * Creates a PIXI.Sprite instance
+		 * @method createPixiSprite with pixel width and height
+		 * @returns {PIXI.Sprite}
+		 */
 		createPixiSprite () {
-			let texture = PIXI.Texture.fromImage(this.abstractPart.imageUrl);
-			let sprite = new PIXI.Sprite(texture);
-			sprite.width = this.abstractPart.width * _scaleRealToPixel;
-			sprite.height = this.abstractPart.height * _scaleRealToPixel;
+			let sprite = new PIXI.Sprite(this.pixiTexture);
+			sprite.width = this.width * _scaleRealToPixel;
+			sprite.height = this.height * _scaleRealToPixel;
 			return sprite;
 		}
 	}
 
-	var _createLayoutPart = function _createLayoutPart () {
-		
+	/**
+	 * @function _createLayoutPart - creates a sprite instance from a LayoutPart and adds it to the _parts container
+	 * Also creates LayoutPart and updates to real world location
+	 * @param {object} abstractPart - This should be common across all instances of this part
+	 * @param {number} xPixel - x position in pixels
+	 * @param {number} yPixel - y position in pixels
+	 * @return {LayoutPart} - 
+	 * @private
+	 */
+	var _createLayoutPart = function _createLayoutPart (abstractPart, xPixel, yPixel) {
+		let layoutPart = new LayoutPart(abstractPart);
+		let sprite = layoutPart.createPixiSprite();
+		sprite.x = xPixel - (sprite.width / 2);
+		sprite.y = yPixel - (sprite.height / 2);
+		layoutPart.x = sprite.x * _scalePixelToReal;
+		layoutPart.y = sprite.y * _scalePixelToReal;
+		_parts.addChild(sprite);
+		return layoutPart;
 	};
-
 
 	/**
 	 * @namespace PixiLayout
@@ -464,6 +532,8 @@ PixiLayout = (function () {
 		setGridEnabled: _setGridEnabled,
 		enableSelectBox: _enableSelectBox,
 		LayoutFrame: LayoutFrame,
+		LayoutPart: LayoutPart,
+		createLayoutPart: _createLayoutPart,
 		addTestItem: _addTestItem
 	};
 })();
