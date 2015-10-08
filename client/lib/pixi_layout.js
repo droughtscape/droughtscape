@@ -82,8 +82,6 @@ PixiLayout = (function () {
 		_mouseDownPt = _computeRelativeMouseLocation(interactionData.data.global);
 		_mouseDownPt = _snapToGrid(_mouseDownPt.x, _mouseDownPt.y);
 		//console.log('_mouseDown: ' + currentMouseLoc.x + ', ' + currentMouseLoc.y);
-		// Starting mouse interactivity, set mousemove
-		interactionData.target.mousemove = _mouseMove;
 		if (_mouseDownHandler) {
 			_mouseDownHandler(_mouseDownPt);
 		}
@@ -99,6 +97,11 @@ PixiLayout = (function () {
 		return p1.x === p2.x && p1.y === p2.y;
 	};
 
+	/**
+	 * _isMouseUpDnSame function - determines if mouse up/dn points are the same
+	 * Mainly for external usage
+	 * @return {boolean} - true if same
+	 */
 	var _isMouseUpDnSame = function _isMouseUpDnSame() {
 		return _isSame(_mouseDownPt, _mouseUpPt);
 	};
@@ -157,6 +160,10 @@ PixiLayout = (function () {
 			}
 		}
 	};
+	
+	var _drawSelectBoxPublic = function _drawSelectBoxPublic () {
+		_drawSelectBox(_mouseDownPt, _mouseMovePt);
+	};
 
 	var _finishSelectBox = function _finishSelectBox(fromPt, toPt) {
 		if (!_isSame(fromPt, toPt)) {
@@ -169,6 +176,10 @@ PixiLayout = (function () {
 			// Store a select point, indicate with w, h == 0
 			_selectBox.currentBox = {x: toPt.x, y: toPt.y, w: 0, h: 0};
 		}
+	};
+	
+	var _finishSelectBoxPublic = function _finishSelectBoxPublic() {
+		_finishSelectBox(_mouseDownPt, _mouseUpPt);
 	};
 
 	class TestAbstractPart {
@@ -194,6 +205,7 @@ PixiLayout = (function () {
 
 	var testAbstractPart = new TestAbstractPart();
 
+	// Mouse handler functions and setters for them
 	var _mouseDownHandler = null;
 	var _setMouseDownHandler = function _setMouseDownHandler(handler) {
 		_mouseDownHandler = handler;
@@ -217,9 +229,6 @@ PixiLayout = (function () {
 		_mouseUpPt = _computeRelativeMouseLocation(interactionData.data.global);
 		_mouseUpPt = _snapToGrid(_mouseUpPt.x, _mouseUpPt.y);
 		//console.log('console: ' + _mouseUpPt);
-		// Clear the mousemove function since we are exiting mouse sensitivity
-		interactionData.target.mousemove = null;
-		_finishSelectBox(_mouseDownPt, _mouseUpPt);
 		if (_mouseUpHandler) {
 			_mouseUpHandler(_mouseUpPt);
 		}
@@ -237,9 +246,6 @@ PixiLayout = (function () {
 		_mouseMovePt = _snapToGrid(_mouseMovePt.x, _mouseMovePt.y);
 
 		//console.log('_mouseMove: ' + _mouseMovePt);
-		// Make sure we moved off of startSelect
-		// possibly drawSelectBox
-		_drawSelectBox(_mouseDownPt, _mouseMovePt);
 		if (_mouseMoveHandler) {
 			_mouseMoveHandler(_mouseDownPt, _mouseMovePt);
 		}
@@ -265,6 +271,7 @@ PixiLayout = (function () {
 		box.mouseout = _mouseOut;
 		box.mousedown = _mouseDown;
 		box.mouseup = _mouseUp;
+		box.mousemove = _mouseMove;
 
 		// When drawing, background will contain the drawn border
 		// as well as the background
@@ -578,10 +585,12 @@ PixiLayout = (function () {
 		LayoutPart: LayoutPart,
 		isSame: _isSame,
 		createLayoutPart: _createLayoutPart,
-		setMouseDownHandler: _setMouseDownHandler,
-		setMouseMoveHandler: _setMouseMoveHandler,
+		setMouseDnHandler: _setMouseDownHandler,
+		setMouseMvHandler: _setMouseMoveHandler,
 		setMouseUpHandler: _setMouseUpHandler,
 		isMouseUpDnSame: _isMouseUpDnSame,
+		drawSelectBox: _drawSelectBoxPublic,
+		finishSelectBox: _finishSelectBoxPublic,
 		addTestItem: _addTestItem
 	};
 })();

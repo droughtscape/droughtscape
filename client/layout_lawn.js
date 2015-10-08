@@ -31,6 +31,8 @@ Session.setDefault(Constants.gridEnabled, true);
 // this is always in cm
 Session.setDefault(Constants.gridSpacing, 24);
 
+var MOUSE_MODE = {Select: 0, Create: 1};
+
 /**
  * pixiAnimate function to furnish animation energy using requestAnimationFrame()
  * Currently this just animates a test case.
@@ -79,16 +81,41 @@ class TestAbstractPartLL {
 var testAbstractPart = new TestAbstractPartLL();
 
 // Mouse handlers
-var _mouseDownSelectHandler = function _mouseDownSelectHandler (pixelPt) {
+var _mouseDnSelectHandler = function _mouseDnSelectHandler (pixelPt) {
+	PixiLayout.setMouseMvHandler(_mouseMvSelectHandler);
 	PixiLayout.enableSelectBox(true);
 };
-var _mouseUpSelectHandler = function _mouseUpSelectHandler (pixelPt) {
-	
+var _mouseMvSelectHandler = function _mouseMvSelectHandler (pixelPt) {
+	PixiLayout.drawSelectBox();
 };
-var _testHandler = function _testHandler (pixelPt) {
+var _mouseUpSelectHandler = function _mouseUpSelectHandler (pixelPt) {
+	PixiLayout.setMouseMvHandler(null);
+	PixiLayout.finishSelectBox();
+};
+var _mouseUpTestHandler = function _testHandler (pixelPt) {
 	if (PixiLayout.isMouseUpDnSame()) {
 		PixiLayout.createLayoutPart(testAbstractPart, pixelPt.x, pixelPt.y);
 	}
+};
+
+var _setMouseMode = function _setMouseMode (mouseMode) {
+	var targetDnHandler = null;
+	var targetUpHandler = null;
+	var targetMvHandler = null;
+	switch (mouseMode) {
+	default:
+	case MOUSE_MODE.Select:
+		targetDnHandler = _mouseDnSelectHandler;
+		targetUpHandler = _mouseUpSelectHandler;
+		targetMvHandler = _mouseMvSelectHandler;
+		break;
+	case MOUSE_MODE.Create:
+		targetUpHandler = _mouseUpTestHandler;
+		break;
+	}
+	PixiLayout.setMouseDnHandler(targetDnHandler);
+	PixiLayout.setMouseMvHandler(targetMvHandler);
+	PixiLayout.setMouseUpHandler(targetUpHandler);
 };
 
 /**
@@ -107,8 +134,7 @@ var _renderLayout = function _renderLayout () {
 	}
 	layoutFrame.fit(defaultFitMode);
 	// Test mousehandler
-	PixiLayout.setMouseDownHandler(_mouseDownSelectHandler);
-	PixiLayout.setMouseUpHandler(_testHandler);
+	_setMouseMode(MOUSE_MODE.Select);
 	if (testFit) {
 		switch (defaultFitMode) {
 		case PixiLayout.FitType.FitTypeX:
