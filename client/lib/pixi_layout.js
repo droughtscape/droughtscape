@@ -47,6 +47,9 @@ PixiLayout = (function () {
 	var _scalePixelToReal;
 
 	// Mouse/touch support
+	var _mouseDownPt;
+	var _mouseMovePt;
+	var _mouseUpPt;
 	/**
 	 * _computeRelativeMouseLocation function - returns point location relative to background by
 	 *  computing offset point from background to _pixiRenderer
@@ -58,36 +61,34 @@ PixiLayout = (function () {
 	};
 
 	/**
-	 * _mouseout function - callback from PIXI.InteractiveManager on mouse entering render area
+	 * _mouseOut function - callback from PIXI.InteractiveManager on mouse entering render area
 	 */
-	var _mouseover = function _mouseover() {
-		//console.log('_mouseover');
+	var _mouseOver = function _mouseOver() {
+		//console.log('_mouseOver');
 	};
 
 	/**
-	 * _mouseout function - callback from PIXI.InteractiveManager on mouse leaving render area
+	 * _mouseOut function - callback from PIXI.InteractiveManager on mouse leaving render area
 	 */
-	var _mouseout = function _mouseout() {
-		//console.log('_mouseout');
+	var _mouseOut = function _mouseOut() {
+		//console.log('_mouseOut');
 	};
 
 	/**
-	 * _mousedown function - callback from PIXI.InteractiveManager on mouse button down
+	 * _mouseDown function - callback from PIXI.InteractiveManager on mouse button down
 	 * @param {object} interactionData - object, contains current point relative to render surface
 	 */
-	var _mousedown = function _mousedown(interactionData) {
-		var currentMouseLoc = _computeRelativeMouseLocation(interactionData.data.global);
-		//console.log('_mousedown: ' + currentMouseLoc.x + ', ' + currentMouseLoc.y);
+	var _mouseDown = function _mouseDown(interactionData) {
+		_mouseDownPt = _computeRelativeMouseLocation(interactionData.data.global);
+		_mouseDownPt = _snapToGrid(_mouseDownPt.x, _mouseDownPt.y);
+		//console.log('_mouseDown: ' + currentMouseLoc.x + ', ' + currentMouseLoc.y);
 		// Starting mouse interactivity, set mousemove
-		interactionData.target.mousemove = _mousemove;
-		_enableSelectBox(true);
-		_selectBox.clear();
-		_selectBox.startSelect = {x: currentMouseLoc.x, y: currentMouseLoc.y};
-		//console.log('_mousedown: x: ' + _selectBox.startSelect.x + ', y: ' + _selectBox.startSelect.y + 
-		//	', background.x: ' + background.innerX + ', background.y: ' + background.innerY);
-		_selectBox.currentBox = null;
+		interactionData.target.mousemove = _mouseMove;
+		if (_mouseDownHandler) {
+			_mouseDownHandler(_mouseDownPt);
+		}
 	};
-
+	
 	/**
 	 * _isSame function - determines if two points are identical
 	 * @param {object} p1 - object, point {x, y}
@@ -98,6 +99,10 @@ PixiLayout = (function () {
 		return p1.x === p2.x && p1.y === p2.y;
 	};
 
+	var _isMouseUpDnSame = function _isMouseUpDnSame() {
+		return _isSame(_mouseDownPt, _mouseUpPt);
+	};
+	
 	/**
 	 * _computeRect function - takes two arbitrary points and computes {ulx, uly, w, h)
 	 * @param {object} p1 - object, point {x, y}
@@ -133,80 +138,110 @@ PixiLayout = (function () {
 	 */
 	var _enableSelectBox = function _enableSelectBox(enable) {
 		_selectBox.visible = enable;
+		_selectBox.clear();
+		_selectBox.startSelect = _mouseDownPt;
+		//console.log('_mouseDown: x: ' + _selectBox.startSelect.x + ', y: ' + _selectBox.startSelect.y + 
+		//	', background.x: ' + background.innerX + ', background.y: ' + background.innerY);
+		_selectBox.currentBox = null;
+	};
+
+	var _drawSelectBox = function _drawSelectBox(fromPt, toPt) {
+		if (_selectBox.visible) {
+			if (!_isSame(fromPt, toPt)) {
+				// Clear last box
+				_selectBox.clear();
+				// Draw outline of final box
+				_selectBox.currentBox = _computeRect(fromPt, toPt);
+				_selectBox.beginFill(0xFF0000, 0.5);
+				_selectBox.drawRect(_selectBox.currentBox.x, _selectBox.currentBox.y, _selectBox.currentBox.w, _selectBox.currentBox.h);
+			}
+		}
+	};
+
+	var _finishSelectBox = function _finishSelectBox(fromPt, toPt) {
+		if (!_isSame(fromPt, toPt)) {
+			_drawSelectBox(fromPt, toPt);
+		}
+		else {
+			_selectBox.beginFill(0xFF0000);
+			toPt = _snapToGrid(toPt.x, toPt.y);
+			_selectBox.drawCircle(toPt.x, toPt.y, 3);
+			// Store a select point, indicate with w, h == 0
+			_selectBox.currentBox = {x: toPt.x, y: toPt.y, w: 0, h: 0};
+		}
 	};
 
 	class TestAbstractPart {
-		constructor () {
+		constructor() {
 			// dimensions in meters
 			this.width = .24;
 			this.height = .24;
 			this.url = 'custom.png';
 		}
 
-		getWidth () { return this.width; }
-		getHeight () { return this.height; }
-		getImageUrl () { return this.url; }
+		getWidth() {
+			return this.width;
+		}
+
+		getHeight() {
+			return this.height;
+		}
+
+		getImageUrl() {
+			return this.url;
+		}
 	}
 
 	var testAbstractPart = new TestAbstractPart();
-	
-	var _mouseupHandler = null;
-	var _setMouseupHandler = function _setMouseupHandler (handler) {
-		_mouseupHandler = handler;
+
+	var _mouseDownHandler = null;
+	var _setMouseDownHandler = function _setMouseDownHandler(handler) {
+		_mouseDownHandler = handler;
+	};
+
+	var _mouseMoveHandler = null;
+	var _setMouseMoveHandler = function _setMouseMoveHandler(handler) {
+		_mouseMoveHandler = handler;
+	};
+
+	var _mouseUpHandler = null;
+	var _setMouseUpHandler = function _setMouseUpHandler(handler) {
+		_mouseUpHandler = handler;
 	};
 
 	/**
-	 * _mouseup function - callback from PIXI.InteractiveManager on mouse button up
+	 * _mouseUp function - callback from PIXI.InteractiveManager on mouse button up
 	 * @param {object} interactionData - object, contains current point relative to render surface
 	 */
-	var _mouseup = function _mouseup(interactionData) {
-		var p1 = _selectBox.startSelect;
-		var p2 = _computeRelativeMouseLocation(interactionData.data.global);
-		//console.log('console: ' + p2);
+	var _mouseUp = function _mouseUp(interactionData) {
+		_mouseUpPt = _computeRelativeMouseLocation(interactionData.data.global);
+		_mouseUpPt = _snapToGrid(_mouseUpPt.x, _mouseUpPt.y);
+		//console.log('console: ' + _mouseUpPt);
 		// Clear the mousemove function since we are exiting mouse sensitivity
 		interactionData.target.mousemove = null;
-		// if we are still on startSelect point, just do a point select
-		// otherwise, draw the box
-		if (!_isSame(p1, p2)) {
-			_selectBox.clear();
-			// Draw outline of final box
-			// Store the final box as the select box
-			_selectBox.currentBox = _computeRect(p1, p2);
-			_selectBox.beginFill(0xFF0000, 0.5);
-			_selectBox.drawRect(_selectBox.currentBox.x, _selectBox.currentBox.y, _selectBox.currentBox.w, _selectBox.currentBox.h);
+		_finishSelectBox(_mouseDownPt, _mouseUpPt);
+		if (_mouseUpHandler) {
+			_mouseUpHandler(_mouseUpPt);
 		}
-		else {
-			_selectBox.beginFill(0xFF0000);
-			p1 = _snapToGrid(p1.x, p1.y);
-			_selectBox.drawCircle(p1.x, p1.y, 3);
-			// Store a select point, indicate with w, h == 0
-			_selectBox.currentBox = {x: p1.x, y: p1.y, w: 0, h: 0};
-			//let layoutPart = new LayoutPart(testAbstractPart);
-			//_createLayoutPart(testAbstractPart, p1.x, p1.y);
-			if (_mouseupHandler) {
-				_mouseupHandler(p1);
-			}
-			//_addTestItem(p1.x, p1.y, 100, 100);
-			console.log('mouseup: xreal: ' + p1.x * _scalePixelToReal + ', yreal: ' + p1.y * _scalePixelToReal);
-		}
+		//_addTestItem(_mouseUpPt.x, _mouseUpPt.y, 100, 100);
+		console.log('mouseup: xreal: ' + _mouseUpPt.x * _scalePixelToReal + ', yreal: ' + _mouseUpPt.y * _scalePixelToReal);
+		//}
 	};
 
 	/**
-	 * _mousemove function - callback from PIXI.InteractiveManager on mouse motion
+	 * _mouseMove function - callback from PIXI.InteractiveManager on mouse motion
 	 * @param {object} interactionData - object, contains current point relative to render surface
 	 */
-	var _mousemove = function _mousemove(interactionData) {
-		var p1 = _selectBox.startSelect;
-		var p2 = _computeRelativeMouseLocation(interactionData.data.global);
-		//console.log('_mousemove: ' + p2);
+	var _mouseMove = function _mouseMove(interactionData) {
+		_mouseMovePt = _computeRelativeMouseLocation(interactionData.data.global);
+		_mouseMovePt = _snapToGrid(_mouseMovePt.x, _mouseMovePt.y);
+
+		//console.log('_mouseMove: ' + _mouseMovePt);
 		// Make sure we moved off of startSelect
-		if (!_isSame(p1, p2)) {
-			// Clear last box
-			_selectBox.clear();
-			// Draw outline of final box
-			let {x, y, w, h} = _computeRect(p1, p2);
-			_selectBox.beginFill(0xFF0000, 0.5);
-			_selectBox.drawRect(x, y, w, h);
+		// possibly drawSelectBox
+		_drawSelectBox(_mouseDownPt, _mouseMovePt);
+		if (_mouseMoveHandler) {
+			_mouseMoveHandler(_mouseDownPt, _mouseMovePt);
 		}
 	};
 
@@ -226,10 +261,10 @@ PixiLayout = (function () {
 		var box = new PIXI.Container();
 		// Set interactivity
 		box.interactive = true;
-		box.mouseover = _mouseover;
-		box.mouseout = _mouseout;
-		box.mousedown = _mousedown;
-		box.mouseup = _mouseup;
+		box.mouseover = _mouseOver;
+		box.mouseout = _mouseOut;
+		box.mousedown = _mouseDown;
+		box.mouseup = _mouseUp;
 
 		// When drawing, background will contain the drawn border
 		// as well as the background
@@ -384,9 +419,9 @@ PixiLayout = (function () {
 		/**
 		 * LayoutPart constructor
 		 * @constructs LayoutClass
-		 * @param {object} abstractPart - This should be common across all instances of this part 
+		 * @param {object} abstractPart - This should be common across all instances of this part
 		 */
-		constructor (abstractPart) {
+		constructor(abstractPart) {
 			/**
 			 * @member {object} abstractPart - save the passed in parameter
 			 */
@@ -424,7 +459,7 @@ PixiLayout = (function () {
 		 * @method createPixiSprite with pixel width and height
 		 * @returns {object} - PIXI.Sprite
 		 */
-		createPixiSprite () {
+		createPixiSprite() {
 			let sprite = new PIXI.Sprite(this.pixiTexture);
 			sprite.width = this.width * _scaleRealToPixel;
 			sprite.height = this.height * _scaleRealToPixel;
@@ -438,10 +473,10 @@ PixiLayout = (function () {
 	 * @param {object} abstractPart - This should be common across all instances of this part
 	 * @param {number} xPixel - x position in pixels
 	 * @param {number} yPixel - y position in pixels
-	 * @return {LayoutPart} - 
+	 * @return {LayoutPart} -
 	 * @private
 	 */
-	var _createLayoutPart = function _createLayoutPart (abstractPart, xPixel, yPixel) {
+	var _createLayoutPart = function _createLayoutPart(abstractPart, xPixel, yPixel) {
 		let layoutPart = new LayoutPart(abstractPart);
 		let sprite = layoutPart.createPixiSprite();
 		sprite.x = xPixel - (sprite.width / 2);
@@ -541,8 +576,12 @@ PixiLayout = (function () {
 		enableSelectBox: _enableSelectBox,
 		LayoutFrame: LayoutFrame,
 		LayoutPart: LayoutPart,
+		isSame: _isSame,
 		createLayoutPart: _createLayoutPart,
-		setMouseupHandler: _setMouseupHandler,
+		setMouseDownHandler: _setMouseDownHandler,
+		setMouseMoveHandler: _setMouseMoveHandler,
+		setMouseUpHandler: _setMouseUpHandler,
+		isMouseUpDnSame: _isMouseUpDnSame,
 		addTestItem: _addTestItem
 	};
 })();

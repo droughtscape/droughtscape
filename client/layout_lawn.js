@@ -78,8 +78,17 @@ class TestAbstractPartLL {
 
 var testAbstractPart = new TestAbstractPartLL();
 
+// Mouse handlers
+var _mouseDownSelectHandler = function _mouseDownSelectHandler (pixelPt) {
+	PixiLayout.enableSelectBox(true);
+};
+var _mouseUpSelectHandler = function _mouseUpSelectHandler (pixelPt) {
+	
+};
 var _testHandler = function _testHandler (pixelPt) {
-	PixiLayout.createLayoutPart(testAbstractPart, pixelPt.x, pixelPt.y);
+	if (PixiLayout.isMouseUpDnSame()) {
+		PixiLayout.createLayoutPart(testAbstractPart, pixelPt.x, pixelPt.y);
+	}
 };
 
 /**
@@ -98,7 +107,8 @@ var _renderLayout = function _renderLayout () {
 	}
 	layoutFrame.fit(defaultFitMode);
 	// Test mousehandler
-	PixiLayout.setMouseupHandler(_testHandler);
+	PixiLayout.setMouseDownHandler(_mouseDownSelectHandler);
+	PixiLayout.setMouseUpHandler(_testHandler);
 	if (testFit) {
 		switch (defaultFitMode) {
 		case PixiLayout.FitType.FitTypeX:
