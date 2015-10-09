@@ -70,7 +70,18 @@ Template.navBar.helpers({
 	}
 });
 
+var _parseEventId = function _parseEventId (eventId) {
+	var substrings = eventId.split('-');
+	return {action: substrings[0], topic: substrings[1]};
+};
+
 Template.navBar.events({
+	'click .action-button': function (event) {
+		console.log('actionButton: ' + event.currentTarget.id);
+		// event encodes message and target MBus
+		let {action, topic} = _parseEventId(event.currentTarget.id);
+		MBus.publish(topic, action, null);
+	},
 	'click .dropdownTag': function (event) {
 		console.log('dropdownTag: ' + event);
 	},

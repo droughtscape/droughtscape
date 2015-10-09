@@ -25,6 +25,11 @@
         <i class={{icon}}></i>{{friendlyName}}</a></li>
 </template>
 
+<template name="actionButton">
+    <li><a id="{{name}}" class="action-button teal-text" style="font-size: 1.25rem">
+        <i class={{icon}}></i>{{friendlyName}}</a></li>
+</template>
+
 <template name="dropdownButton">
     <li><a id="{{name}}" class="dropdown-button teal-text" href="#!" style="font-size: 1.25rem"
            data-activates={{dataActivates}}>{{friendlyName}}<i class={{icon}}></i></a>

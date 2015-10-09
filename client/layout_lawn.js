@@ -79,6 +79,8 @@ class TestAbstractPartLL {
 }
 
 var testAbstractPart = new TestAbstractPartLL();
+var _currentLayoutPart = null;
+var _currentMouseMode = MOUSE_MODE.Select;
 
 // Mouse handlers
 var _mouseDnSelectHandler = function _mouseDnSelectHandler (pixelPt) {
@@ -93,8 +95,8 @@ var _mouseUpSelectHandler = function _mouseUpSelectHandler (pixelPt) {
 	PixiLayout.finishSelectBox();
 };
 var _mouseUpTestHandler = function _testHandler (pixelPt) {
-	if (PixiLayout.isMouseUpDnSame()) {
-		PixiLayout.createLayoutPart(testAbstractPart, pixelPt.x, pixelPt.y);
+	if (PixiLayout.isMouseUpDnSame() && _currentLayoutPart) {
+		PixiLayout.createLayoutPart(_currentLayoutPart, pixelPt.x, pixelPt.y);
 	}
 };
 
@@ -134,7 +136,13 @@ var _renderLayout = function _renderLayout () {
 	}
 	layoutFrame.fit(defaultFitMode);
 	// Test mousehandler
-	_setMouseMode(MOUSE_MODE.Select);
+	if (_currentLayoutPart = CreateLawnData.getCurrentLayoutPart()) {
+		_currentMouseMode = MOUSE_MODE.Create;
+	}
+	else {
+		_currentMouseMode = MOUSE_MODE.Select;
+	}
+	_setMouseMode(_currentMouseMode);
 	if (testFit) {
 		switch (defaultFitMode) {
 		case PixiLayout.FitType.FitTypeX:
@@ -157,11 +165,35 @@ var _renderLayout = function _renderLayout () {
  */
 var _handleResizeEvent = Utils.createDeferredFunction(_renderLayout);
 
+var unsubscribe = null;
+
+var _handleLayoutMessages = function _handleLayoutMessages (message) {
+	if (MBus.validateMessage(message)) {
+		switch (message.type) {
+		case 'select':
+			console.log('_handleLayoutMessages[' + message.topic + ']: ' + message.type + ' --> ' + message.value);
+			CreateLawnData.createLayoutPart(null);
+			if (_currentMouseMode != MOUSE_MODE.Select) {
+				_currentMouseMode = MOUSE_MODE.Select;
+				_setMouseMode(_currentMouseMode);
+			}
+			break;
+		}
+	}
+	else {
+		console.log('_handleLayoutMessages:ERROR, invalid message: ' + message);
+	}
+};
+
 Template.layout_lawn.onCreated(function () {
 	NavConfig.pushNavBar('layout');
 	NavConfig.pushRightBar('rightBar', 'layout_lawn');
 	runAnimation = true;
 	window.addEventListener('resize', _handleResizeEvent);
+	
+	// Test code
+	//CreateLawnData.createLayoutPart(testAbstractPart);
+	unsubscribe = MBus.subscribe(Constants.mbus_layout, _handleLayoutMessages);
 });
 
 Template.layout_lawn.onDestroyed(function () {
@@ -174,6 +206,7 @@ Template.layout_lawn.onDestroyed(function () {
 	// reentered.  We reenable on first mouse down which ensures graphic state is ok
 	PixiLayout.enableSelectBox(false);
 	window.removeEventListener('resize', _handleResizeEvent);
+	unsubscribe.remove();
 });
 
 Template.layout_lawn.onRendered(function () {
@@ -220,6 +253,10 @@ Template.layout_lawn.onRendered(function () {
 	}
 	console.log('layout_lawn.onRendered, pixiRenderer: ' + pixiRenderer);
 });
+
+var testLayoutCreate = function testLayoutCreate () {
+	console.log('testLayoutCreate: ENTRY');
+};
 
 var _settings = {
 	gridEnabled: Session.get(Constants.gridEnabled),

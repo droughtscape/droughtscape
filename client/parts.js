@@ -77,7 +77,7 @@ Template.parts.onCreated(function () {
 		NavConfig.pushRightBar('rightBar', 'parts');
 	}
 	// Support carousel lifecycle.  Subscribe returns the ability to unsubscribe.
-	unsubscribe = MBus.subscribe(Constants.mbus_parts, handlePartTypeMessages)
+	unsubscribe = MBus.subscribe(Constants.mbus_parts, handlePartTypeMessages);
 });
 
 Template.parts.onDestroyed(function () {

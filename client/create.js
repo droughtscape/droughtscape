@@ -209,8 +209,24 @@ Template.build_lawn.events ({
 	}
 });
 
+class TestAbstractPartSP {
+	constructor () {
+		// dimensions in meters
+		this.width = .60;
+		this.height = .60;
+		this.url = 'custom.png';
+	}
+
+	getWidth () { return this.width; }
+	getHeight () { return this.height; }
+	getImageUrl () { return this.url; }
+}
+
+var testAbstractPart = new TestAbstractPartSP();
+
 Template.select_parts.onCreated(function () {
 	NavConfig.pushRightBar(Constants.rightBar, Constants.select_parts);
+	CreateLawnData.createLayoutPart(testAbstractPart);
 });
 
 Template.select_parts.onDestroyed(function () {
