@@ -50,28 +50,40 @@ PixiLayout = (function () {
 	var _mouseDownPt;
 	var _mouseMovePt;
 	var _mouseUpPt;
+	var _currentMoveState = false;
 	/**
 	 * _computeRelativeMouseLocation function - returns point location relative to background by
 	 *  computing offset point from background to _pixiRenderer
 	 * @param {object} absPt - object, point {x, y} - location relative to _pixiRenderer
-	 * @return {object} - point relative to background
+	 * @return {object} - point relative to background, valid if within the _background
 	 */
 	var _computeRelativeMouseLocation = function _computeRelativeMouseLocation(absPt) {
-		return {x: absPt.x - _pixiRenderer.bgndOffX, y: absPt.y - _pixiRenderer.bgndOffY};
+		let point = {x: absPt.x - _pixiRenderer.bgndOffX, y: absPt.y - _pixiRenderer.bgndOffY, valid: true};
+		point.valid = (point.x <= _background.width) && (point.y <= _background.height) &&
+			(point.x >= 0) && (point.y >= 0);
+		return point;
 	};
 
 	/**
 	 * _mouseOut function - callback from PIXI.InteractiveManager on mouse entering render area
 	 */
-	var _mouseOver = function _mouseOver() {
-		//console.log('_mouseOver');
+	var _mouseOver = function _mouseOver(interactionData) {
+		console.log('_mouseOver');
+		let mouseOverPt = _computeRelativeMouseLocation(interactionData.data.global);
+		mouseOverPt = _snapToGrid(mouseOverPt.x, mouseOverPt.y);
+		if (_mouseEnterHandler) {
+			_mouseEnterHandler(mouseOverPt);
+		}
 	};
 
 	/**
 	 * _mouseOut function - callback from PIXI.InteractiveManager on mouse leaving render area
 	 */
-	var _mouseOut = function _mouseOut() {
-		//console.log('_mouseOut');
+	var _mouseOut = function _mouseOut(interactionData) {
+		console.log('_mouseOut');
+		if (_mouseLeaveHandler) {
+			_mouseLeaveHandler();
+		}
 	};
 
 	/**
@@ -148,6 +160,11 @@ PixiLayout = (function () {
 		_selectBox.currentBox = null;
 	};
 
+	/**
+	 * _drawSelectBox function - if in select mode, clear and redraw selection box if toPt != fromPt
+	 * @param {object} fromPt - x, y location we were at
+	 * @param {object} toPt - x, y location we are now at
+	 */
 	var _drawSelectBox = function _drawSelectBox(fromPt, toPt) {
 		if (_selectBox.visible) {
 			if (!_isSame(fromPt, toPt)) {
@@ -160,11 +177,19 @@ PixiLayout = (function () {
 			}
 		}
 	};
-	
+
+	/**
+	 * _drawSelectBoxPublic function - public for callback from outside.  Uses local mouse locations
+	 */
 	var _drawSelectBoxPublic = function _drawSelectBoxPublic () {
 		_drawSelectBox(_mouseDownPt, _mouseMovePt);
 	};
 
+	/**
+	 * _finishSelectBox function - draws final select box or a point if fromPt === toPt
+	 * @param {object} fromPt - x, y location we were at
+	 * @param {object} toPt - x, y location we are now at
+	 */
 	var _finishSelectBox = function _finishSelectBox(fromPt, toPt) {
 		if (!_isSame(fromPt, toPt)) {
 			_drawSelectBox(fromPt, toPt);
@@ -177,11 +202,56 @@ PixiLayout = (function () {
 			_selectBox.currentBox = {x: toPt.x, y: toPt.y, w: 0, h: 0};
 		}
 	};
-	
+
+	/**
+	 * _finishSelectBoxPublic function - public for callback from outside.  Uses local mouse locations
+	 */
 	var _finishSelectBoxPublic = function _finishSelectBoxPublic() {
 		_finishSelectBox(_mouseDownPt, _mouseUpPt);
 	};
 
+	var _mouseSprite = null;
+	
+	/**
+	 * _enableMouseSprite function - enable/disable the graphic cursor sprite.  Used to avoid any
+	 * timing issues when switching between windows
+	 * @param {boolean} enable - true to turn on, false to turn off..
+	 * @param {object} pixelPt - mandatory if enable is true
+	 */
+	var _enableMouseSprite = function _enableMouseSprite (enable, pixelPt) {
+		_selectBox.visible = enable;
+		if (enable) {
+			if (!_mouseSprite) {
+				_mouseSprite = PIXI.Sprite.fromImage('custom.png');
+				_selectBox.addChild(_mouseSprite);
+			}
+			_mouseSprite.width = 50;
+			_mouseSprite.height = 50;
+			// Center the sprite
+			_mouseSprite.position.x = pixelPt.x - 25;
+			_mouseSprite.position.y = pixelPt.y - 25;
+		}
+		else {
+			if (_mouseSprite) {
+				// Remove from the 
+				_selectBox.removeChild(_mouseSprite);
+				_mouseSprite = null;
+			}
+		}
+	};
+
+	/**
+	 * _moveMouseSprite function - Set xy loc of sprite to pixelPt
+	 * @param {object} pixelPt - location to place sprite if active
+	 */
+	var _moveMouseSprite = function _moveMouseSprite (pixelPt) {
+		if (_selectBox.visible && _mouseSprite) {
+			// Center the sprite, 25 is magic since we know w, h == 50
+			_mouseSprite.position.x = pixelPt.x - 25;
+			_mouseSprite.position.y = pixelPt.y - 25;
+		}
+	};
+	
 	class TestAbstractPart {
 		constructor() {
 			// dimensions in meters
@@ -206,6 +276,14 @@ PixiLayout = (function () {
 	var testAbstractPart = new TestAbstractPart();
 
 	// Mouse handler functions and setters for them
+	var _mouseEnterHandler = null;
+	var _setMouseEnterHandler = function _setMouseEnterHandler(handler) {
+		_mouseEnterHandler = handler;
+	};
+	var _mouseLeaveHandler = null;
+	var _setMouseLeaveHandler = function _setMouseLeaveHandler (handler) {
+		_mouseLeaveHandler = handler;
+	};
 	var _mouseDownHandler = null;
 	var _setMouseDownHandler = function _setMouseDownHandler(handler) {
 		_mouseDownHandler = handler;
@@ -242,12 +320,42 @@ PixiLayout = (function () {
 	 * @param {object} interactionData - object, contains current point relative to render surface
 	 */
 	var _mouseMove = function _mouseMove(interactionData) {
-		_mouseMovePt = _computeRelativeMouseLocation(interactionData.data.global);
-		_mouseMovePt = _snapToGrid(_mouseMovePt.x, _mouseMovePt.y);
+		// Rule out Infinity which seems to be a PIXI bug if mouse move is active
+		// and then we move out to a different window and then back into this one.
+		// Even though we reset the mouse handlers, there seems to be some state bug.
+		if (interactionData.data.global.x !== Infinity) {
+			let {x, y, valid} = _computeRelativeMouseLocation(interactionData.data.global);
+			_mouseMovePt = _snapToGrid(x, y);
+			console.log('_mouseMove: ' + _mouseMovePt.x + ', ' + _mouseMovePt.y + ' : valid: ' + valid);
+			
+			// Try to detect mouseover, mouseout
+			if (_currentMoveState) {
+				// The last state was inside
+				if (!valid) {
+					console.log('_mouseMove: LEAVE');
+					// We just moved out, fire handler, set _currentMoveState to out
+					if (_mouseLeaveHandler) {
+						_mouseLeaveHandler();
+					}
+					_currentMoveState = valid;
+				}
+			}
+			else {
+				// The last state was outside
+				if (valid) {
+					console.log('_mouseMove: ENTER');
+					// We just moved in, fire handler, set _currentMoveState to in
+					if (_mouseEnterHandler) {
+						_mouseEnterHandler(_mouseMovePt);
+					}
+					_currentMoveState = valid;
+				}
+			}
 
-		//console.log('_mouseMove: ' + _mouseMovePt);
-		if (_mouseMoveHandler) {
-			_mouseMoveHandler(_mouseDownPt, _mouseMovePt);
+			//console.log('_mouseMove: ' + _mouseMovePt);
+			if (_mouseMoveHandler) {
+				_mouseMoveHandler(_mouseDownPt, _mouseMovePt);
+			}
 		}
 	};
 
@@ -267,8 +375,8 @@ PixiLayout = (function () {
 		var box = new PIXI.Container();
 		// Set interactivity
 		box.interactive = true;
-		box.mouseover = _mouseOver;
-		box.mouseout = _mouseOut;
+		//box.mouseover = _mouseOver;
+		//box.mouseout = _mouseOut;
 		box.mousedown = _mouseDown;
 		box.mouseup = _mouseUp;
 		box.mousemove = _mouseMove;
@@ -581,15 +689,19 @@ PixiLayout = (function () {
 		setRenderer: _setRenderer,
 		setGridEnabled: _setGridEnabled,
 		enableSelectBox: _enableSelectBox,
+		enableMouseSprite: _enableMouseSprite,
 		LayoutFrame: LayoutFrame,
 		LayoutPart: LayoutPart,
 		isSame: _isSame,
 		createLayoutPart: _createLayoutPart,
 		setMouseDnHandler: _setMouseDownHandler,
+		setMouseEnterHandler: _setMouseEnterHandler,
+		setMouseLeaveHandler: _setMouseLeaveHandler,
 		setMouseMvHandler: _setMouseMoveHandler,
 		setMouseUpHandler: _setMouseUpHandler,
 		isMouseUpDnSame: _isMouseUpDnSame,
 		drawSelectBox: _drawSelectBoxPublic,
+		moveMouseSprite: _moveMouseSprite,
 		finishSelectBox: _finishSelectBoxPublic,
 		addTestItem: _addTestItem
 	};

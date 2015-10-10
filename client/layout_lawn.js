@@ -94,6 +94,19 @@ var _mouseUpSelectHandler = function _mouseUpSelectHandler (pixelPt) {
 	PixiLayout.setMouseMvHandler(null);
 	PixiLayout.finishSelectBox();
 };
+var _mouseMvCreateHandler = function _mouseMvCreateHandler (noop, pixelPt) {
+	PixiLayout.moveMouseSprite(pixelPt);
+};
+var _mouseEnterCreateHandler = function _mouseEnterCreateHandler (pixelPt) {
+	console.log('_mouseEnterCreateHandler: ' + pixelPt);
+	PixiLayout.setMouseMvHandler(_mouseMvCreateHandler);
+	PixiLayout.enableMouseSprite(true, pixelPt);
+};
+var _mouseLeaveCreateHandler = function _mouseLeaveCreateHandler () {
+	console.log('_mouseLeaveCreateHandler');
+	PixiLayout.setMouseMvHandler(null);
+	PixiLayout.enableMouseSprite(false);
+};
 var _mouseUpTestHandler = function _testHandler (pixelPt) {
 	if (PixiLayout.isMouseUpDnSame() && _currentLayoutPart) {
 		PixiLayout.createLayoutPart(_currentLayoutPart, pixelPt.x, pixelPt.y);
@@ -101,6 +114,8 @@ var _mouseUpTestHandler = function _testHandler (pixelPt) {
 };
 
 var _setMouseMode = function _setMouseMode (mouseMode) {
+	var targetEnterHandler = null;
+	var targetLeaveHandler = null;
 	var targetDnHandler = null;
 	var targetUpHandler = null;
 	var targetMvHandler = null;
@@ -112,12 +127,16 @@ var _setMouseMode = function _setMouseMode (mouseMode) {
 		targetMvHandler = _mouseMvSelectHandler;
 		break;
 	case MOUSE_MODE.Create:
+		targetEnterHandler = _mouseEnterCreateHandler;
+		targetLeaveHandler = _mouseLeaveCreateHandler;
 		targetUpHandler = _mouseUpTestHandler;
 		break;
 	}
 	PixiLayout.setMouseDnHandler(targetDnHandler);
 	PixiLayout.setMouseMvHandler(targetMvHandler);
 	PixiLayout.setMouseUpHandler(targetUpHandler);
+	PixiLayout.setMouseEnterHandler(targetEnterHandler);
+	PixiLayout.setMouseLeaveHandler(targetLeaveHandler);
 };
 
 /**
