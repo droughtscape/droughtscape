@@ -3,7 +3,7 @@
 	{{#if currentUser}}
         {{> part_type context="favoriteParts" selected=selected}}
         <hr>
-        {{> carousel id=carouselId context=partsMode}}
+        {{> carousel id=carouselId context=partsMode title="Favorite Parts"}}
 	{{else}}
         <div class="center-align valign-wrapper">
             <div id="alert-card" class="row">

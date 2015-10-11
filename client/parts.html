@@ -3,7 +3,7 @@
     {{> part_type context="parts" selected=selected}}
     <hr>
     <div>
-        {{> carousel id=carouselId context=partsMode}}
+        {{> carousel id=carouselId context=partsMode title="All Parts"}}
     </div>
     {{#if notCreateMode}}
         <div class="parts-links">
@@ -15,7 +15,7 @@
                 <i class="mdi-file-cloud left"></i>TurfTerminators Drought Tolerant Catalog"</a>
         </div>
     {{else}}
-        <div style="padding-top: 20px">
+        <div>
             <div class="favorite-parts-buttons center-align" style="margin-top: 100px">
                 <hr>
                 <div id="favorite-parts-add" class="waves-effect waves-light btn">
@@ -23,7 +23,6 @@
                 <div id="favorite-parts-del" class="waves-effect waves-light btn">
                     <i class="mdi-content-remove-circle right"></i>Delete from Favorites</div>
             </div>
-            <h3>Favorite Parts</h3>
             {{> favoriteParts}}
         </div>
     {{/if}}
