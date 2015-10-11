@@ -62,6 +62,13 @@
 <template name="select_parts">
     {{> lawn_info}}
     <h2 align="center">Select Parts</h2>
+    {{> parts}}
+    <hr>
+    <hr>
+    {{> part_type context="parts" selected=selected}}
+    <hr>
+    {{> carousel id=carouselId context=partsMode}}
+
 </template>
 
 <template name="summarize_lawn">

@@ -97,6 +97,7 @@ Template.parts.helpers({
 		return partMode;
 	},
 	notCreateMode: function () {
+		return false;
 		var currentLawn = CreateLawnData.getCurrentLawn();
 		return currentLawn === null;
 	}

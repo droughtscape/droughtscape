@@ -65,7 +65,7 @@ var unsubscribe = null;
 
 Template.favoriteParts.onCreated(function () {
 	NavConfig.pushRightBar('rightBar', 'parts');
-	unsubscribe = MBus.subscribe(Const.mbus_favoriteParts, handlePartTypeMessages);
+	unsubscribe = MBus.subscribe(Constants.mbus_favoriteParts, handlePartTypeMessages);
 });
 
 Template.favoriteParts.onDestroyed(function () {
