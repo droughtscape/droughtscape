@@ -35,7 +35,7 @@ Template.part_type.events({
 	'click .part-select': function (e, template) {
 		var clickedButton = e.currentTarget;
 		// selected is reactive so partsList helper will fire as a result
-		template.data.selected.set(clickedButton.id);
+		template.data.selected.set(clickedButton.value);
 	}
 });
 

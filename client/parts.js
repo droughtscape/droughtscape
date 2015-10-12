@@ -116,6 +116,9 @@ Template.parts.events({
 	},
 	'click #turf-terminators-plant-catalog': function () {
 		window.open('http://turfterminators.com/how-turf-terminators-works/plant-and-groundcover-catalog/', '_blank');
+	},
+	'click .part-select.parts': function (e, template) {
+		console.log('RADIO: e: ' + e + ', template: ' + template)
 	}
 });
 
