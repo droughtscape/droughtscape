@@ -94,6 +94,6 @@ Template.favoriteParts.events({
 		Session.set(Constants.renderView, Constants.signin);
 	},
 	'click #dismiss-alert': function () {
-		Session.set(Constants.renderView, Constants.parts);
+		Session.set(Constants.renderView, Constants.splash);
 	}
 });

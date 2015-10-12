@@ -1,5 +1,5 @@
 <template name="part_type">
-    <form action="#" class="parts-select" id="parts-select">
+    <form action="#" class="parts-select" id={{partsId}}>
         {{#each partsList}}
             <input class="part-select" name="part-type" type="radio" value="{{value}}" id="{{value}}" {{checked}}/>
             <label for="{{value}}">{{friendlyName}}</label>

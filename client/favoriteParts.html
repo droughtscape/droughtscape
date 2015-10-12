@@ -1,7 +1,7 @@
 <template name="favoriteParts">
     <hr>
 	{{#if currentUser}}
-        {{> part_type context="favoriteParts" selected=selected}}
+        {{> part_type context="favoriteParts" partsId="favorite-parts-select" selected=selected}}
         <hr>
         {{> carousel id=carouselId context=partsMode title="Favorite Parts"}}
 	{{else}}

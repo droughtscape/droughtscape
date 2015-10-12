@@ -97,6 +97,7 @@ Template.parts.helpers({
 		return partMode;
 	},
 	notCreateMode: function () {
+		// KKI, TBD just a hack, return false so we can work on parts directly from main page
 		return false;
 		var currentLawn = CreateLawnData.getCurrentLawn();
 		return currentLawn === null;
@@ -104,6 +105,12 @@ Template.parts.helpers({
 });
 
 Template.parts.events({
+	'click #favorite-parts-add': function () {
+		console.log('Add to Favorites clicked');
+	},
+	'click #favorite-parts-del': function () {
+		console.log('Delete from Favorites clicked');
+	},
 	'click #plants-mwd-top-50': function () {
 		window.open('http://bewaterwise.com/pdf/50_Faves.pdf', '_blank');
 	},
