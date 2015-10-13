@@ -69,6 +69,9 @@ var handleFavoritePartCarouselMessages = function handlePartCarouselMessages (me
 		switch (message.type) {
 		case Constants.mbus_selected:
 			console.log('handleFavoritePartCarouselMessages[' + message.topic + ']: ' + message.type + ' --> ' + message.value);
+			let unselectTopic = Utils.getOtherPartCarouselTemplate(message.topic);
+			console.log('handleFavoritePartCarouselMessages: unselect at: ' + unselectTopic);
+			MBus.publish(unselectTopic, Constants.mbus_unselected, null);
 			break;
 		case Constants.mbus_unselected:
 			console.log('handleFavoritePartCarouselMessages[' + message.topic + ']: ' + message.type + ' --> ' + message.value);

@@ -78,11 +78,18 @@ var handlePartTypeMessages = function handlePartTypeMessages (message) {
 	}
 };
 
+var _getOtherPartCarouselTemplate = function _getOtherPartCarouselTemplate (template) {
+	return (template === Constants.mbus_parts_carousel) ? Constants.mbus_favoriteParts_carousel : Constants.mbus_parts_carousel;
+};
+
 var handlePartCarouselMessages = function handlePartCarouselMessages (message) {
 	if (MBus.validateMessage(message)) {
 		switch (message.type) {
 		case Constants.mbus_selected:
 			console.log('handlePartCarouselMessages[' + message.topic + ']: ' + message.type + ' --> ' + message.value);
+			let unselectTopic = Utils.getOtherPartCarouselTemplate(message.topic);
+			console.log('handlePartCarouselMessages: unselect at: ' + unselectTopic);
+			MBus.publish(unselectTopic, Constants.mbus_unselected, null);
 			break;
 		case Constants.mbus_unselected:
 			console.log('handlePartCarouselMessages[' + message.topic + ']: ' + message.type + ' --> ' + message.value);
