@@ -233,6 +233,15 @@ Template.select_parts.onDestroyed(function () {
 	NavConfig.popRightBar();
 });
 
+Template.select_parts.events({
+	'click #favorite-parts-add': function () {
+		console.log('Add to Favorites clicked');
+	},
+	'click #favorite-parts-del': function () {
+		console.log('Delete from Favorites clicked');
+	}
+});
+
 Template.finish_lawn.onCreated(function () {
 	NavConfig.pushRightBar(Constants.rightBar, Constants.finish_lawn);
 });

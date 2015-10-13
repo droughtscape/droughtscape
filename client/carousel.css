@@ -45,6 +45,26 @@
     width:      calc(100% - 100px);
 }
 
+#all-parts-carousel {
+    /*border:     1px solid green;*/
+    top:        50px;
+    left:       50px;
+    /* Use this to allow gallery to fit enclosing div */
+    width:      -webkit-calc(100% - 100px);
+    width:      -moz-calc(100% - 100px);
+    width:      calc(100% - 100px);
+}
+
+#my-parts-carousel {
+    /*border:     1px solid green;*/
+    top:        50px;
+    left:       50px;
+    /* Use this to allow gallery to fit enclosing div */
+    width:      -webkit-calc(100% - 100px);
+    width:      -moz-calc(100% - 100px);
+    width:      calc(100% - 100px);
+}
+
 #favorite-parts-carousel {
     /*border:     1px solid red;*/
     top:        50px;
