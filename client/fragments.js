@@ -28,6 +28,10 @@ Template.part_type.helpers({
 		var topic = 'PartType:' + this.context;
 		MBus.publish(topic, Constants.mbus_selected, this.selected.get());
 		return PartTypeData.getPartTypeList(this.context, this.selected.get());
+	},
+	labelColor: function () {
+		// set label text color to match either select or not for better visual feedback to user
+		return (this.checked) ? Constants.color_teal : Constants.color_gray;
 	}
 });
 

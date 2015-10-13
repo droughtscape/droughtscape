@@ -2,7 +2,7 @@
     <form>
         {{#each partsList}}
             <input class="part-select" name="part-type" type="radio" value="{{value}}" id="{{id}}" {{checked}}/>
-            <label for="{{id}}">{{friendlyName}}</label>
+            <label for="{{id}}" style="color: {{labelColor}}">{{friendlyName}}</label>
         {{/each}}
     </form>
 </template>
