@@ -105,7 +105,7 @@ Template.myParts.helpers({
 		return partsCarouselId;
 	},
 	partsMode: function () {
-		return {type: "parts", subType: partMode.get()};
+		return {type: "myParts", subType: partMode.get()};
 	},
 	selected: function () {
 		return partMode;
