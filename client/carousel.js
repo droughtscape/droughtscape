@@ -57,8 +57,9 @@ Template.carousel.onRendered(function () {
 });
 
 Template.carousel.events({
-	//'click .carouselItem': function (e) {
-	//	console.log('carousel: ' + e);
-	//	MBus.publish('carousel', 'event-click', e);
-	//}
+	'click .carouselItem': function (e, template) {
+		console.log('carousel: ' + e + ', template: template');
+		let topic = 'PartCarousel:' + this.context.type;
+		MBus.publish(topic, Constants.mbus_selected, e);
+	}
 });

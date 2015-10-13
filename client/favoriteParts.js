@@ -44,33 +44,56 @@ var setSelectedCarouselImages = function setSelectedCarouselImages (carouselId, 
 	}
 };
 
-var handlePartTypeMessages = function handlePartTypeMessages (message) {
+var handleFavoritePartTypeMessages = function handleFavoritePartTypeMessages (message) {
 	if (MBus.validateMessage(message)) {
 		switch (message.type) {
-		case 'selected':
-			console.log('handlePartTypeMessages[' + message.topic + ']: ' + message.type + ' --> ' + message.value);
+		case Constants.mbus_selected:
+			console.log('handleFavoritePartTypeMessages[' + message.topic + ']: ' + message.type + ' --> ' + message.value);
 			// init carousel
 			Meteor.defer(function () {
 				setSelectedCarouselImages(favoritePartsCarouselIdElt, message.value);
 			});
 			break;
+		case Constants.mbus_unselected:
+			console.log('handleFavoritePartTypeMessages[' + message.topic + ']: ' + message.type + ' --> ' + message.value);
+			break;
 		}
 	}
 	else {
-		console.log('handlePartTypeMessages:ERROR, invalid message');
+		console.log('handleFavoritePartTypeMessages:ERROR, invalid message');
 	}
 };
 
-var unsubscribe = null;
+var handleFavoritePartCarouselMessages = function handlePartCarouselMessages (message) {
+	if (MBus.validateMessage(message)) {
+		switch (message.type) {
+		case Constants.mbus_selected:
+			console.log('handleFavoritePartCarouselMessages[' + message.topic + ']: ' + message.type + ' --> ' + message.value);
+			break;
+		case Constants.mbus_unselected:
+			console.log('handleFavoritePartCarouselMessages[' + message.topic + ']: ' + message.type + ' --> ' + message.value);
+			break;
+		}
+	}
+	else {
+		console.log('handleFavoritePartCarouselMessages:ERROR, invalid message');
+	}
+};
+
+var unsubscribePartTypeHandler = null;
+var unsubscribePartCarouselHandler = null;
 
 Template.favoriteParts.onCreated(function () {
-	NavConfig.pushRightBar('rightBar', 'parts');
-	unsubscribe = MBus.subscribe(Constants.mbus_favoriteParts, handlePartTypeMessages);
+	let rightBarConfig = (CreateLawnData.getCurrentLawn()) ? Constants.select_parts : Constants.parts;
+	NavConfig.pushRightBar(Constants.rightBar, rightBarConfig);
+	unsubscribePartTypeHandler = MBus.subscribe(Constants.mbus_favoriteParts, handleFavoritePartTypeMessages);
+	unsubscribePartCarouselHandler = MBus.subscribe(Constants.mbus_favoriteParts_carousel, handleFavoritePartCarouselMessages);
 });
 
 Template.favoriteParts.onDestroyed(function () {
 	NavConfig.popRightBar();
-	unsubscribe.remove();
+	unsubscribePartTypeHandler.remove();
+	unsubscribePartCarouselHandler.remove();
 });
 
 Template.favoriteParts.helpers({
@@ -95,5 +118,8 @@ Template.favoriteParts.events({
 	},
 	'click #dismiss-alert': function () {
 		Session.set(Constants.renderView, Constants.splash);
+	},
+	'click .part-select.favorite-parts': function (e, template) {
+		console.log('RADIO.favoriteParts: e: ' + e + ', template: ' + template);
 	}
 });

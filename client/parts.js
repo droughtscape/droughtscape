@@ -46,15 +46,30 @@ var setSelectedCarouselImages = function setSelectedCarouselImages (carouselId, 
 	}
 };
 
+var _getOtherPartTypeTemplate = function _getOtherPartTypeTemplate (template) {
+	var otherTemplate;
+	switch (template) {
+	case Constants.mbus_parts:
+		otherTemplate = Constants.mbus_favoriteParts; 
+		break;
+	case Constants.mbus_favoriteParts:
+		otherTemplate = Constants.mbus_parts;
+		break;
+	}
+};
+
 var handlePartTypeMessages = function handlePartTypeMessages (message) {
 	if (MBus.validateMessage(message)) {
 		switch (message.type) {
-		case 'selected':
+		case Constants.mbus_selected:
 			console.log('handlePartTypeMessages[' + message.topic + ']: ' + message.type + ' --> ' + message.value);
 			// init carousel
 			Meteor.defer(function () {
 				setSelectedCarouselImages(partsCarouselIdElt, message.value);
 			});
+			break;
+		case Constants.mbus_unselected:
+			console.log('handlePartTypeMessages[' + message.topic + ']: ' + message.type + ' --> ' + message.value);
 			break;
 		}
 	}
@@ -63,27 +78,42 @@ var handlePartTypeMessages = function handlePartTypeMessages (message) {
 	}
 };
 
-var unsubscribe = null;
+var handlePartCarouselMessages = function handlePartCarouselMessages (message) {
+	if (MBus.validateMessage(message)) {
+		switch (message.type) {
+		case Constants.mbus_selected:
+			console.log('handlePartCarouselMessages[' + message.topic + ']: ' + message.type + ' --> ' + message.value);
+			break;
+		case Constants.mbus_unselected:
+			console.log('handlePartCarouselMessages[' + message.topic + ']: ' + message.type + ' --> ' + message.value);
+			break;
+		}
+	}
+	else {
+		console.log('handlePartCarouselMessages:ERROR, invalid message');
+	}
+};
+
+var unsubscribePartTypeHandler = null;
+var unsubscribePartCarouselHandler = null;
 
 // Not sure why this works but onCreated and onDestroyed are called whenever the 
 // navBar button PARTS is clicked which sets the renderView Session variable.
 // I guess that since these are "subtemplates", the get created anew every time, similar to a route.
 // In any case, this is the desired effect.
 Template.parts.onCreated(function () {
-	if (CreateLawnData.getCurrentLawn()) {
-		NavConfig.pushRightBar('rightBar', 'select_parts');
-	}
-	else {
-		NavConfig.pushRightBar('rightBar', 'parts');
-	}
+	let rightBarConfig = (CreateLawnData.getCurrentLawn()) ? Constants.select_parts : Constants.parts;
+	NavConfig.pushRightBar(Constants.rightBar, rightBarConfig);
 	// Support carousel lifecycle.  Subscribe returns the ability to unsubscribe.
-	unsubscribe = MBus.subscribe(Constants.mbus_parts, handlePartTypeMessages);
+	unsubscribePartTypeHandler = MBus.subscribe(Constants.mbus_parts, handlePartTypeMessages);
+	unsubscribePartCarouselHandler = MBus.subscribe(Constants.mbus_parts_carousel, handlePartCarouselMessages);
 });
 
 Template.parts.onDestroyed(function () {
 	NavConfig.popRightBar();
 	// Support carousel lifecycle
-	unsubscribe.remove();
+	unsubscribePartTypeHandler.remove();
+	unsubscribePartCarouselHandler.remove();
 });
 
 Template.parts.helpers({
@@ -98,7 +128,7 @@ Template.parts.helpers({
 	},
 	notCreateMode: function () {
 		// KKI, TBD just a hack, return false so we can work on parts directly from main page
-		return false;
+		//return false;
 		var currentLawn = CreateLawnData.getCurrentLawn();
 		return currentLawn === null;
 	}
@@ -118,7 +148,7 @@ Template.parts.events({
 		window.open('http://turfterminators.com/how-turf-terminators-works/plant-and-groundcover-catalog/', '_blank');
 	},
 	'click .part-select.parts': function (e, template) {
-		console.log('RADIO: e: ' + e + ', template: ' + template)
+		console.log('RADIO.parts: e: ' + e + ', template: ' + template);
 	}
 });
 

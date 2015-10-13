@@ -34,6 +34,7 @@ Template.part_type.helpers({
 Template.part_type.events({
 	'click .part-select': function (e, template) {
 		var clickedButton = e.currentTarget;
+		console.log('RADIO: target: ' + e.currentTarget + ', template: ' + template);
 		// selected is reactive so partsList helper will fire as a result
 		template.data.selected.set(clickedButton.value);
 	}
