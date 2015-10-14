@@ -25,6 +25,7 @@ var partMode = new ReactiveVar('all');
 // Build a parameterized name we can use both for html and jquery (JQ)
 var partsCarouselId = 'my-parts-carousel';
 var partsCarouselIdElt = '#' + partsCarouselId;
+var parentTemplateTopic = null;
 
 var setSelectedCarouselImages = function setSelectedCarouselImages (carouselId, selection) {
 	MBus.publish(Constants.mbus_carousel, Constants.mbus_clear, {carousel: partsCarouselIdElt});
@@ -70,6 +71,9 @@ var handlePartCarouselMessages = function handlePartCarouselMessages (message) {
 		switch (message.type) {
 		case Constants.mbus_selected:
 			console.log('handlePartCarouselMessages[' + message.topic + ']: ' + message.type + ' --> ' + message.value);
+			if (parentTemplateTopic) {
+				MBus.publish(parentTemplateTopic, message.type, message.topic);
+			}
 			break;
 		case Constants.mbus_unselected:
 			console.log('handlePartCarouselMessages[' + message.topic + ']: ' + message.type + ' --> ' + message.value);
@@ -102,6 +106,9 @@ Template.myParts.onDestroyed(function () {
 
 Template.myParts.helpers({
 	carouselId: function () {
+		if (this.parentTemplateTopic) {
+			parentTemplateTopic = this.parentTemplateTopic;
+		}
 		return partsCarouselId;
 	},
 	partsMode: function () {

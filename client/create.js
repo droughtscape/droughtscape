@@ -223,14 +223,43 @@ class TestAbstractPartSP {
 }
 
 var testAbstractPart = new TestAbstractPartSP();
+var unsubscribeSelectParts;
+
+var _getUnselectedTopic = function _getUnselectedTopic (selectedTopic) {
+	return (selectedTopic === Constants.mbus_allPartsCarousel) ? Constants.mbus_myPartsCarousel : 
+		Constants.mbus_allPartsCarousel;
+};
+
+var _handleSelectPartsMessages = function _handleSelectPartsMessages (message) {
+	if (MBus.validateMessage(message)) {
+		switch (message.type) {
+		case Constants.mbus_selected:
+			console.log('_handleSelectPartsMessages[' + message.topic + ']: ' + message.type + ' --> ' + message.value);
+			let unselectTopic = _getUnselectedTopic(message.value);
+			MBus.publish(unselectTopic, Constants.mbus_unselected, null);
+			break;
+		}
+	}
+	else {
+		console.log('handlePartTypeMessages:ERROR, invalid message');
+	}
+};
 
 Template.select_parts.onCreated(function () {
 	NavConfig.pushRightBar(Constants.rightBar, Constants.select_parts);
 	CreateLawnData.createLayoutPart(testAbstractPart);
+	unsubscribeSelectParts = MBus.subscribe(Constants.mbus_selectParts, _handleSelectPartsMessages);
 });
 
 Template.select_parts.onDestroyed(function () {
 	NavConfig.popRightBar();
+	unsubscribeSelectParts.remove();
+});
+
+Template.select_parts.helpers({
+	topic: function () {
+		return Constants.mbus_selectParts;
+	}
 });
 
 Template.select_parts.events({
