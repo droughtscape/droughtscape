@@ -26,6 +26,23 @@ var partMode = new ReactiveVar('plants');
 var partsCarouselId = 'all-parts-carousel';
 var partsCarouselIdElt = '#' + partsCarouselId;
 var parentTemplateTopic = null;
+var sharedSelectionMode = false;
+
+Template.allParts.getCarouselId = function getCarouselId () { return partsCarouselIdElt; };
+Template.allParts.clearBorderStyle = function clearBorderStyle () {
+	Template.carousel.setBorderStyle($(partsCarouselIdElt), 'none');
+};
+Template.allParts.clickEvent = function clickEvent (e) {
+	console.log('Template.allParts.clickEvent');
+};
+
+var _setBorderStyleReal = function _setBorderStyleReal (mode) {
+	Template.carousel.setBorderStyle($(partsCarouselIdElt), mode);
+};
+
+var _setBorderStyleNull = function _setBorderStyleNull () {};
+
+var _setBorderStyle = _setBorderStyleNull;
 
 var setSelectedCarouselImages = function setSelectedCarouselImages (carouselId, selection) {
 	MBus.publish(Constants.mbus_carousel, Constants.mbus_clear, {carousel: partsCarouselIdElt});
@@ -44,6 +61,7 @@ var setSelectedCarouselImages = function setSelectedCarouselImages (carouselId, 
 		MBus.publish(Constants.mbus_carousel, Constants.mbus_add, {carousel: partsCarouselIdElt, imgWidth: '200px', imgHeight: '200px', imgArray: ['http://lorempixel.com/580/250/nature/1']});
 		break;
 	}
+	_setBorderStyle('none');
 };
 
 var handlePartTypeMessages = function handlePartTypeMessages (message) {
@@ -71,12 +89,14 @@ var handlePartCarouselMessages = function handlePartCarouselMessages (message) {
 		switch (message.type) {
 		case Constants.mbus_selected:
 			console.log('handlePartCarouselMessages[' + message.topic + ']: ' + message.type + ' --> ' + message.value);
+			_setBorderStyle('solid');
 			if (parentTemplateTopic) {
 				MBus.publish(parentTemplateTopic, message.type, message.topic);
 			}
 			break;
 		case Constants.mbus_unselected:
 			console.log('handlePartCarouselMessages[' + message.topic + ']: ' + message.type + ' --> ' + message.value);
+			_setBorderStyle('none');
 			break;
 		}
 	}
@@ -98,6 +118,20 @@ Template.allParts.onCreated(function () {
 	unsubscribePartCarouselHandler = MBus.subscribe(Constants.mbus_allPartsCarousel, handlePartCarouselMessages);
 });
 
+Template.allParts.onRendered(function () {
+	if (this.data) {
+		if (this.data.parentTemplateTopic) {
+			parentTemplateTopic = this.data.parentTemplateTopic;
+		}
+		if (this.data.sharedSelectionMode) {
+			sharedSelectionMode = this.data.sharedSelectionMode;
+			if (sharedSelectionMode) {
+				_setBorderStyle = _setBorderStyleReal;
+			}
+		}
+	}
+});
+
 Template.allParts.onDestroyed(function () {
 	// Support carousel lifecycle
 	unsubscribePartTypeHandler.remove();
@@ -106,13 +140,10 @@ Template.allParts.onDestroyed(function () {
 
 Template.allParts.helpers({
 	carouselId: function () {
-		if (this.parentTemplateTopic) {
-			parentTemplateTopic = this.parentTemplateTopic;
-		}
 		return partsCarouselId;
 	},
 	partsMode: function () {
-		return {type: "allParts", subType: partMode.get()};
+		return {topic: Constants.mbus_allPartsCarousel, type: "allParts", subType: partMode.get()};
 	},
 	selected: function () {
 		return partMode;

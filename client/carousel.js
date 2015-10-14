@@ -49,6 +49,15 @@
 //     add - add an array of images to carousel {carousel: <carouselId>, imgHeight: <optional height>, imgWidth: <optional width>, imgArray: [<url of image>]}
 Session.setDefault(Constants.carouselMode, '');
 Session.setDefault(Constants.carouselSubMode, '');
+
+Template.carousel.setBorderStyle = function setBorderStyle (carousel, borderStyle) {
+	let slick = carousel[0].slick;
+	for (i=0, len=slick.$slides.length; i<len; ++i) {
+		let slide = slick.$slides.get(i);
+		slide.style.borderStyle = borderStyle;
+	}
+};
+
 Template.carousel.onRendered(function () {
 	// This just starts the render initialization.
 	// The actual component will do any implementation specific setup
@@ -58,8 +67,7 @@ Template.carousel.onRendered(function () {
 
 Template.carousel.events({
 	'click .carouselItem': function (e, template) {
-		console.log('carousel: ' + e + ', template: template');
-		let topic = 'PartCarousel:' + this.context.type;
-		MBus.publish(topic, Constants.mbus_selected, e);
+		console.log('carousel: ' + e + ', template: ' + template);
+		MBus.publish(this.context.topic, Constants.mbus_selected, e);
 	}
 });

@@ -224,6 +224,7 @@ class TestAbstractPartSP {
 
 var testAbstractPart = new TestAbstractPartSP();
 var unsubscribeSelectParts;
+var selectPartSelection = null;
 
 var _getUnselectedTopic = function _getUnselectedTopic (selectedTopic) {
 	return (selectedTopic === Constants.mbus_allPartsCarousel) ? Constants.mbus_myPartsCarousel : 
@@ -235,6 +236,8 @@ var _handleSelectPartsMessages = function _handleSelectPartsMessages (message) {
 		switch (message.type) {
 		case Constants.mbus_selected:
 			console.log('_handleSelectPartsMessages[' + message.topic + ']: ' + message.type + ' --> ' + message.value);
+			// TBD, this is just a placeholder.  We need more information
+			selectPartSelection = {topic: message.topic};
 			let unselectTopic = _getUnselectedTopic(message.value);
 			MBus.publish(unselectTopic, Constants.mbus_unselected, null);
 			break;
@@ -244,6 +247,16 @@ var _handleSelectPartsMessages = function _handleSelectPartsMessages (message) {
 		console.log('handlePartTypeMessages:ERROR, invalid message');
 	}
 };
+
+Template.select_parts.onRendered(function () {
+	// Since we are positing a single active selection between the two carousels, we will set border style to none
+	// and manage it manually
+	console.log('TEST: Template.allParts.partsCarouselIdElt: ' + Template.allParts.getCarouselId());
+	Meteor.defer(function() {
+		Template.allParts.clearBorderStyle();
+		Template.myParts.clearBorderStyle();
+	});
+});
 
 Template.select_parts.onCreated(function () {
 	NavConfig.pushRightBar(Constants.rightBar, Constants.select_parts);

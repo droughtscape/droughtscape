@@ -61,7 +61,7 @@
 
 <template name="select_parts">
     {{> lawn_info}}
-    {{> allParts parentTemplateTopic=topic}}
+    {{> allParts parentTemplateTopic=topic sharedSelectionMode=true}}
     <div class="favorite-parts-buttons center-align" style="margin-top: 100px">
         <hr>
         <div id="favorite-parts-add" class="waves-effect waves-light btn">
@@ -69,7 +69,7 @@
         <div id="favorite-parts-del" class="waves-effect waves-light btn">
             <i class="mdi-content-remove-circle right"></i>Delete from Favorites</div>
     </div>
-    {{> myParts parentTemplateTopic=topic}}
+    {{> myParts parentTemplateTopic=topic sharedSelectionMode=true}}
 </template>
 
 <template name="summarize_lawn">

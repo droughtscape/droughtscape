@@ -1,10 +1,5 @@
 <template name="parts">
-    <hr>
-    {{> part_type context="parts" partsId="parts-select" selected=selected}}
-    <hr>
-    <div>
-        {{> carousel id=carouselId context=partsMode title="All Parts"}}
-    </div>
+    {{> allParts}}
     {{#if notCreateMode}}
         <div class="parts-links">
             <hr>
