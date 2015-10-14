@@ -32,8 +32,8 @@
     <div class="row">
         <form>
             <div class="input-field col s6">
-                <input value= {{lawnData.name}} id="lawn_name" type="text" class="validate">
                 <label class="active" for="lawn_name">Lawn Name</label>
+                <input value="{{lawnData.name}}" id="lawn_name" type="text" class="validate">
             </div>
         </form>
     </div>
@@ -65,9 +65,9 @@
     <div class="favorite-parts-buttons center-align" style="margin-top: 100px">
         <hr>
         <div id="favorite-parts-add" class="waves-effect waves-light btn">
-            <i class="mdi-content-add-circle right"></i>Add to Favorites</div>
+            <i class="mdi-content-add-circle right"></i>Add to My Parts</div>
         <div id="favorite-parts-del" class="waves-effect waves-light btn">
-            <i class="mdi-content-remove-circle right"></i>Delete from Favorites</div>
+            <i class="mdi-content-remove-circle right"></i>Delete from My Parts</div>
     </div>
     {{> myParts parentTemplateTopic=topic sharedSelectionMode=true}}
 </template>

@@ -226,6 +226,12 @@ var testAbstractPart = new TestAbstractPartSP();
 var unsubscribeSelectParts;
 var selectPartSelection = null;
 
+var _validateSelectPartSelection = function _validateSelectPartSelection (source) {
+	return typeof(source !== 'undefined') &&
+		(selectPartSelection.hasAttribute(topic)) &&
+		(source === selectPartSelection.topic); 
+};
+
 var _getUnselectedTopic = function _getUnselectedTopic (selectedTopic) {
 	return (selectedTopic === Constants.mbus_allPartsCarousel) ? Constants.mbus_myPartsCarousel : 
 		Constants.mbus_allPartsCarousel;
@@ -237,7 +243,7 @@ var _handleSelectPartsMessages = function _handleSelectPartsMessages (message) {
 		case Constants.mbus_selected:
 			console.log('_handleSelectPartsMessages[' + message.topic + ']: ' + message.type + ' --> ' + message.value);
 			// TBD, this is just a placeholder.  We need more information
-			selectPartSelection = {topic: message.topic};
+			selectPartSelection = {topic: message.topic, target: message.value};
 			let unselectTopic = _getUnselectedTopic(message.value);
 			MBus.publish(unselectTopic, Constants.mbus_unselected, null);
 			break;
@@ -277,10 +283,10 @@ Template.select_parts.helpers({
 
 Template.select_parts.events({
 	'click #favorite-parts-add': function () {
-		console.log('Add to Favorites clicked');
+		console.log('Add to My Parts clicked');
 	},
 	'click #favorite-parts-del': function () {
-		console.log('Delete from Favorites clicked');
+		console.log('Delete from My Parts clicked');
 	}
 });
 
