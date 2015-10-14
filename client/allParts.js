@@ -29,20 +29,13 @@ var parentTemplateTopic = null;
 var sharedSelectionMode = false;
 
 Template.allParts.getCarouselId = function getCarouselId () { return partsCarouselIdElt; };
-Template.allParts.clearBorderStyle = function clearBorderStyle () {
-	Template.carousel.setBorderStyle($(partsCarouselIdElt), 'none');
+Template.allParts.clearBorderColor = function clearBorderColor () {
+	Template.carousel.setBorderColor($(partsCarouselIdElt), Constants.color_white);
 };
+
 Template.allParts.clickEvent = function clickEvent (e) {
 	console.log('Template.allParts.clickEvent');
 };
-
-var _setBorderStyleReal = function _setBorderStyleReal (mode) {
-	Template.carousel.setBorderStyle($(partsCarouselIdElt), mode);
-};
-
-var _setBorderStyleNull = function _setBorderStyleNull () {};
-
-var _setBorderStyle = _setBorderStyleNull;
 
 var setSelectedCarouselImages = function setSelectedCarouselImages (carouselId, selection) {
 	MBus.publish(Constants.mbus_carousel, Constants.mbus_clear, {carousel: partsCarouselIdElt});
@@ -61,7 +54,6 @@ var setSelectedCarouselImages = function setSelectedCarouselImages (carouselId, 
 		MBus.publish(Constants.mbus_carousel, Constants.mbus_add, {carousel: partsCarouselIdElt, imgWidth: '200px', imgHeight: '200px', imgArray: ['http://lorempixel.com/580/250/nature/1']});
 		break;
 	}
-	_setBorderStyle('none');
 };
 
 var handlePartTypeMessages = function handlePartTypeMessages (message) {
@@ -89,14 +81,13 @@ var handlePartCarouselMessages = function handlePartCarouselMessages (message) {
 		switch (message.type) {
 		case Constants.mbus_selected:
 			console.log('handlePartCarouselMessages[' + message.topic + ']: ' + message.type + ' --> ' + message.value);
-			_setBorderStyle('solid');
 			if (parentTemplateTopic) {
 				MBus.publish(parentTemplateTopic, message.type, message.topic);
 			}
 			break;
 		case Constants.mbus_unselected:
 			console.log('handlePartCarouselMessages[' + message.topic + ']: ' + message.type + ' --> ' + message.value);
-			_setBorderStyle('none');
+			Template.allParts.clearBorderColor();
 			break;
 		}
 	}
@@ -125,9 +116,6 @@ Template.allParts.onRendered(function () {
 		}
 		if (this.data.sharedSelectionMode) {
 			sharedSelectionMode = this.data.sharedSelectionMode;
-			if (sharedSelectionMode) {
-				_setBorderStyle = _setBorderStyleReal;
-			}
 		}
 	}
 });

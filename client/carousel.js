@@ -58,6 +58,14 @@ Template.carousel.setBorderStyle = function setBorderStyle (carousel, borderStyl
 	}
 };
 
+Template.carousel.setBorderColor = function setBorderColor (carousel, borderColor) {
+	let slick = carousel[0].slick;
+	for (i=0, len=slick.$slides.length; i<len; ++i) {
+		let slide = slick.$slides.get(i);
+		slide.style.borderColor = borderColor;
+	}
+};
+
 Template.carousel.onRendered(function () {
 	// This just starts the render initialization.
 	// The actual component will do any implementation specific setup

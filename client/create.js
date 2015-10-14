@@ -259,8 +259,8 @@ Template.select_parts.onRendered(function () {
 	// and manage it manually
 	console.log('TEST: Template.allParts.partsCarouselIdElt: ' + Template.allParts.getCarouselId());
 	Meteor.defer(function() {
-		Template.allParts.clearBorderStyle();
-		Template.myParts.clearBorderStyle();
+		Template.allParts.clearBorderColor();
+		Template.myParts.clearBorderColor();
 	});
 });
 
