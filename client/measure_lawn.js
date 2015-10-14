@@ -87,6 +87,14 @@ Template.measure_lawn.helpers({
 	metricDefault: function () {
 		var units = Session.get(Constants.userUnitsOfMeasure);
 		return (units === 'Metric') ? 'checked' : '';
+	},
+	englishLabelColor: function () {
+		var units = Session.get(Constants.userUnitsOfMeasure);
+		return (units === 'English') ? Constants.color_teal : Constants.color_gray;
+	},
+	metricLabelColor: function () {
+		var units = Session.get(Constants.userUnitsOfMeasure);
+		return (units === 'Metric') ? Constants.color_teal : Constants.color_gray;
 	}
 });
 

@@ -4,9 +4,9 @@
 
     <form action="#">
         <input class="unit-select" name="unit-type" type="radio" id="English" {{englishDefault}}/>
-        <label for="English">English</label>
+        <label for="English" style="color: {{englishLabelColor}}">English</label>
         <input class="unit-select" name="unit-type" type="radio" id="Metric" {{metricDefault}}/>
-        <label for="Metric">Metric</label>
+        <label for="Metric" style="color: {{metricLabelColor}}">Metric</label>
     </form>
     <hr>
     {{> Template.dynamic template=measureLawnShape}}
@@ -37,27 +37,27 @@
             <form class="col s12">
                 <div class="row">
                     <div class="input-field col s2">
-                        <input value= {{lawnDataDisplay.w1}} id="lawn_width_feet" type="number" class="validate">
+                        <input value="{{lawnDataDisplay.w1}}" id="lawn_width_feet" type="number" class="validate">
                         <label class="active" for="lawn_width_feet">Lawn Width Feet</label>
                     </div>
                     <div class="input-field col s2">
-                        <input value={{lawnDataDisplay.w2}} id="lawn_width_inches" type="number" class="validate">
+                        <input value="{{lawnDataDisplay.w2}}" id="lawn_width_inches" type="number" class="validate">
                         <label class="active" for="lawn_width_inches">Lawn Width Inches</label>
                     </div>
                 </div>
                 <div class="row">
                     <div class="input-field col s2">
-                        <input value= {{lawnDataDisplay.l1}} id="lawn_length_feet" type="number" class="validate">
+                        <input value="{{lawnDataDisplay.l1}}" id="lawn_length_feet" type="number" class="validate">
                         <label class="active" for="lawn_length_feet">Lawn Length Feet</label>
                     </div>
                     <div class="input-field col s2">
-                        <input value={{lawnDataDisplay.l2}} id="lawn_length_inches" type="number" class="validate">
+                        <input value="{{lawnDataDisplay.l2}}" id="lawn_length_inches" type="number" class="validate">
                         <label class="active" for="lawn_length_inches">Lawn Length Inches</label>
                     </div>
                 </div>
                 <div class="row">
                     <div class="input-field col s2">
-                        <input value={{lawnDataDisplay.s}} id="lawn_slope_inches" type="number" class="validate">
+                        <input value="{{lawnDataDisplay.s}}" id="lawn_slope_inches" type="number" class="validate">
                         <label class="active" for="lawn_slope_inches">Lawn Slope Inches</label>
                     </div>
                 </div>
@@ -68,19 +68,19 @@
             <form class="col s12">
                 <div class="row">
                     <div class="input-field col s2">
-                        <input value={{lawnDataDisplay.w1}} id="lawn_width_meters" type="number" class="validate">
+                        <input value="{{lawnDataDisplay.w1}}" id="lawn_width_meters" type="number" class="validate">
                         <label class="active" for="lawn_width_meters">Lawn Width {{unitsOfMeasure}}</label>
                     </div>
                 </div>
                 <div class="row">
                     <div class="input-field col s2">
-                        <input value={{lawnDataDisplay.l1}} id="lawn_length_meters" type="number" class="validate">
+                        <input value="{{lawnDataDisplay.l1}}" id="lawn_length_meters" type="number" class="validate">
                         <label class="active" for="lawn_length_meters">Lawn Length {{unitsOfMeasure}}</label>
                     </div>
                 </div>
                 <div class="row">
                     <div class="input-field col s2">
-                        <input value={{lawnDataDisplay.s}} id="lawn_slope_meters" type="number" class="validate">
+                        <input value="{{lawnDataDisplay.s}}" id="lawn_slope_meters" type="number" class="validate">
                         <label class="active" for="lawn_slope_meters">Lawn Slope {{unitsOfMeasure}}</label>
                     </div>
                 </div>
