@@ -76,6 +76,7 @@ Template.carousel.onRendered(function () {
 Template.carousel.events({
 	'click .carouselItem': function (e, template) {
 		console.log('carousel: ' + e + ', template: ' + template);
+		e.currentTarget.style.borderColor = Constants.color_teal;
 		MBus.publish(this.context.topic, Constants.mbus_selected, e);
 	}
 });

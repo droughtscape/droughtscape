@@ -224,6 +224,7 @@ class TestAbstractPartSP {
 
 var testAbstractPart = new TestAbstractPartSP();
 var unsubscribeSelectParts;
+var unsubscribeSlickCarousel;
 var selectPartSelection = null;
 
 var _validateSelectPartSelection = function _validateSelectPartSelection (source) {
@@ -237,6 +238,20 @@ var _getUnselectedTopic = function _getUnselectedTopic (selectedTopic) {
 		Constants.mbus_allPartsCarousel;
 };
 
+var _getUnselectedTopicFromId = function _getUnselectedTopicFromId (carouselId) {
+	switch (carouselId) {
+	case Template.allParts.getCarouselId():
+		return Constants.mbus_myPartsCarousel;
+		break;
+	case Template.myParts.getCarouselId():
+		return Constants.mbus_allPartsCarousel;
+		break;
+	default:
+		return null;
+		break;
+	}
+};
+
 var _handleSelectPartsMessages = function _handleSelectPartsMessages (message) {
 	if (MBus.validateMessage(message)) {
 		switch (message.type) {
@@ -244,8 +259,18 @@ var _handleSelectPartsMessages = function _handleSelectPartsMessages (message) {
 			console.log('_handleSelectPartsMessages[' + message.topic + ']: ' + message.type + ' --> ' + message.value);
 			// TBD, this is just a placeholder.  We need more information
 			selectPartSelection = {topic: message.topic, target: message.value};
+		{
 			let unselectTopic = _getUnselectedTopic(message.value);
 			MBus.publish(unselectTopic, Constants.mbus_unselected, null);
+		}
+			break;
+		case Constants.mbus_slickEvent:
+			console.log('_handleSelectPartsMessages[' + message.topic + ']: ' + message.type + ' --> ' + message.value +
+			', on carousel: ' + message.value.carouselId);
+		{
+			let unselectTopic = _getUnselectedTopicFromId(message.value.carouselId);
+			MBus.publish(unselectTopic, Constants.mbus_unselected, null);
+		}
 			break;
 		}
 	}
@@ -268,11 +293,13 @@ Template.select_parts.onCreated(function () {
 	NavConfig.pushRightBar(Constants.rightBar, Constants.select_parts);
 	CreateLawnData.createLayoutPart(testAbstractPart);
 	unsubscribeSelectParts = MBus.subscribe(Constants.mbus_selectParts, _handleSelectPartsMessages);
+	unsubscribeSlickCarousel = MBus.subscribe(Constants.mbus_slickCarousel, _handleSelectPartsMessages);
 });
 
 Template.select_parts.onDestroyed(function () {
 	NavConfig.popRightBar();
 	unsubscribeSelectParts.remove();
+	unsubscribeSlickCarousel.remove();
 });
 
 Template.select_parts.helpers({

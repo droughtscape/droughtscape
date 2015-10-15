@@ -28,7 +28,7 @@ var partsCarouselIdElt = '#' + partsCarouselId;
 var parentTemplateTopic = null;
 var sharedSelectionMode = false;
 
-Template.allParts.getCarouselId = function getCarouselId () { return partsCarouselIdElt; };
+Template.allParts.getCarouselId = function getCarouselId () { return partsCarouselId; };
 Template.allParts.clearBorderColor = function clearBorderColor () {
 	Template.carousel.setBorderColor($(partsCarouselIdElt), Constants.color_white);
 };
