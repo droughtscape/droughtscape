@@ -21,10 +21,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-Template.splash.onCreated(function () {
-	NavConfig.pushRightBar(Constants.rightBar, Constants.home);
+Template.info_part.onCreated(function () {
+	NavConfig.pushRightBar(Constants.rightBar, Constants.parts);
 });
 
-Template.splash.onDestroyed(function () {
+Template.info_part.onDestroyed(function () {
 	NavConfig.popRightBar();
 });

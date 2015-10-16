@@ -24,7 +24,7 @@
 var partMode = new ReactiveVar('plants');
 
 Template.newPart.onCreated(function () {
-	NavConfig.pushRightBar('rightBar', 'parts');
+	NavConfig.pushRightBar(Constants.rightBar, Constants.parts);
 });
 
 Template.newPart.helpers({

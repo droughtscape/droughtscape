@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 Template.personalize.onCreated(function () {
-	NavConfig.pushRightBar('rightBar', 'home');
+	NavConfig.pushRightBar(Constants.rightBar, Constants.home);
 	console.log('currentUser: ' + Meteor.userId());
 });
 

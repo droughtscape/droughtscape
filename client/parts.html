@@ -1,25 +1,12 @@
 <template name="parts">
     {{> allParts}}
-    {{#if notCreateMode}}
-        <div class="parts-links">
-            <hr>
-            <a id="plants-mwd-top-50" class="waves-effect waves-light btn"><i class="mdi-file-cloud left"></i>Metropolitan
-                Water
-                Districts "50 Favorites"</a>
-            <a id="turf-terminators-plant-catalog" class="waves-effect waves-light btn">
-                <i class="mdi-file-cloud left"></i>TurfTerminators Drought Tolerant Catalog"</a>
-        </div>
-    {{else}}
-        <div>
-            <div class="favorite-parts-buttons center-align" style="margin-top: 100px">
-                <hr>
-                <div id="favorite-parts-add" class="waves-effect waves-light btn">
-                    <i class="mdi-content-add-circle right"></i>Add to Favorites</div>
-                <div id="favorite-parts-del" class="waves-effect waves-light btn">
-                    <i class="mdi-content-remove-circle right"></i>Delete from Favorites</div>
-            </div>
-            {{> favoriteParts}}
-        </div>
-    {{/if}}
+    <div class="parts-links">
+        <hr>
+        <a id="plants-mwd-top-50" class="waves-effect waves-light btn"><i class="mdi-file-cloud left"></i>Metropolitan
+            Water
+            Districts "50 Favorites"</a>
+        <a id="turf-terminators-plant-catalog" class="waves-effect waves-light btn">
+            <i class="mdi-file-cloud left"></i>TurfTerminators Drought Tolerant Catalog"</a>
+    </div>
 </template> 
 

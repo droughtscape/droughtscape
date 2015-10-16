@@ -49,18 +49,6 @@ var setSelectedCarouselImages = function setSelectedCarouselImages (carouselId, 
 	}
 };
 
-var _getOtherPartTypeTemplate = function _getOtherPartTypeTemplate (template) {
-	var otherTemplate;
-	switch (template) {
-	case Constants.mbus_parts:
-		otherTemplate = Constants.mbus_favoriteParts; 
-		break;
-	case Constants.mbus_favoriteParts:
-		otherTemplate = Constants.mbus_parts;
-		break;
-	}
-};
-
 var handlePartTypeMessages = function handlePartTypeMessages (message) {
 	if (MBus.validateMessage(message)) {
 		switch (message.type) {
@@ -81,18 +69,11 @@ var handlePartTypeMessages = function handlePartTypeMessages (message) {
 	}
 };
 
-var _getOtherPartCarouselTemplate = function _getOtherPartCarouselTemplate (template) {
-	return (template === Constants.mbus_parts_carousel) ? Constants.mbus_favoriteParts_carousel : Constants.mbus_parts_carousel;
-};
-
 var handlePartCarouselMessages = function handlePartCarouselMessages (message) {
 	if (MBus.validateMessage(message)) {
 		switch (message.type) {
 		case Constants.mbus_selected:
 			console.log('handlePartCarouselMessages[' + message.topic + ']: ' + message.type + ' --> ' + message.value);
-			let unselectTopic = Utils.getOtherPartCarouselTemplate(message.topic);
-			console.log('handlePartCarouselMessages: unselect at: ' + unselectTopic);
-			MBus.publish(unselectTopic, Constants.mbus_unselected, null);
 			break;
 		case Constants.mbus_unselected:
 			console.log('handlePartCarouselMessages[' + message.topic + ']: ' + message.type + ' --> ' + message.value);
@@ -112,8 +93,7 @@ var unsubscribePartCarouselHandler = null;
 // I guess that since these are "subtemplates", the get created anew every time, similar to a route.
 // In any case, this is the desired effect.
 Template.parts.onCreated(function () {
-	let rightBarConfig = (CreateLawnData.getCurrentLawn()) ? Constants.select_parts : Constants.parts;
-	NavConfig.pushRightBar(Constants.rightBar, rightBarConfig);
+	NavConfig.pushRightBar(Constants.rightBar, Constants.parts);
 	// Support carousel lifecycle.  Subscribe returns the ability to unsubscribe.
 	unsubscribePartTypeHandler = MBus.subscribe(Constants.mbus_parts, handlePartTypeMessages);
 	unsubscribePartCarouselHandler = MBus.subscribe(Constants.mbus_parts_carousel, handlePartCarouselMessages);
@@ -130,35 +110,17 @@ Template.parts.helpers({
 	carouselId: function () {
 		return partsCarouselId;
 	},
-	partsMode: function () {
-		return {type: "parts", subType: partMode.get()};
-	},
 	selected: function () {
 		return partMode;
-	},
-	notCreateMode: function () {
-		// KKI, TBD just a hack, return false so we can work on parts directly from main page
-		//return false;
-		var currentLawn = CreateLawnData.getCurrentLawn();
-		return currentLawn === null;
 	}
 });
 
 Template.parts.events({
-	'click #favorite-parts-add': function () {
-		console.log('Add to Favorites clicked');
-	},
-	'click #favorite-parts-del': function () {
-		console.log('Delete from Favorites clicked');
-	},
 	'click #plants-mwd-top-50': function () {
 		window.open('http://bewaterwise.com/pdf/50_Faves.pdf', '_blank');
 	},
 	'click #turf-terminators-plant-catalog': function () {
 		window.open('http://turfterminators.com/how-turf-terminators-works/plant-and-groundcover-catalog/', '_blank');
-	},
-	'click .part-select.parts': function (e, template) {
-		console.log('RADIO.parts: e: ' + e + ', template: ' + template);
 	}
 });
 

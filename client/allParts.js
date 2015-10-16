@@ -138,8 +138,3 @@ Template.allParts.helpers({
 	}
 });
 
-Template.allParts.events({
-	'click .part-select.allParts': function (e, template) {
-		console.log('RADIO.allParts: e: ' + e + ', template: ' + template);
-	}
-});

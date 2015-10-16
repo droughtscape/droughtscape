@@ -76,8 +76,6 @@ var handlePartTypeMessages = function handlePartTypeMessages (message) {
 	}
 };
 
-var borderStyle = 'solid';
-
 var handlePartCarouselMessages = function handlePartCarouselMessages (message) {
 	if (MBus.validateMessage(message)) {
 		switch (message.type) {
@@ -143,8 +141,3 @@ Template.myParts.helpers({
 	}
 });
 
-Template.myParts.events({
-	'click .part-select.myParts': function (e, template) {
-		console.log('RADIO.myParts: e: ' + e + ', template: ' + template);
-	}
-});

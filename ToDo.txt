@@ -1,0 +1,7 @@
+- parts only has part, no myParts
+- parts rightBar Favorite Parts -> My Parts => select_parts
+	- authentication outside of select_parts => enclosing template: my_parts to handle authentication
+		=> can this be generic?  authentication then dynamic template?
+	=> No, authentication inside so that if user logs out from navbar, we do the right thing.
+		=> Opportunity for a wrapper?
+		

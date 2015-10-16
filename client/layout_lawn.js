@@ -205,8 +205,8 @@ var _handleLayoutMessages = function _handleLayoutMessages (message) {
 };
 
 Template.layout_lawn.onCreated(function () {
-	NavConfig.pushNavBar('layout');
-	NavConfig.pushRightBar('rightBar', 'layout_lawn');
+	NavConfig.pushNavBar(Constants.layout);
+	NavConfig.pushRightBar(Constants.rightBar, Constants.layout_lawn);
 	runAnimation = true;
 	window.addEventListener('resize', _handleResizeEvent);
 	

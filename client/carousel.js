@@ -50,14 +50,6 @@
 Session.setDefault(Constants.carouselMode, '');
 Session.setDefault(Constants.carouselSubMode, '');
 
-Template.carousel.setBorderStyle = function setBorderStyle (carousel, borderStyle) {
-	let slick = carousel[0].slick;
-	for (i=0, len=slick.$slides.length; i<len; ++i) {
-		let slide = slick.$slides.get(i);
-		slide.style.borderStyle = borderStyle;
-	}
-};
-
 Template.carousel.setBorderColor = function setBorderColor (carousel, borderColor) {
 	let slick = carousel[0].slick;
 	for (i=0, len=slick.$slides.length; i<len; ++i) {

@@ -72,7 +72,7 @@ var _handleResizeEvent = Utils.createDeferredFunction(_renderRender);
 
 Template.render_lawn.onCreated(function () {
 	NavConfig.pushNavBar('render');
-	NavConfig.pushRightBar('rightBar', 'render_lawn');
+	NavConfig.pushRightBar(Constants.rightBar, Constants.render_lawn);
 	runAnimation = true;
 	window.addEventListener('resize', _handleResizeEvent);
 });
