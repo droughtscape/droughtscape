@@ -21,10 +21,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
+var _selectedPart = null;
+
+Template.info_part.selectPart = function selectPart (part) {
+	// TODO, dummy for now
+	_selectedPart = {partType: 'plants'};
+};
+
 Template.info_part.onCreated(function () {
 	NavConfig.pushRightBar(Constants.rightBar, Constants.parts);
 });
 
 Template.info_part.onDestroyed(function () {
 	NavConfig.popRightBar();
+});
+
+Template.info_part.helpers({
+	validPart: function () {
+		return _selectedPart != null;
+	},
+	alertNoPart: function () {
+		Materialize.toast('No part selected!', 3000, 'rounded red-text');
+	},
+	partType: function () {
+		return _selectedPart;
+	}
 });

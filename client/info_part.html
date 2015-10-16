@@ -2,4 +2,12 @@
     <h3>
         info_part
     </h3>
+
+    <div>
+        {{#if validPart}}
+            {{partType.partType}}
+        {{else}}
+            {{alertNoPart}}
+        {{/if}}
+    </div>
 </template>
