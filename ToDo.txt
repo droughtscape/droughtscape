@@ -6,6 +6,15 @@
 	=> onDestroyed => popView??? Doesn't work since onDestroyed is called when we go on to next view
 	=> popView
 	=> revisit IronRouter???
+	
+	class ViewState
+		- { view, navBar, rightBar }
+		- pushState
+		- popState
+		- goToState
+		- clearState
+		- length
+		- NO forward
 
 
 - parts only has part, no myParts
