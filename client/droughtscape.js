@@ -24,6 +24,7 @@
 Router.map(function () {
 	this.route(Constants.home, {path: '/'});
 });
+Session.setDefault(Constants.navBar, Constants.navBar);
 // The navBarConfig Session variable controls contents of the navBar
 // => see navconfig.js
 Session.setDefault(Constants.navBarConfig, Constants.home);
@@ -92,6 +93,9 @@ Template.home.onDestroyed(function () {
 });
 
 Template.home.helpers({
+	dynamicNavBar: function () {
+		return Session.get(Constants.navBar);
+	},
 	dynamicTemplate: function () {
 		// Contents of session variable renderView will 
 		// fill the content area

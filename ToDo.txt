@@ -7,7 +7,7 @@
 	=> popView
 	=> revisit IronRouter???
 	
-	class ViewState
+	class ViewState - Decide how to deal with rightBar/navBar changes, how to switch renderView
 		- { view, navBar, rightBar }
 		- pushState
 		- popState
@@ -16,6 +16,11 @@
 		- length
 		- NO forward
 
+- Parts
+	=> Add Info Part to right bar
+		Figure out generic Info Part selection mechanism that will work across both single and shared part selections
+		
+- Info Lawn
 
 - parts only has part, no myParts
 - parts rightBar Favorite Parts -> My Parts => select_parts

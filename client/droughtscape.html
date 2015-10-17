@@ -6,10 +6,10 @@
 <!--
 	We can use the following injection enclosing template.. See NavConfig object
 -->
-{{> navBar }}
 </body>
 
 <template name="home">
+    {{> Template.dynamic template=dynamicNavBar }}
     <div id="content" class="renderArea row">
         <div id="render" class="div3 col s10" style="position: relative">
 			{{> Template.dynamic template=dynamicTemplate}}
