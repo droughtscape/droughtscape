@@ -24,6 +24,7 @@
 
 var _selectedPart = null;
 var unsubscribeSelectParts;
+var _testLoader = getTestLoader();
 
 Template.info_part.onCreated(function () {
 	NavConfig.pushRightBar(Constants.rightBar, Constants.parts);
@@ -42,6 +43,7 @@ Template.info_part.helpers({
 		Materialize.toast('No part selected!', 3000, 'rounded red-text');
 	},
 	partType: function () {
-		return _selectedPart;
+		let partCore = _testLoader.getItem(_selectedPart.itemId);
+		return { itemId: _selectedPart.itemId, url: partCore.getUrl()};
 	}
 });

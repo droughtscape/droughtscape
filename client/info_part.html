@@ -5,7 +5,11 @@
 
     <div>
         {{#if validPart}}
-            {{partType.partType}}
+            <h4>
+                {{partType.itemId}}
+                    <br>
+                {{partType.url}}
+            </h4>
         {{else}}
             {{alertNoPart}}
         {{/if}}
