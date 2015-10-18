@@ -1,6 +1,3 @@
-- Info Part
-	=> Need to be able to return to calling template
-
 - View Stack
 	=> onCreated => push view
 	=> onDestroyed => popView??? Doesn't work since onDestroyed is called when we go on to next view
@@ -16,6 +13,18 @@
 		- length
 		- NO forward
 
+- Info Part
+	=> Need to be able to return to calling template
+	=> Need large slide[0..N] images
+
+- Lawns
+	NavBar
+	=> All Lawns
+	RightBar
+		=> New Lawn
+		=> My Lawns
+		=> Info Lawn
+	
 - Parts
 	=> Add Info Part to right bar
 		Figure out generic Info Part selection mechanism that will work across both single and shared part selections
