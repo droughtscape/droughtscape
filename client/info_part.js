@@ -25,13 +25,9 @@
 var _selectedPart = null;
 var unsubscribeSelectParts;
 
-Template.info_part.selectPart = function selectPart (part) {
-	// TODO, dummy for now
-	_selectedPart = {partType: 'plants'};
-};
-
 Template.info_part.onCreated(function () {
 	NavConfig.pushRightBar(Constants.rightBar, Constants.parts);
+	_selectedPart = SelectionManager.getSelection();
 });
 
 Template.info_part.onDestroyed(function () {
@@ -40,7 +36,7 @@ Template.info_part.onDestroyed(function () {
 
 Template.info_part.helpers({
 	validPart: function () {
-		return _selectedPart != null;
+		return _selectedPart !== null;
 	},
 	alertNoPart: function () {
 		Materialize.toast('No part selected!', 3000, 'rounded red-text');
