@@ -252,29 +252,6 @@ PixiLayout = (function () {
 		}
 	};
 	
-	class TestAbstractPart {
-		constructor() {
-			// dimensions in meters
-			this.width = .24;
-			this.height = .24;
-			this.url = 'custom.png';
-		}
-
-		getWidth() {
-			return this.width;
-		}
-
-		getHeight() {
-			return this.height;
-		}
-
-		getImageUrl() {
-			return this.url;
-		}
-	}
-
-	var testAbstractPart = new TestAbstractPart();
-
 	// Mouse handler functions and setters for them
 	var _mouseEnterHandler = null;
 	var _setMouseEnterHandler = function _setMouseEnterHandler(handler) {

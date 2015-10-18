@@ -20,6 +20,9 @@
 	=> Add Info Part to right bar
 		Figure out generic Info Part selection mechanism that will work across both single and shared part selections
 		
+- Part Selection
+	=> unify click part selection and slick part selection into single message on the select bus
+	
 - Info Lawn
 
 - parts only has part, no myParts

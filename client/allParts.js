@@ -39,19 +39,24 @@ Template.allParts.clickEvent = function clickEvent (e) {
 
 var setSelectedCarouselImages = function setSelectedCarouselImages (carouselId, selection) {
 	MBus.publish(Constants.mbus_carousel, Constants.mbus_clear, {carousel: partsCarouselIdElt});
+	let testLoader = getTestLoader();
+	var testParts;
+
 	switch (selection) {
 	case 'irrigation':
+		testParts = testLoader.createTestParts([
+			'http://lorempixel.com/580/250/nature/1',
+			'http://lorempixel.com/580/250/nature/2',
+			'http://lorempixel.com/580/250/nature/3',
+			'http://lorempixel.com/580/250/nature/4',
+			'http://lorempixel.com/580/250/nature/5'
+		]);
 		MBus.publish(Constants.mbus_carousel, Constants.mbus_add, {carousel: partsCarouselIdElt, imgWidth: '200px', imgHeight: '200px',
-			imgArray: [
-				'http://lorempixel.com/580/250/nature/1',
-				'http://lorempixel.com/580/250/nature/2',
-				'http://lorempixel.com/580/250/nature/3',
-				'http://lorempixel.com/580/250/nature/4',
-				'http://lorempixel.com/580/250/nature/5'
-			]});
+			imgArray: testParts});
 		break;
 	default:
-		MBus.publish(Constants.mbus_carousel, Constants.mbus_add, {carousel: partsCarouselIdElt, imgWidth: '200px', imgHeight: '200px', imgArray: ['http://lorempixel.com/580/250/nature/1']});
+		testParts = testLoader.createTestParts(['http://lorempixel.com/580/250/nature/1']);
+		MBus.publish(Constants.mbus_carousel, Constants.mbus_add, {carousel: partsCarouselIdElt, imgWidth: '200px', imgHeight: '200px', imgArray: testParts});
 		break;
 	}
 };

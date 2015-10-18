@@ -87,7 +87,7 @@ var _handleSelectPartsMessages = function _handleSelectPartsMessages (message) {
 		}
 	}
 	else {
-		console.log('handlePartTypeMessages:ERROR, invalid message');
+		console.log('handleSelectPartsMessages:ERROR, invalid message');
 	}
 };
 

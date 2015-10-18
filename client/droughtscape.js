@@ -39,6 +39,12 @@ Session.setDefault(Constants.renderView, Constants.splash);
 // Admin rights of logged in user
 Session.setDefault(Constants.adminRights, undefined);
 
+// SelectionManager
+var _selectionManager = new SelectionManager();
+
+// TestLoader
+testLoader = new TestLoader();
+
 /**
  * _renderContent function
  * Dynamically adjusts the content part of the app to fit the visible window less the footer (if any)
