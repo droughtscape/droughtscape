@@ -21,14 +21,94 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-class ViewState {
+
+/**
+ * Stores the viewState needed to set the view
+ * @class ViewState
+ */
+ViewState = (function (view, navBar, rightBar) {
+	var _view = view;
+	var _navBar = navBar;
+	var _rightBar = rightBar;
+	var _self = this;
+	return {
+		view: _view,
+		navBar: _navBar,
+		rightBar: _rightBar
+	}
+});
+
+/**
+ * Implements a stack of ViewState and also changes to particular ViewStates
+ * @class ViewStack
+ */
+ViewStack = (function () {
+	var _stack = [];
+
+	/**
+	 * @namespace ViewStack
+	 * @function _pushState - pushes viewState on stack, executes a change of view to the pushed state
+	 * @param {object} viewState - the target viewState to push and move to
+	 */
+	var _pushState = function _pushState (viewState) {
+		_stack.push(viewState);
+		_goToState(viewState);
+	};
+
+	/**
+	 * @namespace ViewStack
+	 * @function _popState - pops viewState off stack, executes a change of view to the popped state
+	 */
+	var _popState = function _popState () {
+		_goToState(_stack.pop());
+	};
+
+	/**
+	 * @namespace ViewStack
+	 * @function _goToState - executes a change of view to the pushed state
+	 * @param {object} viewState - the target viewState to change to
+	 */
+	var _goToState = function _goToState (viewState) {
+		// TODO implement
+	};
+
+	/**
+	 * @namespace ViewStack
+	 * @function _clearState - clears the _stack of all states
+	 */
+	var _clearState = function _clearState () {
+		_stack = [];
+	};
+
+	/**
+	 * @namespace ViewStack
+	 * @function _length - exposes _stack.length
+	 */
+	var _length = function _length () {
+		return _stack.length;
+	};
+	
+	return {
+		pushState: _pushState,
+		popState: _popState,
+		clearState: _clearState,
+		length: _length
+	};
+})();
+
+//var test1 = new ViewState('red', 'green', 'blue');
+//var test2 = new ViewState('cyan', 'magenta', 'yellow');
+//console.log('ViewState:test1: ' + test1.view + ', test2: ' + test2.view);
+
+/*class ViewState {
 	constructor (view, navBar, rightBar) {
 		this.view = view;
 		this.navBar = navBar;
 		this.rightBar = rightBar;
 	}
-}
+}*/
 
+/*
 class ViewStack {
 	constructor () {
 		this.stack = [];
@@ -54,4 +134,4 @@ class ViewStack {
 	length () {
 		return this.stack.length;
 	}
-}
+}*/
