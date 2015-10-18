@@ -69,10 +69,7 @@ Template.carousel.events({
 	'click .carouselItem': function (e, template) {
 		console.log('carousel: ' + e + ', template: ' + template);
 		e.currentTarget.style.borderColor = Constants.color_teal;
-		let testData = e.currentTarget.getAttribute('data-part');
-		let testAttribute = e.currentTarget.attributes['data-part'];
-		console.log('testData: ' + testData + ', testAttribute: ' + testAttribute);
+		SelectionManager.sendSelection(e.currentTarget);
 		MBus.publish(this.context.topic, Constants.mbus_selected, e);
-		MBus.publish(Constants.mbus_selection, Constants.mbus_selected, e);
 	}
 });

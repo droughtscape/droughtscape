@@ -101,6 +101,7 @@ Template.select_parts.onRendered(function () {
 		Meteor.defer(function() {
 			Template.allParts.clearBorderColor();
 			Template.myParts.clearBorderColor();
+			SelectionManager.clearSelection();
 		});
 	}
 });

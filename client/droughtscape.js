@@ -40,7 +40,7 @@ Session.setDefault(Constants.renderView, Constants.splash);
 Session.setDefault(Constants.adminRights, undefined);
 
 // SelectionManager
-var _selectionManager = new SelectionManager();
+var _selectionManager = getSelectionManager();
 
 // TestLoader
 testLoader = new TestLoader();

@@ -19,6 +19,7 @@
 - Parts
 	=> Add Info Part to right bar
 		Figure out generic Info Part selection mechanism that will work across both single and shared part selections
+			=> SelectionManager
 		
 - Part Selection
 	=> unify click part selection and slick part selection into single message on the select bus
