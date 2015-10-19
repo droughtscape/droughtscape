@@ -24,7 +24,11 @@
 		=> New Lawn
 		=> My Lawns
 		=> Info Lawn
-	
+	=> My Lawns
+		=> New Lawn
+		=> Lawns
+		=> Info Lawn
+		
 - Parts
 	=> Add Info Part to right bar
 		Figure out generic Info Part selection mechanism that will work across both single and shared part selections

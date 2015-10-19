@@ -138,7 +138,7 @@ Template.all_lawns.helpers({
 		return lawnsCarouselId;
 	},
 	lawnsMode: function () {
-		return {topic: Constants.mbus_allLawnsCarousel, type: "allLawns", subType: lawnMode.get()};
+		return {topic: Constants.mbus_allLawnsCarousel, html: lawnsCarouselIdElt, type: "allLawns", subType: lawnMode.get()};
 	},
 	selected: function () {
 		return lawnMode;
