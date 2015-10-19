@@ -136,7 +136,7 @@ Template.myParts.helpers({
 		return partsCarouselId;
 	},
 	partsMode: function () {
-		return {topic: Constants.mbus_myPartsCarousel, type: "myParts", subType: partMode.get()};
+		return {topic: Constants.mbus_myPartsCarousel, html: partsCarouselIdElt, type: "myParts", subType: partMode.get()};
 	},
 	selected: function () {
 		return partMode;

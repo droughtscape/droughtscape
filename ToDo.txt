@@ -42,3 +42,9 @@
 	=> No, authentication inside so that if user logs out from navbar, we do the right thing.
 		=> Opportunity for a wrapper?
 		
+- Bugs
+	SlickJS => Sometimes the onBefore callback has currentSlide, nextSlide the same.
+		This makes sense at the boundaries but not in the middle of the carousel or if we are moving off
+		the boundaries.  This causes selection highlighting to get messed up since both slides and clicks
+		change the border highlight.
+		=> Temp fix

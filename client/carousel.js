@@ -51,11 +51,12 @@ Session.setDefault(Constants.carouselMode, '');
 Session.setDefault(Constants.carouselSubMode, '');
 
 Template.carousel.setBorderColor = function setBorderColor (carousel, borderColor) {
-	let slick = carousel[0].slick;
-	for (i=0, len=slick.$slides.length; i<len; ++i) {
-		let slide = slick.$slides.get(i);
-		slide.style.borderColor = borderColor;
-	}
+	MBus.publish(Constants.mbus_carousel, Constants.mbus_setBorderColor, {carousel: carousel, color: borderColor});
+	//let slick = carousel[0].slick;
+	//for (i=0, len=slick.$slides.length; i<len; ++i) {
+	//	let slide = slick.$slides.get(i);
+	//	slide.style.borderColor = borderColor;
+	//}
 };
 
 Template.carousel.onRendered(function () {
@@ -68,8 +69,9 @@ Template.carousel.onRendered(function () {
 Template.carousel.events({
 	'click .carouselItem': function (e, template) {
 		console.log('carousel: ' + e + ', template: ' + template);
-		e.currentTarget.style.borderColor = Constants.color_teal;
+		//e.currentTarget.style.borderColor = Constants.color_teal;
 		SelectionManager.sendSelection(e.currentTarget);
+		MBus.publish(Constants.mbus_carousel, Constants.mbus_selected, {carousel: this.context.html, item: e.currentTarget});
 		MBus.publish(this.context.topic, Constants.mbus_selected, e);
 	}
 });
