@@ -24,7 +24,7 @@
 
 // Not sure why this works but onCreated and onDestroyed are called whenever the 
 // navBar button PARTS is clicked which sets the renderView Session variable.
-// I guess that since these are "subtemplates", the get created anew every time, similar to a route.
+// I guess that since these are "subtemplates", they get created anew every time, similar to a route.
 // In any case, this is the desired effect.
 Template.parts.onCreated(function () {
 	NavConfig.pushRightBar(Constants.rightBar, Constants.parts);

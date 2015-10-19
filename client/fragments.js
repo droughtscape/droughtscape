@@ -44,6 +44,28 @@ Template.part_type.events({
 	}
 });
 
+Template.lawn_type.helpers({
+	// Template must set the context when instantiating this template fragment
+	lawnsList: function () {
+		var topic = 'LawnType:' + this.context;
+		MBus.publish(topic, Constants.mbus_selected, this.selected.get());
+		return LawnTypeData.getLawnTypeList(this.context, this.selected.get());
+	},
+	labelColor: function () {
+		// set label text color to match either select or not for better visual feedback to user
+		return (this.checked) ? Constants.color_teal : Constants.color_gray;
+	}
+});
+
+Template.lawn_type.events({
+	'click .lawn-select': function (e, template) {
+		var clickedButton = e.currentTarget;
+		console.log('RADIO: target: ' + e.currentTarget + ', template: ' + template);
+		// selected is reactive so partsList helper will fire as a result
+		template.data.selected.set(clickedButton.value);
+	}
+});
+
 Template.require_signin.events({
 	'click #dismiss-alert': function () {
 		// Clear all targets, go to splash on all dismisses

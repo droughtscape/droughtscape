@@ -7,6 +7,15 @@
     </form>
 </template>
 
+<template name="lawn_type">
+    <form>
+        {{#each lawnsList}}
+            <input class="lawn-select" name="lawn-type" type="radio" value="{{value}}" id="{{id}}" {{checked}}/>
+            <label for="{{id}}" style="color: {{labelColor}}">{{friendlyName}}</label>
+        {{/each}}
+    </form>
+</template>
+
 <template name="require_signin">
     <div class="center-align valign-wrapper">
         <div id="alert-card" class="row">

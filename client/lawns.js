@@ -21,3 +21,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+Template.lawns.onCreated(function () {
+	NavConfig.pushRightBar(Constants.rightBar, Constants.parts);
+	// Support carousel lifecycle.  Subscribe returns the ability to unsubscribe.
+});
+
+Template.lawns.onDestroyed(function () {
+	NavConfig.popRightBar();
+	// Support carousel lifecycle
+});
+
+Template.lawns.events({
+});

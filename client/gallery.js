@@ -58,7 +58,7 @@ Template.gallery.helpers({
 
 var testItem = 1;
 Template.gallery.events({
-	'click .carouselItem': function (e) {
+/*	'click .carouselItem': function (e) {
 		console.log('Template.gallery.events - carousel: ' + e);
 		testItem++;
 		if (testItem > 5) {
@@ -66,5 +66,5 @@ Template.gallery.events({
 		}
 		var img = 'http://lorempixel.com/580/250/nature/' + testItem;
 		MBus.publish(Constants.mbus_carousel, Constants.mbus_add, {carousel: '#gallery-carousel', imgWidth: '300px', imgHeight: '200px', imgArray: [img]});
-	}
+	}*/
 });
