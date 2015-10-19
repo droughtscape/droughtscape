@@ -58,9 +58,13 @@ ViewStack = (function () {
 	/**
 	 * @namespace ViewStack
 	 * @function _popState - pops viewState off stack, executes a change of view to the popped state
+	 * @param {boolean} restore - controls whether we want to "goto" the popped state or just pop off stack
 	 */
-	var _popState = function _popState () {
-		_goToState(_stack.pop());
+	var _popState = function _popState (restore) {
+		let state = _stack.pop();
+		if (restore) {
+			_goToState(state);
+		}
 	};
 
 	/**

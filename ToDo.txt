@@ -12,6 +12,27 @@
 		- clearState
 		- length
 		- NO forward
+		
+		=> Analysis:
+			The Droughtscape UI has 3 areas:
+				navBar
+					=> contents controlled by Session(navBarConfig)
+				render
+					=> contents controlled by Session(renderView)
+				rightBar
+					=> presence or absence controlled by Session(rightBar)
+					=> contents controlled by Session(rightBarConfig)
+					
+					
+					!! if we always keep rightBar, then only need rightBarConfig
+				navBar and rightBar are populated by the onCreated template callback.
+				renderView sets the template
+				
+			We could either:
+				=> set the bars outside the template
+				=> pass the dynamic data in as a context to the template and genericize the onCreated, onDestroyed callbacks
+				=> We will use MBus for communicating between bars and template
+					
 
 - Info Part
 	=> Need to be able to return to calling template
