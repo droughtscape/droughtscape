@@ -52,13 +52,13 @@ var _updateLawns = function _updateLawns(myLawns, lawn) {
 var _updateShapeDims;
 
 Template.measure_lawn.onCreated(function () {
-	NavConfig.pushNavBar('create');
-	NavConfig.pushEmptyRightBar();
+	//NavConfig.pushNavBar('create');
+	//NavConfig.pushEmptyRightBar();
 });
 
 Template.measure_lawn.onDestroyed(function () {
-	NavConfig.popNavBar();
-	NavConfig.popRightBar();
+	//NavConfig.popNavBar();
+	//NavConfig.popRightBar();
 });
 
 Template.measure_lawn.helpers({
@@ -100,10 +100,13 @@ Template.measure_lawn.helpers({
 
 Template.measure_lawn.events({
 	'click #measure-lawn-cancel': function () {
-		Session.set(Constants.renderView, Constants.splash);
+		ViewStack.clearState();
+		ViewStack.pushTarget('home');
+		//Session.set(Constants.renderView, Constants.splash);
 	},
 	'click #measure-lawn-back': function () {
-		Session.set(Constants.renderView, Constants.shape_lawn);
+		ViewStack.popState(true);
+		//Session.set(Constants.renderView, Constants.shape_lawn);
 		//currentCreateState.set('measure_lawn');
 	},
 	'click #name-lawn': function () {
@@ -150,7 +153,8 @@ Template.measure_lawn.events({
 				// No users so add us here
 				_insertFirstItem(userEmail, CreateLawnData.lawnData);
 			}
-			Session.set(Constants.renderView, Constants.build_lawn);
+			ViewStack.pushTarget('create.build_lawn');
+			//Session.set(Constants.renderView, Constants.build_lawn);
 			//currentCreateState.set('build_lawn');
 		}
 		else {

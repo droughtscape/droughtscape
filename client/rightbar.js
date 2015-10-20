@@ -98,9 +98,9 @@ Template.rightBar.events({
 		default:
 			if (test) {
 				let currentViewState = ViewStack.peekState();
-				let viewState = NavConfig.getRightBarTargetViewState(currentViewState.rightBar, id);
-				console.log('viewState: ' + viewState);
-				ViewStack.pushState(new ViewState(viewState.view, viewState.navBar, viewState.rightBar));
+				let target = NavConfig.getRightBarTarget(currentViewState.rightBar, id);
+				console.log('target: ' + target);
+				ViewStack.pushTarget(target);
 			}
 			else {
 				if (NavConfig.validateRightBarId(Session.get(Constants.rightBarConfig), id)) {

@@ -113,6 +113,7 @@ Template.navBar.events({
 		switch (id) {
 		case 'droughtscapelogo':
 			// Return to start, clear state
+			ViewStack.clearState();
 			ViewStack.pushTarget(Constants.home);
 			//ViewStack.clearState();
 			//ViewStack.pushState(new ViewState(Constants.renderView, Constants.home, Constants.home));

@@ -205,8 +205,8 @@ var _handleLayoutMessages = function _handleLayoutMessages (message) {
 };
 
 Template.layout_lawn.onCreated(function () {
-	NavConfig.pushNavBar(Constants.layout);
-	NavConfig.pushRightBar(Constants.rightBar, Constants.layout_lawn);
+	//NavConfig.pushNavBar(Constants.layout);
+	//NavConfig.pushRightBar(Constants.rightBar, Constants.layout_lawn);
 	runAnimation = true;
 	window.addEventListener('resize', _handleResizeEvent);
 	
@@ -216,8 +216,8 @@ Template.layout_lawn.onCreated(function () {
 });
 
 Template.layout_lawn.onDestroyed(function () {
-	NavConfig.popNavBar();
-	NavConfig.popRightBar();
+	//NavConfig.popNavBar();
+	//NavConfig.popRightBar();
 	// Have to stop animation and renderer
 	runAnimation = false;
 	pixiRenderer = null;

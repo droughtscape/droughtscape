@@ -49,6 +49,10 @@ ViewStack = (function () {
 	var _initTargets = function _initTargets () {
 		// Have to init in a function to avoid load order issues
 		_targets['home'] = new ViewState(Constants.splash, Constants.home, Constants.home);
+		_targets['create'] = new ViewState(Constants.create, Constants.home, Constants.none);
+		_targets['create.measure_lawn'] = new ViewState(Constants.measure_lawn, Constants.home, Constants.none);
+		_targets['create.build_lawn'] = new ViewState(Constants.build_lawn, Constants.create, Constants.none);
+		_targets['create.layout_lawn'] = new ViewState(Constants.layout_lawn, Constants.create, Constants.layout_lawn);
 	};
 	
 	var _stack = [];
@@ -76,7 +80,7 @@ ViewStack = (function () {
 	var _popState = function _popState (restore) {
 		let state = _stack.pop();
 		if (restore) {
-			_goToState(state);
+			_goToState(_peekState());
 		}
 	};
 	

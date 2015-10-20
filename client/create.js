@@ -134,7 +134,8 @@ Template.shape_lawn.events({
 	},
 	'click #shape-lawn-cancel': function (e) {
 		console.log('Template.shape_lawn.events cancel: ' + e.target.id);
-		Session.set(Constants.renderView, Constants.splash);
+		ViewStack.popState(true);
+		//Session.set(Constants.renderView, Constants.splash);
 	},
 	'click #shape-lawn-accept': function (e) {
 		console.log('Template.shape_lawn.events accept: ' + e.target.id);
@@ -142,7 +143,8 @@ Template.shape_lawn.events({
 		if (inputElt) {
 			console.log('Template.shape_lawn.events lawnName: ' + inputElt.value);
 			CreateLawnData.lawnData.name = inputElt.value;
-			Session.set(Constants.renderView, Constants.measure_lawn);
+			ViewStack.pushTarget('create.measure_lawn');
+			//Session.set(Constants.renderView, Constants.measure_lawn);
 			//currentCreateState.set('measure_lawn');
 		}
 	}
@@ -179,14 +181,14 @@ var handleBuildLawnTemplateMessages = function handleBuildLawnTemplateMessages (
 };
 
 Template.build_lawn.onCreated(function () {
-	NavConfig.pushNavBar('create');
-	NavConfig.pushEmptyRightBar();
+	//NavConfig.pushNavBar('create');
+	//NavConfig.pushEmptyRightBar();
 	buildLawnUnsubscribe = MBus.subscribe(Constants.mbus_carousel, handleBuildLawnTemplateMessages);
 });
 
 Template.build_lawn.onDestroyed(function() {
-	NavConfig.popNavBar();
-	NavConfig.popRightBar();
+	//NavConfig.popNavBar();
+	//NavConfig.popRightBar();
 	buildLawnUnsubscribe.remove();
 });
 
@@ -207,14 +209,17 @@ Template.build_lawn.events ({
 		CreateLawnData.lawnData.quickTemplate = e.target.id;
 	},
 	'click #build-lawn-cancel': function () {
-		Session.set(Constants.renderView, Constants.splash);
+		ViewStack.clearState();
+		ViewStack.pushTarget('home');
 	},
 	'click #build-lawn-back': function () {
-		Session.set(Constants.renderView, Constants.measure_lawn);
+		ViewStack.popState(true);
+		//Session.set(Constants.renderView, Constants.measure_lawn);
 		//currentCreateState.set('measure_lawn');
 	},
 	'click #build-lawn-accept': function () {
-		Session.set(Constants.renderView, Constants.layout_lawn);
+		ViewStack.pushTarget('create.layout_lawn');
+		//Session.set(Constants.renderView, Constants.layout_lawn);
 		CreateLawnData.setCurrentLawn();
 		//Session.set('currentLawn', CreateLawnData.lawnData);
 		//currentCreateState.set('layout_lawn');
