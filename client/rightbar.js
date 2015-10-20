@@ -85,6 +85,7 @@ Template.rightBar.helpers({
 	}
 });
 
+var test = true;
 Template.rightBar.events({
 	// We follow the convention that the currentTarget.id is the renderView target template
 	'click': function (event) {
@@ -95,8 +96,16 @@ Template.rightBar.events({
 			Session.set(Constants.renderView, event.currentTarget.id);
 			break;
 		default:
-			if (NavConfig.validateRightBarId(Session.get(Constants.rightBarConfig), id)) {
-				Session.set(Constants.renderView, id);
+			if (test) {
+				let currentViewState = ViewStack.peekState();
+				let viewState = NavConfig.getRightBarTargetViewState(currentViewState.rightBar, id);
+				console.log('viewState: ' + viewState);
+				ViewStack.pushState(new ViewState(viewState.view, viewState.navBar, viewState.rightBar));
+			}
+			else {
+				if (NavConfig.validateRightBarId(Session.get(Constants.rightBarConfig), id)) {
+					Session.set(Constants.renderView, id);
+				}
 			}
 			break;
 		}

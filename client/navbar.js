@@ -89,7 +89,11 @@ Template.navBar.events({
 		console.log('dropdown: ' + event);
 	},
 	'click .brand-logo': function () {
-		Session.set(Constants.renderView, Constants.splash);
+		// Return to home
+		ViewStack.pushTarget(Constants.home);
+		//ViewStack.clearState();
+		//ViewStack.pushState(new ViewState(Constants.splash, Constants.home, Constants.home));
+		//Session.set(Constants.renderView, Constants.splash);
 		// dispatch a resize event to force rendering of the home page
 		// Even if size doesn't change
 		window.dispatchEvent(new Event('resize'));
@@ -108,7 +112,10 @@ Template.navBar.events({
 		var id = event.currentTarget.id;
 		switch (id) {
 		case 'droughtscapelogo':
-			Session.set(Constants.renderView, Constants.splash);
+			// Return to start, clear state
+			ViewStack.pushTarget(Constants.home);
+			//ViewStack.clearState();
+			//ViewStack.pushState(new ViewState(Constants.renderView, Constants.home, Constants.home));
 			break;
 		case 'at-nav-item':
 		case 'at-nav-button':

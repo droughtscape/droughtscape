@@ -30,6 +30,8 @@
 				
 			We could either:
 				=> set the bars outside the template
+					- The good thing here is that the micro templates are less coupled to navBar, rightBar which
+						really are global to the renderView.
 				=> pass the dynamic data in as a context to the template and genericize the onCreated, onDestroyed callbacks
 				=> We will use MBus for communicating between bars and template
 					

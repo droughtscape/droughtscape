@@ -22,9 +22,9 @@
  * THE SOFTWARE.
  */
 Template.splash.onCreated(function () {
-	NavConfig.pushRightBar(Constants.rightBar, Constants.home);
+	//NavConfig.pushRightBar(Constants.rightBar, Constants.home);
 });
 
 Template.splash.onDestroyed(function () {
-	NavConfig.popRightBar();
+	//NavConfig.popRightBar();
 });

@@ -42,6 +42,9 @@ Session.setDefault(Constants.adminRights, undefined);
 // TestLoader
 testLoader = new TestLoader();
 
+// init the targets for ViewStack
+ViewStack.initTargets();
+
 /**
  * _renderContent function
  * Dynamically adjusts the content part of the app to fit the visible window less the footer (if any)
@@ -83,12 +86,14 @@ Meteor.startup(function () {
 var getPosition = Utils.getPosition;
 
 Template.home.onCreated(function () {
-	Session.set(Constants.renderView, Constants.splash);
+	//Session.set(Constants.renderView, Constants.splash);
 	window.onbeforeunload = function () {
 		return 'Your work will be lost';
 	};
-	NavConfig.pushNavBar(Constants.home);
-	NavConfig.pushRightBar(Constants.rightBar, Constants.home);
+	//NavConfig.pushNavBar(Constants.home);
+	//NavConfig.pushRightBar(Constants.rightBar, Constants.home);
+	let viewState = new ViewState(Constants.splash, Constants.home, Constants.home);
+	ViewStack.pushState(viewState);
 });
 
 Template.home.onDestroyed(function () {

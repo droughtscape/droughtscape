@@ -43,8 +43,21 @@ ViewState = (function (view, navBar, rightBar) {
  * @class ViewStack
  */
 ViewStack = (function () {
+	// Predefined targets
+	var _targets = {};
+	
+	var _initTargets = function _initTargets () {
+		// Have to init in a function to avoid load order issues
+		_targets['home'] = new ViewState(Constants.splash, Constants.home, Constants.home);
+	};
+	
 	var _stack = [];
-
+	var _pushTarget = function _pushTarget (target) {
+		if (_targets.hasOwnProperty(target)) {
+			_pushState(_targets[target]);
+		}
+	};
+	
 	/**
 	 * @namespace ViewStack
 	 * @function _pushState - pushes viewState on stack, executes a change of view to the pushed state
@@ -66,6 +79,10 @@ ViewStack = (function () {
 			_goToState(state);
 		}
 	};
+	
+	var _peekState = function _peekState () {
+		return _stack[_stack.length-1];
+	};
 
 	/**
 	 * @namespace ViewStack
@@ -74,6 +91,9 @@ ViewStack = (function () {
 	 */
 	var _goToState = function _goToState (viewState) {
 		// TODO implement
+		Session.set(Constants.navBarConfig, viewState.navBar);
+		Session.set(Constants.rightBarConfig, viewState.rightBar);
+		Session.set(Constants.renderView, viewState.view);
 	};
 
 	/**
@@ -93,8 +113,11 @@ ViewStack = (function () {
 	};
 	
 	return {
+		initTargets: _initTargets,
+		pushTarget: _pushTarget,
 		pushState: _pushState,
 		popState: _popState,
+		peekState: _peekState,
 		clearState: _clearState,
 		length: _length
 	};
