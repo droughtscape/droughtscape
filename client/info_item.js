@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-var carouselId = 'info-lawn-carousel';
+var carouselId = 'info-item-carousel';
 var carouselIdElt = '#' + carouselId;
 
 var _selectedItem = null;
@@ -38,13 +38,12 @@ var _handleInfoItemCarouselMessages = function _handleInfoItemCarouselMessages (
 	}
 };
 
-Template.info_lawn.onCreated(function () {
+Template.info_item.onCreated(function () {
 	_selectedItem = SelectionManager.getSelection();
-	unsubscribeInfoItem = MBus.subscribe(Constants.mbus_infoLawn_carousel, _handleInfoItemCarouselMessages);
+	unsubscribeInfoItem = MBus.subscribe(Constants.mbus_infoItem_carousel, _handleInfoItemCarouselMessages);
 	// if we have a valid part, load it up into the carousel
 	if (_selectedItem) {
 		let itemCore = _testLoader.getItem(_selectedItem.itemId);
-		//let testItem = _testLoader.createTestItem(itemCore.getUrl(), 'lawnId');
 		Meteor.defer(function () {
 			MBus.publish(Constants.mbus_carousel, Constants.mbus_add,
 				{carousel: carouselIdElt, imgWidth: '500px', imgHeight: '500px', imgArray: [itemCore]});
@@ -52,25 +51,25 @@ Template.info_lawn.onCreated(function () {
 	}
 });
 
-Template.info_lawn.onDestroyed(function () {
+Template.info_item.onDestroyed(function () {
 	unsubscribeInfoItem.remove();
 });
 
-Template.info_lawn.helpers({
+Template.info_item.helpers({
 	carouselId: function () {
 		return carouselId;
 	},
 	validItem: function () {
 		return _selectedItem !== null;
 	},
-	infoLawnMode: function () {
-		return {topic: Constants.mbus_infoLawn_carousel, html: carouselIdElt, type: "infoItem", subType: null};
+	infoItemMode: function () {
+		return {topic: Constants.mbus_infoItem_carousel, html: carouselIdElt, type: "infoItem", subType: null};
 	},
-	alertNoLawn: function () {
+	alertNoItem: function () {
 		Materialize.toast('No item selected!', 3000, 'rounded red-text');
 		ViewStack.popState(true);
 	},
-	lawnType: function () {
+	itemType: function () {
 		let itemCore = _testLoader.getItem(_selectedItem.itemId);
 		return { itemId: _selectedItem.itemId, url: itemCore.getUrl()};
 	}
