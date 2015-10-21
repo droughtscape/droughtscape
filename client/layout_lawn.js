@@ -205,8 +205,6 @@ var _handleLayoutMessages = function _handleLayoutMessages (message) {
 };
 
 Template.layout_lawn.onCreated(function () {
-	//NavConfig.pushNavBar(Constants.layout);
-	//NavConfig.pushRightBar(Constants.rightBar, Constants.layout_lawn);
 	runAnimation = true;
 	window.addEventListener('resize', _handleResizeEvent);
 	
@@ -216,8 +214,6 @@ Template.layout_lawn.onCreated(function () {
 });
 
 Template.layout_lawn.onDestroyed(function () {
-	//NavConfig.popNavBar();
-	//NavConfig.popRightBar();
 	// Have to stop animation and renderer
 	runAnimation = false;
 	pixiRenderer = null;
@@ -284,7 +280,6 @@ var _settings = {
 };
 
 Template.layout_settings.onCreated(function () {
-	NavConfig.pushEmptyRightBar();
 	_settings.gridEnabled = Session.get(Constants.gridEnabled);
 	_settings.gridSpacing = Session.get(Constants.gridSpacing);
 	_settings.gridUnits = (Session.get(Constants.userUnitsOfMeasure) === Constants.English) ? 'inches' : 'cm';
@@ -292,7 +287,6 @@ Template.layout_settings.onCreated(function () {
 });
 
 Template.layout_settings.onDestroyed(function () {
-	NavConfig.popRightBar();
 });
 
 Template.layout_settings.helpers({
@@ -321,7 +315,8 @@ Template.layout_settings.events({
 		_settings.gridEnabled = false;
 	},
 	'click #layout-settings-cancel': function () {
-		Session.set(Constants.renderView, Constants.layout_lawn);
+		ViewStack.popState(true);
+		//Session.set(Constants.renderView, Constants.layout_lawn);
 	},
 	'click #layout-settings-accept': function () {
 		Session.set(Constants.gridEnabled, _settings.gridEnabled);
@@ -332,7 +327,8 @@ Template.layout_settings.events({
 			temp *= 100;
 		}
 		Session.set(Constants.gridSpacing, temp);
-		Session.set(Constants.renderView, Constants.layout_lawn);
+		ViewStack.popState(true);
+		//Session.set(Constants.renderView, Constants.layout_lawn);
 	}
 });
 

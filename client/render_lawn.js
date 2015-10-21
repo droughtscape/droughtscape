@@ -71,15 +71,11 @@ var _renderRender = function _renderRender () {
 var _handleResizeEvent = Utils.createDeferredFunction(_renderRender);
 
 Template.render_lawn.onCreated(function () {
-	NavConfig.pushNavBar('render');
-	NavConfig.pushRightBar(Constants.rightBar, Constants.render_lawn);
 	runAnimation = true;
 	window.addEventListener('resize', _handleResizeEvent);
 });
 
 Template.render_lawn.onDestroyed(function () {
-	NavConfig.popNavBar();
-	NavConfig.popRightBar();
 	threeCamera = null;
 	threeRenderer = null;
 	threeScene = null;

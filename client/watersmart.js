@@ -54,11 +54,9 @@ var tickleCenterMe = function tickleCenterMe () {
 };
 
 Template.watersmart.onCreated(function () {
-	NavConfig.pushEmptyRightBar();
 });
 
 Template.watersmart.onDestroyed(function () {
-	NavConfig.popRightBar();
 });
 
 Template.watersmart.onRendered(function () {
@@ -97,7 +95,7 @@ Template.watersmarttipcard.helpers({
 
 Template.watersmarttipcard.events({
 	'click #dismiss-watersmart-btn': function () {
-		Session.set(Constants.renderView, Constants.home);
+		ViewStack.popState(true);
 	},
 	'click #next-tip-btn': function () {
 		if (tipsArray && tipsArray.length > 0) {

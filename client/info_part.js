@@ -39,7 +39,6 @@ var _handleInfoPartCarouselMessages = function _handleInfoPartCarouselMessages (
 };
 
 Template.info_part.onCreated(function () {
-	NavConfig.pushRightBar(Constants.rightBar, Constants.parts);
 	_selectedPart = SelectionManager.getSelection();
 	unsubscribeInfoPart = MBus.subscribe(Constants.mbus_infoPart_carousel, _handleInfoPartCarouselMessages);
 	// if we have a valid part, load it up into the carousel
@@ -54,7 +53,6 @@ Template.info_part.onCreated(function () {
 });
 
 Template.info_part.onDestroyed(function () {
-	NavConfig.popRightBar();
 });
 
 Template.info_part.helpers({
@@ -69,6 +67,7 @@ Template.info_part.helpers({
 	},
 	alertNoPart: function () {
 		Materialize.toast('No part selected!', 3000, 'rounded red-text');
+		ViewStack.popState(true);
 	},
 	partType: function () {
 		let partCore = _testLoader.getItem(_selectedPart.itemId);

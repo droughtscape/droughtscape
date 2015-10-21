@@ -88,13 +88,13 @@ var unsubscribePartCarouselHandler = null;
 
 Template.favoriteParts.onCreated(function () {
 	let rightBarConfig = (CreateLawnData.getCurrentLawn()) ? Constants.select_parts : Constants.parts;
-	NavConfig.pushRightBar(Constants.rightBar, rightBarConfig);
+	//NavConfig.pushRightBar(Constants.rightBar, rightBarConfig);
 	unsubscribePartTypeHandler = MBus.subscribe(Constants.mbus_favoriteParts, handleFavoritePartTypeMessages);
 	unsubscribePartCarouselHandler = MBus.subscribe(Constants.mbus_favoriteParts_carousel, handleFavoritePartCarouselMessages);
 });
 
 Template.favoriteParts.onDestroyed(function () {
-	NavConfig.popRightBar();
+	//NavConfig.popRightBar();
 	unsubscribePartTypeHandler.remove();
 	unsubscribePartCarouselHandler.remove();
 });

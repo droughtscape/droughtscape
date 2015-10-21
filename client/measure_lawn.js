@@ -52,13 +52,9 @@ var _updateLawns = function _updateLawns(myLawns, lawn) {
 var _updateShapeDims;
 
 Template.measure_lawn.onCreated(function () {
-	//NavConfig.pushNavBar('create');
-	//NavConfig.pushEmptyRightBar();
 });
 
 Template.measure_lawn.onDestroyed(function () {
-	//NavConfig.popNavBar();
-	//NavConfig.popRightBar();
 });
 
 Template.measure_lawn.helpers({
@@ -90,11 +86,11 @@ Template.measure_lawn.helpers({
 	},
 	englishLabelColor: function () {
 		var units = Session.get(Constants.userUnitsOfMeasure);
-		return (units === 'English') ? Constants.color_teal : Constants.color_gray;
+		return (units === 'English') ? Constants.color_highlight : Constants.color_gray;
 	},
 	metricLabelColor: function () {
 		var units = Session.get(Constants.userUnitsOfMeasure);
-		return (units === 'Metric') ? Constants.color_teal : Constants.color_gray;
+		return (units === 'Metric') ? Constants.color_highlight : Constants.color_gray;
 	}
 });
 
@@ -153,7 +149,7 @@ Template.measure_lawn.events({
 				// No users so add us here
 				_insertFirstItem(userEmail, CreateLawnData.lawnData);
 			}
-			ViewStack.pushTarget('create.build_lawn');
+			ViewStack.pushTarget(Constants.vsCreateBuildLawn);
 			//Session.set(Constants.renderView, Constants.build_lawn);
 			//currentCreateState.set('build_lawn');
 		}

@@ -86,12 +86,9 @@ Meteor.startup(function () {
 var getPosition = Utils.getPosition;
 
 Template.home.onCreated(function () {
-	//Session.set(Constants.renderView, Constants.splash);
 	window.onbeforeunload = function () {
 		return 'Your work will be lost';
 	};
-	//NavConfig.pushNavBar(Constants.home);
-	//NavConfig.pushRightBar(Constants.rightBar, Constants.home);
 	let viewState = new ViewState(Constants.splash, Constants.home, Constants.home);
 	ViewStack.pushState(viewState);
 });

@@ -27,12 +27,10 @@
 // I guess that since these are "subtemplates", they get created anew every time, similar to a route.
 // In any case, this is the desired effect.
 Template.parts.onCreated(function () {
-	NavConfig.pushRightBar(Constants.rightBar, Constants.parts);
 	// Support carousel lifecycle.  Subscribe returns the ability to unsubscribe.
 });
 
 Template.parts.onDestroyed(function () {
-	NavConfig.popRightBar();
 	// Support carousel lifecycle
 });
 

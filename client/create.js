@@ -58,8 +58,9 @@ Template.create.helpers({
 
 Template.create.events({
 	'click #signin': function () {
-		SignInUtils.pushRenderViewTarget(Constants.create);
-		Session.set(Constants.renderView, Constants.signin);
+		SignInUtils.pushRenderViewTarget(Constants.vsCreate);
+		ViewStack.pushTarget(Constants.vsSignIn);
+		//Session.set(Constants.renderView, Constants.signin);
 	}
 });
 
@@ -99,9 +100,6 @@ var handleLawnShapeMessages = function handleLawnShapeMessages (message) {
 
 Template.shape_lawn.onCreated(function () {
 	CreateLawnData.createLawnShapeTemplate('rectangle');
-	// remove right bar from this frame
-	//NavConfig.pushNavBar('create');
-	//NavConfig.pushEmptyRightBar();
 	unsubscribe = MBus.subscribe(Constants.mbus_carousel, handleLawnShapeMessages);
 });
 
@@ -110,8 +108,6 @@ Template.shape_lawn.onRendered(function () {
 });
 
 Template.shape_lawn.onDestroyed(function () {
-	//NavConfig.popNavBar();
-	//NavConfig.popRightBar();
 	unsubscribe.remove();
 });
 
@@ -134,7 +130,7 @@ Template.shape_lawn.events({
 	},
 	'click #shape-lawn-cancel': function (e) {
 		console.log('Template.shape_lawn.events cancel: ' + e.target.id);
-		ViewStack.popState(true);
+		ViewStack.pushTarget(Constants.vsHome);
 		//Session.set(Constants.renderView, Constants.splash);
 	},
 	'click #shape-lawn-accept': function (e) {
@@ -143,7 +139,7 @@ Template.shape_lawn.events({
 		if (inputElt) {
 			console.log('Template.shape_lawn.events lawnName: ' + inputElt.value);
 			CreateLawnData.lawnData.name = inputElt.value;
-			ViewStack.pushTarget('create.measure_lawn');
+			ViewStack.pushTarget(Constants.vsCreateMeasureLawn);
 			//Session.set(Constants.renderView, Constants.measure_lawn);
 			//currentCreateState.set('measure_lawn');
 		}
@@ -181,14 +177,10 @@ var handleBuildLawnTemplateMessages = function handleBuildLawnTemplateMessages (
 };
 
 Template.build_lawn.onCreated(function () {
-	//NavConfig.pushNavBar('create');
-	//NavConfig.pushEmptyRightBar();
 	buildLawnUnsubscribe = MBus.subscribe(Constants.mbus_carousel, handleBuildLawnTemplateMessages);
 });
 
 Template.build_lawn.onDestroyed(function() {
-	//NavConfig.popNavBar();
-	//NavConfig.popRightBar();
 	buildLawnUnsubscribe.remove();
 });
 
@@ -210,7 +202,7 @@ Template.build_lawn.events ({
 	},
 	'click #build-lawn-cancel': function () {
 		ViewStack.clearState();
-		ViewStack.pushTarget('home');
+		ViewStack.pushTarget(Constants.vsHome);
 	},
 	'click #build-lawn-back': function () {
 		ViewStack.popState(true);
@@ -218,32 +210,28 @@ Template.build_lawn.events ({
 		//currentCreateState.set('measure_lawn');
 	},
 	'click #build-lawn-accept': function () {
-		ViewStack.pushTarget('create.layout_lawn');
-		//Session.set(Constants.renderView, Constants.layout_lawn);
+		ViewStack.pushTarget(Constants.vsCreateLayoutLawn);
 		CreateLawnData.setCurrentLawn();
-		//Session.set('currentLawn', CreateLawnData.lawnData);
-		//currentCreateState.set('layout_lawn');
 	}
 });
 
 Template.finish_lawn.onCreated(function () {
-	NavConfig.pushRightBar(Constants.rightBar, Constants.finish_lawn);
 });
 
 Template.finish_lawn.onDestroyed(function () {
-	NavConfig.popRightBar();
 });
 
 Template.finish_lawn.events({
 	'click #finish-lawn-cancel': function () {
-		Session.set(Constants.renderView, Constants.splash);
+		ViewStack.pushTarget(Constants.vsHome);
 		CreateLawnData.clearCurrentLawn();
 	},
 	'click #finish-lawn-back': function () {
-		Session.set(Constants.renderView, Constants.layout_lawn);
+		ViewStack.popState(true);
 	},
 	'click #finish-lawn-accept': function () {
-		Session.set(Constants.renderView, Constants.create);
+		ViewStack.clearState();
+		ViewStack.pushTarget(Constants.vsCreate);
 		CreateLawnData.clearCurrentLawn();
 	}
 });

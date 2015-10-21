@@ -31,7 +31,7 @@ Template.part_type.helpers({
 	},
 	labelColor: function () {
 		// set label text color to match either select or not for better visual feedback to user
-		return (this.checked) ? Constants.color_teal : Constants.color_gray;
+		return (this.checked) ? Constants.color_highlight : Constants.color_gray;
 	}
 });
 
@@ -53,7 +53,7 @@ Template.lawn_type.helpers({
 	},
 	labelColor: function () {
 		// set label text color to match either select or not for better visual feedback to user
-		return (this.checked) ? Constants.color_teal : Constants.color_gray;
+		return (this.checked) ? Constants.color_highlight : Constants.color_gray;
 	}
 });
 

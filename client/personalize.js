@@ -22,12 +22,10 @@
  * THE SOFTWARE.
  */
 Template.personalize.onCreated(function () {
-	NavConfig.pushRightBar(Constants.rightBar, Constants.home);
 	console.log('currentUser: ' + Meteor.userId());
 });
 
 Template.personalize.onDestroyed(function () {
-	NavConfig.popRightBar();
 });
 
 Template.personalize.helpers({
@@ -50,7 +48,7 @@ Template.personalize.events({
 		Session.set(Constants.userUnitsOfMeasure, clickedButton.id);
 	},
 	'click #signin': function () {
-		SignInUtils.pushRenderViewTarget(Constants.personalize);
-		Session.set(Constants.renderView, Constants.signin);
+		SignInUtils.pushRenderViewTarget(Constants.vsPersonalize);
+		ViewStack.pushTarget(Constants.vsSignIn);
 	}
 });

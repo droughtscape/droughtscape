@@ -26,15 +26,18 @@
  * Stores the viewState needed to set the view
  * @class ViewState
  */
-ViewState = (function (view, navBar, rightBar) {
+ViewState = (function (view, navBar, rightBar, clearOnPush) {
 	var _view = view;
 	var _navBar = navBar;
 	var _rightBar = rightBar;
+	// clearOnPush => on any push, clear first
+	var _clearOnPush = clearOnPush;
 	var _self = this;
 	return {
 		view: _view,
 		navBar: _navBar,
-		rightBar: _rightBar
+		rightBar: _rightBar,
+		clearOnPush: _clearOnPush
 	}
 });
 
@@ -48,11 +51,28 @@ ViewStack = (function () {
 	
 	var _initTargets = function _initTargets () {
 		// Have to init in a function to avoid load order issues
-		_targets['home'] = new ViewState(Constants.splash, Constants.home, Constants.home);
-		_targets['create'] = new ViewState(Constants.create, Constants.home, Constants.none);
-		_targets['create.measure_lawn'] = new ViewState(Constants.measure_lawn, Constants.home, Constants.none);
-		_targets['create.build_lawn'] = new ViewState(Constants.build_lawn, Constants.create, Constants.none);
-		_targets['create.layout_lawn'] = new ViewState(Constants.layout_lawn, Constants.create, Constants.layout_lawn);
+		_targets[Constants.vsAbout] = new ViewState(Constants.about, Constants.home, Constants.home, false);
+		_targets[Constants.vsHome] = new ViewState(Constants.splash, Constants.home, Constants.home, true);
+		_targets[Constants.vsSignIn] = new ViewState(Constants.signin, Constants.home, Constants.home, false);
+		_targets[Constants.vsCreate] = new ViewState(Constants.create, Constants.home, Constants.none, false);
+		_targets[Constants.vsCreateMeasureLawn] = new ViewState(Constants.measure_lawn, Constants.home, Constants.none, false);
+		_targets[Constants.vsCreateBuildLawn] = new ViewState(Constants.build_lawn, Constants.create, Constants.none, false);
+		_targets[Constants.vsCreateLayoutLawn] = new ViewState(Constants.layout_lawn, Constants.create, Constants.layout_lawn, true);
+		_targets[Constants.vsCreateLayoutSettings] = new ViewState(Constants.layout_settings, Constants.create, Constants.none, false);
+		_targets[Constants.vsCreateRenderLawn] = new ViewState(Constants.render_lawn, Constants.create, Constants.render_lawn, true);
+		_targets[Constants.vsCreateSelectParts] = new ViewState(Constants.select_parts, Constants.create, Constants.select_parts, false);
+		_targets[Constants.vsCreateFinishLawn] = new ViewState(Constants.finish_lawn, Constants.home, Constants.finish_lawn, false);
+		_targets[Constants.vsCreateInfoPart] = new ViewState(Constants.info_part, Constants.create, Constants.parts, false);
+		_targets[Constants.vsInfoPart] = new ViewState(Constants.info_part, Constants.home, Constants.parts, false);
+		_targets[Constants.vsNewPart] = new ViewState(Constants.newPart, Constants.home, Constants.parts, false);
+		_targets[Constants.vsParts] = new ViewState(Constants.parts, Constants.home, Constants.parts, false);
+		_targets[Constants.vsLawns] = new ViewState(Constants.lawns, Constants.home, Constants.lawns, false);
+		_targets[Constants.vsPersonalize] = new ViewState(Constants.personalize, Constants.home, Constants.home, false);
+		_targets[Constants.vsCommunity] = new ViewState(Constants.community, Constants.home, Constants.home, false);
+		_targets[Constants.vsRebates] = new ViewState(Constants.rebates, Constants.home, Constants.home, false);
+		_targets[Constants.vsWatercalc] = new ViewState(Constants.watercalc, Constants.home, Constants.none, false);
+		_targets[Constants.vsWatersmart] = new ViewState(Constants.watersmart, Constants.home, Constants.none, false);
+		_targets[Constants.vsFavorites] = new ViewState(Constants.favorites, Constants.home, Constants.home, false);
 	};
 	
 	var _stack = [];
@@ -68,6 +88,9 @@ ViewStack = (function () {
 	 * @param {object} viewState - the target viewState to push and move to
 	 */
 	var _pushState = function _pushState (viewState) {
+		if (viewState.clearOnPush) {
+			_clearState();
+		}
 		_stack.push(viewState);
 		_goToState(viewState);
 	};
@@ -78,7 +101,7 @@ ViewStack = (function () {
 	 * @param {boolean} restore - controls whether we want to "goto" the popped state or just pop off stack
 	 */
 	var _popState = function _popState (restore) {
-		let state = _stack.pop();
+		_stack.pop();
 		if (restore) {
 			_goToState(_peekState());
 		}

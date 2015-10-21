@@ -107,15 +107,12 @@ Template.select_parts.onRendered(function () {
 });
 
 Template.select_parts.onCreated(function () {
-	let rightBarTarget = (CreateLawnData.getCurrentLawn()) ? Constants.select_parts : Constants.new_parts;
-	NavConfig.pushRightBar(Constants.rightBar, rightBarTarget);
 	CreateLawnData.createLayoutPart(testAbstractPart);
 	unsubscribeSelectParts = MBus.subscribe(Constants.mbus_selectParts, _handleSelectPartsMessages);
 	unsubscribeSlickCarousel = MBus.subscribe(Constants.mbus_slickCarousel, _handleSelectPartsMessages);
 });
 
 Template.select_parts.onDestroyed(function () {
-	NavConfig.popRightBar();
 	unsubscribeSelectParts.remove();
 	unsubscribeSlickCarousel.remove();
 });
@@ -128,8 +125,8 @@ Template.select_parts.helpers({
 
 Template.select_parts.events({
 	'click #signin': function () {
-		SignInUtils.pushRenderViewTarget(Constants.select_parts);
-		Session.set(Constants.renderView, Constants.signin);
+		SignInUtils.pushRenderViewTarget(Constants.vsCreateSelectParts);
+		ViewStack.pushTarget(Constants.vsSignIn);
 	},
 	'click #favorite-parts-add': function () {
 		console.log('Add to My Parts clicked');

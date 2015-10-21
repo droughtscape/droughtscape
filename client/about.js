@@ -23,6 +23,7 @@
  */
 Template.about.events({
 	'click #dismiss-about': function () {
-		Session.set(Constants.renderView, Constants.splash);
+		ViewStack.popState(true);
+		//Session.set(Constants.renderView, Constants.splash);
 	}
 });
