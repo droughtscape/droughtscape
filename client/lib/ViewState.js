@@ -63,6 +63,7 @@ ViewStack = (function () {
 		_targets[Constants.vsCreateSelectParts] = new ViewState(Constants.select_parts, Constants.create, Constants.select_parts, false);
 		_targets[Constants.vsCreateFinishLawn] = new ViewState(Constants.finish_lawn, Constants.home, Constants.finish_lawn, false);
 		_targets[Constants.vsCreateInfoPart] = new ViewState(Constants.info_part, Constants.create, Constants.parts, false);
+		_targets[Constants.vsInfoLawn] = new ViewState(Constants.info_lawn, Constants.home, Constants.none, false);
 		_targets[Constants.vsInfoPart] = new ViewState(Constants.info_part, Constants.home, Constants.parts, false);
 		_targets[Constants.vsNewPart] = new ViewState(Constants.newPart, Constants.home, Constants.parts, false);
 		_targets[Constants.vsParts] = new ViewState(Constants.parts, Constants.home, Constants.parts, false);

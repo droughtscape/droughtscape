@@ -1,5 +1,6 @@
 - Lawns
 	=> RightBar probably needs info_lawn
+	=> Maybe info_lawn, info_part can be same generic info template?
 - View Stack
 	=> onCreated => push view
 	=> onDestroyed => popView??? Doesn't work since onDestroyed is called when we go on to next view

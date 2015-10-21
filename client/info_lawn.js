@@ -21,57 +21,57 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-var partsCarouselId = 'info-part-carousel';
-var partsCarouselIdElt = '#' + partsCarouselId;
+var carouselId = 'info-lawn-carousel';
+var carouselIdElt = '#' + carouselId;
 
-var _selectedPart = null;
-var unsubscribeSelectParts;
-var unsubscribeInfoPart;
+var _selectedItem = null;
+var unsubscribeSelectItems;
+var unsubscribeInfoItem;
 var _testLoader = getTestLoader();
 
-var _handleInfoPartCarouselMessages = function _handleInfoPartCarouselMessages (message) {
+var _handleInfoItemCarouselMessages = function _handleInfoItemCarouselMessages (message) {
 	if (MBus.validateMessage(message)) {
-		console.log('_handleInfoPartCarouselMessages:TODO, message.type: ' + message.type);
+		console.log('_handleInfoItemCarouselMessages:TODO, message.type: ' + message.type);
 	}
 	else {
-		console.log('_handleInfoPartCarouselMessages:ERROR, invalid message');
+		console.log('_handleInfoItemCarouselMessages:ERROR, invalid message');
 	}
 };
 
-Template.info_part.onCreated(function () {
-	_selectedPart = SelectionManager.getSelection();
-	unsubscribeInfoPart = MBus.subscribe(Constants.mbus_infoPart_carousel, _handleInfoPartCarouselMessages);
+Template.info_lawn.onCreated(function () {
+	_selectedItem = SelectionManager.getSelection();
+	unsubscribeInfoItem = MBus.subscribe(Constants.mbus_infoLawn_carousel, _handleInfoItemCarouselMessages);
 	// if we have a valid part, load it up into the carousel
-	if (_selectedPart) {
-		let partCore = _testLoader.getItem(_selectedPart.itemId);
-		let testPart = _testLoader.createTestPart(partCore.getUrl());
+	if (_selectedItem) {
+		let itemCore = _testLoader.getItem(_selectedItem.itemId);
+		//let testItem = _testLoader.createTestItem(itemCore.getUrl(), 'lawnId');
 		Meteor.defer(function () {
 			MBus.publish(Constants.mbus_carousel, Constants.mbus_add,
-				{carousel: partsCarouselIdElt, imgWidth: '500px', imgHeight: '500px', imgArray: [testPart]});
+				{carousel: carouselIdElt, imgWidth: '500px', imgHeight: '500px', imgArray: [itemCore]});
 		});
 	}
 });
 
-Template.info_part.onDestroyed(function () {
-	unsubscribeInfoPart.remove();
+Template.info_lawn.onDestroyed(function () {
+	unsubscribeInfoItem.remove();
 });
 
-Template.info_part.helpers({
+Template.info_lawn.helpers({
 	carouselId: function () {
-		return partsCarouselId;
+		return carouselId;
 	},
-	validPart: function () {
-		return _selectedPart !== null;
+	validItem: function () {
+		return _selectedItem !== null;
 	},
-	infoPartMode: function () {
-		return {topic: Constants.mbus_infoPart_carousel, html: partsCarouselIdElt, type: "infoPart", subType: null};
+	infoLawnMode: function () {
+		return {topic: Constants.mbus_infoLawn_carousel, html: carouselIdElt, type: "infoItem", subType: null};
 	},
-	alertNoPart: function () {
-		Materialize.toast('No part selected!', 3000, 'rounded red-text');
+	alertNoLawn: function () {
+		Materialize.toast('No item selected!', 3000, 'rounded red-text');
 		ViewStack.popState(true);
 	},
-	partType: function () {
-		let partCore = _testLoader.getItem(_selectedPart.itemId);
-		return { itemId: _selectedPart.itemId, url: partCore.getUrl()};
+	lawnType: function () {
+		let itemCore = _testLoader.getItem(_selectedItem.itemId);
+		return { itemId: _selectedItem.itemId, url: itemCore.getUrl()};
 	}
 });

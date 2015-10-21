@@ -1,0 +1,17 @@
+<template name="info_lawn">
+    <h3>
+        info_lawn
+    </h3>
+
+    <div>
+        {{#if validItem}}
+            <h4>
+                {{lawnType.itemId}}
+                <br>
+                {{> carousel id=carouselId context=infoLawnMode}}
+            </h4>
+        {{else}}
+            {{alertNoLawn}}
+        {{/if}}
+    </div>
+</template>
