@@ -100,7 +100,7 @@ var _mouseMvCreateHandler = function _mouseMvCreateHandler (noop, pixelPt) {
 var _mouseEnterCreateHandler = function _mouseEnterCreateHandler (pixelPt) {
 	console.log('_mouseEnterCreateHandler: ' + pixelPt);
 	PixiLayout.setMouseMvHandler(_mouseMvCreateHandler);
-	PixiLayout.enableMouseSprite(true, pixelPt);
+	PixiLayout.enableMouseSprite(true, pixelPt, _currentLayoutPart.getUrl());
 };
 var _mouseLeaveCreateHandler = function _mouseLeaveCreateHandler () {
 	console.log('_mouseLeaveCreateHandler');
@@ -191,7 +191,7 @@ var _handleLayoutMessages = function _handleLayoutMessages (message) {
 		switch (message.type) {
 		case 'select':
 			console.log('_handleLayoutMessages[' + message.topic + ']: ' + message.type + ' --> ' + message.value);
-			CreateLawnData.createLayoutPart(null);
+			CreateLawnData.setCurrentLayoutPart(null);
 			if (_currentMouseMode != MOUSE_MODE.Select) {
 				_currentMouseMode = MOUSE_MODE.Select;
 				_setMouseMode(_currentMouseMode);

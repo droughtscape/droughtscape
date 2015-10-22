@@ -211,18 +211,29 @@ PixiLayout = (function () {
 	};
 
 	var _mouseSprite = null;
+	var _mouseMask = null;
 	
 	/**
 	 * _enableMouseSprite function - enable/disable the graphic cursor sprite.  Used to avoid any
 	 * timing issues when switching between windows
 	 * @param {boolean} enable - true to turn on, false to turn off..
 	 * @param {object} pixelPt - mandatory if enable is true
+	 * @param {string} url - image for sprite
 	 */
-	var _enableMouseSprite = function _enableMouseSprite (enable, pixelPt) {
+	var _enableMouseSprite = function _enableMouseSprite (enable, pixelPt, url) {
 		_selectBox.visible = enable;
 		if (enable) {
 			if (!_mouseSprite) {
-				_mouseSprite = PIXI.Sprite.fromImage('custom.png');
+				// TODO make _mouseMask optional, depends on implementing footprint
+				_mouseMask = new PIXI.Graphics();
+				_mouseMask.beginFill();
+				_mouseMask.drawCircle(25, 25, 25);
+				_mouseMask.endFill();
+
+				_selectBox.addChild(_mouseMask);
+				
+				_mouseSprite = PIXI.Sprite.fromImage(url);
+				_mouseSprite.mask = _mouseMask;
 				_selectBox.addChild(_mouseSprite);
 			}
 			_mouseSprite.width = 50;
@@ -230,6 +241,8 @@ PixiLayout = (function () {
 			// Center the sprite
 			_mouseSprite.position.x = pixelPt.x - 25;
 			_mouseSprite.position.y = pixelPt.y - 25;
+			_mouseMask.position.x = _mouseSprite.position.x;
+			_mouseMask.position.y = _mouseSprite.position.y;
 		}
 		else {
 			if (_mouseSprite) {
@@ -249,6 +262,10 @@ PixiLayout = (function () {
 			// Center the sprite, 25 is magic since we know w, h == 50
 			_mouseSprite.position.x = pixelPt.x - 25;
 			_mouseSprite.position.y = pixelPt.y - 25;
+			if (_mouseMask) {
+				_mouseMask.position.x = _mouseSprite.position.x;
+				_mouseMask.position.y = _mouseSprite.position.y;
+			}
 		}
 	};
 	

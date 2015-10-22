@@ -87,7 +87,7 @@ var handlePartCarouselMessages = function handlePartCarouselMessages (message) {
 		case Constants.mbus_selected:
 			console.log('handlePartCarouselMessages[' + message.topic + ']: ' + message.type + ' --> ' + message.value);
 			if (parentTemplateTopic) {
-				MBus.publish(parentTemplateTopic, message.type, message.topic);
+				MBus.publish(parentTemplateTopic, message.type, {topic: message.topic, html: message.value});
 			}
 			break;
 		case Constants.mbus_unselected:

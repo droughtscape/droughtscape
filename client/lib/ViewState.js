@@ -57,7 +57,7 @@ ViewStack = (function () {
 		_targets[Constants.vsCreate] = new ViewState(Constants.create, Constants.home, Constants.none, false);
 		_targets[Constants.vsCreateMeasureLawn] = new ViewState(Constants.measure_lawn, Constants.home, Constants.none, false);
 		_targets[Constants.vsCreateBuildLawn] = new ViewState(Constants.build_lawn, Constants.create, Constants.none, false);
-		_targets[Constants.vsCreateLayoutLawn] = new ViewState(Constants.layout_lawn, Constants.create, Constants.layout_lawn, true);
+		_targets[Constants.vsCreateLayoutLawn] = new ViewState(Constants.layout_lawn, Constants.layout, Constants.layout_lawn, true);
 		_targets[Constants.vsCreateLayoutSettings] = new ViewState(Constants.layout_settings, Constants.create, Constants.none, false);
 		_targets[Constants.vsCreateRenderLawn] = new ViewState(Constants.render_lawn, Constants.create, Constants.render_lawn, true);
 		_targets[Constants.vsCreateSelectParts] = new ViewState(Constants.select_parts, Constants.create, Constants.select_parts, false);
@@ -74,6 +74,8 @@ ViewStack = (function () {
 		_targets[Constants.vsWatercalc] = new ViewState(Constants.watercalc, Constants.home, Constants.none, false);
 		_targets[Constants.vsWatersmart] = new ViewState(Constants.watersmart, Constants.home, Constants.none, false);
 		_targets[Constants.vsFavorites] = new ViewState(Constants.favorites, Constants.home, Constants.home, false);
+		_targets[Constants.vsPartSelectParts] = new ViewState(Constants.select_parts, Constants.home, Constants.new_parts, false);
+
 	};
 	
 	var _stack = [];

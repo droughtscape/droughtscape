@@ -39,6 +39,9 @@ var unsubscribeSelectParts;
 var unsubscribeSlickCarousel;
 var selectPartSelection = null;
 
+// TODO Remove this singleton once we implement collections
+var _testLoader = getTestLoader();
+
 var _validateSelectPartSelection = function _validateSelectPartSelection (source) {
 	return typeof(source !== 'undefined') &&
 		(selectPartSelection.hasAttribute(topic)) &&
@@ -69,10 +72,14 @@ var _handleSelectPartsMessages = function _handleSelectPartsMessages (message) {
 		switch (message.type) {
 		case Constants.mbus_selected:
 			console.log('_handleSelectPartsMessages[' + message.topic + ']: ' + message.type + ' --> ' + message.value);
-			// TBD, this is just a placeholder.  We need more information
+			// message.value => {topic, html}
 			selectPartSelection = {topic: message.topic, target: message.value};
+			let itemId = message.value.html.getAttribute(Constants.dataPart);
+			let abstractPart = _testLoader.getItem(itemId);
+			console.log('selected item: ' + itemId + ', abstractPart: ' + abstractPart);
+			CreateLawnData.setCurrentLayoutPart(abstractPart);
 		{
-			let unselectTopic = _getUnselectedTopic(message.value);
+			let unselectTopic = _getUnselectedTopic(message.value.topic);
 			MBus.publish(unselectTopic, Constants.mbus_unselected, null);
 		}
 			break;
@@ -107,7 +114,7 @@ Template.select_parts.onRendered(function () {
 });
 
 Template.select_parts.onCreated(function () {
-	CreateLawnData.createLayoutPart(testAbstractPart);
+	//CreateLawnData.createLayoutPart(testAbstractPart);
 	unsubscribeSelectParts = MBus.subscribe(Constants.mbus_selectParts, _handleSelectPartsMessages);
 	unsubscribeSlickCarousel = MBus.subscribe(Constants.mbus_slickCarousel, _handleSelectPartsMessages);
 });

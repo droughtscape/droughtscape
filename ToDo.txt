@@ -1,3 +1,14 @@
+- Pixi and Threejs images must be from a CORS ok server.
+- Render plants idea:
+	=> define basic 3-d render shape: {cubic, spherical, cone, inverted cone}
+	=> tile the 2D image onto the render shape and extrude
+- Layout plants idea:
+	=> define basic 2-d footprint shape: {rectangular, ellipsoid}
+	=> constrain both cursor and image shape by the footprint shape.  The idea is that most
+		plants will have a ellipsoid footprint.
+		
+- Layout Lawn | Measure => disable Accept until valid area
+
 - Lawns
 	=> RightBar probably needs info_lawn
 	=> Maybe info_lawn, info_part can be same generic info template?
