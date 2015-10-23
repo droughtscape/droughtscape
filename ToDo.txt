@@ -6,22 +6,27 @@
 	=> define basic 2-d footprint shape: {rectangular, ellipsoid}
 	=> constrain both cursor and image shape by the footprint shape.  The idea is that most
 		plants will have a ellipsoid footprint.
+- Flesh out AbstractPart
+- Collections
+
 		
-- Layout Lawn | Measure => disable Accept until valid area
++ Layout Lawn | Measure => disable Accept until valid area
+- Right Bar Info * disable until valid selection
+	=> Needs Session variable and some magic testing for "info-"
 
-Fix ReInit selection issue - Maybe can use SelectionManager
++ Fix ReInit selection issue - Maybe can use SelectionManager
 
-MBus is inefficient.  When we use a common bus (topic) all subscribers are invoked and have to filter.
++ MBus is inefficient.  When we use a common bus (topic) all subscribers are invoked and have to filter.
 	=> Better is the LSE method, subscribe to a { bus, [events] } and only call the subscriber if the dispatch mechanism criteria
 		of {bus, event} is matched.
 	=> Recursive events are disallowed
 	=> Treat as a system wide bus, topics are really events.  type may be redundant so roll into topic.
 	=> Look at partType, lawnType to see if we can reduce type out of it.
 
-- Lawns
++ Lawns
 	=> RightBar probably needs info_lawn
 	=> Maybe info_lawn, info_part can be same generic info template?
-- View Stack
++ View Stack
 	=> onCreated => push view
 	=> onDestroyed => popView??? Doesn't work since onDestroyed is called when we go on to next view
 	=> popView
@@ -59,7 +64,7 @@ MBus is inefficient.  When we use a common bus (topic) all subscribers are invok
 				=> We will use MBus for communicating between bars and template
 					
 
-- Info Part
++ Info Part
 	=> Need to be able to return to calling template
 	=> Need large slide[0..N] images
 
@@ -75,15 +80,15 @@ MBus is inefficient.  When we use a common bus (topic) all subscribers are invok
 		=> Lawns
 		=> Info Lawn
 		
-- Parts
++ Parts
 	=> Add Info Part to right bar
 		Figure out generic Info Part selection mechanism that will work across both single and shared part selections
 			=> SelectionManager
 		
-- Part Selection
++ Part Selection
 	=> unify click part selection and slick part selection into single message on the select bus
 	
-- Info Lawn
++ Info Lawn
 
 - parts only has part, no myParts
 - parts rightBar Favorite Parts -> My Parts => select_parts
