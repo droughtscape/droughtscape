@@ -91,6 +91,10 @@ Template.measure_lawn.helpers({
 	metricLabelColor: function () {
 		var units = Session.get(Constants.userUnitsOfMeasure);
 		return (units === 'Metric') ? Constants.color_highlight : Constants.color_gray;
+	},
+	disabled: function () {
+		// enable/disable the Accept button based on valid area
+		return (Session.get(Constants.computedArea) > 0) ? '' : 'disabled';
 	}
 });
 
@@ -230,7 +234,7 @@ Template.measure_rectangle_lawn.helpers({
 });
 
 Template.measure_rectangle_lawn.events({
-	'change .input-field': function () {
+	'input .input-field': function () {
 		console.log('input-field change event');
 		_updateShapeDims();
 	}
