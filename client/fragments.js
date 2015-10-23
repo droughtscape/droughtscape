@@ -44,6 +44,7 @@ Template.part_type.events({
 	}
 });
 
+// TODO Rethink how radio button type stuff works.  Can we bury this.context in value?
 Template.lawn_type.helpers({
 	// Template must set the context when instantiating this template fragment
 	lawnsList: function () {
