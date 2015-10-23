@@ -1,8 +1,7 @@
 @startuml
-carousel.click -> carousel.slick.listeners: MBus.publish({type: selected, value: {carousel: targetCarousel, item: htmlItem}}
+carousel.click -> carousel.slick.listeners: MBus.publish({topic: carousel.selected, value: Selection(carouselId, htmlItem})
 carousel.slick.listeners -> carousel.slick.listeners: Fix Single Item carousel bug
-carousel.click -> targetCarousel.listeners: MBus.publish({type: selected, value: htmlItem}
-targetCarousel.listeners -> select_parts: MBus.publish({type: selected, value: {topic: sourceCarousel, html: htmlItem})
+carousel.click -> select_parts: MBus.publish({topic: carousel.selected, value: Selection(sourceCarousel, htmlItem}})
 select_parts -> select_parts: getItemIdFromPart(message.value.html.getAttributes("data-part"))
-select_parts -> unselected.listeners: MBus.publish(type: unselected}
+select_parts -> unselected.listeners: MBus.publish(topic: carousel.unselected}
 @enduml

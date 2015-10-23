@@ -1,0 +1,5 @@
+@startuml
+carousel.slick.reInit -> select_parts: MBus.publish({topic: carousel.selected, value: Selection(carouselId, htmlSlide})
+carousel.slick.afterSlide -> select_parts: MBus.publish({topic: carousel.selected, value: Selection(carouselId, htmlSlide})
+select_parts -> targetTemplate: clearSelection
+@enduml

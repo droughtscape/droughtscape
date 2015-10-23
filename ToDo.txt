@@ -9,6 +9,13 @@
 		
 - Layout Lawn | Measure => disable Accept until valid area
 
+Fix ReInit selection issue - Maybe can use SelectionManager
+
+MBus is inefficient.  When we use a common bus (topic) all subscribers are invoked and have to filter.
+	=> Better is the LSE method, subscribe to a { bus, [events] } and only call the subscriber if the dispatch mechanism criteria
+		of {bus, event} is matched.
+	=> Recursive events are disallowed
+
 - Lawns
 	=> RightBar probably needs info_lawn
 	=> Maybe info_lawn, info_part can be same generic info template?

@@ -71,7 +71,7 @@ Template.carousel.events({
 		console.log('carousel: ' + e + ', template: ' + template);
 		//e.currentTarget.style.borderColor = Constants.color_teal;
 		SelectionManager.sendSelection(e.currentTarget);
-		MBus.publish(Constants.mbus_carousel, Constants.mbus_selected, {carousel: this.context.html, item: e.currentTarget});
+		MBus.publish(Constants.mbus_carousel_selected, Constants.mbus_selected, new Selection(this.id, e.currentTarget));
 		MBus.publish(this.context.topic, Constants.mbus_selected, e.currentTarget);
 	}
 });

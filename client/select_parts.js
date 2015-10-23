@@ -37,16 +37,9 @@ class TestAbstractPartSP {
 var testAbstractPart = new TestAbstractPartSP();
 var unsubscribeSelectParts;
 var unsubscribeSlickCarousel;
-var selectPartSelection = null;
 
 // TODO Remove this singleton once we implement collections
 var _testLoader = getTestLoader();
-
-var _validateSelectPartSelection = function _validateSelectPartSelection (source) {
-	return typeof(source !== 'undefined') &&
-		(selectPartSelection.hasAttribute(topic)) &&
-		(source === selectPartSelection.topic);
-};
 
 var _getUnselectedTopic = function _getUnselectedTopic (selectedTopic) {
 	return (selectedTopic === Constants.mbus_allPartsCarousel) ? Constants.mbus_myPartsCarousel :
@@ -67,14 +60,28 @@ var _getUnselectedTopicFromId = function _getUnselectedTopicFromId (carouselId) 
 	}
 };
 
+var _unselectFromId = function _unselectFromId (carouselId) {
+	switch (carouselId) {
+	case Template.allParts.getCarouselId():
+		Template.myParts.clearBorderColor();
+		break;
+	case Template.myParts.getCarouselId():
+		Template.allParts.clearBorderColor();
+		break;
+	default:
+		return null;
+		break;
+	}
+};
+
 var _handleSelectPartsMessages = function _handleSelectPartsMessages (message) {
 	if (MBus.validateMessage(message)) {
 		switch (message.type) {
 		case Constants.mbus_selected:
 			console.log('_handleSelectPartsMessages[' + message.topic + ']: ' + message.type + ' --> ' + message.value);
 			// message.value => {topic, html}
-			selectPartSelection = {topic: message.topic, target: message.value};
-			let itemId = message.value.html.getAttribute(Constants.dataPart);
+			//let itemId = message.value.html.getAttribute(Constants.dataPart);
+			let itemId = message.value.getDataPart();
 			let abstractPart = _testLoader.getItem(itemId);
 			console.log('selected item: ' + itemId + ', abstractPart: ' + abstractPart);
 			CreateLawnData.setCurrentLayoutPart(abstractPart);
@@ -92,6 +99,22 @@ var _handleSelectPartsMessages = function _handleSelectPartsMessages (message) {
 		}
 			break;
 		}
+	}
+	else {
+		console.log('handleSelectPartsMessages:ERROR, invalid message');
+	}
+};
+
+var _handleSelectCarouselMessage = function _handleSelectCarouselMessage(message) {
+	if (MBus.validateMessage(message)) {
+		console.log('_handleSelectCarouselMessage[' + message.topic + ']: ' + message.type + ' --> ' + message.value);
+		// message.value => {topic, html}
+		//let itemId = message.value.html.getAttribute(Constants.dataPart);
+		let itemId = message.value.getDataPart();
+		let abstractPart = _testLoader.getItem(itemId);
+		console.log('selected item: ' + itemId + ', abstractPart: ' + abstractPart);
+		CreateLawnData.setCurrentLayoutPart(abstractPart);
+		_unselectFromId(message.value.carouselId);
 	}
 	else {
 		console.log('handleSelectPartsMessages:ERROR, invalid message');
@@ -116,7 +139,7 @@ Template.select_parts.onRendered(function () {
 Template.select_parts.onCreated(function () {
 	//CreateLawnData.createLayoutPart(testAbstractPart);
 	unsubscribeSelectParts = MBus.subscribe(Constants.mbus_selectParts, _handleSelectPartsMessages);
-	unsubscribeSlickCarousel = MBus.subscribe(Constants.mbus_slickCarousel, _handleSelectPartsMessages);
+	unsubscribeSlickCarousel = MBus.subscribe(Constants.mbus_carousel_selected, _handleSelectCarouselMessage);
 });
 
 Template.select_parts.onDestroyed(function () {
