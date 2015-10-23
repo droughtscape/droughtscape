@@ -79,6 +79,7 @@ var _handleSelectPartsMessages = function _handleSelectPartsMessages (message) {
 		switch (message.type) {
 		case Constants.mbus_selected:
 			console.log('_handleSelectPartsMessages[' + message.topic + ']: ' + message.type + ' --> ' + message.value);
+			throw 'Unexpected!!!';
 			// message.value => {topic, html}
 			//let itemId = message.value.html.getAttribute(Constants.dataPart);
 			let itemId = message.value.getDataPart();
@@ -87,14 +88,6 @@ var _handleSelectPartsMessages = function _handleSelectPartsMessages (message) {
 			CreateLawnData.setCurrentLayoutPart(abstractPart);
 		{
 			let unselectTopic = _getUnselectedTopic(message.value.topic);
-			MBus.publish(unselectTopic, Constants.mbus_unselected, null);
-		}
-			break;
-		case Constants.mbus_slickEvent:
-			console.log('_handleSelectPartsMessages[' + message.topic + ']: ' + message.type + ' --> ' + message.value +
-				', on carousel: ' + message.value.carouselId);
-		{
-			let unselectTopic = _getUnselectedTopicFromId(message.value.carouselId);
 			MBus.publish(unselectTopic, Constants.mbus_unselected, null);
 		}
 			break;

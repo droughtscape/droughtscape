@@ -15,6 +15,8 @@ MBus is inefficient.  When we use a common bus (topic) all subscribers are invok
 	=> Better is the LSE method, subscribe to a { bus, [events] } and only call the subscriber if the dispatch mechanism criteria
 		of {bus, event} is matched.
 	=> Recursive events are disallowed
+	=> Treat as a system wide bus, topics are really events.  type may be redundant so roll into topic.
+	=> Look at partType, lawnType to see if we can reduce type out of it.
 
 - Lawns
 	=> RightBar probably needs info_lawn
