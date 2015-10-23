@@ -63,7 +63,7 @@ Template.carousel.onRendered(function () {
 	// This just starts the render initialization.
 	// The actual component will do any implementation specific setup
 	// and then emit the rendered message
-	MBus.publish(Constants.mbus_carousel, Constants.mbus_render, {id: this.data.id, dataType: this.data.context.type});
+	MBus.publish(Constants.mbus_carousel_render, Constants.mbus_render, {id: this.data.id, dataType: this.data.context.type});
 });
 
 Template.carousel.events({

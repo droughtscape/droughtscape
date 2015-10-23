@@ -39,7 +39,7 @@ Template.all_lawns.clickEvent = function clickEvent (e) {
 };
 
 var _setSelectedCarouselImages = function _setSelectedCarouselImages (carouselId, selection) {
-	MBus.publish(Constants.mbus_carousel, Constants.mbus_clear, {carousel: lawnsCarouselIdElt});
+	MBus.publish(Constants.mbus_carousel_clear, Constants.mbus_clear, {carousel: lawnsCarouselIdElt});
 	let testLoader = getTestLoader();
 	var testLawns;
 
@@ -52,13 +52,13 @@ var _setSelectedCarouselImages = function _setSelectedCarouselImages (carouselId
 			{id: 'lawn_4', img: 'http://lorempixel.com/580/250/nature/4'},
 			{id: 'lawn_5', img: 'http://lorempixel.com/580/250/nature/5'}
 		], 'lawnId');
-		MBus.publish(Constants.mbus_carousel, Constants.mbus_add, {carousel: lawnsCarouselIdElt, imgWidth: '200px', imgHeight: '200px',
+		MBus.publish(Constants.mbus_carousel_add, Constants.mbus_add, {carousel: lawnsCarouselIdElt, imgWidth: '200px', imgHeight: '200px',
 			imgArray: testLawns});
 		break;
 	default:
 		testLawns = testLoader.createTestItems([
 			{id: 'lawn_6', img: 'http://lorempixel.com/580/250/nature/1'}], 'lawnId');
-		MBus.publish(Constants.mbus_carousel, Constants.mbus_add, {carousel: lawnsCarouselIdElt, imgWidth: '200px', imgHeight: '200px', imgArray: testLawns});
+		MBus.publish(Constants.mbus_carousel_add, Constants.mbus_add, {carousel: lawnsCarouselIdElt, imgWidth: '200px', imgHeight: '200px', imgArray: testLawns});
 		break;
 	}
 };

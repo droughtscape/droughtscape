@@ -38,7 +38,7 @@ Template.allParts.clickEvent = function clickEvent (e) {
 };
 
 var setSelectedCarouselImages = function setSelectedCarouselImages (carouselId, selection) {
-	MBus.publish(Constants.mbus_carousel, Constants.mbus_clear, {carousel: partsCarouselIdElt});
+	MBus.publish(Constants.mbus_carousel_clear, Constants.mbus_clear, {carousel: partsCarouselIdElt});
 	let testLoader = getTestLoader();
 	var testParts;
 
@@ -51,12 +51,12 @@ var setSelectedCarouselImages = function setSelectedCarouselImages (carouselId, 
 			'http://lorempixel.com/580/250/nature/4',
 			'http://lorempixel.com/580/250/nature/5'
 		]);
-		MBus.publish(Constants.mbus_carousel, Constants.mbus_add, {carousel: partsCarouselIdElt, imgWidth: '200px', imgHeight: '200px',
+		MBus.publish(Constants.mbus_carousel_add, Constants.mbus_add, {carousel: partsCarouselIdElt, imgWidth: '200px', imgHeight: '200px',
 			imgArray: testParts});
 		break;
 	default:
 		testParts = testLoader.createTestParts(['http://lorempixel.com/580/250/nature/1']);
-		MBus.publish(Constants.mbus_carousel, Constants.mbus_add, {carousel: partsCarouselIdElt, imgWidth: '200px', imgHeight: '200px', imgArray: testParts});
+		MBus.publish(Constants.mbus_carousel_add, Constants.mbus_add, {carousel: partsCarouselIdElt, imgWidth: '200px', imgHeight: '200px', imgArray: testParts});
 		break;
 	}
 };

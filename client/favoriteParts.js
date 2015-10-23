@@ -26,10 +26,10 @@ var favoritePartsCarouselId = 'favorite-parts-carousel';
 var favoritePartsCarouselIdElt = '#' + favoritePartsCarouselId;
 
 var setSelectedCarouselImages = function setSelectedCarouselImages (carouselId, selection) {
-	MBus.publish(Constants.mbus_carousel, Constants.mbus_clear, {carousel: favoritePartsCarouselIdElt});
+	MBus.publish(Constants.mbus_carousel_clear, Constants.mbus_clear, {carousel: favoritePartsCarouselIdElt});
 	switch (selection) {
 	case 'irrigation':
-		MBus.publish(Constants.mbus_carousel, Constants.mbus_add, {carousel: favoritePartsCarouselIdElt, imgWidth: '200px', imgHeight: '200px',
+		MBus.publish(Constants.mbus_carousel_add, Constants.mbus_add, {carousel: favoritePartsCarouselIdElt, imgWidth: '200px', imgHeight: '200px',
 			imgArray: [
 				'http://lorempixel.com/580/250/nature/1',
 				'http://lorempixel.com/580/250/nature/2',
@@ -39,7 +39,7 @@ var setSelectedCarouselImages = function setSelectedCarouselImages (carouselId, 
 			]});
 		break;
 	default:
-		MBus.publish(Constants.mbus_carousel, Constants.mbus_add, {carousel: favoritePartsCarouselIdElt, imgWidth: '200px', imgHeight: '200px', imgArray: ['http://lorempixel.com/580/250/nature/1']});
+		MBus.publish(Constants.mbus_carousel_add, Constants.mbus_add, {carousel: favoritePartsCarouselIdElt, imgWidth: '200px', imgHeight: '200px', imgArray: ['http://lorempixel.com/580/250/nature/1']});
 		break;
 	}
 };
