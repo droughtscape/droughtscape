@@ -45,8 +45,7 @@ Template.info_item.onCreated(function () {
 	if (_selectedItem) {
 		let itemCore = _testLoader.getItem(_selectedItem.itemId);
 		Meteor.defer(function () {
-			MBus.publish(Constants.mbus_carousel_add, Constants.mbus_add,
-				{carousel: carouselIdElt, imgWidth: '500px', imgHeight: '500px', imgArray: [itemCore]});
+			MBus.publishSimple(Constants.mbus_carousel_add, {carousel: carouselIdElt, imgWidth: '500px', imgHeight: '500px', imgArray: [itemCore]});
 		});
 	}
 });

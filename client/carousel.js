@@ -51,7 +51,7 @@ Session.setDefault(Constants.carouselMode, '');
 Session.setDefault(Constants.carouselSubMode, '');
 
 Template.carousel.setBorderColor = function setBorderColor (carousel, borderColor) {
-	MBus.publish(Constants.mbus_carousel_setBorderColor, Constants.mbus_setBorderColor, {carousel: carousel, color: borderColor});
+	MBus.publishSimple(Constants.mbus_carousel_setBorderColor, {carousel: carousel, color: borderColor});
 	//let slick = carousel[0].slick;
 	//for (i=0, len=slick.$slides.length; i<len; ++i) {
 	//	let slide = slick.$slides.get(i);
@@ -63,7 +63,7 @@ Template.carousel.onRendered(function () {
 	// This just starts the render initialization.
 	// The actual component will do any implementation specific setup
 	// and then emit the rendered message
-	MBus.publish(Constants.mbus_carousel_render, Constants.mbus_render, {id: this.data.id, dataType: this.data.context.type});
+	MBus.publishSimple(Constants.mbus_carousel_render, {id: this.data.id, dataType: this.data.context.type});
 });
 
 Template.carousel.events({
@@ -71,7 +71,7 @@ Template.carousel.events({
 		console.log('carousel: ' + e + ', template: ' + template);
 		//e.currentTarget.style.borderColor = Constants.color_teal;
 		SelectionManager.sendSelection(e.currentTarget);
-		MBus.publish(Constants.mbus_carousel_selected, Constants.mbus_selected, new Selection(this.id, e.currentTarget));
+		MBus.publishSimple(Constants.mbus_carousel_selected, new Selection(this.id, e.currentTarget));
 		//MBus.publish(this.context.topic, Constants.mbus_selected, e.currentTarget);
 	}
 });

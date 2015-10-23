@@ -51,12 +51,11 @@ var setSelectedCarouselImages = function setSelectedCarouselImages (carouselId, 
 			'http://lorempixel.com/580/250/nature/4',
 			'http://lorempixel.com/580/250/nature/5'
 		]);
-		MBus.publish(Constants.mbus_carousel_add, Constants.mbus_add, {carousel: partsCarouselIdElt, imgWidth: '200px', imgHeight: '200px',
-			imgArray: testParts});
+		MBus.publishSimple(Constants.mbus_carousel_add, {carousel: partsCarouselIdElt, imgWidth: '200px', imgHeight: '200px', imgArray: testParts});
 		break;
 	default:
 		testParts = testLoader.createTestParts(['http://lorempixel.com/580/250/nature/1']);
-		MBus.publish(Constants.mbus_carousel_add, Constants.mbus_add, {carousel: partsCarouselIdElt, imgWidth: '200px', imgHeight: '200px', imgArray: testParts});
+		MBus.publishSimple(Constants.mbus_carousel_add, {carousel: partsCarouselIdElt, imgWidth: '200px', imgHeight: '200px', imgArray: testParts});
 		break;
 	}
 };
@@ -81,29 +80,7 @@ var handlePartTypeMessages = function handlePartTypeMessages (message) {
 	}
 };
 
-// TODO Remove this
-//var handlePartCarouselMessages = function handlePartCarouselMessages (message) {
-//	if (MBus.validateMessage(message)) {
-//		switch (message.type) {
-//		case Constants.mbus_selected:
-//			console.log('handlePartCarouselMessages[' + message.topic + ']: ' + message.type + ' --> ' + message.value);
-//			if (parentTemplateTopic) {
-//				MBus.publish(parentTemplateTopic, message.type, {topic: message.topic, html: message.value});
-//			}
-//			break;
-//		case Constants.mbus_unselected:
-//			console.log('handlePartCarouselMessages[' + message.topic + ']: ' + message.type + ' --> ' + message.value);
-//			Template.allParts.clearBorderColor();
-//			break;
-//		}
-//	}
-//	else {
-//		console.log('handlePartCarouselMessages:ERROR, invalid message');
-//	}
-//};
-
 var unsubscribePartTypeHandler = null;
-var unsubscribePartCarouselHandler = null;
 
 // Not sure why this works but onCreated and onDestroyed are called whenever the 
 // navBar button PARTS is clicked which sets the renderView Session variable.
@@ -112,7 +89,6 @@ var unsubscribePartCarouselHandler = null;
 Template.allParts.onCreated(function () {
 	// Support carousel lifecycle.  Subscribe returns the ability to unsubscribe.
 	unsubscribePartTypeHandler = MBus.subscribe(Constants.mbus_allPartsType, handlePartTypeMessages);
-	//unsubscribePartCarouselHandler = MBus.subscribe(Constants.mbus_allPartsCarousel, handlePartCarouselMessages);
 });
 
 Template.allParts.onRendered(function () {
@@ -129,7 +105,6 @@ Template.allParts.onRendered(function () {
 Template.allParts.onDestroyed(function () {
 	// Support carousel lifecycle
 	unsubscribePartTypeHandler.remove();
-	//unsubscribePartCarouselHandler.remove();
 });
 
 Template.allParts.helpers({
