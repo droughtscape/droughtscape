@@ -44,6 +44,7 @@ var setSelectedCarouselImages = function setSelectedCarouselImages (carouselId, 
 	case 'irrigation':
 		MBus.publish(Constants.mbus_carousel, Constants.mbus_add, {carousel: partsCarouselIdElt, imgWidth: '200px', imgHeight: '200px',
 			imgArray: testLoader.createTestParts([
+				'custom.png',
 				'https://lh3.googleusercontent.com/ER8azvf5Xy-Bno_pHXYAPGbOSOvb_VRXMJnjX5E6xgvCL0EndJb5FD8-l7apbixJOndhZpMaVEY6Etfli82vtFc2ogdSF2HTdV5H7TD_JpYyVLJm5Fs5KXYmSPk9xD4kpDlHKrbtyV64e5jb0Ij3IvjC8IXii-5HDhkmv7AUCxXlIIPfL8eSh2Jj59pznlHCiEGCkTHrWD81kf9XiDhWrNAU32UgD3jrnbSEIeb44cI53LBBpY07ktdaEKN45qYQtRH94aBGhMWAeeXyhtVQiPTrFWKlzKF82_3SMWhOE6ATnAATz2fZGaHIFJP9AKsrotU2rspO42itmqLXDHq-14HeP-P7ovADnD_FSS7xgp0Q5kHa82a1sr8TBwXF1qR57xNAKZ8E3xEcOlfPcMY-nLND-OPTpc02rht9Ry0S0lRv9_AiEHTokXQJU66zrauI4hX4bS99ytOjsfE3DJwS1DOg7FVqOYFPW8Rpo_iJix3rAybF_MZvMGrTBk3V5BPL-tc_JSarBcY31xnA6fLAgaVhL69zPCKlzozv1r1zhX4=w864-h1151-no',
 				'http://lorempixel.com/580/250/nature/1',
 				'http://lorempixel.com/580/250/nature/2',
@@ -79,25 +80,26 @@ var handlePartTypeMessages = function handlePartTypeMessages (message) {
 	}
 };
 
-var handlePartCarouselMessages = function handlePartCarouselMessages (message) {
-	if (MBus.validateMessage(message)) {
-		switch (message.type) {
-		case Constants.mbus_selected:
-			console.log('handlePartCarouselMessages[' + message.topic + ']: ' + message.type + ' --> ' + message.value);
-			if (parentTemplateTopic) {
-				MBus.publish(parentTemplateTopic, message.type, {topic: message.topic, html: message.value});
-			}
-			break;
-		case Constants.mbus_unselected:
-			console.log('handlePartCarouselMessages[' + message.topic + ']: ' + message.type + ' --> ' + message.value);
-			Template.myParts.clearBorderColor();
-			break;
-		}
-	}
-	else {
-		console.log('handlePartCarouselMessages:ERROR, invalid message');
-	}
-};
+// TODO Remove this
+//var handlePartCarouselMessages = function handlePartCarouselMessages (message) {
+//	if (MBus.validateMessage(message)) {
+//		switch (message.type) {
+//		case Constants.mbus_selected:
+//			console.log('handlePartCarouselMessages[' + message.topic + ']: ' + message.type + ' --> ' + message.value);
+//			if (parentTemplateTopic) {
+//				MBus.publish(parentTemplateTopic, message.type, {topic: message.topic, html: message.value});
+//			}
+//			break;
+//		case Constants.mbus_unselected:
+//			console.log('handlePartCarouselMessages[' + message.topic + ']: ' + message.type + ' --> ' + message.value);
+//			Template.myParts.clearBorderColor();
+//			break;
+//		}
+//	}
+//	else {
+//		console.log('handlePartCarouselMessages:ERROR, invalid message');
+//	}
+//};
 
 var unsubscribePartTypeHandler = null;
 var unsubscribePartCarouselHandler = null;
@@ -109,7 +111,7 @@ var unsubscribePartCarouselHandler = null;
 Template.myParts.onCreated(function () {
 	// Support carousel lifecycle.  Subscribe returns the ability to unsubscribe.
 	unsubscribePartTypeHandler = MBus.subscribe(Constants.mbus_myPartsType, handlePartTypeMessages);
-	unsubscribePartCarouselHandler = MBus.subscribe(Constants.mbus_myPartsCarousel, handlePartCarouselMessages);
+	//unsubscribePartCarouselHandler = MBus.subscribe(Constants.mbus_myPartsCarousel, handlePartCarouselMessages);
 });
 
 Template.myParts.onRendered(function () {
@@ -126,7 +128,7 @@ Template.myParts.onRendered(function () {
 Template.myParts.onDestroyed(function () {
 	// Support carousel lifecycle
 	unsubscribePartTypeHandler.remove();
-	unsubscribePartCarouselHandler.remove();
+	//unsubscribePartCarouselHandler.remove();
 });
 
 Template.myParts.helpers({

@@ -81,25 +81,26 @@ var handlePartTypeMessages = function handlePartTypeMessages (message) {
 	}
 };
 
-var handlePartCarouselMessages = function handlePartCarouselMessages (message) {
-	if (MBus.validateMessage(message)) {
-		switch (message.type) {
-		case Constants.mbus_selected:
-			console.log('handlePartCarouselMessages[' + message.topic + ']: ' + message.type + ' --> ' + message.value);
-			if (parentTemplateTopic) {
-				MBus.publish(parentTemplateTopic, message.type, {topic: message.topic, html: message.value});
-			}
-			break;
-		case Constants.mbus_unselected:
-			console.log('handlePartCarouselMessages[' + message.topic + ']: ' + message.type + ' --> ' + message.value);
-			Template.allParts.clearBorderColor();
-			break;
-		}
-	}
-	else {
-		console.log('handlePartCarouselMessages:ERROR, invalid message');
-	}
-};
+// TODO Remove this
+//var handlePartCarouselMessages = function handlePartCarouselMessages (message) {
+//	if (MBus.validateMessage(message)) {
+//		switch (message.type) {
+//		case Constants.mbus_selected:
+//			console.log('handlePartCarouselMessages[' + message.topic + ']: ' + message.type + ' --> ' + message.value);
+//			if (parentTemplateTopic) {
+//				MBus.publish(parentTemplateTopic, message.type, {topic: message.topic, html: message.value});
+//			}
+//			break;
+//		case Constants.mbus_unselected:
+//			console.log('handlePartCarouselMessages[' + message.topic + ']: ' + message.type + ' --> ' + message.value);
+//			Template.allParts.clearBorderColor();
+//			break;
+//		}
+//	}
+//	else {
+//		console.log('handlePartCarouselMessages:ERROR, invalid message');
+//	}
+//};
 
 var unsubscribePartTypeHandler = null;
 var unsubscribePartCarouselHandler = null;
@@ -111,7 +112,7 @@ var unsubscribePartCarouselHandler = null;
 Template.allParts.onCreated(function () {
 	// Support carousel lifecycle.  Subscribe returns the ability to unsubscribe.
 	unsubscribePartTypeHandler = MBus.subscribe(Constants.mbus_allPartsType, handlePartTypeMessages);
-	unsubscribePartCarouselHandler = MBus.subscribe(Constants.mbus_allPartsCarousel, handlePartCarouselMessages);
+	//unsubscribePartCarouselHandler = MBus.subscribe(Constants.mbus_allPartsCarousel, handlePartCarouselMessages);
 });
 
 Template.allParts.onRendered(function () {
@@ -128,7 +129,7 @@ Template.allParts.onRendered(function () {
 Template.allParts.onDestroyed(function () {
 	// Support carousel lifecycle
 	unsubscribePartTypeHandler.remove();
-	unsubscribePartCarouselHandler.remove();
+	//unsubscribePartCarouselHandler.remove();
 });
 
 Template.allParts.helpers({

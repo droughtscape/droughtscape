@@ -51,7 +51,7 @@ Session.setDefault(Constants.carouselMode, '');
 Session.setDefault(Constants.carouselSubMode, '');
 
 Template.carousel.setBorderColor = function setBorderColor (carousel, borderColor) {
-	MBus.publish(Constants.mbus_carousel, Constants.mbus_setBorderColor, {carousel: carousel, color: borderColor});
+	MBus.publish(Constants.mbus_carousel_setBorderColor, Constants.mbus_setBorderColor, {carousel: carousel, color: borderColor});
 	//let slick = carousel[0].slick;
 	//for (i=0, len=slick.$slides.length; i<len; ++i) {
 	//	let slide = slick.$slides.get(i);
@@ -72,6 +72,6 @@ Template.carousel.events({
 		//e.currentTarget.style.borderColor = Constants.color_teal;
 		SelectionManager.sendSelection(e.currentTarget);
 		MBus.publish(Constants.mbus_carousel_selected, Constants.mbus_selected, new Selection(this.id, e.currentTarget));
-		MBus.publish(this.context.topic, Constants.mbus_selected, e.currentTarget);
+		//MBus.publish(this.context.topic, Constants.mbus_selected, e.currentTarget);
 	}
 });
