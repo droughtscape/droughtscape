@@ -38,7 +38,7 @@ Template.allParts.clickEvent = function clickEvent (e) {
 };
 
 var setSelectedCarouselImages = function setSelectedCarouselImages (carouselId, selection) {
-	MBus.publish(Constants.mbus_carousel_clear, Constants.mbus_clear, {carousel: partsCarouselIdElt});
+	MBus.publishSimple(Constants.mbus_carousel_clear, {carousel: partsCarouselIdElt});
 	let testLoader = getTestLoader();
 	var testParts;
 
