@@ -26,20 +26,20 @@ var favoritePartsCarouselId = 'favorite-parts-carousel';
 var favoritePartsCarouselIdElt = '#' + favoritePartsCarouselId;
 
 var setSelectedCarouselImages = function setSelectedCarouselImages (carouselId, selection) {
-	MBus.publishSimple(Constants.mbus_carousel_clear, {carousel: favoritePartsCarouselIdElt});
+	MBus.publishSimple(Constants.mbus_carousel_clear, new Message.Clear(favoritePartsCarouselIdElt));
 	switch (selection) {
 	case 'irrigation':
-		MBus.publishSimple(Constants.mbus_carousel_add, {carousel: favoritePartsCarouselIdElt, imgWidth: '200px', imgHeight: '200px',
-			imgArray: [
+		MBus.publishSimple(Constants.mbus_carousel_add, new Message.Add(favoritePartsCarouselIdElt, '200px', '200px',
+			[
 				'http://lorempixel.com/580/250/nature/1',
 				'http://lorempixel.com/580/250/nature/2',
 				'http://lorempixel.com/580/250/nature/3',
 				'http://lorempixel.com/580/250/nature/4',
 				'http://lorempixel.com/580/250/nature/5'
-			]});
+			]));
 		break;
 	default:
-		MBus.publishSimple(Constants.mbus_carousel_add, {carousel: favoritePartsCarouselIdElt, imgWidth: '200px', imgHeight: '200px', imgArray: ['http://lorempixel.com/580/250/nature/1']});
+		MBus.publishSimple(Constants.mbus_carousel_add, new Message.Add(favoritePartsCarouselIdElt, '200px', '200px', ['http://lorempixel.com/580/250/nature/1']));
 		break;
 	}
 };
