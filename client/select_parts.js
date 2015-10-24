@@ -35,7 +35,6 @@ class TestAbstractPartSP {
 }
 
 var testAbstractPart = new TestAbstractPartSP();
-var unsubscribeSelectParts;
 var unsubscribeSlickCarousel;
 
 // TODO Remove this singleton once we implement collections
@@ -74,30 +73,6 @@ var _unselectFromId = function _unselectFromId (carouselId) {
 	}
 };
 
-var _handleSelectPartsMessages = function _handleSelectPartsMessages (message) {
-	if (MBus.validateMessage(message)) {
-		switch (message.type) {
-		case Constants.mbus_selected:
-			console.log('_handleSelectPartsMessages[' + message.topic + ']: ' + message.type + ' --> ' + message.value);
-			throw 'Unexpected!!!';
-			// message.value => {topic, html}
-			//let itemId = message.value.html.getAttribute(Constants.dataPart);
-			let itemId = message.value.getDataPart();
-			let abstractPart = _testLoader.getItem(itemId);
-			console.log('selected item: ' + itemId + ', abstractPart: ' + abstractPart);
-			CreateLawnData.setCurrentLayoutPart(abstractPart);
-		{
-			let unselectTopic = _getUnselectedTopic(message.value.topic);
-			MBus.publish(unselectTopic, Constants.mbus_unselected, null);
-		}
-			break;
-		}
-	}
-	else {
-		console.log('handleSelectPartsMessages:ERROR, invalid message');
-	}
-};
-
 var _handleSelectCarouselMessage = function _handleSelectCarouselMessage(message) {
 	if (MBus.validateMessage(message)) {
 		console.log('_handleSelectCarouselMessage[' + message.topic + ']: ' + message.type + ' --> ' + message.value);
@@ -130,13 +105,10 @@ Template.select_parts.onRendered(function () {
 });
 
 Template.select_parts.onCreated(function () {
-	//CreateLawnData.createLayoutPart(testAbstractPart);
-	unsubscribeSelectParts = MBus.subscribe(Constants.mbus_selectParts, _handleSelectPartsMessages);
 	unsubscribeSlickCarousel = MBus.subscribe(Constants.mbus_carousel_selected, _handleSelectCarouselMessage);
 });
 
 Template.select_parts.onDestroyed(function () {
-	unsubscribeSelectParts.remove();
 	unsubscribeSlickCarousel.remove();
 });
 

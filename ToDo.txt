@@ -1,3 +1,4 @@
+- BUG => parts -> my parts and create -> layout -> my parts share radio button context.  Might be ok.
 - Pixi and Threejs images must be from a CORS ok server.
 - Render plants idea:
 	=> define basic 3-d render shape: {cubic, spherical, cone, inverted cone}
@@ -22,6 +23,7 @@
 	=> Recursive events are disallowed
 	=> Treat as a system wide bus, topics are really events.  type may be redundant so roll into topic.
 	=> Look at partType, lawnType to see if we can reduce type out of it.
+	=> Fixed generalized to allow private buses if needed.  Currently, still using a single bus.
 
 + Lawns
 	=> RightBar probably needs info_lawn

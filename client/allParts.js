@@ -25,8 +25,6 @@ var partMode = new ReactiveVar('plants');
 // Build a parameterized name we can use both for html and jquery (JQ)
 var partsCarouselId = 'all-parts-carousel';
 var partsCarouselIdElt = '#' + partsCarouselId;
-var parentTemplateTopic = null;
-var sharedSelectionMode = false;
 
 Template.allParts.getCarouselId = function getCarouselId () { return partsCarouselId; };
 Template.allParts.clearBorderColor = function clearBorderColor () {
@@ -92,14 +90,6 @@ Template.allParts.onCreated(function () {
 });
 
 Template.allParts.onRendered(function () {
-	if (this.data) {
-		if (this.data.parentTemplateTopic) {
-			parentTemplateTopic = this.data.parentTemplateTopic;
-		}
-		if (this.data.sharedSelectionMode) {
-			sharedSelectionMode = this.data.sharedSelectionMode;
-		}
-	}
 });
 
 Template.allParts.onDestroyed(function () {
