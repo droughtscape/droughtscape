@@ -38,6 +38,7 @@ Session.setDefault(Constants.rightBarConfig, Constants.home);
 Session.setDefault(Constants.renderView, Constants.splash);
 // Admin rights of logged in user
 Session.setDefault(Constants.adminRights, undefined);
+Session.setDefault('currentSelection', false);
 
 // TestLoader
 testLoader = new TestLoader();
