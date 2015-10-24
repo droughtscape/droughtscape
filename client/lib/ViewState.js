@@ -120,7 +120,6 @@ ViewStack = (function () {
 	 * @param {object} viewState - the target viewState to change to
 	 */
 	var _goToState = function _goToState (viewState) {
-		// TODO implement
 		Session.set(Constants.navBarConfig, viewState.navBar);
 		Session.set(Constants.rightBarConfig, viewState.rightBar);
 		Session.set(Constants.renderView, viewState.view);
@@ -153,42 +152,3 @@ ViewStack = (function () {
 	};
 })();
 
-//var test1 = new ViewState('red', 'green', 'blue');
-//var test2 = new ViewState('cyan', 'magenta', 'yellow');
-//console.log('ViewState:test1: ' + test1.view + ', test2: ' + test2.view);
-
-/*class ViewState {
-	constructor (view, navBar, rightBar) {
-		this.view = view;
-		this.navBar = navBar;
-		this.rightBar = rightBar;
-	}
-}*/
-
-/*
-class ViewStack {
-	constructor () {
-		this.stack = [];
-	}
-	
-	pushState (viewState) {
-		this.stack.push(viewState);
-		goToState(viewState);
-	}
-	
-	popState () {
-		goToState( this.stack.pop());
-	}
-	
-	goToState (viewState) {
-		// TODO, implement
-	}
-	
-	clearStack () {
-		this.stack = [];
-	}
-	
-	length () {
-		return this.stack.length;
-	}
-}*/

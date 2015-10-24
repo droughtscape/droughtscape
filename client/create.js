@@ -37,6 +37,7 @@ Template.create.onCreated(function(){
 	//window.onbeforeunload = function () {
 	//	return 'Your work will be lost';
 	//};
+	CreateLawnData.setCurrentLayoutPart(null);
 	Session.set(Constants.computedArea, 0);
 	console.log('history.state: ' + history.state);
 	// On initial entry reset the state to shape_lawn
