@@ -25,6 +25,8 @@
 Template.part_type.helpers({
 	// Template must set the context when instantiating this template fragment
 	partsList: function () {
+		// Target topic is dynamic depending on this.context to indicate any related item like a carousel that
+		// will be listening on that topic tuple: PartType:<related template>
 		var topic = 'PartType:' + this.context;
 		MBus.publish(topic, new Message.TypeSelection(this.selected.get()));
 		return PartTypeData.getPartTypeList(this.context, this.selected.get());
@@ -44,10 +46,11 @@ Template.part_type.events({
 	}
 });
 
-// TODO Rethink how radio button type stuff works.  Can we bury this.context in value?
 Template.lawn_type.helpers({
 	// Template must set the context when instantiating this template fragment
 	lawnsList: function () {
+		// Target topic is dynamic depending on this.context to indicate any related item like a carousel that
+		// will be listening on that topic tuple: PartType:<related template>
 		var topic = 'LawnType:' + this.context;
 		MBus.publish(topic, new Message.TypeSelection(this.selected.get()));
 		return LawnTypeData.getLawnTypeList(this.context, this.selected.get());
