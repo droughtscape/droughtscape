@@ -37,29 +37,33 @@ class TestAbstractPartSP {
 var testAbstractPart = new TestAbstractPartSP();
 var unsubscribeSlickCarousel;
 
+var currentSelectedCarousel = new ReactiveVar(null);
+
 // TODO Remove this singleton once we implement collections
 var _testLoader = getTestLoader();
 
-var _getUnselectedTopic = function _getUnselectedTopic (selectedTopic) {
-	return (selectedTopic === Constants.mbus_allPartsCarousel) ? Constants.mbus_myPartsCarousel :
-		Constants.mbus_allPartsCarousel;
-};
-
-var _getUnselectedTopicFromId = function _getUnselectedTopicFromId (carouselId) {
-	switch (carouselId) {
-	case Template.allParts.getCarouselId():
-		return Constants.mbus_myPartsCarousel;
-		break;
-	case Template.myParts.getCarouselId():
-		return Constants.mbus_allPartsCarousel;
-		break;
-	default:
-		return null;
-		break;
-	}
-};
+//var _getUnselectedTopic = function _getUnselectedTopic (selectedTopic) {
+//	return (selectedTopic === Constants.mbus_allPartsCarousel) ? Constants.mbus_myPartsCarousel :
+//		Constants.mbus_allPartsCarousel;
+//};
+//
+//var _getUnselectedTopicFromId = function _getUnselectedTopicFromId (carouselId) {
+//	currentSelectedCarousel = carouselId;
+//	switch (carouselId) {
+//	case Template.allParts.getCarouselId():
+//		return Constants.mbus_myPartsCarousel;
+//		break;
+//	case Template.myParts.getCarouselId():
+//		return Constants.mbus_allPartsCarousel;
+//		break;
+//	default:
+//		return null;
+//		break;
+//	}
+//};
 
 var _unselectFromId = function _unselectFromId (carouselId) {
+	currentSelectedCarousel.set(carouselId);
 	switch (carouselId) {
 	case Template.allParts.getCarouselId():
 		Template.myParts.clearBorderColor();
@@ -118,15 +122,33 @@ Template.select_parts.helpers({
 	}
 });
 
+Template.select_parts.helpers({
+	disableAddToMyParts: function () {
+		return (_enableClick(Template.allParts.getCarouselId())) ? '' : 'disabled';
+	},
+	disableDeleteFromMyParts: function () {
+		return (_enableClick(Template.myParts.getCarouselId())) ? '' : 'disabled';
+	}
+});
+
+var _enableClick = function _enableClick (targetCarousel) {
+	return Session.get('currentSelection') && 
+			currentSelectedCarousel.get() === targetCarousel;
+};
+
 Template.select_parts.events({
 	'click #signin': function () {
 		SignInUtils.pushRenderViewTarget(Constants.vsCreateSelectParts);
 		ViewStack.pushTarget(Constants.vsSignIn);
 	},
 	'click #favorite-parts-add': function () {
-		console.log('Add to My Parts clicked');
+		if (_enableClick(Template.allParts.getCarouselId())) {
+			console.log('Add to My Parts clicked');
+		}
 	},
 	'click #favorite-parts-del': function () {
-		console.log('Delete from My Parts clicked');
+		if (_enableClick(Template.myParts.getCarouselId())) {
+			console.log('Delete from My Parts clicked');
+		}
 	}
 });
