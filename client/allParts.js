@@ -60,10 +60,10 @@ var setSelectedCarouselImages = function setSelectedCarouselImages (carouselId, 
 
 var handlePartTypeMessages = function handlePartTypeMessages (message) {
 	if (MBus.validateMessage(message)) {
-		console.log('handlePartTypeMessages[' + message.topic + ']: ' + message.type + ' --> ' + message.value);
+		console.log('handlePartTypeMessages[' + message.topic + ']: ' + message.type + ' --> ' + message.value.typeSelection);
 		// init carousel
 		Meteor.defer(function () {
-			setSelectedCarouselImages(partsCarouselIdElt, message.value);
+			setSelectedCarouselImages(partsCarouselIdElt, message.value.typeSelection);
 		});
 	}
 	else {

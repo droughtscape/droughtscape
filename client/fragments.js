@@ -26,7 +26,7 @@ Template.part_type.helpers({
 	// Template must set the context when instantiating this template fragment
 	partsList: function () {
 		var topic = 'PartType:' + this.context;
-		MBus.publish(topic, this.selected.get());
+		MBus.publish(topic, new Message.TypeSelection(this.selected.get()));
 		return PartTypeData.getPartTypeList(this.context, this.selected.get());
 	},
 	labelColor: function () {
@@ -49,7 +49,7 @@ Template.lawn_type.helpers({
 	// Template must set the context when instantiating this template fragment
 	lawnsList: function () {
 		var topic = 'LawnType:' + this.context;
-		MBus.publish(topic, this.selected.get());
+		MBus.publish(topic, new Message.TypeSelection(this.selected.get()));
 		return LawnTypeData.getLawnTypeList(this.context, this.selected.get());
 	},
 	labelColor: function () {
