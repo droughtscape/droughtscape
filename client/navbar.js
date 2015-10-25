@@ -80,7 +80,7 @@ Template.navBar.events({
 		console.log('actionButton: ' + event.currentTarget.id);
 		// event encodes message and target MBus
 		let {action, topic} = _parseEventId(event.currentTarget.id);
-		MBus.publish(topic, action, null);
+		MBus.publish(topic, new Message.Action(action));
 	},
 	'click .dropdownTag': function (event) {
 		console.log('dropdownTag: ' + event);

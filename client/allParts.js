@@ -36,7 +36,7 @@ Template.allParts.clickEvent = function clickEvent (e) {
 };
 
 var setSelectedCarouselImages = function setSelectedCarouselImages (carouselId, selection) {
-	MBus.publishSimple(Constants.mbus_carousel_clear, new Message.Clear(partsCarouselIdElt));
+	MBus.publish(Constants.mbus_carousel_clear, new Message.Clear(partsCarouselIdElt));
 	let testLoader = getTestLoader();
 	var testParts;
 
@@ -49,29 +49,22 @@ var setSelectedCarouselImages = function setSelectedCarouselImages (carouselId, 
 			'http://lorempixel.com/580/250/nature/4',
 			'http://lorempixel.com/580/250/nature/5'
 		]);
-		MBus.publishSimple(Constants.mbus_carousel_add, new Message.Add(partsCarouselIdElt, '200px', '200px', testParts));
+		MBus.publish(Constants.mbus_carousel_add, new Message.Add(partsCarouselIdElt, '200px', '200px', testParts));
 		break;
 	default:
 		testParts = testLoader.createTestParts(['http://lorempixel.com/580/250/nature/1']);
-		MBus.publishSimple(Constants.mbus_carousel_add, new Message.Add(partsCarouselIdElt, '200px', '200px', testParts));
+		MBus.publish(Constants.mbus_carousel_add, new Message.Add(partsCarouselIdElt, '200px', '200px', testParts));
 		break;
 	}
 };
 
 var handlePartTypeMessages = function handlePartTypeMessages (message) {
 	if (MBus.validateMessage(message)) {
-		switch (message.type) {
-		case Constants.mbus_selected:
-			console.log('handlePartTypeMessages[' + message.topic + ']: ' + message.type + ' --> ' + message.value);
-			// init carousel
-			Meteor.defer(function () {
-				setSelectedCarouselImages(partsCarouselIdElt, message.value);
-			});
-			break;
-		case Constants.mbus_unselected:
-			console.log('handlePartTypeMessages[' + message.topic + ']: ' + message.type + ' --> ' + message.value);
-			break;
-		}
+		console.log('handlePartTypeMessages[' + message.topic + ']: ' + message.type + ' --> ' + message.value);
+		// init carousel
+		Meteor.defer(function () {
+			setSelectedCarouselImages(partsCarouselIdElt, message.value);
+		});
 	}
 	else {
 		console.log('handlePartTypeMessages:ERROR, invalid message');

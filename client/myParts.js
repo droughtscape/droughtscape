@@ -36,11 +36,11 @@ Template.myParts.clickEvent = function clickEvent (e) {
 };
 
 var setSelectedCarouselImages = function setSelectedCarouselImages (carouselId, selection) {
-	MBus.publishSimple(Constants.mbus_carousel_clear, new Message.Clear(partsCarouselIdElt));
+	MBus.publish(Constants.mbus_carousel_clear, new Message.Clear(partsCarouselIdElt));
 	let testLoader = getTestLoader();
 	switch (selection) {
 	case 'irrigation':
-		MBus.publishSimple(Constants.mbus_carousel_add, new Message.Add(partsCarouselIdElt, '200px', '200px',
+		MBus.publish(Constants.mbus_carousel_add, new Message.Add(partsCarouselIdElt, '200px', '200px',
 			testLoader.createTestParts([
 				'custom.png',
 				'https://lh3.googleusercontent.com/ER8azvf5Xy-Bno_pHXYAPGbOSOvb_VRXMJnjX5E6xgvCL0EndJb5FD8-l7apbixJOndhZpMaVEY6Etfli82vtFc2ogdSF2HTdV5H7TD_JpYyVLJm5Fs5KXYmSPk9xD4kpDlHKrbtyV64e5jb0Ij3IvjC8IXii-5HDhkmv7AUCxXlIIPfL8eSh2Jj59pznlHCiEGCkTHrWD81kf9XiDhWrNAU32UgD3jrnbSEIeb44cI53LBBpY07ktdaEKN45qYQtRH94aBGhMWAeeXyhtVQiPTrFWKlzKF82_3SMWhOE6ATnAATz2fZGaHIFJP9AKsrotU2rspO42itmqLXDHq-14HeP-P7ovADnD_FSS7xgp0Q5kHa82a1sr8TBwXF1qR57xNAKZ8E3xEcOlfPcMY-nLND-OPTpc02rht9Ry0S0lRv9_AiEHTokXQJU66zrauI4hX4bS99ytOjsfE3DJwS1DOg7FVqOYFPW8Rpo_iJix3rAybF_MZvMGrTBk3V5BPL-tc_JSarBcY31xnA6fLAgaVhL69zPCKlzozv1r1zhX4=w864-h1151-no',
@@ -52,7 +52,7 @@ var setSelectedCarouselImages = function setSelectedCarouselImages (carouselId, 
 			])));
 		break;
 	default:
-		MBus.publishSimple(Constants.mbus_carousel_add, new Message.Add(partsCarouselIdElt, '200px', '200px', 
+		MBus.publish(Constants.mbus_carousel_add, new Message.Add(partsCarouselIdElt, '200px', '200px', 
 			testLoader.createTestParts(['http://lorempixel.com/580/250/nature/1'])));
 		break;
 	}
@@ -60,18 +60,11 @@ var setSelectedCarouselImages = function setSelectedCarouselImages (carouselId, 
 
 var handlePartTypeMessages = function handlePartTypeMessages (message) {
 	if (MBus.validateMessage(message)) {
-		switch (message.type) {
-		case Constants.mbus_selected:
-			console.log('handlePartTypeMessages[' + message.topic + ']: ' + message.type + ' --> ' + message.value);
-			// init carousel
-			Meteor.defer(function () {
-				setSelectedCarouselImages(partsCarouselIdElt, message.value);
-			});
-			break;
-		case Constants.mbus_unselected:
-			console.log('handlePartTypeMessages[' + message.topic + ']: ' + message.type + ' --> ' + message.value);
-			break;
-		}
+		console.log('handlePartTypeMessages[' + message.topic + ']: ' + message.type + ' --> ' + message.value);
+		// init carousel
+		Meteor.defer(function () {
+			setSelectedCarouselImages(partsCarouselIdElt, message.value);
+		});
 	}
 	else {
 		console.log('handlePartTypeMessages:ERROR, invalid message');
