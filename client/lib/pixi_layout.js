@@ -235,9 +235,8 @@ PixiLayout = (function () {
 		if (enable) {
 			if (!_mouseSprite) {
 				var url = abstractPart.getUrl();
-				let unitW = 50;
 				_mouseSprite = PIXI.Sprite.fromImage(url);
-				_mouseSprite.width = unitW;
+				_mouseSprite.width = _unitW;
 				_mouseSprite.height = (_unitW * abstractPart.getHeight()) / abstractPart.getWidth();
 				// Center the sprite
 				_mouseSprite.position = _computeCenterPt(pixelPt);
