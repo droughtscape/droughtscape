@@ -230,8 +230,7 @@ PixiLayout = (function () {
 	 */
 	var _enableMouseSprite = function _enableMouseSprite (enable, pixelPt, abstractPart) {
 		_selectBox.visible = enable;
-		// unit width will be 50.  For rectangular masking, just adjust the height and compute center point
-		// For ellipse, center point is computed identically but we have to make a mask
+		// _unitW is currently 50, height of mouse sprite is relative to the ratio of w:h in the abstractPart.  
 		if (enable) {
 			if (!_mouseSprite) {
 				var url = abstractPart.getUrl();
@@ -240,6 +239,8 @@ PixiLayout = (function () {
 				_mouseSprite.height = (_unitW * abstractPart.getHeight()) / abstractPart.getWidth();
 				// Center the sprite
 				_mouseSprite.position = _computeCenterPt(pixelPt);
+				// For rectangular masking, just adjust the height and compute center point
+				// For ellipse, center point is computed identically but we have to make a mask
 				if (abstractPart.footprint === LayoutFootprintType.ellipse) {
 					// have to mask
 					_mouseMask = new PIXI.Graphics();
@@ -334,7 +335,7 @@ PixiLayout = (function () {
 		if (interactionData.data.global.x !== Infinity) {
 			let {x, y, valid} = _computeRelativeMouseLocation(interactionData.data.global);
 			_mouseMovePt = _snapToGrid(x, y);
-			console.log('_mouseMove: ' + _mouseMovePt.x + ', ' + _mouseMovePt.y + ' : valid: ' + valid);
+			//console.log('_mouseMove: ' + _mouseMovePt.x + ', ' + _mouseMovePt.y + ' : valid: ' + valid);
 			
 			// Try to detect mouseover, mouseout
 			if (_currentMoveState) {
