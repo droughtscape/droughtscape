@@ -100,7 +100,7 @@ var _mouseMvCreateHandler = function _mouseMvCreateHandler (noop, pixelPt) {
 var _mouseEnterCreateHandler = function _mouseEnterCreateHandler (pixelPt) {
 	console.log('_mouseEnterCreateHandler: ' + pixelPt);
 	PixiLayout.setMouseMvHandler(_mouseMvCreateHandler);
-	PixiLayout.enableMouseSprite(true, pixelPt, _currentLayoutPart.getUrl());
+	PixiLayout.enableMouseSprite(true, pixelPt, _currentLayoutPart);
 };
 var _mouseLeaveCreateHandler = function _mouseLeaveCreateHandler () {
 	console.log('_mouseLeaveCreateHandler');

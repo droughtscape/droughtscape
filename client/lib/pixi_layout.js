@@ -212,37 +212,53 @@ PixiLayout = (function () {
 
 	var _mouseSprite = null;
 	var _mouseMask = null;
+	var _unitW = 50;
+	
+	var _computeCenterPt = function _computeCenterPt (pixelPt) {
+		let centerPt = {};
+		centerPt.x = pixelPt.x - (_unitW / 2);
+		centerPt.y = pixelPt.y - (_mouseSprite.height / 2);
+		return centerPt;
+	};
 	
 	/**
 	 * _enableMouseSprite function - enable/disable the graphic cursor sprite.  Used to avoid any
 	 * timing issues when switching between windows
 	 * @param {boolean} enable - true to turn on, false to turn off..
 	 * @param {object} pixelPt - mandatory if enable is true
-	 * @param {string} url - image for sprite
+	 * @param {object} abstractPart - the part we have selected to create, currently of type TestAbstractPart
 	 */
-	var _enableMouseSprite = function _enableMouseSprite (enable, pixelPt, url) {
+	var _enableMouseSprite = function _enableMouseSprite (enable, pixelPt, abstractPart) {
 		_selectBox.visible = enable;
+		// unit width will be 50.  For rectangular masking, just adjust the height and compute center point
+		// For ellipse, center point is computed identically but we have to make a mask
 		if (enable) {
 			if (!_mouseSprite) {
-				// TODO make _mouseMask optional, depends on implementing footprint
-				_mouseMask = new PIXI.Graphics();
-				_mouseMask.beginFill();
-				_mouseMask.drawCircle(25, 25, 25);
-				_mouseMask.endFill();
-
-				_selectBox.addChild(_mouseMask);
-				
+				var url = abstractPart.getUrl();
+				let unitW = 50;
 				_mouseSprite = PIXI.Sprite.fromImage(url);
-				_mouseSprite.mask = _mouseMask;
+				_mouseSprite.width = unitW;
+				_mouseSprite.height = (_unitW * abstractPart.getHeight()) / abstractPart.getWidth();
+				// Center the sprite
+				_mouseSprite.position = _computeCenterPt(pixelPt);
+				if (abstractPart.footprint === LayoutFootprintType.ellipse) {
+					// have to mask
+					_mouseMask = new PIXI.Graphics();
+					_mouseMask.beginFill();
+					_mouseMask.drawEllipse(_mouseSprite.width / 2, _mouseSprite.height.y / 2, _mouseSprite.width, _mouseSprite.height);
+					_mouseMask.endFill();
+					_mouseMask.position.x = _mouseSprite.position.x;
+					_mouseMask.position.y = _mouseSprite.position.y;
+
+					_selectBox.addChild(_mouseMask);
+					_mouseSprite.mask = _mouseMask;
+				}
+				else {
+					_mouseMask = null;
+					_mouseSprite.mask = null;
+				}
 				_selectBox.addChild(_mouseSprite);
 			}
-			_mouseSprite.width = 50;
-			_mouseSprite.height = 50;
-			// Center the sprite
-			_mouseSprite.position.x = pixelPt.x - 25;
-			_mouseSprite.position.y = pixelPt.y - 25;
-			_mouseMask.position.x = _mouseSprite.position.x;
-			_mouseMask.position.y = _mouseSprite.position.y;
 		}
 		else {
 			if (_mouseSprite) {
@@ -259,9 +275,8 @@ PixiLayout = (function () {
 	 */
 	var _moveMouseSprite = function _moveMouseSprite (pixelPt) {
 		if (_selectBox.visible && _mouseSprite) {
-			// Center the sprite, 25 is magic since we know w, h == 50
-			_mouseSprite.position.x = pixelPt.x - 25;
-			_mouseSprite.position.y = pixelPt.y - 25;
+			// Center the sprite
+			_mouseSprite.position = _computeCenterPt(pixelPt);
 			if (_mouseMask) {
 				_mouseMask.position.x = _mouseSprite.position.x;
 				_mouseMask.position.y = _mouseSprite.position.y;
