@@ -1,3 +1,4 @@
+- Should there be a BACK button on the right bar?
 - BUG => parts -> my parts and create -> layout -> my parts share radio button context.  Might be ok.
 - Pixi and Threejs images must be from a CORS ok server.
 - Render plants idea:
@@ -12,7 +13,7 @@
 
 		
 + Layout Lawn | Measure => disable Accept until valid area
-- Right Bar Info * disable until valid selection
++ Right Bar Info * disable until valid selection
 	=> Needs Session variable and some magic testing for "info-"
 
 + Fix ReInit selection issue - Maybe can use SelectionManager
