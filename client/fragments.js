@@ -42,7 +42,8 @@ Template.part_type.events({
 		var clickedButton = e.currentTarget;
 		console.log('RADIO: target: ' + e.currentTarget + ', template: ' + template);
 		// selected is reactive so partsList helper will fire as a result
-		template.data.selected.set(clickedButton.value);
+		// We know the value is a number for force it with unary +
+		template.data.selected.set(+clickedButton.value);
 	}
 });
 

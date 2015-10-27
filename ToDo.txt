@@ -1,3 +1,5 @@
+- Create test allParts, myParts with typed AbstractParts
+- Will lawns fit under AbstractParts or will we generate AbstractLawns => DOH, it will be a separate type: AbstractLawn
 - Implement Add/Delete parts
 - Should there be a BACK button on the right bar?
 - BUG => parts -> my parts and create -> layout -> my parts share radio button context.  Might be ok.

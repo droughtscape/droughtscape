@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-var partMode = new ReactiveVar('all');
+var partMode = new ReactiveVar(PartType.all);
 // Build a parameterized name we can use both for html and jquery (JQ)
 var partsCarouselId = 'my-parts-carousel';
 var partsCarouselIdElt = '#' + partsCarouselId;
@@ -39,7 +39,7 @@ var setSelectedCarouselImages = function setSelectedCarouselImages (carouselId, 
 	MBus.publish(Constants.mbus_carousel_clear, new Message.Clear(partsCarouselIdElt));
 	let testLoader = getTestLoader();
 	switch (selection) {
-	case 'irrigation':
+	case PartType.irrigation:
 		MBus.publish(Constants.mbus_carousel_add, new Message.Add(partsCarouselIdElt, '200px', '200px',
 			testLoader.createTestParts([
 				'custom.png',

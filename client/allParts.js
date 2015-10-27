@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-var partMode = new ReactiveVar('plants');
+var partMode = new ReactiveVar(PartType.plants);
 // Build a parameterized name we can use both for html and jquery (JQ)
 var partsCarouselId = 'all-parts-carousel';
 var partsCarouselIdElt = '#' + partsCarouselId;
@@ -41,7 +41,7 @@ var setSelectedCarouselImages = function setSelectedCarouselImages (carouselId, 
 	var testParts;
 
 	switch (selection) {
-	case 'irrigation':
+	case PartType.irrigation:
 		testParts = testLoader.createTestParts([
 			'http://lorempixel.com/580/250/nature/1',
 			'http://lorempixel.com/580/250/nature/2',
