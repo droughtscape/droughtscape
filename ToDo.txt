@@ -1,3 +1,4 @@
+- Need default "No Parts" icon for parts/lawns so slide appears
 - Create test allParts, myParts with typed AbstractParts
 - Will lawns fit under AbstractParts or will we generate AbstractLawns => DOH, it will be a separate type: AbstractLawn
 - Implement Add/Delete parts

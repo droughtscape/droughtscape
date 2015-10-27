@@ -42,6 +42,7 @@ Session.setDefault('currentSelection', false);
 
 // TestLoader
 testLoader = new TestLoader();
+PartsManager.testInitParts();
 
 // init the targets for ViewStack
 ViewStack.initTargets();
