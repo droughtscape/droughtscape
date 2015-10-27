@@ -1,3 +1,4 @@
+- Implement Add/Delete parts
 - Should there be a BACK button on the right bar?
 - BUG => parts -> my parts and create -> layout -> my parts share radio button context.  Might be ok.
 - Pixi and Threejs images must be from a CORS ok server.
@@ -10,7 +11,31 @@
 		plants will have a ellipsoid footprint.
 - Flesh out AbstractPart
 - Collections
-
+		
+- Lawns
+	NavBar
+	=> All Lawns
+	RightBar
+		=> New Lawn
+		=> My Lawns
+		=> Info Lawn
+	=> My Lawns
+		=> New Lawn
+		=> Lawns
+		=> Info Lawn
+		
+- parts rightBar Favorite Parts -> My Parts => select_parts
+	- authentication outside of select_parts => enclosing template: my_parts to handle authentication
+		=> can this be generic?  authentication then dynamic template?
+	=> No, authentication inside so that if user logs out from navbar, we do the right thing.
+		=> Opportunity for a wrapper?
+		
+- Bugs
+	SlickJS => Sometimes the onBefore callback has currentSlide, nextSlide the same.
+		This makes sense at the boundaries but not in the middle of the carousel or if we are moving off
+		the boundaries.  This causes selection highlighting to get messed up since both slides and clicks
+		change the border highlight.
+		=> Temp fix
 		
 + Layout Lawn | Measure => disable Accept until valid area
 + Right Bar Info * disable until valid selection
@@ -71,18 +96,6 @@
 	=> Need to be able to return to calling template
 	=> Need large slide[0..N] images
 
-- Lawns
-	NavBar
-	=> All Lawns
-	RightBar
-		=> New Lawn
-		=> My Lawns
-		=> Info Lawn
-	=> My Lawns
-		=> New Lawn
-		=> Lawns
-		=> Info Lawn
-		
 + Parts
 	=> Add Info Part to right bar
 		Figure out generic Info Part selection mechanism that will work across both single and shared part selections
@@ -93,16 +106,4 @@
 	
 + Info Lawn
 
-- parts only has part, no myParts
-- parts rightBar Favorite Parts -> My Parts => select_parts
-	- authentication outside of select_parts => enclosing template: my_parts to handle authentication
-		=> can this be generic?  authentication then dynamic template?
-	=> No, authentication inside so that if user logs out from navbar, we do the right thing.
-		=> Opportunity for a wrapper?
-		
-- Bugs
-	SlickJS => Sometimes the onBefore callback has currentSlide, nextSlide the same.
-		This makes sense at the boundaries but not in the middle of the carousel or if we are moving off
-		the boundaries.  This causes selection highlighting to get messed up since both slides and clicks
-		change the border highlight.
-		=> Temp fix
++ parts only has part, no myParts

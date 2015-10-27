@@ -144,11 +144,13 @@ Template.select_parts.events({
 	'click #favorite-parts-add': function () {
 		if (_enableClick(Template.allParts.getCarouselId())) {
 			console.log('Add to My Parts clicked');
+			PartsManager.addToMyParts(SelectionManager.getSelection());
 		}
 	},
 	'click #favorite-parts-del': function () {
 		if (_enableClick(Template.myParts.getCarouselId())) {
 			console.log('Delete from My Parts clicked');
+			PartsManager.delFromMyParts(SelectionManager.getSelection());
 		}
 	}
 });
