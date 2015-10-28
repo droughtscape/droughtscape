@@ -37,26 +37,8 @@ Template.allParts.clickEvent = function clickEvent (e) {
 
 var setSelectedCarouselImages = function setSelectedCarouselImages (carouselId, selection) {
 	MBus.publish(Constants.mbus_carousel_clear, new Message.Clear(partsCarouselIdElt));
-	//let testLoader = getTestLoader();
-	let testParts = PartsManager.getAllPartsByType(selection);
-	MBus.publish(Constants.mbus_carousel_add, new Message.Add(partsCarouselIdElt, '200px', '200px', testParts));
-
-	//switch (selection) {
-	//case PartType.irrigation:
-	//	testParts = testLoader.createTestParts([
-	//		'http://lorempixel.com/580/250/nature/1',
-	//		'http://lorempixel.com/580/250/nature/2',
-	//		'http://lorempixel.com/580/250/nature/3',
-	//		'http://lorempixel.com/580/250/nature/4',
-	//		'http://lorempixel.com/580/250/nature/5'
-	//	]);
-	//	MBus.publish(Constants.mbus_carousel_add, new Message.Add(partsCarouselIdElt, '200px', '200px', testParts));
-	//	break;
-	//default:
-	//	testParts = testLoader.createTestParts(['http://lorempixel.com/580/250/nature/1']);
-	//	MBus.publish(Constants.mbus_carousel_add, new Message.Add(partsCarouselIdElt, '200px', '200px', testParts));
-	//	break;
-	//}
+	let allParts = PartsManager.getAllPartsByType(selection);
+	MBus.publish(Constants.mbus_carousel_add, new Message.Add(partsCarouselIdElt, '200px', '200px', allParts));
 };
 
 var handlePartTypeMessages = function handlePartTypeMessages (message) {
