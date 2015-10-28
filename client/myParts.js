@@ -38,6 +38,9 @@ Template.myParts.clickEvent = function clickEvent (e) {
 var setSelectedCarouselImages = function setSelectedCarouselImages (carouselId, selection) {
 	MBus.publish(Constants.mbus_carousel_clear, new Message.Clear(partsCarouselIdElt));
 	let myParts = PartsManager.getMyPartsByType(selection);
+	if (myParts.length === 0) {
+		myParts = PartsManager.getEmptyPart();
+	}
 	MBus.publish(Constants.mbus_carousel_add, new Message.Add(partsCarouselIdElt, '200px', '200px', myParts));
 };
 
