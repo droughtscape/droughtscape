@@ -1,3 +1,6 @@
++ Need a way to programmatically set the part type radio button to a particular part type
+ 	=> send Message.TypeSelection(targetRadioButtonType) to the appropriate part template that contains the part_type template.
+ 	=> the handlers will have to have code to compare the partMode reactive var to the targetRadioButtonType and set partMode if different.  That's all.
 - Need default "No Parts" icon for parts/lawns so slide appears
 - Create test allParts, myParts with typed AbstractParts
 - Will lawns fit under AbstractParts or will we generate AbstractLawns => DOH, it will be a separate type: AbstractLawn

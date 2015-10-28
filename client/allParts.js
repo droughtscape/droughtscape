@@ -44,6 +44,8 @@ var setSelectedCarouselImages = function setSelectedCarouselImages (carouselId, 
 var handlePartTypeMessages = function handlePartTypeMessages (message) {
 	if (MBus.validateMessage(message)) {
 		console.log('handlePartTypeMessages[' + message.topic + ']: ' + message.type + ' --> ' + message.value.typeSelection);
+		// Set partMode to inbound typeSelection in case it is different so that the radio button is updated
+		partMode.set(message.value.typeSelection);
 		// init carousel
 		Meteor.defer(function () {
 			setSelectedCarouselImages(partsCarouselIdElt, message.value.typeSelection);
