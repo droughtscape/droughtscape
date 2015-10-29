@@ -1,8 +1,4 @@
-- Distinguish between Part-Info and Lawn-Info since they look at separate collections
-- Both Info-Part and Info-Lawn need to look in PartsManager, LawnsManager instead of TestLoader
 - Make lawn template dynamic
-- Create test allParts, myParts with typed AbstractParts
-- Will lawns fit under AbstractParts or will we generate AbstractLawns => DOH, it will be a separate type: AbstractLawn
 - Should there be a BACK button on the right bar?
 - BUG => parts -> my parts and create -> layout -> my parts share radio button context.  Might be ok.
 - Pixi and Threejs images must be from a CORS ok server.
@@ -41,6 +37,10 @@
 		change the border highlight.
 		=> Temp fix
 		
++ Will lawns fit under AbstractParts or will we generate AbstractLawns => DOH, it will be a separate type: AbstractLawn
++ Create test allParts, myParts with typed AbstractParts
++ Distinguish between Part-Info and Lawn-Info since they look at separate collections
++ Both Info-Part and Info-Lawn need to look in PartsManager, LawnsManager instead of TestLoader
 + Implement Add/Delete parts
 + Need a way to programmatically set the part type radio button to a particular part type
  	=> send Message.TypeSelection(targetRadioButtonType) to the appropriate part template that contains the part_type template.
