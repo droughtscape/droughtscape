@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 // values for lawnMode are the various shapes for lawns [rectangle, corner, custom]
-var lawnMode = new ReactiveVar('rectangle');
+var lawnMode = new ReactiveVar(LawnShapeType.rectangle);
 // Build a parameterized name we can use both for html and jquery (JQ)
 var lawnsCarouselId = 'all-lawns-carousel';
 var lawnsCarouselIdElt = '#' + lawnsCarouselId;
@@ -38,31 +38,39 @@ Template.all_lawns.clickEvent = function clickEvent (e) {
 
 var _setSelectedCarouselImages = function _setSelectedCarouselImages (carouselId, selection) {
 	MBus.publish(Constants.mbus_carousel_clear, new Message.Clear(lawnsCarouselIdElt));
-	let testLoader = getTestLoader();
-	var testLawns;
-
-	switch (selection) {
-	case 'rectangle':
-		testLawns = testLoader.createTestItems([
-			{id: 'lawn_1', img: 'http://lorempixel.com/580/250/nature/1'},
-			{id: 'lawn_2', img: 'http://lorempixel.com/580/250/nature/2'},
-			{id: 'lawn_3', img: 'http://lorempixel.com/580/250/nature/3'},
-			{id: 'lawn_4', img: 'http://lorempixel.com/580/250/nature/4'},
-			{id: 'lawn_5', img: 'http://lorempixel.com/580/250/nature/5'}
-		], 'lawnId');
-		MBus.publish(Constants.mbus_carousel_add, new Message.Add(lawnsCarouselIdElt, '200px', '200px', testLawns));
-		break;
-	default:
-		testLawns = testLoader.createTestItems([
-			{id: 'lawn_6', img: 'http://lorempixel.com/580/250/nature/1'}], 'lawnId');
-		MBus.publish(Constants.mbus_carousel_add, new Message.Add(lawnsCarouselIdElt, '200px', '200px', testLawns));
-		break;
+	let allLawns = LawnsManager.getAllLawnsByShape(selection);
+	if (allLawns.length === 0) {
+		allLawns = LawnsManager.getEmptyLawn();
 	}
+	MBus.publish(Constants.mbus_carousel_add, new Message.Add(lawnsCarouselIdElt, '200px', '200px', allLawns));
+	//
+	//let testLoader = getTestLoader();
+	//var testLawns;
+	//
+	//switch (selection) {
+	//case 'rectangle':
+	//	testLawns = testLoader.createTestItems([
+	//		{id: 'lawn_1', img: 'http://lorempixel.com/580/250/nature/1'},
+	//		{id: 'lawn_2', img: 'http://lorempixel.com/580/250/nature/2'},
+	//		{id: 'lawn_3', img: 'http://lorempixel.com/580/250/nature/3'},
+	//		{id: 'lawn_4', img: 'http://lorempixel.com/580/250/nature/4'},
+	//		{id: 'lawn_5', img: 'http://lorempixel.com/580/250/nature/5'}
+	//	], 'lawnId');
+	//	MBus.publish(Constants.mbus_carousel_add, new Message.Add(lawnsCarouselIdElt, '200px', '200px', testLawns));
+	//	break;
+	//default:
+	//	testLawns = testLoader.createTestItems([
+	//		{id: 'lawn_6', img: 'http://lorempixel.com/580/250/nature/1'}], 'lawnId');
+	//	MBus.publish(Constants.mbus_carousel_add, new Message.Add(lawnsCarouselIdElt, '200px', '200px', testLawns));
+	//	break;
+	//}
 };
 
 var _handleLawnTypeMessages = function _handleLawnTypeMessages (message) {
 	if (MBus.validateMessage(message)) {
 		console.log('_handleLawnTypeMessages[' + message.topic + ']: ' + message.type + ' --> ' + message.value.typeSelection);
+		// Set lawnMode to inbound typeSelection in case it is different so that the radio button is updated
+		lawnMode.set(message.value.typeSelection);
 		// init carousel
 		Meteor.defer(function () {
 			_setSelectedCarouselImages(lawnsCarouselIdElt, message.value.typeSelection);

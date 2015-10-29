@@ -43,6 +43,7 @@ Session.setDefault('currentSelection', false);
 // TestLoader
 testLoader = new TestLoader();
 PartsManager.testInitParts();
+LawnsManager.initLawnConstants();
 
 // init the targets for ViewStack
 ViewStack.initTargets();

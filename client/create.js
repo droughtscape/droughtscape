@@ -80,15 +80,9 @@ var shapeLawnCarouselIdElt = '#' + shapeLawnCarouselId;
 
 var handleLawnShapeMessages = function handleLawnShapeMessages (message) {
 	if (MBus.validateMessage(message)) {
-		let testLoader = getTestLoader();
-		console.log('handleLawnShapeMessages[' + message.topic + ']: ' + message.type + ' --> ' + message.value);
 		MBus.publish(Constants.mbus_carousel_clear, new Message.Clear(shapeLawnCarouselIdElt));
-		MBus.publish(Constants.mbus_carousel_add, new Message.Add(shapeLawnCarouselIdElt, '300px', '200px', 
-			testLoader.createTestItems([{id: 'rectangle', img:'rectangle.png'}], 'shapeId')));
-		MBus.publish(Constants.mbus_carousel_add, new Message.Add(shapeLawnCarouselIdElt, '300px', '200px', 
-			testLoader.createTestItems([{id: 'corner', img:'corner.png'}], 'shapeId')));
-		MBus.publish(Constants.mbus_carousel_add, new Message.Add(shapeLawnCarouselIdElt, '300px', '200px', 
-			testLoader.createTestItems([{id: 'custom', img:'custom.png'}], 'shapeId')));
+		let shapes = LawnsManager.getLawnShapes();
+		MBus.publish(Constants.mbus_carousel_add, new Message.Add(shapeLawnCarouselIdElt, '300px', '200px', shapes));
 	}
 	else {
 		console.log('handleLawnShapeMessages:ERROR, invalid message');
@@ -150,19 +144,12 @@ var buildLawnTemplateCarouselIdElt = '#' + buildLawnTemplateCarouselId;
 
 var handleBuildLawnTemplateMessages = function handleBuildLawnTemplateMessages (message) {
 	if (MBus.validateMessage(message)) {
-		let testLoader = getTestLoader();
+		let templates = LawnsManager.getLawnTemplates();
 		console.log('handleBuildLawnTemplateMessages[' + message.topic + ']: ' + message.type + ' --> ' + message.value);
 		MBus.publish(Constants.mbus_carousel_clear, new Message.Clear(buildLawnTemplateCarouselIdElt));
 		// Here we will use a filter based on standard shapes to select a set of templates
 		// What about custom shape?  Nothing to filter => no templates
-		MBus.publish(Constants.mbus_carousel_add, new Message.Add(buildLawnTemplateCarouselIdElt, '300px', '200px', 
-			testLoader.createTestItems([{id: 'none', img:'custom.png'}], 'templateId')));
-		MBus.publish(Constants.mbus_carousel_add, new Message.Add(buildLawnTemplateCarouselIdElt, '300px', '200px', 
-			testLoader.createTestItems([{id: 'template1', img:'template1.jpg'}], 'templateId')));
-		MBus.publish(Constants.mbus_carousel_add, new Message.Add(buildLawnTemplateCarouselIdElt, '300px', '200px', 
-			testLoader.createTestItems([{id: 'template2', img:'template2.png'}], 'templateId')));
-		MBus.publish(Constants.mbus_carousel_add, new Message.Add(buildLawnTemplateCarouselIdElt, '300px', '200px', 
-			testLoader.createTestItems([{id: 'template3', img:'template3.jpg'}], 'templateId')));
+		MBus.publish(Constants.mbus_carousel_add, new Message.Add(buildLawnTemplateCarouselIdElt, '300px', '200px', templates));
 	}
 	else {
 		console.log('handleBuildLawnTemplateMessages:ERROR, invalid message');

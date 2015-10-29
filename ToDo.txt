@@ -1,10 +1,8 @@
-+ Need a way to programmatically set the part type radio button to a particular part type
- 	=> send Message.TypeSelection(targetRadioButtonType) to the appropriate part template that contains the part_type template.
- 	=> the handlers will have to have code to compare the partMode reactive var to the targetRadioButtonType and set partMode if different.  That's all.
-- Need default "No Parts" icon for parts/lawns so slide appears
+- Distinguish between Part-Info and Lawn-Info since they look at separate collections
+- Both Info-Part and Info-Lawn need to look in PartsManager, LawnsManager instead of TestLoader
+- Make lawn template dynamic
 - Create test allParts, myParts with typed AbstractParts
 - Will lawns fit under AbstractParts or will we generate AbstractLawns => DOH, it will be a separate type: AbstractLawn
-- Implement Add/Delete parts
 - Should there be a BACK button on the right bar?
 - BUG => parts -> my parts and create -> layout -> my parts share radio button context.  Might be ok.
 - Pixi and Threejs images must be from a CORS ok server.
@@ -43,6 +41,11 @@
 		change the border highlight.
 		=> Temp fix
 		
++ Implement Add/Delete parts
++ Need a way to programmatically set the part type radio button to a particular part type
+ 	=> send Message.TypeSelection(targetRadioButtonType) to the appropriate part template that contains the part_type template.
+ 	=> the handlers will have to have code to compare the partMode reactive var to the targetRadioButtonType and set partMode if different.  That's all.
++ Need default "No Parts" icon for parts/lawns so slide appears
 + Layout Lawn | Measure => disable Accept until valid area
 + Right Bar Info * disable until valid selection
 	=> Needs Session variable and some magic testing for "info-"
