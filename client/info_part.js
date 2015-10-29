@@ -29,32 +29,35 @@ var unsubscribeSelectItems;
 var unsubscribeInfoItem;
 var _testLoader = getTestLoader();
 
-var _handleInfoItemCarouselMessages = function _handleInfoItemCarouselMessages (message) {
+var _handleInfoPartCarouselMessages = function _handleInfoPartCarouselMessages (message) {
 	if (MBus.validateMessage(message)) {
-		console.log('_handleInfoItemCarouselMessages:TODO, message.type: ' + message.type);
+		console.log('_handleInfoPartCarouselMessages:TODO, message.type: ' + message.type);
 	}
 	else {
-		console.log('_handleInfoItemCarouselMessages:ERROR, invalid message');
+		console.log('_handleInfoPartCarouselMessages:ERROR, invalid message');
 	}
 };
 
-Template.info_item.onCreated(function () {
+Template.info_part.onCreated(function () {
 	_selectedItem = SelectionManager.getSelection();
-	unsubscribeInfoItem = MBus.subscribe(Constants.mbus_infoItem_carousel, _handleInfoItemCarouselMessages);
+	unsubscribeInfoItem = MBus.subscribe(Constants.mbus_infoItem_carousel, _handleInfoPartCarouselMessages);
 	// if we have a valid part, load it up into the carousel
 	if (_selectedItem) {
-		let itemCore = _testLoader.getItem(_selectedItem.itemId);
+		let items = PartsManager.getPartByItemId(_selectedItem.itemId);
+		if (items.length === 1) {
+			var itemCore = items[0];
+		}
 		Meteor.defer(function () {
 			MBus.publish(Constants.mbus_carousel_add, new Message.Add(carouselIdElt, '500px', '500px', [itemCore]));
 		});
 	}
 });
 
-Template.info_item.onDestroyed(function () {
+Template.info_part.onDestroyed(function () {
 	unsubscribeInfoItem.remove();
 });
 
-Template.info_item.helpers({
+Template.info_part.helpers({
 	carouselId: function () {
 		return carouselId;
 	},
