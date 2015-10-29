@@ -27,7 +27,6 @@ var carouselIdElt = '#' + carouselId;
 var _selectedItem = null;
 var unsubscribeSelectItems;
 var unsubscribeInfoItem;
-var _testLoader = getTestLoader();
 
 var _handleInfoLawnCarouselMessages = function _handleInfoLawnCarouselMessages (message) {
 	if (MBus.validateMessage(message)) {
@@ -43,13 +42,12 @@ Template.info_lawn.onCreated(function () {
 	unsubscribeInfoItem = MBus.subscribe(Constants.mbus_infoItem_carousel, _handleInfoLawnCarouselMessages);
 	// if we have a valid part, load it up into the carousel
 	if (_selectedItem) {
-		let items = LawnsManager.getLawnByItemId(_selectedItem.itemId);
-		if (items.length === 1) {
-			var itemCore = items[0];
+		let lawn = LawnsManager.getLawnByItemId(_selectedItem.itemId);
+		if (lawn) {
+			Meteor.defer(function () {
+				MBus.publish(Constants.mbus_carousel_add, new Message.Add(carouselIdElt, '500px', '500px', [lawn]));
+			});
 		}
-		Meteor.defer(function () {
-			MBus.publish(Constants.mbus_carousel_add, new Message.Add(carouselIdElt, '500px', '500px', [itemCore]));
-		});
 	}
 });
 
@@ -72,10 +70,7 @@ Template.info_lawn.helpers({
 		ViewStack.popState(true);
 	},
 	itemType: function () {
-		let items = LawnsManager.getLawnByItemId(_selectedItem.itemId);
-		if (items.length === 1) {
-			var itemCore = items[0];
-		}
-		return { itemId: _selectedItem.itemId, url: itemCore.getUrl()};
+		let lawn = LawnsManager.getLawnByItemId(_selectedItem.itemId);
+		return { itemId: _selectedItem.itemId, url: (lawn) ? lawn.getUrl() : ''};
 	}
 });
