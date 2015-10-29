@@ -69,7 +69,10 @@ Template.info_item.helpers({
 		ViewStack.popState(true);
 	},
 	itemType: function () {
-		let itemCore = _testLoader.getItem(_selectedItem.itemId);
+		let items = PartsManager.getPartByItemId(_selectedItem.itemId);
+		if (items.length === 1) {
+			var itemCore = items[0];
+		}
 		return { itemId: _selectedItem.itemId, url: itemCore.getUrl()};
 	}
 });
