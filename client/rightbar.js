@@ -68,6 +68,22 @@ Template.rightBar.onRendered(function () {
 	}
 );
 
+var _checkInfoEnable = function _checkInfoEnable (rightButtons) {
+	for (var i=0,len=rightButtons.length; i<len; ++i) {
+		// look for string containing 'info_'
+		if (rightButtons[i].name.indexOf('info_') > -1) {
+			// Found, now check to see if we have a valid selection
+			let rightButton = rightButtons[i];
+			if (!Session.get('currentSelection')) {
+				rightButton.disabled = 'disabled';
+			}
+			else {
+				rightButton.disabled = '';
+			}
+		}
+	}
+};
+
 Template.rightBar.helpers({
 	dynamicTemplate: function () {
 		// Contents of session variable renderView will 
@@ -81,7 +97,9 @@ Template.rightBar.helpers({
 		Meteor.defer(function () {
 			_renderRightBar();
 		});
-		return NavConfig.getRightBarConfig(Session.get(Constants.rightBarConfig));
+		let rightButtons = NavConfig.getRightBarConfig(Session.get(Constants.rightBarConfig));
+		_checkInfoEnable(rightButtons);
+		return rightButtons;
 	}
 });
 
@@ -89,17 +107,20 @@ Template.rightBar.events({
 	// We follow the convention that the currentTarget.id is the renderView target template
 	'click': function (event) {
 		console.log('Template.rightBar.events: ' + event);
-		var id = event.currentTarget.id;
-		switch (id) {
-		case 'about':
-			ViewStack.pushTarget(Constants.vsAbout);
-			break;
-		default:
-			let currentViewState = ViewStack.peekState();
-			let target = NavConfig.getRightBarTarget(currentViewState.rightBar, id);
-			console.log('target: ' + target);
-			ViewStack.pushTarget(target);
-			break;
+		// See if click item is active
+		if (!this.hasOwnProperty('disabled') || this.disabled !== 'disabled') {
+			var id = event.currentTarget.id;
+			switch (id) {
+			case 'about':
+				ViewStack.pushTarget(Constants.vsAbout);
+				break;
+			default:
+				let currentViewState = ViewStack.peekState();
+				let target = NavConfig.getRightBarTarget(currentViewState.rightBar, id);
+				console.log('target: ' + target);
+				ViewStack.pushTarget(target);
+				break;
+			}
 		}
 	}
 });

@@ -62,9 +62,9 @@ ViewStack = (function () {
 		_targets[Constants.vsCreateRenderLawn] = new ViewState(Constants.render_lawn, Constants.create, Constants.render_lawn, true);
 		_targets[Constants.vsCreateSelectParts] = new ViewState(Constants.select_parts, Constants.create, Constants.select_parts, false);
 		_targets[Constants.vsCreateFinishLawn] = new ViewState(Constants.finish_lawn, Constants.home, Constants.finish_lawn, false);
-		_targets[Constants.vsCreateInfoPart] = new ViewState(Constants.info_item, Constants.create, Constants.parts, false);
-		_targets[Constants.vsInfoItem] = new ViewState(Constants.info_item, Constants.home, Constants.none, false);
-		_targets[Constants.vsInfoPart] = new ViewState(Constants.info_item, Constants.home, Constants.parts, false);
+		_targets[Constants.vsCreateInfoPart] = new ViewState(Constants.info_part, Constants.create, Constants.create_info_item, false);
+		_targets[Constants.vsInfoItem] = new ViewState(Constants.info_lawn, Constants.home, Constants.none, false);
+		_targets[Constants.vsInfoPart] = new ViewState(Constants.info_part, Constants.home, Constants.part_info_item, false);
 		_targets[Constants.vsNewPart] = new ViewState(Constants.newPart, Constants.home, Constants.parts, false);
 		_targets[Constants.vsParts] = new ViewState(Constants.parts, Constants.home, Constants.parts, false);
 		_targets[Constants.vsLawns] = new ViewState(Constants.lawns, Constants.home, Constants.lawns, false);
@@ -120,7 +120,6 @@ ViewStack = (function () {
 	 * @param {object} viewState - the target viewState to change to
 	 */
 	var _goToState = function _goToState (viewState) {
-		// TODO implement
 		Session.set(Constants.navBarConfig, viewState.navBar);
 		Session.set(Constants.rightBarConfig, viewState.rightBar);
 		Session.set(Constants.renderView, viewState.view);
@@ -153,42 +152,3 @@ ViewStack = (function () {
 	};
 })();
 
-//var test1 = new ViewState('red', 'green', 'blue');
-//var test2 = new ViewState('cyan', 'magenta', 'yellow');
-//console.log('ViewState:test1: ' + test1.view + ', test2: ' + test2.view);
-
-/*class ViewState {
-	constructor (view, navBar, rightBar) {
-		this.view = view;
-		this.navBar = navBar;
-		this.rightBar = rightBar;
-	}
-}*/
-
-/*
-class ViewStack {
-	constructor () {
-		this.stack = [];
-	}
-	
-	pushState (viewState) {
-		this.stack.push(viewState);
-		goToState(viewState);
-	}
-	
-	popState () {
-		goToState( this.stack.pop());
-	}
-	
-	goToState (viewState) {
-		// TODO, implement
-	}
-	
-	clearStack () {
-		this.stack = [];
-	}
-	
-	length () {
-		return this.stack.length;
-	}
-}*/

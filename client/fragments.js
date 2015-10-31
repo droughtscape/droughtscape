@@ -25,8 +25,10 @@
 Template.part_type.helpers({
 	// Template must set the context when instantiating this template fragment
 	partsList: function () {
+		// Target topic is dynamic depending on this.context to indicate any related item like a carousel that
+		// will be listening on that topic tuple: PartType:<related template>
 		var topic = 'PartType:' + this.context;
-		MBus.publish(topic, Constants.mbus_selected, this.selected.get());
+		MBus.publish(topic, new Message.TypeSelection(this.selected.get()));
 		return PartTypeData.getPartTypeList(this.context, this.selected.get());
 	},
 	labelColor: function () {
@@ -40,15 +42,18 @@ Template.part_type.events({
 		var clickedButton = e.currentTarget;
 		console.log('RADIO: target: ' + e.currentTarget + ', template: ' + template);
 		// selected is reactive so partsList helper will fire as a result
-		template.data.selected.set(clickedButton.value);
+		// We know the value is a number for force it with unary +
+		template.data.selected.set(+clickedButton.value);
 	}
 });
 
 Template.lawn_type.helpers({
 	// Template must set the context when instantiating this template fragment
 	lawnsList: function () {
+		// Target topic is dynamic depending on this.context to indicate any related item like a carousel that
+		// will be listening on that topic tuple: PartType:<related template>
 		var topic = 'LawnType:' + this.context;
-		MBus.publish(topic, Constants.mbus_selected, this.selected.get());
+		MBus.publish(topic, new Message.TypeSelection(this.selected.get()));
 		return LawnTypeData.getLawnTypeList(this.context, this.selected.get());
 	},
 	labelColor: function () {
@@ -62,7 +67,8 @@ Template.lawn_type.events({
 		var clickedButton = e.currentTarget;
 		console.log('RADIO: target: ' + e.currentTarget + ', template: ' + template);
 		// selected is reactive so partsList helper will fire as a result
-		template.data.selected.set(clickedButton.value);
+		// We know the value is a number for force it with unary +
+		template.data.selected.set(+clickedButton.value);
 	}
 });
 

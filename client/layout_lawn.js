@@ -100,7 +100,7 @@ var _mouseMvCreateHandler = function _mouseMvCreateHandler (noop, pixelPt) {
 var _mouseEnterCreateHandler = function _mouseEnterCreateHandler (pixelPt) {
 	console.log('_mouseEnterCreateHandler: ' + pixelPt);
 	PixiLayout.setMouseMvHandler(_mouseMvCreateHandler);
-	PixiLayout.enableMouseSprite(true, pixelPt, _currentLayoutPart.getUrl());
+	PixiLayout.enableMouseSprite(true, pixelPt, _currentLayoutPart);
 };
 var _mouseLeaveCreateHandler = function _mouseLeaveCreateHandler () {
 	console.log('_mouseLeaveCreateHandler');
@@ -188,7 +188,7 @@ var unsubscribe = null;
 
 var _handleLayoutMessages = function _handleLayoutMessages (message) {
 	if (MBus.validateMessage(message)) {
-		switch (message.type) {
+		switch (message.value.action) {
 		case 'select':
 			console.log('_handleLayoutMessages[' + message.topic + ']: ' + message.type + ' --> ' + message.value);
 			CreateLawnData.setCurrentLayoutPart(null);

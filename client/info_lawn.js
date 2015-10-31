@@ -21,41 +21,41 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-var carouselId = 'info-item-carousel';
+var carouselId = 'info-lawn-carousel';
 var carouselIdElt = '#' + carouselId;
 
 var _selectedItem = null;
 var unsubscribeSelectItems;
 var unsubscribeInfoItem;
-var _testLoader = getTestLoader();
 
-var _handleInfoItemCarouselMessages = function _handleInfoItemCarouselMessages (message) {
+var _handleInfoLawnCarouselMessages = function _handleInfoLawnCarouselMessages (message) {
 	if (MBus.validateMessage(message)) {
-		console.log('_handleInfoItemCarouselMessages:TODO, message.type: ' + message.type);
+		console.log('_handleInfoLawnCarouselMessages:TODO, message.type: ' + message.type);
 	}
 	else {
-		console.log('_handleInfoItemCarouselMessages:ERROR, invalid message');
+		console.log('_handleInfoLawnCarouselMessages:ERROR, invalid message');
 	}
 };
 
-Template.info_item.onCreated(function () {
+Template.info_lawn.onCreated(function () {
 	_selectedItem = SelectionManager.getSelection();
-	unsubscribeInfoItem = MBus.subscribe(Constants.mbus_infoItem_carousel, _handleInfoItemCarouselMessages);
+	unsubscribeInfoItem = MBus.subscribe(Constants.mbus_infoItem_carousel, _handleInfoLawnCarouselMessages);
 	// if we have a valid part, load it up into the carousel
 	if (_selectedItem) {
-		let itemCore = _testLoader.getItem(_selectedItem.itemId);
-		Meteor.defer(function () {
-			MBus.publish(Constants.mbus_carousel, Constants.mbus_add,
-				{carousel: carouselIdElt, imgWidth: '500px', imgHeight: '500px', imgArray: [itemCore]});
-		});
+		let lawn = LawnsManager.getLawnByItemId(_selectedItem.itemId);
+		if (lawn) {
+			Meteor.defer(function () {
+				MBus.publish(Constants.mbus_carousel_add, new Message.Add(carouselIdElt, '500px', '500px', [lawn]));
+			});
+		}
 	}
 });
 
-Template.info_item.onDestroyed(function () {
+Template.info_lawn.onDestroyed(function () {
 	unsubscribeInfoItem.remove();
 });
 
-Template.info_item.helpers({
+Template.info_lawn.helpers({
 	carouselId: function () {
 		return carouselId;
 	},
@@ -66,11 +66,11 @@ Template.info_item.helpers({
 		return {topic: Constants.mbus_infoItem_carousel, html: carouselIdElt, type: "infoItem", subType: null};
 	},
 	alertNoItem: function () {
-		Materialize.toast('No item selected!', 3000, 'rounded red-text');
+		Materialize.toast('No lawn selected!', 3000, 'rounded red-text');
 		ViewStack.popState(true);
 	},
 	itemType: function () {
-		let itemCore = _testLoader.getItem(_selectedItem.itemId);
-		return { itemId: _selectedItem.itemId, url: itemCore.getUrl()};
+		let lawn = LawnsManager.getLawnByItemId(_selectedItem.itemId);
+		return { itemId: _selectedItem.itemId, url: (lawn) ? lawn.getUrl() : ''};
 	}
 });

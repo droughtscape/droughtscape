@@ -1,3 +1,6 @@
+- Make lawn template dynamic
+- Should there be a BACK button on the right bar?
+- BUG => parts -> my parts and create -> layout -> my parts share radio button context.  Might be ok.
 - Pixi and Threejs images must be from a CORS ok server.
 - Render plants idea:
 	=> define basic 3-d render shape: {cubic, spherical, cone, inverted cone}
@@ -6,13 +9,61 @@
 	=> define basic 2-d footprint shape: {rectangular, ellipsoid}
 	=> constrain both cursor and image shape by the footprint shape.  The idea is that most
 		plants will have a ellipsoid footprint.
+- Flesh out AbstractPart
+- Collections
 		
-- Layout Lawn | Measure => disable Accept until valid area
-
 - Lawns
+	NavBar
+	=> All Lawns
+	RightBar
+		=> New Lawn
+		=> My Lawns
+		=> Info Lawn
+	=> My Lawns
+		=> New Lawn
+		=> Lawns
+		=> Info Lawn
+		
+- parts rightBar Favorite Parts -> My Parts => select_parts
+	- authentication outside of select_parts => enclosing template: my_parts to handle authentication
+		=> can this be generic?  authentication then dynamic template?
+	=> No, authentication inside so that if user logs out from navbar, we do the right thing.
+		=> Opportunity for a wrapper?
+		
+- Bugs
+	SlickJS => Sometimes the onBefore callback has currentSlide, nextSlide the same.
+		This makes sense at the boundaries but not in the middle of the carousel or if we are moving off
+		the boundaries.  This causes selection highlighting to get messed up since both slides and clicks
+		change the border highlight.
+		=> Temp fix
+		
++ Will lawns fit under AbstractParts or will we generate AbstractLawns => DOH, it will be a separate type: AbstractLawn
++ Create test allParts, myParts with typed AbstractParts
++ Distinguish between Part-Info and Lawn-Info since they look at separate collections
++ Both Info-Part and Info-Lawn need to look in PartsManager, LawnsManager instead of TestLoader
++ Implement Add/Delete parts
++ Need a way to programmatically set the part type radio button to a particular part type
+ 	=> send Message.TypeSelection(targetRadioButtonType) to the appropriate part template that contains the part_type template.
+ 	=> the handlers will have to have code to compare the partMode reactive var to the targetRadioButtonType and set partMode if different.  That's all.
++ Need default "No Parts" icon for parts/lawns so slide appears
++ Layout Lawn | Measure => disable Accept until valid area
++ Right Bar Info * disable until valid selection
+	=> Needs Session variable and some magic testing for "info-"
+
++ Fix ReInit selection issue - Maybe can use SelectionManager
+
++ MBus is inefficient.  When we use a common bus (topic) all subscribers are invoked and have to filter.
+	=> Better is the LSE method, subscribe to a { bus, [events] } and only call the subscriber if the dispatch mechanism criteria
+		of {bus, event} is matched.
+	=> Recursive events are disallowed
+	=> Treat as a system wide bus, topics are really events.  type may be redundant so roll into topic.
+	=> Look at partType, lawnType to see if we can reduce type out of it.
+	=> Fixed generalized to allow private buses if needed.  Currently, still using a single bus.
+
++ Lawns
 	=> RightBar probably needs info_lawn
 	=> Maybe info_lawn, info_part can be same generic info template?
-- View Stack
++ View Stack
 	=> onCreated => push view
 	=> onDestroyed => popView??? Doesn't work since onDestroyed is called when we go on to next view
 	=> popView
@@ -50,42 +101,18 @@
 				=> We will use MBus for communicating between bars and template
 					
 
-- Info Part
++ Info Part
 	=> Need to be able to return to calling template
 	=> Need large slide[0..N] images
 
-- Lawns
-	NavBar
-	=> All Lawns
-	RightBar
-		=> New Lawn
-		=> My Lawns
-		=> Info Lawn
-	=> My Lawns
-		=> New Lawn
-		=> Lawns
-		=> Info Lawn
-		
-- Parts
++ Parts
 	=> Add Info Part to right bar
 		Figure out generic Info Part selection mechanism that will work across both single and shared part selections
 			=> SelectionManager
 		
-- Part Selection
++ Part Selection
 	=> unify click part selection and slick part selection into single message on the select bus
 	
-- Info Lawn
++ Info Lawn
 
-- parts only has part, no myParts
-- parts rightBar Favorite Parts -> My Parts => select_parts
-	- authentication outside of select_parts => enclosing template: my_parts to handle authentication
-		=> can this be generic?  authentication then dynamic template?
-	=> No, authentication inside so that if user logs out from navbar, we do the right thing.
-		=> Opportunity for a wrapper?
-		
-- Bugs
-	SlickJS => Sometimes the onBefore callback has currentSlide, nextSlide the same.
-		This makes sense at the boundaries but not in the middle of the carousel or if we are moving off
-		the boundaries.  This causes selection highlighting to get messed up since both slides and clicks
-		change the border highlight.
-		=> Temp fix
++ parts only has part, no myParts

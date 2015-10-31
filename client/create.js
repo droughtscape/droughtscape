@@ -37,6 +37,7 @@ Template.create.onCreated(function(){
 	//window.onbeforeunload = function () {
 	//	return 'Your work will be lost';
 	//};
+	CreateLawnData.setCurrentLayoutPart(null);
 	Session.set(Constants.computedArea, 0);
 	console.log('history.state: ' + history.state);
 	// On initial entry reset the state to shape_lawn
@@ -79,19 +80,9 @@ var shapeLawnCarouselIdElt = '#' + shapeLawnCarouselId;
 
 var handleLawnShapeMessages = function handleLawnShapeMessages (message) {
 	if (MBus.validateMessage(message)) {
-		let testLoader = getTestLoader();
-		switch (message.type) {
-		case 'rendered':
-			console.log('handleLawnShapeMessages[' + message.topic + ']: ' + message.type + ' --> ' + message.value);
-			MBus.publish(Constants.mbus_carousel, Constants.mbus_clear, {carousel: shapeLawnCarouselIdElt});
-			MBus.publish(Constants.mbus_carousel, Constants.mbus_add, {carousel: shapeLawnCarouselIdElt, imgWidth: '300px', imgHeight: '200px', 
-				imgArray: testLoader.createTestItems([{id: 'rectangle', img:'rectangle.png'}], 'shapeId')});
-			MBus.publish(Constants.mbus_carousel, Constants.mbus_add, {carousel: shapeLawnCarouselIdElt, imgWidth: '300px', imgHeight: '200px', 
-				imgArray: testLoader.createTestItems([{id: 'corner', img:'corner.png'}], 'shapeId')});
-			MBus.publish(Constants.mbus_carousel, Constants.mbus_add, {carousel: shapeLawnCarouselIdElt, imgWidth: '300px', imgHeight: '200px', 
-				imgArray: testLoader.createTestItems([{id: 'custom', img:'custom.png'}], 'shapeId')});
-			break;
-		}
+		MBus.publish(Constants.mbus_carousel_clear, new Message.Clear(shapeLawnCarouselIdElt));
+		let shapes = LawnsManager.getLawnShapes();
+		MBus.publish(Constants.mbus_carousel_add, new Message.Add(shapeLawnCarouselIdElt, '300px', '200px', shapes));
 	}
 	else {
 		console.log('handleLawnShapeMessages:ERROR, invalid message');
@@ -100,7 +91,7 @@ var handleLawnShapeMessages = function handleLawnShapeMessages (message) {
 
 Template.shape_lawn.onCreated(function () {
 	CreateLawnData.createLawnShapeTemplate('rectangle');
-	unsubscribe = MBus.subscribe(Constants.mbus_carousel, handleLawnShapeMessages);
+	unsubscribe = MBus.subscribe(Constants.mbus_carousel_rendered, handleLawnShapeMessages);
 });
 
 Template.shape_lawn.onRendered(function () {
@@ -153,23 +144,12 @@ var buildLawnTemplateCarouselIdElt = '#' + buildLawnTemplateCarouselId;
 
 var handleBuildLawnTemplateMessages = function handleBuildLawnTemplateMessages (message) {
 	if (MBus.validateMessage(message)) {
-		let testLoader = getTestLoader();
-		switch (message.type) {
-		case 'rendered':
-			console.log('handleBuildLawnTemplateMessages[' + message.topic + ']: ' + message.type + ' --> ' + message.value);
-			MBus.publish(Constants.mbus_carousel, Constants.mbus_clear, {carousel: buildLawnTemplateCarouselIdElt});
-			// Here we will use a filter based on standard shapes to select a set of templates
-			// What about custom shape?  Nothing to filter => no templates
-			MBus.publish(Constants.mbus_carousel, Constants.mbus_add, {carousel: buildLawnTemplateCarouselIdElt, imgWidth: '300px', imgHeight: '200px', 
-				imgArray: testLoader.createTestItems([{id: 'none', img:'custom.png'}], 'templateId')});
-			MBus.publish(Constants.mbus_carousel, Constants.mbus_add, {carousel: buildLawnTemplateCarouselIdElt, imgWidth: '300px', imgHeight: '200px', 
-				imgArray: testLoader.createTestItems([{id: 'template1', img:'template1.jpg'}], 'templateId')});
-			MBus.publish(Constants.mbus_carousel, Constants.mbus_add, {carousel: buildLawnTemplateCarouselIdElt, imgWidth: '300px', imgHeight: '200px', 
-				imgArray: testLoader.createTestItems([{id: 'template2', img:'template2.png'}], 'templateId')});
-			MBus.publish(Constants.mbus_carousel, Constants.mbus_add, {carousel: buildLawnTemplateCarouselIdElt, imgWidth: '300px', imgHeight: '200px', 
-				imgArray: testLoader.createTestItems([{id: 'template3', img:'template3.jpg'}], 'templateId')});
-			break;
-		}
+		let templates = LawnsManager.getLawnTemplates();
+		console.log('handleBuildLawnTemplateMessages[' + message.topic + ']: ' + message.type + ' --> ' + message.value);
+		MBus.publish(Constants.mbus_carousel_clear, new Message.Clear(buildLawnTemplateCarouselIdElt));
+		// Here we will use a filter based on standard shapes to select a set of templates
+		// What about custom shape?  Nothing to filter => no templates
+		MBus.publish(Constants.mbus_carousel_add, new Message.Add(buildLawnTemplateCarouselIdElt, '300px', '200px', templates));
 	}
 	else {
 		console.log('handleBuildLawnTemplateMessages:ERROR, invalid message');
@@ -177,7 +157,7 @@ var handleBuildLawnTemplateMessages = function handleBuildLawnTemplateMessages (
 };
 
 Template.build_lawn.onCreated(function () {
-	buildLawnUnsubscribe = MBus.subscribe(Constants.mbus_carousel, handleBuildLawnTemplateMessages);
+	buildLawnUnsubscribe = MBus.subscribe(Constants.mbus_carousel_rendered, handleBuildLawnTemplateMessages);
 });
 
 Template.build_lawn.onDestroyed(function() {

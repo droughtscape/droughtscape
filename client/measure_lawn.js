@@ -91,8 +91,22 @@ Template.measure_lawn.helpers({
 	metricLabelColor: function () {
 		var units = Session.get(Constants.userUnitsOfMeasure);
 		return (units === 'Metric') ? Constants.color_highlight : Constants.color_gray;
+	},
+	disabled: function () {
+		// enable/disable the Accept button based on valid area
+		this.enabled = (Session.get(Constants.computedArea) > 0);
+		return (this.enabled) ? '' : 'disabled';
 	}
 });
+
+var _checkEnabled = function _checkEnabled (item) {
+	for (var i=0,len=item.classList.length; i<len; ++i) {
+		if (item.classList[i] === 'disabled') {
+			return fasle;
+		}
+	}
+	return true;
+};
 
 Template.measure_lawn.events({
 	'click #measure-lawn-cancel': function () {
@@ -115,48 +129,50 @@ Template.measure_lawn.events({
 		var clickedButton = e.currentTarget;
 		Session.set(Constants.userUnitsOfMeasure, clickedButton.id);
 	},
-	'click #measure-lawn-accept': function () {
-		console.log('lawn-measure clicked');
-		console.log('lawnData: ' + CreateLawnData.lawnData);
-		if (_updateShapeDims()) {
-			var user = Meteor.user();
-			var userEmail = user.emails[0].address;
-			// See if we already have a profile, if so, look for myLawns, if not create one
-			var dsUsers = DroughtscapeUsers.find({});
-			var dsUsersArray = dsUsers.fetch();
-			if (dsUsersArray.length > 0) {
-				var updated = null;
-				for (var i = 0, len = dsUsersArray.length; i < len; ++i) {
-					if (dsUsersArray[i].user === userEmail) {
-						// found us, update
-						if (!dsUsersArray[i].myLawns) {
-							dsUsersArray[i].myLawns = [];
+	'click #measure-lawn-accept': function (e) {
+		if (_checkEnabled(e.currentTarget)) {
+			console.log('lawn-measure clicked');
+			console.log('lawnData: ' + CreateLawnData.lawnData);
+			if (_updateShapeDims()) {
+				var user = Meteor.user();
+				var userEmail = user.emails[0].address;
+				// See if we already have a profile, if so, look for myLawns, if not create one
+				var dsUsers = DroughtscapeUsers.find({});
+				var dsUsersArray = dsUsers.fetch();
+				if (dsUsersArray.length > 0) {
+					var updated = null;
+					for (var i = 0, len = dsUsersArray.length; i < len; ++i) {
+						if (dsUsersArray[i].user === userEmail) {
+							// found us, update
+							if (!dsUsersArray[i].myLawns) {
+								dsUsersArray[i].myLawns = [];
+							}
+							_updateLawns(dsUsersArray[i].myLawns, CreateLawnData.lawnData);
+							updated = dsUsersArray[i];
+							break;
 						}
-						_updateLawns(dsUsersArray[i].myLawns, CreateLawnData.lawnData);
-						updated = dsUsersArray[i];
-						break;
+					}
+					if (!updated) {
+						// user not found, add
+						_insertFirstItem(userEmail, CreateLawnData.lawnData);
+					}
+					else {
+						DroughtscapeUsers.update(updated._id, updated);
 					}
 				}
-				if (!updated) {
-					// user not found, add
+				else {
+					// No users so add us here
 					_insertFirstItem(userEmail, CreateLawnData.lawnData);
 				}
-				else {
-					DroughtscapeUsers.update(updated._id, updated);
-				}
+				ViewStack.pushTarget(Constants.vsCreateBuildLawn);
+				//Session.set(Constants.renderView, Constants.build_lawn);
+				//currentCreateState.set('build_lawn');
 			}
 			else {
-				// No users so add us here
-				_insertFirstItem(userEmail, CreateLawnData.lawnData);
+				// send an alert toast and stay here.  If the user wants to abort or go back, 
+				// they can use the appropriate buttons
+				Materialize.toast('Zero width or length!', 3000, 'rounded red-text');
 			}
-			ViewStack.pushTarget(Constants.vsCreateBuildLawn);
-			//Session.set(Constants.renderView, Constants.build_lawn);
-			//currentCreateState.set('build_lawn');
-		}
-		else {
-			// send an alert toast and stay here.  If the user wants to abort or go back, 
-			// they can use the appropriate buttons
-			Materialize.toast('Zero width or length!', 3000, 'rounded red-text');
 		}
 	}
 });
@@ -230,7 +246,7 @@ Template.measure_rectangle_lawn.helpers({
 });
 
 Template.measure_rectangle_lawn.events({
-	'change .input-field': function () {
+	'input .input-field': function () {
 		console.log('input-field change event');
 		_updateShapeDims();
 	}

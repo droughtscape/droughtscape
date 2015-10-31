@@ -1,0 +1,17 @@
+<template name="info_part">
+    <h3>
+        Info Part
+    </h3>
+
+    <div>
+        {{#if validItem}}
+            <h4>
+                {{itemType.itemId}}
+                <br>
+                {{> carousel id=carouselId context=infoItemMode}}
+            </h4>
+        {{else}}
+            {{alertNoItem}}
+        {{/if}}
+    </div>
+</template>
