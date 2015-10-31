@@ -21,43 +21,40 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-var partMode = new ReactiveVar('plants');
+var partMode = new ReactiveVar(PartType.plants);
 
-Template.newPart.onCreated(function () {
+Template.new_part.onCreated(function () {
 });
 
-Template.newPart.helpers({
-	partsMode: function () {
-		return {type: "newParts", subType: partMode.get()};
-	},
+Template.new_part.helpers({
 	selected: function () {
 		return partMode;
 	},
 	createItemTemplate: function () {
 		var template = Template.createOther;
 		switch (partMode.get()) {
-		case 'plants':
+		case PartType.plants:
 			template = Template.createPlant;
 			break;
-		case 'groundcovers':
+		case PartType.groundcovers:
 			template = Template.createGroundcover;
 			break;
-		case 'borders':
+		case PartType.borders:
 			template = Template.createBorder;
 			break;
-		case 'pavers':
+		case PartType.pavers:
 			template = Template.createPaver;
 			break;
-		case 'largerocks':
+		case PartType.largerocks:
 			template = Template.createLargeRock;
 			break;
-		case 'irrigation':
+		case PartType.irrigation:
 			template = Template.createIrrigation;
 			break;
-		case 'lighting':
+		case PartType.lighting:
 			template = Template.createLighting;
 			break;
-		case 'decorative':
+		case PartType.decorative:
 			template = Template.createDecorative;
 			break;
 		}
@@ -66,9 +63,9 @@ Template.newPart.helpers({
 });
 
 // Expect this template event to be invoked with context=<string>
-// Where <string> := "parts" | "newPart" | ...
+// Where <string> := "parts" | "new_part" | ...
 // The event comes from a subtemplate part_type
-Template.newPart.events({
+Template.new_part.events({
 	'click #cancel-part': function () {
 		var val = Utils.getRadioVal(document.getElementById('parts-select'), 'part-type');
 		console.log('dismiss-part: ' + val);
@@ -81,5 +78,5 @@ Template.newPart.events({
 	}
 });
 
-Template.newPart.onDestroyed(function () {
+Template.new_part.onDestroyed(function () {
 });
