@@ -26,13 +26,13 @@ var partMode = new ReactiveVar(PartType.all);
 var partsCarouselId = 'my-parts-carousel';
 var partsCarouselIdElt = '#' + partsCarouselId;
 
-Template.myParts.getCarouselId = function getCarouselId () { return partsCarouselId; };
-Template.myParts.clearBorderColor = function clearBorderColor () {
+Template.my_parts.getCarouselId = function getCarouselId () { return partsCarouselId; };
+Template.my_parts.clearBorderColor = function clearBorderColor () {
 	Template.carousel.setBorderColor($(partsCarouselIdElt), Constants.color_white);
 };
 
-Template.myParts.clickEvent = function clickEvent (e) {
-	console.log('Template.myParts.clickEvent');
+Template.my_parts.clickEvent = function clickEvent (e) {
+	console.log('Template.my_parts.clickEvent');
 };
 
 var setSelectedCarouselImages = function setSelectedCarouselImages (carouselId, selection) {
@@ -65,20 +65,20 @@ var unsubscribePartTypeHandler = null;
 // navBar button PARTS is clicked which sets the renderView Session variable.
 // I guess that since these are "subtemplates", the get created anew every time, similar to a route.
 // In any case, this is the desired effect.
-Template.myParts.onCreated(function () {
+Template.my_parts.onCreated(function () {
 	// Support carousel lifecycle.  Subscribe returns the ability to unsubscribe.
 	unsubscribePartTypeHandler = MBus.subscribe(Constants.mbus_myPartsType, handlePartTypeMessages);
 });
 
-Template.myParts.onRendered(function () {
+Template.my_parts.onRendered(function () {
 });
 
-Template.myParts.onDestroyed(function () {
+Template.my_parts.onDestroyed(function () {
 	// Support carousel lifecycle
 	unsubscribePartTypeHandler.remove();
 });
 
-Template.myParts.helpers({
+Template.my_parts.helpers({
 	carouselId: function () {
 		return partsCarouselId;
 	},

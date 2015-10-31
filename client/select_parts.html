@@ -11,7 +11,7 @@
                 <i class="mdi-content-remove-circle right"></i>Delete from My Parts
             </div>
         </div>
-        {{> myParts parentTemplateTopic=topic sharedSelectionMode=true}}
+        {{> my_parts parentTemplateTopic=topic sharedSelectionMode=true}}
     {{else}}
         {{> require_signin message="Please sign in to view your parts"}}
     {{/if}}

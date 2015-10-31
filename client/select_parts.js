@@ -46,9 +46,9 @@ var _unselectFromId = function _unselectFromId (carouselId) {
 	currentSelectedCarousel.set(carouselId);
 	switch (carouselId) {
 	case Template.all_parts.getCarouselId():
-		Template.myParts.clearBorderColor();
+		Template.my_parts.clearBorderColor();
 		break;
-	case Template.myParts.getCarouselId():
+	case Template.my_parts.getCarouselId():
 		Template.all_parts.clearBorderColor();
 		break;
 	default:
@@ -76,13 +76,13 @@ var _handleSelectCarouselMessage = function _handleSelectCarouselMessage(message
 Template.select_parts.onRendered(function () {
 	// Since we are positing a single active selection between the two carousels, we will set border style to none
 	// and manage it manually
-	// We might not be logged in so check first, if not, the all_parts and myParts templates will not
+	// We might not be logged in so check first, if not, the all_parts and my_parts templates will not
 	// be instantiated
 	if (Meteor.userId()) {
 		console.log('TEST: Template.all_parts.partsCarouselIdElt: ' + Template.all_parts.getCarouselId());
 		Meteor.defer(function() {
 			Template.all_parts.clearBorderColor();
-			Template.myParts.clearBorderColor();
+			Template.my_parts.clearBorderColor();
 			SelectionManager.clearSelection();
 		});
 	}
@@ -107,7 +107,7 @@ Template.select_parts.helpers({
 		return (_enableClick(Template.all_parts.getCarouselId())) ? '' : 'disabled';
 	},
 	disableDeleteFromMyParts: function () {
-		return (_enableClick(Template.myParts.getCarouselId())) ? '' : 'disabled';
+		return (_enableClick(Template.my_parts.getCarouselId())) ? '' : 'disabled';
 	}
 });
 
@@ -128,7 +128,7 @@ Template.select_parts.events({
 		}
 	},
 	'click #favorite-parts-del': function () {
-		if (_enableClick(Template.myParts.getCarouselId())) {
+		if (_enableClick(Template.my_parts.getCarouselId())) {
 			console.log('Delete from My Parts clicked');
 			PartsManager.delFromMyParts(SelectionManager.getSelection());
 		}
