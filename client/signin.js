@@ -29,7 +29,7 @@ SignInUtils = (function () {
 	};
 	
 	var popRenderViewTarget = function popRenderViewTarget () {
-		return (renderViewTargetStack.length > 0) ? renderViewTargetStack.pop() : Constants.vsHome;
+		return (renderViewTargetStack.length > 0) ? renderViewTargetStack.pop() : ViewTargetType.home;
 	};
 	
 	var clearRenderViewTargets = function clearRenderViewTargets () {
@@ -113,7 +113,7 @@ Template.signin.events({
 	'click #dismiss-sign-in': function () {
 		// Clear all targets, go to splash on all dismisses
 		SignInUtils.clearRenderViewTargets();
-		ViewStack.pushTarget(Constants.vsHome);
+		ViewStack.pushTarget(ViewTargetType.home);
 		//Session.set(Constants.renderView, Constants.splash);
 	},
 	'click #at-btn': function () {

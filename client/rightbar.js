@@ -112,7 +112,7 @@ Template.rightBar.events({
 			var id = event.currentTarget.id;
 			switch (id) {
 			case 'about':
-				ViewStack.pushTarget(Constants.vsAbout);
+				ViewStack.pushTarget(ViewTargetType.about);
 				break;
 			default:
 				let currentViewState = ViewStack.peekState();

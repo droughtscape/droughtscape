@@ -118,8 +118,8 @@ var _enableClick = function _enableClick (targetCarousel) {
 
 Template.select_parts.events({
 	'click #signin': function () {
-		SignInUtils.pushRenderViewTarget(Constants.vsCreateSelectParts);
-		ViewStack.pushTarget(Constants.vsSignIn);
+		SignInUtils.pushRenderViewTarget(ViewTargetType.createSelectParts);
+		ViewStack.pushTarget(ViewTargetType.signIn);
 	},
 	'click #favorite-parts-add': function () {
 		if (_enableClick(Template.all_parts.getCarouselId())) {

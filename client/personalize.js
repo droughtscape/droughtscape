@@ -48,7 +48,7 @@ Template.personalize.events({
 		Session.set(Constants.userUnitsOfMeasure, clickedButton.id);
 	},
 	'click #signin': function () {
-		SignInUtils.pushRenderViewTarget(Constants.vsPersonalize);
-		ViewStack.pushTarget(Constants.vsSignIn);
+		SignInUtils.pushRenderViewTarget(ViewTargetType.personalize);
+		ViewStack.pushTarget(ViewTargetType.signIn);
 	}
 });

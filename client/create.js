@@ -59,8 +59,8 @@ Template.create.helpers({
 
 Template.create.events({
 	'click #signin': function () {
-		SignInUtils.pushRenderViewTarget(Constants.vsCreate);
-		ViewStack.pushTarget(Constants.vsSignIn);
+		SignInUtils.pushRenderViewTarget(ViewTargetType.create);
+		ViewStack.pushTarget(ViewTargetType.signIn);
 		//Session.set(Constants.renderView, Constants.signin);
 	}
 });
@@ -121,7 +121,7 @@ Template.shape_lawn.events({
 	},
 	'click #shape-lawn-cancel': function (e) {
 		console.log('Template.shape_lawn.events cancel: ' + e.target.id);
-		ViewStack.pushTarget(Constants.vsHome);
+		ViewStack.pushTarget(ViewTargetType.home);
 		//Session.set(Constants.renderView, Constants.splash);
 	},
 	'click #shape-lawn-accept': function (e) {
@@ -130,7 +130,7 @@ Template.shape_lawn.events({
 		if (inputElt) {
 			console.log('Template.shape_lawn.events lawnName: ' + inputElt.value);
 			CreateLawnData.lawnData.name = inputElt.value;
-			ViewStack.pushTarget(Constants.vsCreateMeasureLawn);
+			ViewStack.pushTarget(ViewTargetType.createMeasureLawn);
 			//Session.set(Constants.renderView, Constants.measure_lawn);
 			//currentCreateState.set('measure_lawn');
 		}
@@ -182,7 +182,7 @@ Template.build_lawn.events ({
 	},
 	'click #build-lawn-cancel': function () {
 		ViewStack.clearState();
-		ViewStack.pushTarget(Constants.vsHome);
+		ViewStack.pushTarget(ViewTargetType.home);
 	},
 	'click #build-lawn-back': function () {
 		ViewStack.popState(true);
@@ -190,7 +190,7 @@ Template.build_lawn.events ({
 		//currentCreateState.set('measure_lawn');
 	},
 	'click #build-lawn-accept': function () {
-		ViewStack.pushTarget(Constants.vsCreateLayoutLawn);
+		ViewStack.pushTarget(ViewTargetType.createLayoutLawn);
 		CreateLawnData.setCurrentLawn();
 	}
 });
@@ -203,7 +203,7 @@ Template.finish_lawn.onDestroyed(function () {
 
 Template.finish_lawn.events({
 	'click #finish-lawn-cancel': function () {
-		ViewStack.pushTarget(Constants.vsHome);
+		ViewStack.pushTarget(ViewTargetType.home);
 		CreateLawnData.clearCurrentLawn();
 	},
 	'click #finish-lawn-back': function () {
@@ -211,7 +211,7 @@ Template.finish_lawn.events({
 	},
 	'click #finish-lawn-accept': function () {
 		ViewStack.clearState();
-		ViewStack.pushTarget(Constants.vsCreate);
+		ViewStack.pushTarget(ViewTargetType.create);
 		CreateLawnData.clearCurrentLawn();
 	}
 });

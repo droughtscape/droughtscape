@@ -111,7 +111,7 @@ var _checkEnabled = function _checkEnabled (item) {
 Template.measure_lawn.events({
 	'click #measure-lawn-cancel': function () {
 		ViewStack.clearState();
-		ViewStack.pushTarget('home');
+		ViewStack.pushTarget(ViewTargetType.home);
 		//Session.set(Constants.renderView, Constants.splash);
 	},
 	'click #measure-lawn-back': function () {
@@ -164,7 +164,7 @@ Template.measure_lawn.events({
 					// No users so add us here
 					_insertFirstItem(userEmail, CreateLawnData.lawnData);
 				}
-				ViewStack.pushTarget(Constants.vsCreateBuildLawn);
+				ViewStack.pushTarget(ViewTargetType.createBuildLawn);
 				//Session.set(Constants.renderView, Constants.build_lawn);
 				//currentCreateState.set('build_lawn');
 			}
