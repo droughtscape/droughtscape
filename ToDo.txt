@@ -38,7 +38,7 @@
 		=> Temp fix
 		
 + Will lawns fit under AbstractParts or will we generate AbstractLawns => DOH, it will be a separate type: AbstractLawn
-+ Create test allParts, myParts with typed AbstractParts
++ Create test all_parts, myParts with typed AbstractParts
 + Distinguish between Part-Info and Lawn-Info since they look at separate collections
 + Both Info-Part and Info-Lawn need to look in PartsManager, LawnsManager instead of TestLoader
 + Implement Add/Delete parts

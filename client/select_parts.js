@@ -42,34 +42,14 @@ var currentSelectedCarousel = new ReactiveVar(null);
 // TODO Remove this singleton once we implement collections
 var _testLoader = getTestLoader();
 
-//var _getUnselectedTopic = function _getUnselectedTopic (selectedTopic) {
-//	return (selectedTopic === Constants.mbus_allPartsCarousel) ? Constants.mbus_myPartsCarousel :
-//		Constants.mbus_allPartsCarousel;
-//};
-//
-//var _getUnselectedTopicFromId = function _getUnselectedTopicFromId (carouselId) {
-//	currentSelectedCarousel = carouselId;
-//	switch (carouselId) {
-//	case Template.allParts.getCarouselId():
-//		return Constants.mbus_myPartsCarousel;
-//		break;
-//	case Template.myParts.getCarouselId():
-//		return Constants.mbus_allPartsCarousel;
-//		break;
-//	default:
-//		return null;
-//		break;
-//	}
-//};
-
 var _unselectFromId = function _unselectFromId (carouselId) {
 	currentSelectedCarousel.set(carouselId);
 	switch (carouselId) {
-	case Template.allParts.getCarouselId():
+	case Template.all_parts.getCarouselId():
 		Template.myParts.clearBorderColor();
 		break;
 	case Template.myParts.getCarouselId():
-		Template.allParts.clearBorderColor();
+		Template.all_parts.clearBorderColor();
 		break;
 	default:
 		return null;
@@ -96,12 +76,12 @@ var _handleSelectCarouselMessage = function _handleSelectCarouselMessage(message
 Template.select_parts.onRendered(function () {
 	// Since we are positing a single active selection between the two carousels, we will set border style to none
 	// and manage it manually
-	// We might not be logged in so check first, if not, the allParts and myParts templates will not
+	// We might not be logged in so check first, if not, the all_parts and myParts templates will not
 	// be instantiated
 	if (Meteor.userId()) {
-		console.log('TEST: Template.allParts.partsCarouselIdElt: ' + Template.allParts.getCarouselId());
+		console.log('TEST: Template.all_parts.partsCarouselIdElt: ' + Template.all_parts.getCarouselId());
 		Meteor.defer(function() {
-			Template.allParts.clearBorderColor();
+			Template.all_parts.clearBorderColor();
 			Template.myParts.clearBorderColor();
 			SelectionManager.clearSelection();
 		});
@@ -124,7 +104,7 @@ Template.select_parts.helpers({
 
 Template.select_parts.helpers({
 	disableAddToMyParts: function () {
-		return (_enableClick(Template.allParts.getCarouselId())) ? '' : 'disabled';
+		return (_enableClick(Template.all_parts.getCarouselId())) ? '' : 'disabled';
 	},
 	disableDeleteFromMyParts: function () {
 		return (_enableClick(Template.myParts.getCarouselId())) ? '' : 'disabled';
@@ -142,7 +122,7 @@ Template.select_parts.events({
 		ViewStack.pushTarget(Constants.vsSignIn);
 	},
 	'click #favorite-parts-add': function () {
-		if (_enableClick(Template.allParts.getCarouselId())) {
+		if (_enableClick(Template.all_parts.getCarouselId())) {
 			console.log('Add to My Parts clicked');
 			PartsManager.addToMyParts(SelectionManager.getSelection());
 		}
