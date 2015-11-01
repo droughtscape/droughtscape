@@ -31,31 +31,31 @@ Template.new_part.helpers({
 		return partMode;
 	},
 	createItemTemplate: function () {
-		var template = Template.createOther;
+		var template = Template.create_other;
 		switch (partMode.get()) {
 		case PartType.plants:
-			template = Template.createPlant;
+			template = Template.create_plant;
 			break;
 		case PartType.groundcovers:
-			template = Template.createGroundcover;
+			template = Template.create_groundcover;
 			break;
 		case PartType.borders:
-			template = Template.createBorder;
+			template = Template.create_border;
 			break;
 		case PartType.pavers:
-			template = Template.createPaver;
+			template = Template.create_paver;
 			break;
 		case PartType.largerocks:
-			template = Template.createLargeRock;
+			template = Template.create_large_rock;
 			break;
 		case PartType.irrigation:
-			template = Template.createIrrigation;
+			template = Template.create_irrigation;
 			break;
 		case PartType.lighting:
-			template = Template.createLighting;
+			template = Template.create_lighting;
 			break;
 		case PartType.decorative:
-			template = Template.createDecorative;
+			template = Template.create_decorative;
 			break;
 		}
 		return template;
