@@ -24,6 +24,5 @@
 Template.about.events({
 	'click #dismiss-about': function () {
 		ViewStack.popState(true);
-		//Session.set(Constants.renderView, Constants.splash);
 	}
 });

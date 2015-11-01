@@ -121,7 +121,6 @@ Template.shape_lawn.events({
 	'click #shape-lawn-cancel': function (e) {
 		console.log('Template.shape_lawn.events cancel: ' + e.target.id);
 		ViewStack.pushTarget(ViewTargetType.home);
-		//Session.set(Constants.renderView, Constants.splash);
 	},
 	'click #shape-lawn-accept': function (e) {
 		console.log('Template.shape_lawn.events accept: ' + e.target.id);
@@ -130,8 +129,6 @@ Template.shape_lawn.events({
 			console.log('Template.shape_lawn.events lawnName: ' + inputElt.value);
 			CreateLawnData.lawnData.name = inputElt.value;
 			ViewStack.pushTarget(ViewTargetType.createMeasureLawn);
-			//Session.set(Constants.renderView, Constants.measure_lawn);
-			//currentCreateState.set('measure_lawn');
 		}
 	}
 });
@@ -185,8 +182,6 @@ Template.build_lawn.events ({
 	},
 	'click #build-lawn-back': function () {
 		ViewStack.popState(true);
-		//Session.set(Constants.renderView, Constants.measure_lawn);
-		//currentCreateState.set('measure_lawn');
 	},
 	'click #build-lawn-accept': function () {
 		ViewStack.pushTarget(ViewTargetType.createLayoutLawn);

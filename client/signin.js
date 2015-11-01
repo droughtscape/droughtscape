@@ -89,7 +89,10 @@ SignInUtils = (function () {
 			console.log('getAdminRights:adminRights is defined: ' + Session.get(Constants.adminRights));
 		}
 	};
-	
+	/**
+	 * @function - insertAdmin - add admin account to server
+	 * @param newAdmin
+	 */
 	var insertAdmin = function insertAdmin (newAdmin) {
 		hasAdminRights(function (isAdmin) {
 			if (isAdmin) {
@@ -114,10 +117,8 @@ Template.signin.events({
 		// Clear all targets, go to splash on all dismisses
 		SignInUtils.clearRenderViewTargets();
 		ViewStack.pushTarget(ViewTargetType.home);
-		//Session.set(Constants.renderView, Constants.splash);
 	},
 	'click #at-btn': function () {
 		ViewStack.pushTarget(SignInUtils.popRenderViewTarget());
-		//Session.set(Constants.renderView, SignInUtils.popRenderViewTarget());
 	}
 });

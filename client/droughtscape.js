@@ -24,7 +24,7 @@
 Router.map(function () {
 	this.route(Constants.home, {path: '/'});
 });
-Session.setDefault(Constants.navBar, Constants.navBar);
+//Session.setDefault(Constants.navBar, Constants.navBar);
 // The navBarConfig Session variable controls contents of the navBar
 // => see navconfig.js
 //Session.setDefault(Constants.navBarConfig, Constants.home);
@@ -35,7 +35,6 @@ Session.setDefault(Constants.rightBar, Constants.rightBar);
 //Session.setDefault(Constants.rightBarConfig, Constants.home);
 // The renderView Session variable controls what the render area template is currently
 // set to.  We use this to avoid routing.
-//Session.setDefault(Constants.renderView, Constants.splash);
 // Admin rights of logged in user
 Session.setDefault(Constants.adminRights, undefined);
 Session.setDefault('currentSelection', false);
@@ -104,7 +103,8 @@ Template.home.onDestroyed(function () {
 
 Template.home.helpers({
 	dynamicNavBar: function () {
-		return Session.get(Constants.navBar);
+		return Constants.navBar;
+		//return Session.get(Constants.navBar);
 	},
 	dynamicTemplate: function () {
 		// Contents of session variable renderView will 
@@ -119,7 +119,8 @@ Template.home.helpers({
 		// or the empty string to remove the rightBar from that context.
 		// The exact buttons on the bar are programmed via the rightBarConfig
 		// global Session variable and that is handled within the right bar component
-		return Session.get(Constants.rightBar);
+		return Constants.rightBar;
+		//return Session.get(Constants.rightBar);
 	}
 });
 

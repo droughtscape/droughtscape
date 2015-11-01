@@ -91,9 +91,6 @@ Template.navBar.events({
 	'click .brand-logo': function () {
 		// Return to home
 		ViewStack.pushTarget(ViewTargetType.home);
-		//ViewStack.clearState();
-		//ViewStack.pushState(new ViewState(Constants.splash, Constants.home, Constants.home));
-		//Session.set(Constants.renderView, Constants.splash);
 		// dispatch a resize event to force rendering of the home page
 		// Even if size doesn't change
 		window.dispatchEvent(new Event('resize'));
@@ -101,7 +98,6 @@ Template.navBar.events({
 	'click .signin-button': function () {
 		if (!Meteor.userId()) {
 			ViewStack.pushTarget(ViewTargetType.signIn);
-			//Session.set(Constants.renderView, Constants.signin);
 		}
 		else {
 			AccountsTemplates.logout();
@@ -115,14 +111,11 @@ Template.navBar.events({
 		case 'droughtscapelogo':
 			// Return to start, clear state
 			ViewStack.pushTarget(ViewTargetType.home);
-			//ViewStack.clearState();
-			//ViewStack.pushState(new ViewState(Constants.renderView, Constants.home, Constants.home));
 			break;
 		case 'at-nav-item':
 		case 'at-nav-button':
 			if (!Meteor.userId()) {
 				ViewStack.pushTarget(ViewTargetType.signIn);
-				//Session.set(Constants.renderView, Constants.signin);
 			}
 			else {
 				AccountsTemplates.logout();
@@ -133,9 +126,6 @@ Template.navBar.events({
 			let target = NavConfig.getNavBarTarget(currentViewState.navBar, id);
 			console.log('navBar target: ' + target);
 			ViewStack.pushTarget(target);
-			//if (NavConfig.validateNavBarId(Session.get(Constants.navBarConfig), id)) {
-			//	Session.set(Constants.renderView, event.currentTarget.id);
-			//}
 			break;
 		}
 		// dispatch a resize event to force rendering of the home page
