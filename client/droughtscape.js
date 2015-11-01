@@ -29,7 +29,7 @@ Router.map(function () {
 // => see navconfig.js
 //Session.setDefault(Constants.navBarConfig, Constants.home);
 // The rightBar Session variable controls presence or absence of the rightBar
-Session.setDefault(Constants.rightBar, Constants.rightBar);
+//Session.setDefault(Constants.rightBar, Constants.rightBar);
 // The rightBarConfig Session variable controls contents of the rightBar (if present)
 // => see navconfig.js
 //Session.setDefault(Constants.rightBarConfig, Constants.home);
