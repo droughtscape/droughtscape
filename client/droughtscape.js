@@ -103,8 +103,7 @@ Template.home.onDestroyed(function () {
 
 Template.home.helpers({
 	dynamicNavBar: function () {
-		return Constants.navBar;
-		//return Session.get(Constants.navBar);
+		return Constants.nav_bar;
 	},
 	dynamicTemplate: function () {
 		// Contents of session variable renderView will 

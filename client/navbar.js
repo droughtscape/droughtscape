@@ -29,7 +29,7 @@ Object.size = function (obj) {
 	return size;
 };
 
-Template.navBar.onRendered(function () {
+Template.nav_bar.onRendered(function () {
 	// if there is a signin macro button, size it
 	var signin = document.getElementById('at-nav-button');
 	if (signin) {
@@ -42,8 +42,8 @@ Template.navBar.onRendered(function () {
 
 // From useraccounts_materialize.js
 // Simply 'inherits' helpers from AccountsTemplates
-Template.atNavItem.helpers(AccountsTemplates.atNavButtonHelpers);  
-Template.atNavItem.helpers({
+Template.at_nav_item.helpers(AccountsTemplates.atNavButtonHelpers);  
+Template.at_nav_item.helpers({
 	text: function(){
 		var key = Meteor.userId() ? AccountsTemplates.texts.navSignOut : AccountsTemplates.texts.navSignIn;
 		var text = T9n.get(key, markIfMissing=false);
@@ -59,9 +59,9 @@ Template.atNavItem.helpers({
 });
 
 // Simply 'inherits' events from AccountsTemplates
-Template.atNavItem.events(AccountsTemplates.atNavButtonEvents);
+Template.at_nav_item.events(AccountsTemplates.atNavButtonEvents);
 
-Template.navBar.helpers({
+Template.nav_bar.helpers({
 	navButtons: function () {
 		// The nav bar is a singleton per "page" so we use a global
 		// Session variable: navBarConfig which can by dynamically
@@ -75,9 +75,9 @@ var _parseEventId = function _parseEventId (eventId) {
 	return {action: substrings[0], topic: substrings[1]};
 };
 
-Template.navBar.events({
+Template.nav_bar.events({
 	'click .action-button': function (event) {
-		console.log('actionButton: ' + event.currentTarget.id);
+		console.log('action_button: ' + event.currentTarget.id);
 		// event encodes message and target MBus
 		let {action, topic} = _parseEventId(event.currentTarget.id);
 		MBus.publish(topic, new Message.Action(action));
@@ -105,7 +105,7 @@ Template.navBar.events({
 	},
 	// We follow the convention that the currentTarget.id is the renderView target template
 	'click .nav-button': function (event) {
-		console.log('Template.navBar.events: ' + event);
+		console.log('Template.nav_bar.events: ' + event);
 		var id = event.currentTarget.id;
 		switch (id) {
 		case 'droughtscapelogo':
