@@ -119,7 +119,7 @@ Template.home.helpers({
 		// or the empty string to remove the rightBar from that context.
 		// The exact buttons on the bar are programmed via the rightBarConfig
 		// global Session variable and that is handled within the right bar component
-		return Constants.rightBar;
+		return Constants.right_bar;
 		//return Session.get(Constants.rightBar);
 	}
 });

@@ -1,9 +1,9 @@
-<template name="rightBar">
+<template name="right_bar">
     <div id="rightNav" class="div2 col s2 brown lighten-4">
         <hr>
 		{{#each rightButtons}}
             <div class="row">
-				{{> rightButton}}
+				{{> right_button}}
             </div>
             <hr>
 		{{/each}}
@@ -29,7 +29,7 @@
     </div>
 </template>
 
-<template name="rightButton">
+<template name="right_button">
     <a id="{{name}}" class="col s12 waves-effect waves-light btn-large {{disabled}}">
     <i class={{icon}}></i>{{friendlyName}}</a>
 </template>
