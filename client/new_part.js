@@ -67,14 +67,12 @@ Template.new_part.helpers({
 // The event comes from a subtemplate part_type
 Template.new_part.events({
 	'click #cancel-part': function () {
-		var val = Utils.getRadioVal(document.getElementById('parts-select'), 'part-type');
-		console.log('dismiss-part: ' + val);
-		Session.set(Constants.renderView, Constants.parts);
+		console.log('dismiss-part: ' + partMode.get());
+		ViewStack.popState(true);
 	},
 	'click #create-part': function () {
-		var val = Utils.getRadioVal(document.getElementById('parts-select'), 'part-type');
-		console.log('create-part: ' + val);
-		Session.set(Constants.renderView, Constants.parts);
+		console.log('create-part: ' + partMode.get());
+		ViewStack.popState(true);
 	}
 });
 

@@ -42,7 +42,7 @@ Template.create.onCreated(function(){
 	console.log('history.state: ' + history.state);
 	// On initial entry reset the state to shape_lawn
 	if (Meteor.userId()) {
-		Session.set(Constants.renderView, Constants.shape_lawn);
+		ViewStack.pushTarget(ViewTargetType.createShapeLawn);
 	}
 });
 
@@ -61,7 +61,6 @@ Template.create.events({
 	'click #signin': function () {
 		SignInUtils.pushRenderViewTarget(ViewTargetType.create);
 		ViewStack.pushTarget(ViewTargetType.signIn);
-		//Session.set(Constants.renderView, Constants.signin);
 	}
 });
 

@@ -27,15 +27,15 @@ Router.map(function () {
 Session.setDefault(Constants.navBar, Constants.navBar);
 // The navBarConfig Session variable controls contents of the navBar
 // => see navconfig.js
-Session.setDefault(Constants.navBarConfig, Constants.home);
+//Session.setDefault(Constants.navBarConfig, Constants.home);
 // The rightBar Session variable controls presence or absence of the rightBar
 Session.setDefault(Constants.rightBar, Constants.rightBar);
 // The rightBarConfig Session variable controls contents of the rightBar (if present)
 // => see navconfig.js
-Session.setDefault(Constants.rightBarConfig, Constants.home);
+//Session.setDefault(Constants.rightBarConfig, Constants.home);
 // The renderView Session variable controls what the render area template is currently
 // set to.  We use this to avoid routing.
-Session.setDefault(Constants.renderView, Constants.splash);
+//Session.setDefault(Constants.renderView, Constants.splash);
 // Admin rights of logged in user
 Session.setDefault(Constants.adminRights, undefined);
 Session.setDefault('currentSelection', false);
@@ -47,6 +47,8 @@ LawnsManager.initLawnConstants();
 
 // init the targets for ViewStack
 ViewStack.initTargets();
+
+ViewStack.pushTarget(ViewTargetType.home);
 
 /**
  * _renderContent function

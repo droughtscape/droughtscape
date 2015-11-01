@@ -53,30 +53,31 @@ ViewStack = (function () {
 	
 	var _initTargets = function _initTargets () {
 		// Have to init in a function to avoid load order issues
-		_targets[ViewTargetType.about] = new ViewState(Constants.about, Constants.home, Constants.home, false);
-		_targets[ViewTargetType.home] = new ViewState(Constants.splash, Constants.home, Constants.home, true);
-		_targets[ViewTargetType.signIn] = new ViewState(Constants.signin, Constants.home, Constants.home, false);
-		_targets[ViewTargetType.create] = new ViewState(Constants.create, Constants.home, Constants.none, false);
-		_targets[ViewTargetType.createMeasureLawn] = new ViewState(Constants.measure_lawn, Constants.home, Constants.none, false);
-		_targets[ViewTargetType.createBuildLawn] = new ViewState(Constants.build_lawn, Constants.create, Constants.none, false);
-		_targets[ViewTargetType.createLayoutLawn] = new ViewState(Constants.layout_lawn, Constants.layout, Constants.layout_lawn, true);
-		_targets[ViewTargetType.createLayoutSettings] = new ViewState(Constants.layout_settings, Constants.create, Constants.none, false);
-		_targets[ViewTargetType.createRenderLawn] = new ViewState(Constants.render_lawn, Constants.create, Constants.render_lawn, true);
-		_targets[ViewTargetType.createSelectParts] = new ViewState(Constants.select_parts, Constants.create, Constants.select_parts, false);
-		_targets[ViewTargetType.createFinishLawn] = new ViewState(Constants.finish_lawn, Constants.home, Constants.finish_lawn, false);
-		_targets[ViewTargetType.createInfoPart] = new ViewState(Constants.info_part, Constants.create, Constants.create_info_item, false);
-		_targets[ViewTargetType.infoLawn] = new ViewState(Constants.info_lawn, Constants.home, Constants.none, false);
-		_targets[ViewTargetType.infoPart] = new ViewState(Constants.info_part, Constants.home, Constants.part_info_item, false);
-		_targets[ViewTargetType.newPart] = new ViewState(Constants.new_part, Constants.home, Constants.parts, false);
-		_targets[ViewTargetType.parts] = new ViewState(Constants.parts, Constants.home, Constants.parts, false);
-		_targets[ViewTargetType.lawns] = new ViewState(Constants.lawns, Constants.home, Constants.lawns, false);
-		_targets[ViewTargetType.personalize] = new ViewState(Constants.personalize, Constants.home, Constants.home, false);
-		_targets[ViewTargetType.community] = new ViewState(Constants.community, Constants.home, Constants.home, false);
-		_targets[ViewTargetType.rebates] = new ViewState(Constants.rebates, Constants.home, Constants.home, false);
-		_targets[ViewTargetType.waterCalc] = new ViewState(Constants.watercalc, Constants.home, Constants.none, false);
-		_targets[ViewTargetType.waterSmart] = new ViewState(Constants.watersmart, Constants.home, Constants.none, false);
-		_targets[ViewTargetType.favorites] = new ViewState(Constants.favorites, Constants.home, Constants.home, false);
-		_targets[ViewTargetType.partSelectParts] = new ViewState(Constants.select_parts, Constants.home, Constants.new_parts, false);
+		_targets[ViewTargetType.about] 					= new ViewState(Constants.about, Constants.home, Constants.home, false);
+		_targets[ViewTargetType.home] 					= new ViewState(Constants.splash, Constants.home, Constants.home, true);
+		_targets[ViewTargetType.signIn] 				= new ViewState(Constants.signin, Constants.home, Constants.home, false);
+		_targets[ViewTargetType.create] 				= new ViewState(Constants.create, Constants.home, Constants.none, false);
+		_targets[ViewTargetType.createShapeLawn] 		= new ViewState(Constants.shape_lawn, Constants.home, Constants.none, false);
+		_targets[ViewTargetType.createMeasureLawn] 		= new ViewState(Constants.measure_lawn, Constants.home, Constants.none, false);
+		_targets[ViewTargetType.createBuildLawn] 		= new ViewState(Constants.build_lawn, Constants.create, Constants.none, false);
+		_targets[ViewTargetType.createLayoutLawn] 		= new ViewState(Constants.layout_lawn, Constants.layout, Constants.layout_lawn, true);
+		_targets[ViewTargetType.createLayoutSettings] 	= new ViewState(Constants.layout_settings, Constants.create, Constants.none, false);
+		_targets[ViewTargetType.createRenderLawn] 		= new ViewState(Constants.render_lawn, Constants.create, Constants.render_lawn, true);
+		_targets[ViewTargetType.createSelectParts] 		= new ViewState(Constants.select_parts, Constants.create, Constants.select_parts, false);
+		_targets[ViewTargetType.createFinishLawn] 		= new ViewState(Constants.finish_lawn, Constants.home, Constants.finish_lawn, false);
+		_targets[ViewTargetType.createInfoPart] 		= new ViewState(Constants.info_part, Constants.create, Constants.create_info_item, false);
+		_targets[ViewTargetType.infoLawn] 				= new ViewState(Constants.info_lawn, Constants.home, Constants.none, false);
+		_targets[ViewTargetType.infoPart] 				= new ViewState(Constants.info_part, Constants.home, Constants.part_info_item, false);
+		_targets[ViewTargetType.newPart] 				= new ViewState(Constants.new_part, Constants.home, Constants.parts, false);
+		_targets[ViewTargetType.parts] 					= new ViewState(Constants.parts, Constants.home, Constants.parts, false);
+		_targets[ViewTargetType.lawns] 					= new ViewState(Constants.lawns, Constants.home, Constants.lawns, false);
+		_targets[ViewTargetType.personalize] 			= new ViewState(Constants.personalize, Constants.home, Constants.home, false);
+		_targets[ViewTargetType.community] 				= new ViewState(Constants.community, Constants.home, Constants.home, false);
+		_targets[ViewTargetType.rebates] 				= new ViewState(Constants.rebates, Constants.home, Constants.home, false);
+		_targets[ViewTargetType.waterCalc] 				= new ViewState(Constants.watercalc, Constants.home, Constants.none, false);
+		_targets[ViewTargetType.waterSmart] 			= new ViewState(Constants.watersmart, Constants.home, Constants.none, false);
+		_targets[ViewTargetType.favorites] 				= new ViewState(Constants.favorites, Constants.home, Constants.home, false);
+		_targets[ViewTargetType.partSelectParts] 		= new ViewState(Constants.select_parts, Constants.home, Constants.new_parts, false);
 
 	};
 	

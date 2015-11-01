@@ -123,7 +123,8 @@ Template.measure_lawn.events({
 		CreateLawnData.lawnData.name = document.getElementById('lawn_name').value;
 	},
 	'click #open-lawn': function () {
-		Session.set(Constants.renderView, Constants.favorites);
+		ViewStack.pushTarget(ViewTargetType.favorites);
+		//Session.set(Constants.renderView, Constants.favorites);
 	},
 	'click .unit-select': function (e) {
 		var clickedButton = e.currentTarget;
