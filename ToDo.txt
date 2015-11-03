@@ -1,3 +1,4 @@
+- Clean up constants
 - Make lawn template dynamic
 - Should there be a BACK button on the right bar?
 - BUG => parts -> my parts and create -> layout -> my parts share radio button context.  Might be ok.

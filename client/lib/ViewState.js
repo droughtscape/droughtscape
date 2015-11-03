@@ -53,31 +53,31 @@ ViewStack = (function () {
 	
 	var _initTargets = function _initTargets () {
 		// Have to init in a function to avoid load order issues
-		_targets[ViewTargetType.about] 					= new ViewState(Constants.about, Constants.home, Constants.home, false);
-		_targets[ViewTargetType.home] 					= new ViewState(Constants.splash, Constants.home, Constants.home, true);
-		_targets[ViewTargetType.signIn] 				= new ViewState(Constants.signin, Constants.home, Constants.home, false);
-		_targets[ViewTargetType.create] 				= new ViewState(Constants.create, Constants.home, Constants.none, false);
-		_targets[ViewTargetType.createShapeLawn] 		= new ViewState(Constants.shape_lawn, Constants.home, Constants.none, false);
-		_targets[ViewTargetType.createMeasureLawn] 		= new ViewState(Constants.measure_lawn, Constants.home, Constants.none, false);
-		_targets[ViewTargetType.createBuildLawn] 		= new ViewState(Constants.build_lawn, Constants.create, Constants.none, false);
-		_targets[ViewTargetType.createLayoutLawn] 		= new ViewState(Constants.layout_lawn, Constants.layout, Constants.layout_lawn, true);
-		_targets[ViewTargetType.createLayoutSettings] 	= new ViewState(Constants.layout_settings, Constants.create, Constants.none, false);
-		_targets[ViewTargetType.createRenderLawn] 		= new ViewState(Constants.render_lawn, Constants.render, Constants.render_lawn, true);
-		_targets[ViewTargetType.createSelectParts] 		= new ViewState(Constants.select_parts, Constants.create, Constants.select_parts, false);
-		_targets[ViewTargetType.createFinishLawn] 		= new ViewState(Constants.finish_lawn, Constants.home, Constants.finish_lawn, false);
-		_targets[ViewTargetType.createInfoPart] 		= new ViewState(Constants.info_part, Constants.create, Constants.create_info_item, false);
-		_targets[ViewTargetType.infoLawn] 				= new ViewState(Constants.info_lawn, Constants.home, Constants.none, false);
-		_targets[ViewTargetType.infoPart] 				= new ViewState(Constants.info_part, Constants.home, Constants.part_info_item, false);
-		_targets[ViewTargetType.newPart] 				= new ViewState(Constants.new_part, Constants.home, Constants.parts, false);
-		_targets[ViewTargetType.parts] 					= new ViewState(Constants.parts, Constants.home, Constants.parts, false);
-		_targets[ViewTargetType.lawns] 					= new ViewState(Constants.lawns, Constants.home, Constants.lawns, false);
-		_targets[ViewTargetType.personalize] 			= new ViewState(Constants.personalize, Constants.home, Constants.home, false);
-		_targets[ViewTargetType.community] 				= new ViewState(Constants.community, Constants.home, Constants.home, false);
-		_targets[ViewTargetType.rebates] 				= new ViewState(Constants.rebates, Constants.home, Constants.home, false);
-		_targets[ViewTargetType.waterCalc] 				= new ViewState(Constants.watercalc, Constants.home, Constants.none, false);
-		_targets[ViewTargetType.waterSmart] 			= new ViewState(Constants.watersmart, Constants.home, Constants.none, false);
-		_targets[ViewTargetType.favorites] 				= new ViewState(Constants.favorites, Constants.home, Constants.home, false);
-		_targets[ViewTargetType.partSelectParts] 		= new ViewState(Constants.select_parts, Constants.home, Constants.new_parts, false);
+		_targets[ViewTargetType.about] 					= new ViewState(RenderViewType.about, NavBarType.home, RightBarType.home, false);
+		_targets[ViewTargetType.home] 					= new ViewState(RenderViewType.splash, NavBarType.home, RightBarType.home, true);
+		_targets[ViewTargetType.signIn] 				= new ViewState(RenderViewType.signin, NavBarType.home, RightBarType.home, false);
+		_targets[ViewTargetType.create] 				= new ViewState(RenderViewType.create, NavBarType.home, RightBarType.none, false);
+		_targets[ViewTargetType.createShapeLawn] 		= new ViewState(RenderViewType.shape_lawn, NavBarType.home, RightBarType.none, false);
+		_targets[ViewTargetType.createMeasureLawn] 		= new ViewState(RenderViewType.measure_lawn, NavBarType.home, RightBarType.none, false);
+		_targets[ViewTargetType.createBuildLawn] 		= new ViewState(RenderViewType.build_lawn, NavBarType.create, RightBarType.none, false);
+		_targets[ViewTargetType.createLayoutLawn] 		= new ViewState(RenderViewType.layout_lawn, NavBarType.layout, RightBarType.layout_lawn, true);
+		_targets[ViewTargetType.createLayoutSettings] 	= new ViewState(RenderViewType.layout_settings, NavBarType.create, RightBarType.none, false);
+		_targets[ViewTargetType.createRenderLawn] 		= new ViewState(RenderViewType.render_lawn, NavBarType.render, RightBarType.render_lawn, true);
+		_targets[ViewTargetType.createSelectParts] 		= new ViewState(RenderViewType.select_parts, NavBarType.create, RightBarType.select_parts, false);
+		_targets[ViewTargetType.createFinishLawn] 		= new ViewState(RenderViewType.finish_lawn, NavBarType.home, RightBarType.finish_lawn, false);
+		_targets[ViewTargetType.createInfoPart] 		= new ViewState(RenderViewType.info_part, NavBarType.create, RightBarType.create_info_item, false);
+		_targets[ViewTargetType.infoLawn] 				= new ViewState(RenderViewType.info_lawn, NavBarType.home, RightBarType.none, false);
+		_targets[ViewTargetType.infoPart] 				= new ViewState(RenderViewType.info_part, NavBarType.home, RightBarType.part_info_item, false);
+		_targets[ViewTargetType.newPart] 				= new ViewState(RenderViewType.new_part, NavBarType.home, RightBarType.parts, false);
+		_targets[ViewTargetType.parts] 					= new ViewState(RenderViewType.parts, NavBarType.home, RightBarType.parts, false);
+		_targets[ViewTargetType.lawns] 					= new ViewState(RenderViewType.lawns, NavBarType.home, RightBarType.lawns, false);
+		_targets[ViewTargetType.personalize] 			= new ViewState(RenderViewType.personalize, NavBarType.home, RightBarType.home, false);
+		_targets[ViewTargetType.community] 				= new ViewState(RenderViewType.community, NavBarType.home, RightBarType.home, false);
+		_targets[ViewTargetType.rebates] 				= new ViewState(RenderViewType.rebates, NavBarType.home, RightBarType.home, false);
+		_targets[ViewTargetType.waterCalc] 				= new ViewState(RenderViewType.watercalc, NavBarType.home, RightBarType.none, false);
+		_targets[ViewTargetType.waterSmart] 			= new ViewState(RenderViewType.watersmart, NavBarType.home, RightBarType.none, false);
+		_targets[ViewTargetType.favorites] 				= new ViewState(RenderViewType.favorites, NavBarType.home, RightBarType.home, false);
+		_targets[ViewTargetType.partSelectParts] 		= new ViewState(RenderViewType.select_parts, NavBarType.home, RightBarType.new_parts, false);
 
 	};
 	

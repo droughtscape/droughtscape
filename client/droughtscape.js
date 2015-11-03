@@ -93,8 +93,7 @@ Template.home.onCreated(function () {
 	window.onbeforeunload = function () {
 		return 'Your work will be lost';
 	};
-	let viewState = new ViewState(Constants.splash, Constants.home, Constants.home);
-	ViewStack.pushState(viewState);
+	ViewStack.pushTarget(ViewTargetType.home);
 });
 
 Template.home.onDestroyed(function () {
