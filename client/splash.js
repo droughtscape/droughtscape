@@ -57,6 +57,10 @@ Template.splash.onCreated(function () {
 });
 
 Template.splash.onDestroyed(function () {
+	if (timer) {
+		clearInterval(timer);
+		firstSlide = true;
+	}
 });
 
 Template.splash.helpers({
