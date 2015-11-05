@@ -24,17 +24,13 @@
 Router.map(function () {
 	this.route(Constants.home, {path: '/'});
 });
-//Session.setDefault(Constants.navBar, Constants.navBar);
 // The navBarConfig Session variable controls contents of the navBar
 // => see navconfig.js
-//Session.setDefault(Constants.navBarConfig, Constants.home);
 // The rightBar Session variable controls presence or absence of the rightBar
-//Session.setDefault(Constants.rightBar, Constants.rightBar);
 // The rightBarConfig Session variable controls contents of the rightBar (if present)
-// => see navconfig.js
-//Session.setDefault(Constants.rightBarConfig, Constants.home);
 // The renderView Session variable controls what the render area template is currently
 // set to.  We use this to avoid routing.
+// => see ViewState.js
 // Admin rights of logged in user
 Session.setDefault(Constants.adminRights, undefined);
 Session.setDefault('currentSelection', false);
@@ -118,7 +114,6 @@ Template.home.helpers({
 		// The exact buttons on the bar are programmed via the rightBarConfig
 		// global Session variable and that is handled within the right bar component
 		return Constants.right_bar;
-		//return Session.get(Constants.rightBar);
 	}
 });
 

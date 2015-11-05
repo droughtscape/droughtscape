@@ -209,7 +209,6 @@ Template.layout_lawn.onCreated(function () {
 	window.addEventListener('resize', _handleResizeEvent);
 	
 	// Test code
-	//CreateLawnData.createLayoutPart(testAbstractPart);
 	unsubscribe = MBus.subscribe(Constants.mbus_layout, _handleLayoutMessages);
 });
 
