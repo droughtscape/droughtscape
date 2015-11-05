@@ -21,8 +21,47 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+var carouselId = 'splash-item-carousel';
+var carouselIdElt = '#' + carouselId;
+Session.setDefault('splashItem', '//c1.staticflickr.com/9/8812/17426760895_a77bdd6c09_h.jpg');
+Session.setDefault('splashId', 'splash-1');
+var timer;
+
 Template.splash.onCreated(function () {
+	// Load up the carousel
+	let splashLawns = SplashManager.getSplashLawns();
+	if (splashLawns) {
+		let splashIdx = 0;
+		Meteor.defer(function () {
+			//MBus.publish(Constants.mbus_carousel_add, new Message.Add(carouselIdElt, '100%', '100%', splashLawns));
+			timer = setInterval(function () {
+				if (splashLawns.length > 1) {
+					Session.set('splashItem', splashLawns[splashIdx].url);
+					Session.set('splashId', splashLawns[splashIdx].id);
+					splashIdx++;
+					if (splashIdx == splashLawns.length) {
+						splashIdx = 0;
+					}
+				}
+			}, 5000);
+		})
+	}
 });
 
 Template.splash.onDestroyed(function () {
+});
+
+Template.splash.helpers({
+	carouselId: function () {
+		return carouselId;
+	},
+	splashId: function () {
+		return Session.get('splashId');
+	},
+	splashItem: function () {
+		return Session.get('splashItem');
+	},
+	splashMode: function () {
+		return {topic: Constants.mbus_splashCarousel, html: carouselIdElt, type: 'splashItem', subType: null}
+	}
 });
