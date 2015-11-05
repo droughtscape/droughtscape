@@ -24,8 +24,9 @@
 var carouselId = 'splash-item-carousel';
 var carouselIdElt = '#' + carouselId;
 Session.setDefault('splashItem', '//c1.staticflickr.com/9/8812/17426760895_a77bdd6c09_h.jpg');
-Session.setDefault('splashId', 'splash-1');
+//Session.setDefault('splashId', 'splash-1');
 var timer;
+var firstSlide = true;
 
 Template.splash.onCreated(function () {
 	// Load up the carousel
@@ -42,7 +43,8 @@ Template.splash.onCreated(function () {
 				timer = setInterval(function () {
 					if (splashLawns.length > 1) {
 						Session.set('splashItem', splashLawns[splashIdx].url);
-						Session.set('splashId', splashLawns[splashIdx].id);
+						//Session.set('splashId', splashLawns[splashIdx].id);
+						SplashManager.bringToFront(splashLawns[splashIdx].id);
 						splashIdx++;
 						if (splashIdx == splashLawns.length) {
 							splashIdx = 0;
@@ -61,36 +63,26 @@ Template.splash.helpers({
 	carouselId: function () {
 		return carouselId;
 	},
-	splashId: function () {
-		return Session.get('splashId');
+	opaque: function () {
+		if (firstSlide) {
+			firstSlide = false;
+			return 'opaque';
+		}
+		else {
+			return '';
+		}
+	},
+	splashLawns: function () {
+		return SplashManager.getSplashLawns();
 	},
 	splashItem: function () {
 		return Session.get('splashItem');
 	},
-	splashMode: function () {
-		return {topic: Constants.mbus_splashCarousel, html: carouselIdElt, type: 'splashItem', subType: null}
-	},
+	//splashMode: function () {
+	//	return {topic: Constants.mbus_splashCarousel, html: carouselIdElt, type: 'splashItem', subType: null}
+	//},
 	items: function () {
 		return [{pic: 'custom.png', email: 'junk@gmail.com', fullname: 'joe schmo'}];
 	}
 });
 
-Template.splash.animations({
-	".item": {
-		container: ".container-items", // container of the ".item" elements
-		in: "animated fast fadeIn", // class applied to inserted elements (animations courtesy of animate.css)
-		out: "animated fast fadeOut", // class applied to removed elements
-		inCallback: function () {
-			var title = $(this).find(".title").text();
-			console.log("Inserted " + title + " to the DOM");
-
-		},
-		outCallback: function () {
-			var title = $(this).find(".title").text();
-			console.log("Removed " + title + " from the DOM");
-		},
-		animateInitial: true, // animate the elements already rendered
-		animateInitialStep: 200, // Step between animations for each initial item
-		animateInitialDelay: 500 // Delay before the initial items animate
-	}
-});
