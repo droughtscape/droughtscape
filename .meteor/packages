@@ -10,7 +10,6 @@ iron:router
 accounts-password
 limemakers:three
 reactive-var
-richsilv:owl-carousel
 useraccounts:materialize
 udondan:slick
 jquery
@@ -30,4 +29,3 @@ ejson
 spacebars
 check
 ecmascript
-gwendall:template-animations

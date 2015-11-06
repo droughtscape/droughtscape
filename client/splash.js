@@ -21,42 +21,36 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-var carouselId = 'splash-item-carousel';
-var carouselIdElt = '#' + carouselId;
-Session.setDefault('splashItem', '//c1.staticflickr.com/9/8812/17426760895_a77bdd6c09_h.jpg');
-//Session.setDefault('splashId', 'splash-1');
 var timer;
+/**
+ * firstSlide defaults to true, one time flag per view activation, ensures the 
+ * initial splash is immediately visible.
+ * @type {boolean}
+ */
 var firstSlide = true;
 
 Template.splash.onCreated(function () {
-	// Load up the carousel
+	// Load up the splashLawns
 	let splashLawns = SplashManager.getSplashLawns();
 	if (splashLawns) {
 		let splashIdx = 0;
-		let testSlick = false;
 		Meteor.defer(function () {
-			if (testSlick) {
-				MBus.publish(Constants.mbus_carousel_add, new Message.Add(carouselIdElt, '100%', '100%', splashLawns));
-				
-			}
-			else {
-				timer = setInterval(function () {
-					if (splashLawns.length > 1) {
-						Session.set('splashItem', splashLawns[splashIdx].url);
-						//Session.set('splashId', splashLawns[splashIdx].id);
-						SplashManager.bringToFront(splashLawns[splashIdx].id);
-						splashIdx++;
-						if (splashIdx == splashLawns.length) {
-							splashIdx = 0;
-						}
+			// This interval will switch images every 5 seconds
+			timer = setInterval(function () {
+				if (splashLawns.length > 1) {
+					SplashManager.bringToFront(splashLawns[splashIdx].id);
+					splashIdx++;
+					if (splashIdx == splashLawns.length) {
+						splashIdx = 0;
 					}
-				}, 5000);
-			}
+				}
+			}, 5000);
 		})
 	}
 });
 
 Template.splash.onDestroyed(function () {
+	// When leaving the view, if interval active, clear it, reset firstSlide
 	if (timer) {
 		clearInterval(timer);
 		firstSlide = true;
@@ -64,9 +58,6 @@ Template.splash.onDestroyed(function () {
 });
 
 Template.splash.helpers({
-	carouselId: function () {
-		return carouselId;
-	},
 	opaque: function () {
 		if (firstSlide) {
 			firstSlide = false;
@@ -78,15 +69,6 @@ Template.splash.helpers({
 	},
 	splashLawns: function () {
 		return SplashManager.getSplashLawns();
-	},
-	splashItem: function () {
-		return Session.get('splashItem');
-	},
-	//splashMode: function () {
-	//	return {topic: Constants.mbus_splashCarousel, html: carouselIdElt, type: 'splashItem', subType: null}
-	//},
-	items: function () {
-		return [{pic: 'custom.png', email: 'junk@gmail.com', fullname: 'joe schmo'}];
 	}
 });
 

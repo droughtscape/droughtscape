@@ -1,12 +1,8 @@
 <template name="splash">
-	<div class="renderComponent">
+    <div class="renderComponent">
         {{#each splashLawns}}
-                <img id="{{id}}" src="{{url}}" class="splashImage {{opaque}}" style="position: absolute; top: 0; left: 0;">
+            <img id="{{id}}" src="{{url}}" class="splashImage {{opaque}}" style="position: absolute; top: 0; left: 0;">
         {{/each}}
     </div>
-</template>
-
-<template name="splashElement">
-    <img id={{id}} class="splashImage" src={{src}}>
 </template>
 
