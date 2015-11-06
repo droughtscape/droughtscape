@@ -1,4 +1,3 @@
-- Clean up constants
 - Make lawn template dynamic
 - Should there be a BACK button on the right bar?
 - BUG => parts -> my parts and create -> layout -> my parts share radio button context.  Might be ok.
@@ -39,6 +38,7 @@
 		change the border highlight.
 		=> Temp fix
 		
++ Clean up constants
 + Will lawns fit under AbstractParts or will we generate AbstractLawns => DOH, it will be a separate type: AbstractLawn
 + Create test all_parts, my_parts with typed AbstractParts
 + Distinguish between Part-Info and Lawn-Info since they look at separate collections
