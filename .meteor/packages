@@ -10,7 +10,6 @@ iron:router
 accounts-password
 limemakers:three
 reactive-var
-richsilv:owl-carousel
 useraccounts:materialize
 udondan:slick
 jquery

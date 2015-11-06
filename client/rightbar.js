@@ -54,16 +54,16 @@ var _renderRightBar = function _renderRightBar () {
  */
 var _handleResizeEvent = Utils.createDeferredFunction(_renderRightBar);
 
-Template.rightBar.onCreated(function () {
+Template.right_bar.onCreated(function () {
 	window.addEventListener('resize', _handleResizeEvent);
 });
 
-Template.rightBar.onDestroyed(function () {
+Template.right_bar.onDestroyed(function () {
 	window.removeEventListener('resize', _handleResizeEvent);
 });
 
-Template.rightBar.onRendered(function () {
-		console.log('rightBar.onRendered');
+Template.right_bar.onRendered(function () {
+		console.log('right_bar.onRendered');
 		_renderRightBar();
 	}
 );
@@ -84,7 +84,7 @@ var _checkInfoEnable = function _checkInfoEnable (rightButtons) {
 	}
 };
 
-Template.rightBar.helpers({
+Template.right_bar.helpers({
 	dynamicTemplate: function () {
 		// Contents of session variable renderView will 
 		// fill the content area
@@ -103,16 +103,16 @@ Template.rightBar.helpers({
 	}
 });
 
-Template.rightBar.events({
+Template.right_bar.events({
 	// We follow the convention that the currentTarget.id is the renderView target template
 	'click': function (event) {
-		console.log('Template.rightBar.events: ' + event);
+		console.log('Template.right_bar.events: ' + event);
 		// See if click item is active
 		if (!this.hasOwnProperty('disabled') || this.disabled !== 'disabled') {
 			var id = event.currentTarget.id;
 			switch (id) {
 			case 'about':
-				ViewStack.pushTarget(Constants.vsAbout);
+				ViewStack.pushTarget(ViewTargetType.about);
 				break;
 			default:
 				let currentViewState = ViewStack.peekState();

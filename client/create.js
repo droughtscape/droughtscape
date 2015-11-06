@@ -42,7 +42,7 @@ Template.create.onCreated(function(){
 	console.log('history.state: ' + history.state);
 	// On initial entry reset the state to shape_lawn
 	if (Meteor.userId()) {
-		Session.set(Constants.renderView, Constants.shape_lawn);
+		ViewStack.pushTarget(ViewTargetType.createShapeLawn);
 	}
 });
 
@@ -59,9 +59,8 @@ Template.create.helpers({
 
 Template.create.events({
 	'click #signin': function () {
-		SignInUtils.pushRenderViewTarget(Constants.vsCreate);
-		ViewStack.pushTarget(Constants.vsSignIn);
-		//Session.set(Constants.renderView, Constants.signin);
+		SignInUtils.pushRenderViewTarget(ViewTargetType.create);
+		ViewStack.pushTarget(ViewTargetType.signIn);
 	}
 });
 
@@ -121,8 +120,7 @@ Template.shape_lawn.events({
 	},
 	'click #shape-lawn-cancel': function (e) {
 		console.log('Template.shape_lawn.events cancel: ' + e.target.id);
-		ViewStack.pushTarget(Constants.vsHome);
-		//Session.set(Constants.renderView, Constants.splash);
+		ViewStack.pushTarget(ViewTargetType.home);
 	},
 	'click #shape-lawn-accept': function (e) {
 		console.log('Template.shape_lawn.events accept: ' + e.target.id);
@@ -130,9 +128,7 @@ Template.shape_lawn.events({
 		if (inputElt) {
 			console.log('Template.shape_lawn.events lawnName: ' + inputElt.value);
 			CreateLawnData.lawnData.name = inputElt.value;
-			ViewStack.pushTarget(Constants.vsCreateMeasureLawn);
-			//Session.set(Constants.renderView, Constants.measure_lawn);
-			//currentCreateState.set('measure_lawn');
+			ViewStack.pushTarget(ViewTargetType.createMeasureLawn);
 		}
 	}
 });
@@ -182,15 +178,13 @@ Template.build_lawn.events ({
 	},
 	'click #build-lawn-cancel': function () {
 		ViewStack.clearState();
-		ViewStack.pushTarget(Constants.vsHome);
+		ViewStack.pushTarget(ViewTargetType.home);
 	},
 	'click #build-lawn-back': function () {
 		ViewStack.popState(true);
-		//Session.set(Constants.renderView, Constants.measure_lawn);
-		//currentCreateState.set('measure_lawn');
 	},
 	'click #build-lawn-accept': function () {
-		ViewStack.pushTarget(Constants.vsCreateLayoutLawn);
+		ViewStack.pushTarget(ViewTargetType.createLayoutLawn);
 		CreateLawnData.setCurrentLawn();
 	}
 });
@@ -203,7 +197,7 @@ Template.finish_lawn.onDestroyed(function () {
 
 Template.finish_lawn.events({
 	'click #finish-lawn-cancel': function () {
-		ViewStack.pushTarget(Constants.vsHome);
+		ViewStack.pushTarget(ViewTargetType.home);
 		CreateLawnData.clearCurrentLawn();
 	},
 	'click #finish-lawn-back': function () {
@@ -211,7 +205,7 @@ Template.finish_lawn.events({
 	},
 	'click #finish-lawn-accept': function () {
 		ViewStack.clearState();
-		ViewStack.pushTarget(Constants.vsCreate);
+		ViewStack.pushTarget(ViewTargetType.create);
 		CreateLawnData.clearCurrentLawn();
 	}
 });

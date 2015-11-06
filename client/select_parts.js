@@ -42,34 +42,14 @@ var currentSelectedCarousel = new ReactiveVar(null);
 // TODO Remove this singleton once we implement collections
 var _testLoader = getTestLoader();
 
-//var _getUnselectedTopic = function _getUnselectedTopic (selectedTopic) {
-//	return (selectedTopic === Constants.mbus_allPartsCarousel) ? Constants.mbus_myPartsCarousel :
-//		Constants.mbus_allPartsCarousel;
-//};
-//
-//var _getUnselectedTopicFromId = function _getUnselectedTopicFromId (carouselId) {
-//	currentSelectedCarousel = carouselId;
-//	switch (carouselId) {
-//	case Template.allParts.getCarouselId():
-//		return Constants.mbus_myPartsCarousel;
-//		break;
-//	case Template.myParts.getCarouselId():
-//		return Constants.mbus_allPartsCarousel;
-//		break;
-//	default:
-//		return null;
-//		break;
-//	}
-//};
-
 var _unselectFromId = function _unselectFromId (carouselId) {
 	currentSelectedCarousel.set(carouselId);
 	switch (carouselId) {
-	case Template.allParts.getCarouselId():
-		Template.myParts.clearBorderColor();
+	case Template.all_parts.getCarouselId():
+		Template.my_parts.clearBorderColor();
 		break;
-	case Template.myParts.getCarouselId():
-		Template.allParts.clearBorderColor();
+	case Template.my_parts.getCarouselId():
+		Template.all_parts.clearBorderColor();
 		break;
 	default:
 		return null;
@@ -96,13 +76,13 @@ var _handleSelectCarouselMessage = function _handleSelectCarouselMessage(message
 Template.select_parts.onRendered(function () {
 	// Since we are positing a single active selection between the two carousels, we will set border style to none
 	// and manage it manually
-	// We might not be logged in so check first, if not, the allParts and myParts templates will not
+	// We might not be logged in so check first, if not, the all_parts and my_parts templates will not
 	// be instantiated
 	if (Meteor.userId()) {
-		console.log('TEST: Template.allParts.partsCarouselIdElt: ' + Template.allParts.getCarouselId());
+		console.log('TEST: Template.all_parts.partsCarouselIdElt: ' + Template.all_parts.getCarouselId());
 		Meteor.defer(function() {
-			Template.allParts.clearBorderColor();
-			Template.myParts.clearBorderColor();
+			Template.all_parts.clearBorderColor();
+			Template.my_parts.clearBorderColor();
 			SelectionManager.clearSelection();
 		});
 	}
@@ -124,10 +104,10 @@ Template.select_parts.helpers({
 
 Template.select_parts.helpers({
 	disableAddToMyParts: function () {
-		return (_enableClick(Template.allParts.getCarouselId())) ? '' : 'disabled';
+		return (_enableClick(Template.all_parts.getCarouselId())) ? '' : 'disabled';
 	},
 	disableDeleteFromMyParts: function () {
-		return (_enableClick(Template.myParts.getCarouselId())) ? '' : 'disabled';
+		return (_enableClick(Template.my_parts.getCarouselId())) ? '' : 'disabled';
 	}
 });
 
@@ -138,17 +118,17 @@ var _enableClick = function _enableClick (targetCarousel) {
 
 Template.select_parts.events({
 	'click #signin': function () {
-		SignInUtils.pushRenderViewTarget(Constants.vsCreateSelectParts);
-		ViewStack.pushTarget(Constants.vsSignIn);
+		SignInUtils.pushRenderViewTarget(ViewTargetType.createSelectParts);
+		ViewStack.pushTarget(ViewTargetType.signIn);
 	},
 	'click #favorite-parts-add': function () {
-		if (_enableClick(Template.allParts.getCarouselId())) {
+		if (_enableClick(Template.all_parts.getCarouselId())) {
 			console.log('Add to My Parts clicked');
 			PartsManager.addToMyParts(SelectionManager.getSelection());
 		}
 	},
 	'click #favorite-parts-del': function () {
-		if (_enableClick(Template.myParts.getCarouselId())) {
+		if (_enableClick(Template.my_parts.getCarouselId())) {
 			console.log('Delete from My Parts clicked');
 			PartsManager.delFromMyParts(SelectionManager.getSelection());
 		}

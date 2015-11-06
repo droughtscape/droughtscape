@@ -21,27 +21,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-var partMode = new ReactiveVar(PartType.plants);
+var partMode = new ReactiveVar(PartType.all);
 // Build a parameterized name we can use both for html and jquery (JQ)
-var partsCarouselId = 'all-parts-carousel';
+var partsCarouselId = 'my-parts-carousel';
 var partsCarouselIdElt = '#' + partsCarouselId;
 
-Template.allParts.getCarouselId = function getCarouselId () { return partsCarouselId; };
-Template.allParts.clearBorderColor = function clearBorderColor () {
+Template.my_parts.getCarouselId = function getCarouselId () { return partsCarouselId; };
+Template.my_parts.clearBorderColor = function clearBorderColor () {
 	Template.carousel.setBorderColor($(partsCarouselIdElt), Constants.color_white);
 };
 
-Template.allParts.clickEvent = function clickEvent (e) {
-	console.log('Template.allParts.clickEvent');
+Template.my_parts.clickEvent = function clickEvent (e) {
+	console.log('Template.my_parts.clickEvent');
 };
 
 var setSelectedCarouselImages = function setSelectedCarouselImages (carouselId, selection) {
 	MBus.publish(Constants.mbus_carousel_clear, new Message.Clear(partsCarouselIdElt));
-	let allParts = PartsManager.getAllPartsByType(selection);
-	if (allParts.length === 0) {
-		allParts = PartsManager.getEmptyPart();
+	let myParts = PartsManager.getMyPartsByType(selection);
+	if (myParts.length === 0) {
+		myParts = PartsManager.getEmptyPart();
 	}
-	MBus.publish(Constants.mbus_carousel_add, new Message.Add(partsCarouselIdElt, '200px', '200px', allParts));
+	MBus.publish(Constants.mbus_carousel_add, new Message.Add(partsCarouselIdElt, '200px', '200px', myParts));
 };
 
 var handlePartTypeMessages = function handlePartTypeMessages (message) {
@@ -65,25 +65,25 @@ var unsubscribePartTypeHandler = null;
 // navBar button PARTS is clicked which sets the renderView Session variable.
 // I guess that since these are "subtemplates", the get created anew every time, similar to a route.
 // In any case, this is the desired effect.
-Template.allParts.onCreated(function () {
+Template.my_parts.onCreated(function () {
 	// Support carousel lifecycle.  Subscribe returns the ability to unsubscribe.
-	unsubscribePartTypeHandler = MBus.subscribe(Constants.mbus_allPartsType, handlePartTypeMessages);
+	unsubscribePartTypeHandler = MBus.subscribe(Constants.mbus_myPartsType, handlePartTypeMessages);
 });
 
-Template.allParts.onRendered(function () {
+Template.my_parts.onRendered(function () {
 });
 
-Template.allParts.onDestroyed(function () {
+Template.my_parts.onDestroyed(function () {
 	// Support carousel lifecycle
 	unsubscribePartTypeHandler.remove();
 });
 
-Template.allParts.helpers({
+Template.my_parts.helpers({
 	carouselId: function () {
 		return partsCarouselId;
 	},
 	partsMode: function () {
-		return {topic: Constants.mbus_allPartsCarousel, html: partsCarouselIdElt, type: "allParts", subType: partMode.get()};
+		return {topic: Constants.mbus_myPartsCarousel, html: partsCarouselIdElt, type: "myParts", subType: partMode.get()};
 	},
 	selected: function () {
 		return partMode;

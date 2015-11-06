@@ -21,8 +21,54 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+var timer;
+/**
+ * firstSlide defaults to true, one time flag per view activation, ensures the 
+ * initial splash is immediately visible.
+ * @type {boolean}
+ */
+var firstSlide = true;
+
 Template.splash.onCreated(function () {
+	// Load up the splashLawns
+	let splashLawns = SplashManager.getSplashLawns();
+	if (splashLawns) {
+		let splashIdx = 0;
+		Meteor.defer(function () {
+			// This interval will switch images every 5 seconds
+			timer = setInterval(function () {
+				if (splashLawns.length > 1) {
+					SplashManager.bringToFront(splashLawns[splashIdx].id);
+					splashIdx++;
+					if (splashIdx == splashLawns.length) {
+						splashIdx = 0;
+					}
+				}
+			}, 5000);
+		})
+	}
 });
 
 Template.splash.onDestroyed(function () {
+	// When leaving the view, if interval active, clear it, reset firstSlide
+	if (timer) {
+		clearInterval(timer);
+		firstSlide = true;
+	}
 });
+
+Template.splash.helpers({
+	opaque: function () {
+		if (firstSlide) {
+			firstSlide = false;
+			return 'opaque';
+		}
+		else {
+			return '';
+		}
+	},
+	splashLawns: function () {
+		return SplashManager.getSplashLawns();
+	}
+});
+

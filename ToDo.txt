@@ -31,14 +31,16 @@
 		=> Opportunity for a wrapper?
 		
 - Bugs
+	- Currently can select the "NO PARTS" "NO LAWNS" items.
 	SlickJS => Sometimes the onBefore callback has currentSlide, nextSlide the same.
 		This makes sense at the boundaries but not in the middle of the carousel or if we are moving off
 		the boundaries.  This causes selection highlighting to get messed up since both slides and clicks
 		change the border highlight.
 		=> Temp fix
 		
++ Clean up constants
 + Will lawns fit under AbstractParts or will we generate AbstractLawns => DOH, it will be a separate type: AbstractLawn
-+ Create test allParts, myParts with typed AbstractParts
++ Create test all_parts, my_parts with typed AbstractParts
 + Distinguish between Part-Info and Lawn-Info since they look at separate collections
 + Both Info-Part and Info-Lawn need to look in PartsManager, LawnsManager instead of TestLoader
 + Implement Add/Delete parts
@@ -115,4 +117,4 @@
 	
 + Info Lawn
 
-+ parts only has part, no myParts
++ parts only has part, no my_parts

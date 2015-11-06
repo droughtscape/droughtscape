@@ -29,7 +29,7 @@ Object.size = function (obj) {
 	return size;
 };
 
-Template.navBar.onRendered(function () {
+Template.nav_bar.onRendered(function () {
 	// if there is a signin macro button, size it
 	var signin = document.getElementById('at-nav-button');
 	if (signin) {
@@ -42,8 +42,8 @@ Template.navBar.onRendered(function () {
 
 // From useraccounts_materialize.js
 // Simply 'inherits' helpers from AccountsTemplates
-Template.atNavItem.helpers(AccountsTemplates.atNavButtonHelpers);  
-Template.atNavItem.helpers({
+Template.at_nav_item.helpers(AccountsTemplates.atNavButtonHelpers);  
+Template.at_nav_item.helpers({
 	text: function(){
 		var key = Meteor.userId() ? AccountsTemplates.texts.navSignOut : AccountsTemplates.texts.navSignIn;
 		var text = T9n.get(key, markIfMissing=false);
@@ -59,9 +59,9 @@ Template.atNavItem.helpers({
 });
 
 // Simply 'inherits' events from AccountsTemplates
-Template.atNavItem.events(AccountsTemplates.atNavButtonEvents);
+Template.at_nav_item.events(AccountsTemplates.atNavButtonEvents);
 
-Template.navBar.helpers({
+Template.nav_bar.helpers({
 	navButtons: function () {
 		// The nav bar is a singleton per "page" so we use a global
 		// Session variable: navBarConfig which can by dynamically
@@ -75,9 +75,9 @@ var _parseEventId = function _parseEventId (eventId) {
 	return {action: substrings[0], topic: substrings[1]};
 };
 
-Template.navBar.events({
+Template.nav_bar.events({
 	'click .action-button': function (event) {
-		console.log('actionButton: ' + event.currentTarget.id);
+		console.log('action_button: ' + event.currentTarget.id);
 		// event encodes message and target MBus
 		let {action, topic} = _parseEventId(event.currentTarget.id);
 		MBus.publish(topic, new Message.Action(action));
@@ -90,18 +90,14 @@ Template.navBar.events({
 	},
 	'click .brand-logo': function () {
 		// Return to home
-		ViewStack.pushTarget(Constants.vsHome);
-		//ViewStack.clearState();
-		//ViewStack.pushState(new ViewState(Constants.splash, Constants.home, Constants.home));
-		//Session.set(Constants.renderView, Constants.splash);
+		ViewStack.pushTarget(ViewTargetType.home);
 		// dispatch a resize event to force rendering of the home page
 		// Even if size doesn't change
 		window.dispatchEvent(new Event('resize'));
 	},
 	'click .signin-button': function () {
 		if (!Meteor.userId()) {
-			ViewStack.pushTarget(Constants.vsSignIn);
-			//Session.set(Constants.renderView, Constants.signin);
+			ViewStack.pushTarget(ViewTargetType.signIn);
 		}
 		else {
 			AccountsTemplates.logout();
@@ -109,20 +105,17 @@ Template.navBar.events({
 	},
 	// We follow the convention that the currentTarget.id is the renderView target template
 	'click .nav-button': function (event) {
-		console.log('Template.navBar.events: ' + event);
+		console.log('Template.nav_bar.events: ' + event);
 		var id = event.currentTarget.id;
 		switch (id) {
 		case 'droughtscapelogo':
 			// Return to start, clear state
-			ViewStack.pushTarget(Constants.vsHome);
-			//ViewStack.clearState();
-			//ViewStack.pushState(new ViewState(Constants.renderView, Constants.home, Constants.home));
+			ViewStack.pushTarget(ViewTargetType.home);
 			break;
 		case 'at-nav-item':
 		case 'at-nav-button':
 			if (!Meteor.userId()) {
-				ViewStack.pushTarget(Constants.vsSignIn);
-				//Session.set(Constants.renderView, Constants.signin);
+				ViewStack.pushTarget(ViewTargetType.signIn);
 			}
 			else {
 				AccountsTemplates.logout();
@@ -133,9 +126,6 @@ Template.navBar.events({
 			let target = NavConfig.getNavBarTarget(currentViewState.navBar, id);
 			console.log('navBar target: ' + target);
 			ViewStack.pushTarget(target);
-			//if (NavConfig.validateNavBarId(Session.get(Constants.navBarConfig), id)) {
-			//	Session.set(Constants.renderView, event.currentTarget.id);
-			//}
 			break;
 		}
 		// dispatch a resize event to force rendering of the home page

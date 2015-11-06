@@ -21,44 +21,41 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-var partMode = new ReactiveVar('plants');
+var partMode = new ReactiveVar(PartType.plants);
 
-Template.newPart.onCreated(function () {
+Template.new_part.onCreated(function () {
 });
 
-Template.newPart.helpers({
-	partsMode: function () {
-		return {type: "newParts", subType: partMode.get()};
-	},
+Template.new_part.helpers({
 	selected: function () {
 		return partMode;
 	},
 	createItemTemplate: function () {
-		var template = Template.createOther;
+		var template = Template.create_other;
 		switch (partMode.get()) {
-		case 'plants':
-			template = Template.createPlant;
+		case PartType.plants:
+			template = Template.create_plant;
 			break;
-		case 'groundcovers':
-			template = Template.createGroundcover;
+		case PartType.groundcovers:
+			template = Template.create_groundcover;
 			break;
-		case 'borders':
-			template = Template.createBorder;
+		case PartType.borders:
+			template = Template.create_border;
 			break;
-		case 'pavers':
-			template = Template.createPaver;
+		case PartType.pavers:
+			template = Template.create_paver;
 			break;
-		case 'largerocks':
-			template = Template.createLargeRock;
+		case PartType.largerocks:
+			template = Template.create_large_rock;
 			break;
-		case 'irrigation':
-			template = Template.createIrrigation;
+		case PartType.irrigation:
+			template = Template.create_irrigation;
 			break;
-		case 'lighting':
-			template = Template.createLighting;
+		case PartType.lighting:
+			template = Template.create_lighting;
 			break;
-		case 'decorative':
-			template = Template.createDecorative;
+		case PartType.decorative:
+			template = Template.create_decorative;
 			break;
 		}
 		return template;
@@ -66,20 +63,18 @@ Template.newPart.helpers({
 });
 
 // Expect this template event to be invoked with context=<string>
-// Where <string> := "parts" | "newPart" | ...
+// Where <string> := "parts" | "new_part" | ...
 // The event comes from a subtemplate part_type
-Template.newPart.events({
+Template.new_part.events({
 	'click #cancel-part': function () {
-		var val = Utils.getRadioVal(document.getElementById('parts-select'), 'part-type');
-		console.log('dismiss-part: ' + val);
-		Session.set(Constants.renderView, Constants.parts);
+		console.log('dismiss-part: ' + partMode.get());
+		ViewStack.popState(true);
 	},
 	'click #create-part': function () {
-		var val = Utils.getRadioVal(document.getElementById('parts-select'), 'part-type');
-		console.log('create-part: ' + val);
-		Session.set(Constants.renderView, Constants.parts);
+		console.log('create-part: ' + partMode.get());
+		ViewStack.popState(true);
 	}
 });
 
-Template.newPart.onDestroyed(function () {
+Template.new_part.onDestroyed(function () {
 });

@@ -63,7 +63,7 @@ Template.info_part.helpers({
 		return _selectedItem !== null;
 	},
 	infoItemMode: function () {
-		return {topic: Constants.mbus_infoItem_carousel, html: carouselIdElt, type: "infoItem", subType: null};
+		return {topic: Constants.mbus_infoItem_carousel, html: carouselIdElt, type: 'infoItem', subType: null};
 	},
 	alertNoItem: function () {
 		Materialize.toast('No item selected!', 3000, 'rounded red-text');

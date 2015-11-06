@@ -209,7 +209,6 @@ Template.layout_lawn.onCreated(function () {
 	window.addEventListener('resize', _handleResizeEvent);
 	
 	// Test code
-	//CreateLawnData.createLayoutPart(testAbstractPart);
 	unsubscribe = MBus.subscribe(Constants.mbus_layout, _handleLayoutMessages);
 });
 
@@ -316,7 +315,6 @@ Template.layout_settings.events({
 	},
 	'click #layout-settings-cancel': function () {
 		ViewStack.popState(true);
-		//Session.set(Constants.renderView, Constants.layout_lawn);
 	},
 	'click #layout-settings-accept': function () {
 		Session.set(Constants.gridEnabled, _settings.gridEnabled);
@@ -328,7 +326,6 @@ Template.layout_settings.events({
 		}
 		Session.set(Constants.gridSpacing, temp);
 		ViewStack.popState(true);
-		//Session.set(Constants.renderView, Constants.layout_lawn);
 	}
 });
 

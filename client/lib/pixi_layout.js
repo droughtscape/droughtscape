@@ -79,6 +79,11 @@ PixiLayout = (function () {
 	/**
 	 * _mouseOut function - callback from PIXI.InteractiveManager on mouse leaving render area
 	 */
+	/**
+	 * 
+	 * @param interactionData
+	 * @private
+	 */
 	var _mouseOut = function _mouseOut(interactionData) {
 		console.log('_mouseOut');
 		if (_mouseLeaveHandler) {

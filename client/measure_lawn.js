@@ -111,19 +111,16 @@ var _checkEnabled = function _checkEnabled (item) {
 Template.measure_lawn.events({
 	'click #measure-lawn-cancel': function () {
 		ViewStack.clearState();
-		ViewStack.pushTarget('home');
-		//Session.set(Constants.renderView, Constants.splash);
+		ViewStack.pushTarget(ViewTargetType.home);
 	},
 	'click #measure-lawn-back': function () {
 		ViewStack.popState(true);
-		//Session.set(Constants.renderView, Constants.shape_lawn);
-		//currentCreateState.set('measure_lawn');
 	},
 	'click #name-lawn': function () {
 		CreateLawnData.lawnData.name = document.getElementById('lawn_name').value;
 	},
 	'click #open-lawn': function () {
-		Session.set(Constants.renderView, Constants.favorites);
+		ViewStack.pushTarget(ViewTargetType.favorites);
 	},
 	'click .unit-select': function (e) {
 		var clickedButton = e.currentTarget;
@@ -164,9 +161,7 @@ Template.measure_lawn.events({
 					// No users so add us here
 					_insertFirstItem(userEmail, CreateLawnData.lawnData);
 				}
-				ViewStack.pushTarget(Constants.vsCreateBuildLawn);
-				//Session.set(Constants.renderView, Constants.build_lawn);
-				//currentCreateState.set('build_lawn');
+				ViewStack.pushTarget(ViewTargetType.createBuildLawn);
 			}
 			else {
 				// send an alert toast and stay here.  If the user wants to abort or go back, 

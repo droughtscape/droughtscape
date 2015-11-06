@@ -24,18 +24,13 @@
 Router.map(function () {
 	this.route(Constants.home, {path: '/'});
 });
-Session.setDefault(Constants.navBar, Constants.navBar);
 // The navBarConfig Session variable controls contents of the navBar
 // => see navconfig.js
-Session.setDefault(Constants.navBarConfig, Constants.home);
 // The rightBar Session variable controls presence or absence of the rightBar
-Session.setDefault(Constants.rightBar, Constants.rightBar);
 // The rightBarConfig Session variable controls contents of the rightBar (if present)
-// => see navconfig.js
-Session.setDefault(Constants.rightBarConfig, Constants.home);
 // The renderView Session variable controls what the render area template is currently
 // set to.  We use this to avoid routing.
-Session.setDefault(Constants.renderView, Constants.splash);
+// => see ViewState.js
 // Admin rights of logged in user
 Session.setDefault(Constants.adminRights, undefined);
 Session.setDefault('currentSelection', false);
@@ -44,9 +39,12 @@ Session.setDefault('currentSelection', false);
 testLoader = new TestLoader();
 PartsManager.testInitParts();
 LawnsManager.initLawnConstants();
+SplashManager.initSplashLawns();
 
 // init the targets for ViewStack
 ViewStack.initTargets();
+
+ViewStack.pushTarget(ViewTargetType.home);
 
 /**
  * _renderContent function
@@ -92,8 +90,7 @@ Template.home.onCreated(function () {
 	window.onbeforeunload = function () {
 		return 'Your work will be lost';
 	};
-	let viewState = new ViewState(Constants.splash, Constants.home, Constants.home);
-	ViewStack.pushState(viewState);
+	ViewStack.pushTarget(ViewTargetType.home);
 });
 
 Template.home.onDestroyed(function () {
@@ -102,7 +99,7 @@ Template.home.onDestroyed(function () {
 
 Template.home.helpers({
 	dynamicNavBar: function () {
-		return Session.get(Constants.navBar);
+		return Constants.nav_bar;
 	},
 	dynamicTemplate: function () {
 		// Contents of session variable renderView will 
@@ -117,7 +114,7 @@ Template.home.helpers({
 		// or the empty string to remove the rightBar from that context.
 		// The exact buttons on the bar are programmed via the rightBarConfig
 		// global Session variable and that is handled within the right bar component
-		return Session.get(Constants.rightBar);
+		return Constants.right_bar;
 	}
 });
 

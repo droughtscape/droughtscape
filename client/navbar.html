@@ -1,4 +1,4 @@
-<template name="navBar">
+<template name="nav_bar">
     <nav>
         <div id="topNav" class="nav-wrapper brown lighten-4">
             <img src="watersave.jpg" id="droughtscapelogo" class="brand-logo right" style="width:80px;height:64px">
@@ -8,36 +8,36 @@
                 {{#each navButtons}}
                     {{> Template.dynamic template=buttonType}}
                 {{/each}}
-                {{> atNavItem}}
+                {{> at_nav_item}}
             </ul>
             <ul class="side-nav" id="mobile-demo">
                 {{#each navButtons}}
-                    {{> navButton}}
+                    {{> nav_button}}
                 {{/each}}
-                {{> atNavItem}}
+                {{> at_nav_item}}
             </ul>
         </div>
     </nav>
 </template>
 
-<template name="navButton">
+<template name="nav_button">
     <li><a id="{{name}}" class="nav-button teal-text" style="font-size: 1.25rem">
         <i class={{icon}}></i>{{friendlyName}}</a></li>
 </template>
 
-<template name="actionButton">
+<template name="action_button">
     <li><a id="{{name}}" class="action-button teal-text" style="font-size: 1.25rem">
         <i class={{icon}}></i>{{friendlyName}}</a></li>
 </template>
 
-<template name="dropdownButton">
+<template name="dropdown_button">
     <li><a id="{{name}}" class="dropdown-button teal-text" href="#!" style="font-size: 1.25rem"
            data-activates={{dataActivates}}>{{friendlyName}}<i class={{icon}}></i></a>
-        {{> dropdownData}}
+        {{> dropdown_data}}
     </li>
 </template>
 
-<template name="dropdownData">
+<template name="dropdown_data">
     <ul id={{dataActivates}} class="dropdown-content">
         <!--
 		We use a dynamic template w/o helper here.  Just embed tagType into the
@@ -45,23 +45,23 @@
 		distinguish between tag and divider and others (not yet foreseen) in the
 		dropdown.  I had problems using a helper here so I did it statically with
 		data.  
-		=> See dropdownTag and dropdownDivider below as well as NavConfig._navBarConfigs
+		=> See dropdown_tag and dropdown_divider below as well as NavConfig._navBarConfigs
 		-->
-        {{#each dropdownTags}}
+       {{#each dropdownTags}}
             {{> Template.dynamic template=tagType}}
         {{/each}}
     </ul>
 </template>
 
-<template name="dropdownTag">
+<template name="dropdown_tag">
     <li><a class="dropdownTag" data-parent={{dataActivates}} href="#!">{{tagName}}</a></li>
 </template>
 
-<template name="dropdownDivider">
+<template name="dropdown_divider">
     <li class="divider"></li>
 </template>
 
-<template name="atNavItem">
+<template name="at_nav_item">
     <li><a id="at-nav-item" class="signin-button {{loginColor}}" style="font-size: 1.25rem">
         <i class={{loginIcon}}></i>{{text}}</a></li>
 </template>
