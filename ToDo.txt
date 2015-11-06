@@ -1,3 +1,15 @@
+The next big push choices:
+- 3d rendering
+- collections
+- administrative views
+
+=> collections probably waits on prototype 3d render
+=> sufficient functionality in the api for either of the other two
+=> 3d render more valuable.
+	=> Needs underlying LayoutManager to handle the data and proxy the collections
+	
+- implement data/control path for dropdown clicks
+
 - Make lawn template dynamic
 - Should there be a BACK button on the right bar?
 - BUG => parts -> my parts and create -> layout -> my parts share radio button context.  Might be ok.
@@ -10,7 +22,6 @@
 	=> constrain both cursor and image shape by the footprint shape.  The idea is that most
 		plants will have a ellipsoid footprint.
 - Flesh out AbstractPart
-- Collections
 		
 - Lawns
 	NavBar
