@@ -1,4 +1,5 @@
 The next big push choices:
+- LayoutManager
 - 3d rendering
 - collections
 - administrative views
@@ -7,6 +8,7 @@ The next big push choices:
 => sufficient functionality in the api for either of the other two
 => 3d render more valuable.
 	=> Needs underlying LayoutManager to handle the data and proxy the collections
+=> 3d render needs basic LayoutManager functionality
 	
 - implement data/control path for dropdown clicks
 

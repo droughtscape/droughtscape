@@ -238,10 +238,10 @@ PixiLayout = (function () {
 		// _unitW is currently 50, height of mouse sprite is relative to the ratio of w:h in the abstractPart.  
 		if (enable) {
 			if (!_mouseSprite) {
-				var url = abstractPart.getUrl();
+				var url = abstractPart.url;
 				_mouseSprite = PIXI.Sprite.fromImage(url);
 				_mouseSprite.width = _unitW;
-				_mouseSprite.height = (_unitW * abstractPart.getHeight()) / abstractPart.getWidth();
+				_mouseSprite.height = (_unitW * abstractPart.height) / abstractPart.width;
 				// Center the sprite
 				_mouseSprite.position = _computeCenterPt(pixelPt);
 				// For rectangular masking, just adjust the height and compute center point
@@ -541,64 +541,42 @@ PixiLayout = (function () {
 	};
 
 	/**
-	 * LayoutPart class
-	 * @class LayoutPart
+	 * Instance of abstractPart
+	 * @type {Function}
+	 * @parameter {object} abstractPart - underlying abstractPart
+	 * @parameter {number} xPixel - center x
+	 * @parameter {number} yPixel - center y
+	 * @parameter {number} rotation
 	 */
-	class LayoutPart {
-		/**
-		 * LayoutPart constructor
-		 * @constructs LayoutClass
-		 * @param {object} abstractPart - This should be common across all instances of this part
-		 */
-		constructor(abstractPart) {
-			/**
-			 * @member {object} abstractPart - save the passed in parameter
-			 */
-			this.abstractPart = abstractPart;
-			// real world coordinates
-			/**
-			 * @member {number} x - real world x position
-			 */
-			this.x = 0.0;
-			/**
-			 * @member {number} y - real world y position
-			 */
-			this.y = 0.0;
-			/**
-			 * @member {number} width - real world width in meters
-			 */
-			this.width = abstractPart.getWidth();
-			/**
-			 * @member {number} height - real world height in meters
-			 */
-			this.height = abstractPart.getHeight();
-			/**
-			 * @member {string} imageUrl - image to display in layout mode
-			 */
-			this.imageUrl = abstractPart.getImageUrl();
-			/**
-			 * @member {object} pixiTexture - pixi texture is common for all instances of the part
-			 * Note, while ES6 classes do not allow static class variables, PIXI's texture cache prevents redundant textures
-			 */
-			this.pixiTexture = PIXI.Texture.fromImage(this.imageUrl);
-		}
+	LayoutPart = (function (abstractPart, xPixel, yPixel, rotation) {
+		var _abstractPart = abstractPart;
+		var _x = xPixel || 0;
+		var _y = yPixel || 0;
+		var _rotation = rotation || 0;
+		// These are real world units (meters)
+		var _width = _abstractPart.width;
+		var _height = _abstractPart.height;
+		var _imageUrl = _abstractPart.url;
+		// Convert pixel to real world units
+		_x = _x * _scalePixelToReal;
+		_y = _y * _scalePixelToReal;
+		// Translate to Upper Left corner
+		_x = _x - (_width / 2);
+		_y = _y - (_height / 2);
 
-		/**
-		 * Creates a PIXI.Sprite instance
-		 * @method createPixiSprite with pixel width and height
-		 * @returns {object} - PIXI.Sprite
-		 */
-		createPixiSprite() {
-			let sprite = new PIXI.Sprite(this.pixiTexture);
-			sprite.width = this.width * _scaleRealToPixel;
-			sprite.height = this.height * _scaleRealToPixel;
-			return sprite;
+		return {
+			x: _x,
+			y: _y,
+			rotation: _rotation,
+			width: _width,
+			height: _height,
+			imageUrl: _imageUrl
 		}
-	}
+	});
 
 	/**
-	 * @function _createLayoutPart - creates a sprite instance from a LayoutPart and adds it to the _parts container
-	 * Also creates LayoutPart and updates to real world location
+	 * @function _createLayoutPart - Factory that creates a LayoutPart instance and an associated PIXI Sprite and adds the sprite to the _parts container
+	 * Also augments sprite with the layoutPart instance and layoutPart with the sprite instance
 	 * @param {object} abstractPart - This should be common across all instances of this part
 	 * @param {number} xPixel - x position in pixels
 	 * @param {number} yPixel - y position in pixels
@@ -606,12 +584,15 @@ PixiLayout = (function () {
 	 * @private
 	 */
 	var _createLayoutPart = function _createLayoutPart(abstractPart, xPixel, yPixel) {
-		let layoutPart = new LayoutPart(abstractPart);
-		let sprite = layoutPart.createPixiSprite();
-		sprite.x = xPixel - (sprite.width / 2);
-		sprite.y = yPixel - (sprite.height / 2);
-		layoutPart.x = sprite.x * _scalePixelToReal;
-		layoutPart.y = sprite.y * _scalePixelToReal;
+		var layoutPart = new LayoutPart(abstractPart, xPixel, yPixel);
+		var pixiTexture = PIXI.Texture.fromImage(layoutPart.imageUrl);
+		var sprite = new PIXI.Sprite(pixiTexture);
+		sprite.width = layoutPart.width * _scaleRealToPixel;
+		sprite.height = layoutPart.height * _scaleRealToPixel;
+		sprite.x = layoutPart.x * _scaleRealToPixel;
+		sprite.y = layoutPart.y * _scaleRealToPixel;
+		layoutPart.sprite = sprite;
+		sprite.layoutPart = layoutPart;
 		_parts.addChild(sprite);
 		return layoutPart;
 	};

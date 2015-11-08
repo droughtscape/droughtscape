@@ -71,6 +71,6 @@ Template.info_lawn.helpers({
 	},
 	itemType: function () {
 		let lawn = LawnsManager.getLawnByItemId(_selectedItem.itemId);
-		return { itemId: _selectedItem.itemId, url: (lawn) ? lawn.getUrl() : ''};
+		return { itemId: _selectedItem.itemId, url: (lawn) ? lawn.url : ''};
 	}
 });

@@ -71,6 +71,6 @@ Template.info_part.helpers({
 	},
 	itemType: function () {
 		let part = PartsManager.getPartByItemId(_selectedItem.itemId);
-		return { itemId: _selectedItem.itemId, url: (part) ? part.getUrl() : ''};
+		return { itemId: _selectedItem.itemId, url: (part) ? part.url : ''};
 	}
 });
