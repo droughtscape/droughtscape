@@ -539,52 +539,19 @@ PixiLayout = (function () {
 
 		_parts.addChild(item);
 	};
-
-	/**
-	 * Instance of abstractPart
-	 * @type {Function}
-	 * @parameter {object} abstractPart - underlying abstractPart
-	 * @parameter {number} xPixel - center x
-	 * @parameter {number} yPixel - center y
-	 * @parameter {number} rotation
-	 */
-	LayoutPart = (function (abstractPart, xPixel, yPixel, rotation) {
-		var _abstractPart = abstractPart;
-		var _x = xPixel || 0;
-		var _y = yPixel || 0;
-		var _rotation = rotation || 0;
-		// These are real world units (meters)
-		var _width = _abstractPart.width;
-		var _height = _abstractPart.height;
-		var _imageUrl = _abstractPart.url;
-		// Convert pixel to real world units
-		_x = _x * _scalePixelToReal;
-		_y = _y * _scalePixelToReal;
-		// Translate to Upper Left corner
-		_x = _x - (_width / 2);
-		_y = _y - (_height / 2);
-
-		return {
-			x: _x,
-			y: _y,
-			rotation: _rotation,
-			width: _width,
-			height: _height,
-			imageUrl: _imageUrl
-		}
-	});
-
+	
 	/**
 	 * @function _createLayoutPart - Factory that creates a LayoutPart instance and an associated PIXI Sprite and adds the sprite to the _parts container
 	 * Also augments sprite with the layoutPart instance and layoutPart with the sprite instance
 	 * @param {object} abstractPart - This should be common across all instances of this part
 	 * @param {number} xPixel - x position in pixels
 	 * @param {number} yPixel - y position in pixels
+	 * @param {number} rotation - clockwise rotation in degrees
 	 * @return {LayoutPart} -
 	 * @private
 	 */
-	var _createLayoutPart = function _createLayoutPart(abstractPart, xPixel, yPixel) {
-		var layoutPart = new LayoutPart(abstractPart, xPixel, yPixel);
+	var _createLayoutPart = function _createLayoutPart(abstractPart, xPixel, yPixel, rotation) {
+		var layoutPart = LayoutManager.addItem(abstractPart, xPixel * _scalePixelToReal, yPixel * _scalePixelToReal, rotation);
 		var pixiTexture = PIXI.Texture.fromImage(layoutPart.imageUrl);
 		var sprite = new PIXI.Sprite(pixiTexture);
 		sprite.width = layoutPart.width * _scaleRealToPixel;
@@ -686,7 +653,6 @@ PixiLayout = (function () {
 		enableSelectBox: _enableSelectBox,
 		enableMouseSprite: _enableMouseSprite,
 		LayoutFrame: LayoutFrame,
-		LayoutPart: LayoutPart,
 		isSame: _isSame,
 		createLayoutPart: _createLayoutPart,
 		setMouseDnHandler: _setMouseDownHandler,
