@@ -37,7 +37,7 @@ Template.create.onCreated(function(){
 	//window.onbeforeunload = function () {
 	//	return 'Your work will be lost';
 	//};
-	CreateLawnData.setCurrentLayoutPart(null);
+	LayoutManager.setCurrentLayoutPart(null);
 	Session.set(Constants.computedArea, 0);
 	console.log('history.state: ' + history.state);
 	// On initial entry reset the state to shape_lawn
@@ -120,6 +120,7 @@ Template.shape_lawn.events({
 	},
 	'click #shape-lawn-cancel': function (e) {
 		console.log('Template.shape_lawn.events cancel: ' + e.target.id);
+		CreateLawnData.clearCurrentLawn();
 		ViewStack.pushTarget(ViewTargetType.home);
 	},
 	'click #shape-lawn-accept': function (e) {
@@ -128,6 +129,7 @@ Template.shape_lawn.events({
 		if (inputElt) {
 			console.log('Template.shape_lawn.events lawnName: ' + inputElt.value);
 			CreateLawnData.lawnData.name = inputElt.value;
+			CreateLawnData.setCurrentLawn();
 			ViewStack.pushTarget(ViewTargetType.createMeasureLawn);
 		}
 	}
@@ -177,6 +179,7 @@ Template.build_lawn.events ({
 		CreateLawnData.lawnData.quickTemplate = e.target.id;
 	},
 	'click #build-lawn-cancel': function () {
+		CreateLawnData.clearCurrentLawn();
 		ViewStack.clearState();
 		ViewStack.pushTarget(ViewTargetType.home);
 	},

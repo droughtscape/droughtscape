@@ -21,26 +21,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-class TestAbstractPartSP {
-	constructor () {
-		// dimensions in meters
-		this.width = .60;
-		this.height = .60;
-		this.url = 'custom.png';
-	}
-
-	getWidth () { return this.width; }
-	getHeight () { return this.height; }
-	getImageUrl () { return this.url; }
-}
-
-var testAbstractPart = new TestAbstractPartSP();
 var unsubscribeSlickCarousel;
 
 var currentSelectedCarousel = new ReactiveVar(null);
-
-// TODO Remove this singleton once we implement collections
-var _testLoader = getTestLoader();
 
 var _unselectFromId = function _unselectFromId (carouselId) {
 	currentSelectedCarousel.set(carouselId);
@@ -61,11 +44,10 @@ var _handleSelectCarouselMessage = function _handleSelectCarouselMessage(message
 	if (MBus.validateMessage(message)) {
 		console.log('_handleSelectCarouselMessage[' + message.topic + ']: ' + message.type + ' --> ' + message.value);
 		// message.value => {topic, html}
-		//let itemId = message.value.html.getAttribute(Constants.dataPart);
 		let itemId = message.value.getDataPart();
-		let abstractPart = _testLoader.getItem(itemId);
+		let abstractPart = PartsManager.getPartByItemId(itemId);
 		console.log('selected item: ' + itemId + ', abstractPart: ' + abstractPart);
-		CreateLawnData.setCurrentLayoutPart(abstractPart);
+		LayoutManager.setCurrentLayoutPart(abstractPart);
 		_unselectFromId(message.value.carouselId);
 	}
 	else {

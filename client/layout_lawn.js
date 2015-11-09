@@ -64,21 +64,6 @@ var defaultFitMode = PixiLayout.FitType.FitTypeXY;
  * @var {array} _lawnParts - current working set of lawn parts
  */
 var _lawnParts = null;
-
-class TestAbstractPartLL {
-	constructor () {
-		// dimensions in meters
-		this.width = .50;
-		this.height = .50;
-		this.url = 'watersave.jpg';
-	}
-
-	getWidth () { return this.width; }
-	getHeight () { return this.height; }
-	getImageUrl () { return this.url; }
-}
-
-var testAbstractPart = new TestAbstractPartLL();
 var _currentLayoutPart = null;
 var _currentMouseMode = MOUSE_MODE.Select;
 
@@ -155,7 +140,7 @@ var _renderLayout = function _renderLayout () {
 	}
 	layoutFrame.fit(defaultFitMode);
 	// Test mousehandler
-	if (_currentLayoutPart = CreateLawnData.getCurrentLayoutPart()) {
+	if (_currentLayoutPart = LayoutManager.getCurrentLayoutPart()) {
 		_currentMouseMode = MOUSE_MODE.Create;
 	}
 	else {
@@ -191,7 +176,7 @@ var _handleLayoutMessages = function _handleLayoutMessages (message) {
 		switch (message.value.action) {
 		case 'select':
 			console.log('_handleLayoutMessages[' + message.topic + ']: ' + message.type + ' --> ' + message.value);
-			CreateLawnData.setCurrentLayoutPart(null);
+			LayoutManager.setCurrentLayoutPart(null);
 			if (_currentMouseMode != MOUSE_MODE.Select) {
 				_currentMouseMode = MOUSE_MODE.Select;
 				_setMouseMode(_currentMouseMode);

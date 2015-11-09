@@ -110,6 +110,7 @@ var _checkEnabled = function _checkEnabled (item) {
 
 Template.measure_lawn.events({
 	'click #measure-lawn-cancel': function () {
+		CreateLawnData.clearCurrentLawn();
 		ViewStack.clearState();
 		ViewStack.pushTarget(ViewTargetType.home);
 	},
