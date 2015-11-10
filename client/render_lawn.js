@@ -105,6 +105,14 @@ var getRenderer = function getRenderer (canvas) {
 	return Detector.webgl? new THREE.WebGLRenderer({canvas: canvas}): new THREE.CanvasRenderer({canvas: canvas});
 };
 
+var _renderLayout = function _renderLayout () {
+	var layoutItems = LayoutManager.currentLayout;
+	console.log('renderLawn: layoutItems.length: ' + layoutItems.length);
+	for (var i=0, len=layoutItems.length; i<len; ++i) {
+		
+	}
+};
+
 Template.render_lawn.onRendered(function () {
 	// Start dropdowns
 	$(".dropdown-button").dropdown();
@@ -122,46 +130,25 @@ Template.render_lawn.onRendered(function () {
 	renderCanvas.height = height;
 	renderCanvas.width = width;
 	
-	if (testMode) {
-		if (threeScene === null) {
-			threeScene = new THREE.Scene();
-		}
-		if (threeCamera === null) {
-			threeCamera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR);
-		}
-		if (threeRenderer === null) {
-			threeRenderer = getRenderer(renderCanvas);
-		}
-		//renderer.setSize(window.innerWidth, window.innerHeight);
-		//document.body.appendChild(renderer.domElement);
-
-		geometry = new THREE.BoxGeometry( 10, 1, 1 );
-		material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
-		cube = new THREE.Mesh( geometry, material );
-		threeScene.add( cube );
-
-		threeCamera.position.z = 5;
-
-		threeAnimate();
+	if (threeScene === null) {
+		threeScene = new THREE.Scene();
 	}
-	else {
-		if (threeRenderer === null) {
-			threeRenderer = getRenderer(renderCanvas);
-			threeCamera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR);
-		}
-		if (threeScene === null) {
-			threeScene = new THREE.Scene();
-			//threeScene.add(threeCamera);
-			//threeRenderer.setSize(WIDTH, HEIGHT);
-			//render.appendChild(threeRenderer.domElement);
-			//document.body.appendChild(threeRenderer.domElement);
-			geometry = new THREE.BoxGeometry( 1, 1, 1 );
-			material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
-			cube = new THREE.Mesh( geometry, material );
-			threeScene.add( cube );
-			threeCamera.position.z = 5;
-			threeAnimate();
-		}
+	if (threeCamera === null) {
+		threeCamera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR);
 	}
+	if (threeRenderer === null) {
+		threeRenderer = getRenderer(renderCanvas);
+	}
+	//renderer.setSize(window.innerWidth, window.innerHeight);
+	//document.body.appendChild(renderer.domElement);
+
+	geometry = new THREE.BoxGeometry( 10, 1, 1 );
+	material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+	cube = new THREE.Mesh( geometry, material );
+	threeScene.add( cube );
+
+	threeCamera.position.z = 5;
+
+	threeAnimate();
 	console.log('render_lawn.onCreated, threeScene: ' + threeScene + ', threeRenderer: ' + threeRenderer);
 });
