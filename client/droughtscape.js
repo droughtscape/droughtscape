@@ -34,6 +34,7 @@ Router.map(function () {
 // Admin rights of logged in user
 Session.setDefault(Constants.adminRights, undefined);
 Session.setDefault('currentSelection', false);
+Session.setDefault(Constants.userUnitsOfMeasure, Constants.Metric);
 
 // TestLoader
 testLoader = new TestLoader();
