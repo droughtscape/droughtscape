@@ -1,5 +1,10 @@
 The next big push choices:
 - LayoutManager
+	- point selection
+	- area selection
+	- cycle point selection
+		- How for mobile
+			Maybe just support front/back semantics
 - 3d rendering
 - collections
 - administrative views
