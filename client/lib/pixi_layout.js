@@ -30,9 +30,71 @@ PixiLayout = (function () {
 		FitTypeY: 2
 	};
 	var _pixiRenderer = null;
-	var _setRenderer = function _setRenderer(pixiRenderer) {
-		_pixiRenderer = pixiRenderer;
+	var _pixiContainer = null;
+	var _layoutFrame = null;
+	var _runAnimation = false;
+	
+	var _getLayoutFrame = function _getLayoutFrame () {
+		if (_layoutFrame === null) {
+			_layoutFrame = new LayoutFrame();
+		}
+		return _layoutFrame;
 	};
+
+	var _getPixiContainer = function _getPixiContainer () {
+		if (_pixiContainer === null) {
+			_pixiContainer = _getLayoutFrame().getLayoutFrame();
+		}
+		return _pixiContainer;
+	};
+	var _pixiAnimate = function _pixiAnimate () {
+		if (_runAnimation) {
+			requestAnimationFrame(_pixiAnimate);
+			if (_pixiRenderer) {
+				_pixiRenderer.render(_getPixiContainer());
+			}
+		}
+		else {
+			console.log('_pixiAnimate: stopping animation');
+		}
+	};
+	var _isValid = function _isValid () {
+		return _pixiRenderer !== null;
+	};
+
+	var _createLayout = function _createLayout (canvas, w, h) {
+		_getPixiContainer();
+		if (_pixiRenderer === null) {
+			_pixiRenderer = PIXI.autoDetectRenderer(w, h, {view:canvas});
+		}
+		return _pixiRenderer;
+	};
+
+	var _destroyLayout = function _destroyLayout () {
+		_pixiRenderer = null;
+		// disable select box on exit to handle timing issues when this template is 
+		// reentered.  We reenable on first mouse down which ensures graphic state is ok
+		_enableSelectBox(false);
+		return _pixiRenderer;
+	};
+
+	var _resizeLayout = function _resizeLayout (newWidth, newHeight, fitMode) {
+		if (_pixiRenderer) {
+			_pixiRenderer.resize(newWidth, newHeight);
+		}
+		_getLayoutFrame().fit(fitMode);
+	};
+
+	var _startAnimation = function _startAnimation () {
+		_runAnimation = true;
+		requestAnimationFrame(_pixiAnimate);
+	};
+
+	var _enableAnimation = function _enableAnimation (enable) {
+		_runAnimation = enable;
+	};
+
+
 	var _background;
 	var _grid;
 	var _selectBox;
@@ -647,8 +709,14 @@ PixiLayout = (function () {
 	};
 
 	return {
+		pixiRenderer: _pixiRenderer,
+		isValid: _isValid,
+		createLayout: _createLayout,
+		destroyLayout: _destroyLayout,
+		resizeLayout: _resizeLayout,
+		startAnimation: _startAnimation,
+		enableAnimation: _enableAnimation,
 		FitType: FitType,
-		setRenderer: _setRenderer,
 		setGridEnabled: _setGridEnabled,
 		enableSelectBox: _enableSelectBox,
 		enableMouseSprite: _enableMouseSprite,

@@ -21,108 +21,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-// For layout, we use pixijs since we want a true 2D view to simplify the layout.
-// We will use a top view, looking down on the lawn area from above to simplify
-// the actual layout activity.
-var pixiContainer = null;
-var pixiRenderer = null;
-var runAnimation = false;
 Session.setDefault(Constants.gridEnabled, true);
 // this is always in cm
 Session.setDefault(Constants.gridSpacing, 24);
 
-var MOUSE_MODE = {Select: 0, Create: 1};
-
-/**
- * pixiAnimate function to furnish animation energy using requestAnimationFrame()
- * Currently this just animates a test case.
- */
-var pixiAnimate = function pixiAnimate () {
-	if (runAnimation) {
-		requestAnimationFrame(pixiAnimate);
-		watersave.rotation += 0.1;
-		pixiRenderer.render(pixiContainer);
-	}
-	else {
-		console.log('pixiAnimate: stopping animation');
-	}
-};
-
-// Test stuff
-var texture = PIXI.Texture.fromImage('watersave.jpg');
-var watersave = new PIXI.Sprite(texture);
-watersave.anchor.x = 0.5;
-watersave.anchor.y = 0.5;
-watersave.position.x = 200;
-watersave.position.y = 200;
-var layoutFrame = new PixiLayout.LayoutFrame();
-var testMode = false;
-var testFit = false;
-var defaultFitMode = PixiLayout.FitType.FitTypeXY;
+var defaultFitMode = LayoutManager.getDefaultFitMode();
 
 /**
  * @var {array} _lawnParts - current working set of lawn parts
  */
-var _lawnParts = null;
-var _currentLayoutPart = null;
-var _currentMouseMode = MOUSE_MODE.Select;
+var _currentMouseMode = LayoutManager.MOUSE_MODE.Select;
 
-// Mouse handlers
-var _mouseDnSelectHandler = function _mouseDnSelectHandler (pixelPt) {
-	PixiLayout.setMouseMvHandler(_mouseMvSelectHandler);
-	PixiLayout.enableSelectBox(true);
-};
-var _mouseMvSelectHandler = function _mouseMvSelectHandler (pixelPt) {
-	PixiLayout.drawSelectBox();
-};
-var _mouseUpSelectHandler = function _mouseUpSelectHandler (pixelPt) {
-	PixiLayout.setMouseMvHandler(null);
-	PixiLayout.finishSelectBox();
-};
-var _mouseMvCreateHandler = function _mouseMvCreateHandler (noop, pixelPt) {
-	PixiLayout.moveMouseSprite(pixelPt);
-};
-var _mouseEnterCreateHandler = function _mouseEnterCreateHandler (pixelPt) {
-	console.log('_mouseEnterCreateHandler: ' + pixelPt);
-	PixiLayout.setMouseMvHandler(_mouseMvCreateHandler);
-	PixiLayout.enableMouseSprite(true, pixelPt, _currentLayoutPart);
-};
-var _mouseLeaveCreateHandler = function _mouseLeaveCreateHandler () {
-	console.log('_mouseLeaveCreateHandler');
-	PixiLayout.setMouseMvHandler(null);
-	PixiLayout.enableMouseSprite(false);
-};
-var _mouseUpTestHandler = function _testHandler (pixelPt) {
-	if (PixiLayout.isMouseUpDnSame() && _currentLayoutPart) {
-		PixiLayout.createLayoutPart(_currentLayoutPart, pixelPt.x, pixelPt.y);
-	}
-};
 
-var _setMouseMode = function _setMouseMode (mouseMode) {
-	var targetEnterHandler = null;
-	var targetLeaveHandler = null;
-	var targetDnHandler = null;
-	var targetUpHandler = null;
-	var targetMvHandler = null;
-	switch (mouseMode) {
-	default:
-	case MOUSE_MODE.Select:
-		targetDnHandler = _mouseDnSelectHandler;
-		targetUpHandler = _mouseUpSelectHandler;
-		targetMvHandler = _mouseMvSelectHandler;
-		break;
-	case MOUSE_MODE.Create:
-		targetEnterHandler = _mouseEnterCreateHandler;
-		targetLeaveHandler = _mouseLeaveCreateHandler;
-		targetUpHandler = _mouseUpTestHandler;
-		break;
-	}
-	PixiLayout.setMouseDnHandler(targetDnHandler);
-	PixiLayout.setMouseMvHandler(targetMvHandler);
-	PixiLayout.setMouseUpHandler(targetUpHandler);
-	PixiLayout.setMouseEnterHandler(targetEnterHandler);
-	PixiLayout.setMouseLeaveHandler(targetLeaveHandler);
-};
 
 /**
  * _renderLayout function to redraw the layout
@@ -134,31 +44,15 @@ var _renderLayout = function _renderLayout () {
 	var width = (layoutContainer) ? layoutContainer.clientWidth : 800;
 	var height = (layoutContainer) ? layoutContainer.clientHeight : 600;
 	console.log('_renderLayout: width: ' + width + ', height: ' + height);
-	if (pixiRenderer) {
-		pixiRenderer.resize(width, height);
-		console.log('_renderLayout: resize: ');
-	}
-	layoutFrame.fit(defaultFitMode);
+	LayoutManager.resizeLayout(width, height, defaultFitMode);
 	// Test mousehandler
-	if (_currentLayoutPart = LayoutManager.getCurrentLayoutPart()) {
-		_currentMouseMode = MOUSE_MODE.Create;
+	if (LayoutManager.setActiveLayoutPart(LayoutManager.getCurrentLayoutPart())) {
+		_currentMouseMode = LayoutManager.MOUSE_MODE.Create;
 	}
 	else {
-		_currentMouseMode = MOUSE_MODE.Select;
+		_currentMouseMode = LayoutManager.MOUSE_MODE.Select;
 	}
-	_setMouseMode(_currentMouseMode);
-	if (testFit) {
-		switch (defaultFitMode) {
-		case PixiLayout.FitType.FitTypeX:
-			defaultFitMode = PixiLayout.FitType.FitTypeY;
-			break;
-		case PixiLayout.FitType.FitTypeXY:
-			defaultFitMode = PixiLayout.FitType.FitTypeX;
-			break;
-		case PixiLayout.FitType.FitTypeY:
-			defaultFitMode = PixiLayout.FitType.FitTypeXY;
-		}
-	}
+	LayoutManager.setMouseMode(_currentMouseMode);
 };
 
 /**
@@ -177,9 +71,9 @@ var _handleLayoutMessages = function _handleLayoutMessages (message) {
 		case 'select':
 			console.log('_handleLayoutMessages[' + message.topic + ']: ' + message.type + ' --> ' + message.value);
 			LayoutManager.setCurrentLayoutPart(null);
-			if (_currentMouseMode != MOUSE_MODE.Select) {
-				_currentMouseMode = MOUSE_MODE.Select;
-				_setMouseMode(_currentMouseMode);
+			if (_currentMouseMode != LayoutManager.MOUSE_MODE.Select) {
+				_currentMouseMode = LayoutManager.MOUSE_MODE.Select;
+				LayoutManager.setMouseMode(_currentMouseMode);
 			}
 			break;
 		}
@@ -190,7 +84,7 @@ var _handleLayoutMessages = function _handleLayoutMessages (message) {
 };
 
 Template.layout_lawn.onCreated(function () {
-	runAnimation = true;
+	LayoutManager.enableAnimation(true);
 	window.addEventListener('resize', _handleResizeEvent);
 	
 	// Test code
@@ -199,11 +93,10 @@ Template.layout_lawn.onCreated(function () {
 
 Template.layout_lawn.onDestroyed(function () {
 	// Have to stop animation and renderer
-	runAnimation = false;
-	pixiRenderer = null;
+	LayoutManager.enableAnimation(false);
+	LayoutManager.destroyLayout();
 	// disable select box on exit to handle timing issues when this template is 
 	// reentered.  We reenable on first mouse down which ensures graphic state is ok
-	PixiLayout.enableSelectBox(false);
 	window.removeEventListener('resize', _handleResizeEvent);
 	unsubscribe.remove();
 });
@@ -218,39 +111,21 @@ Template.layout_lawn.onRendered(function () {
 	var infoContainer = document.getElementById('info-container');
 	var offset = infoContainer.offsetTop + infoContainer.clientHeight;
 	
-	// The pixiContainer state is kept between entries here but
-	// must be managed at a meta level above the create context so that we
-	// can distinguish between:
-	// 1. entering a new lawn create/open sequence
-	// 2. bouncing between layout/render of the current lawn sequence
-	if (pixiContainer === null) {
-		if (!testMode) {
-			pixiContainer = layoutFrame.getLayoutFrame();
-		}
-		else {
-			pixiContainer = new PIXI.Container();
-			pixiContainer.addChild(watersave);
-		}
-	}
-	// See onDestroyed() which is stopping animation and clearing pixiRenderer
-	// => every time we enter onRendered(), pixiRenderer should be null
-	if (pixiRenderer === null) {
+	// See onDestroyed() which is stopping animation and destroys layout
+	// => every time we enter onRendered(), create layout again
+	if (!LayoutManager.isValid()) {
 		var layout = document.getElementById('layout-canvas');
 		var layoutContainer = document.getElementById('layout-div-container');
 		var width = (layoutContainer) ? layoutContainer.clientWidth : 800;
 		var height = (layoutContainer) ? layoutContainer.clientHeight : 600;
 		height -= offset;
-		pixiRenderer = PIXI.autoDetectRenderer(width,
-			height,
-			{view:layout}
-		);
-		PixiLayout.setRenderer(pixiRenderer);
-		// By here the pixiRenderer is set and has the correct pixel render area
+		LayoutManager.createLayout(layout, width, height);
+		// By here the layout is set up and has the correct pixel render area
 		_renderLayout();
 		
-		requestAnimationFrame(pixiAnimate);
+		LayoutManager.startAnimation();
 	}
-	console.log('layout_lawn.onRendered, pixiRenderer: ' + pixiRenderer);
+	console.log('layout_lawn.onRendered');
 });
 
 var testLayoutCreate = function testLayoutCreate () {
