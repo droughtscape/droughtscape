@@ -46,7 +46,7 @@ var _renderLayout = function _renderLayout () {
 	console.log('_renderLayout: width: ' + width + ', height: ' + height);
 	LayoutManager.resizeLayout(width, height, defaultFitMode);
 	// Test mousehandler
-	if (LayoutManager.setActiveLayoutPart(LayoutManager.getCurrentLayoutPart())) {
+	if (LayoutManager.setActiveLayoutPart(LayoutManager.getCurrentAbstractPart())) {
 		_currentMouseMode = LayoutManager.MOUSE_MODE.Create;
 	}
 	else {

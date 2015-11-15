@@ -24,11 +24,11 @@
 PixiLayout = (function () {
 
 	/** @enum {number} */
-	this.FitType = {
-		FitTypeXY: 0,
-		FitTypeX: 1,
-		FitTypeY: 2
-	};
+	//this.FitType = {
+	//	FitTypeXY: 0,
+	//	FitTypeX: 1,
+	//	FitTypeY: 2
+	//};
 	var _pixiRenderer = null;
 	var _pixiContainer = null;
 	var _layoutFrame = null;
@@ -105,8 +105,11 @@ PixiLayout = (function () {
 	var _gridEnabled = false;
 	var _gridSpacing;
 
-	var _scaleRealToPixel;
-	var _scalePixelToReal;
+	var _scaleRealToPixel = 1.0;
+	var _scalePixelToReal = 1.0;
+	var _getScalePixelToReal = function _getScalePixelToReal () {
+		return _scalePixelToReal;
+	};
 
 	// Mouse/touch support
 	var _mouseDownPt;
@@ -605,15 +608,14 @@ PixiLayout = (function () {
 	/**
 	 * @function _createLayoutPart - Factory that creates a LayoutPart instance and an associated PIXI Sprite and adds the sprite to the _parts container
 	 * Also augments sprite with the layoutPart instance and layoutPart with the sprite instance
-	 * @param {object} abstractPart - This should be common across all instances of this part
+	 * @param {object} layoutPart - This should be common across all instances of this part
 	 * @param {number} xPixel - x position in pixels
 	 * @param {number} yPixel - y position in pixels
 	 * @param {number} rotation - clockwise rotation in degrees
 	 * @return {LayoutPart} -
 	 * @private
 	 */
-	var _createLayoutPart = function _createLayoutPart(abstractPart, xPixel, yPixel, rotation) {
-		var layoutPart = LayoutManager.addItem(abstractPart, xPixel * _scalePixelToReal, yPixel * _scalePixelToReal, rotation);
+	var _createLayoutPart = function _createLayoutPart(layoutPart, xPixel, yPixel, rotation) {
 		var pixiTexture = PIXI.Texture.fromImage(layoutPart.imageUrl);
 		var sprite = new PIXI.Sprite(pixiTexture);
 		sprite.width = layoutPart.width * _scaleRealToPixel;
@@ -668,18 +670,18 @@ PixiLayout = (function () {
 				var bestFit = {widthPixels: pixiRenderWidth, lengthPixels: pixiRenderHeight};
 				// based on fitMode, adjust values, then modify the fitted frame
 				switch (fitMode) {
-				case PixiLayout.FitType.FitTypeXY:
+				case FitType.FitTypeXY:
 					bestFit = Utils.computeLayoutFrame(dims.width, dims.length, pixiRenderWidth, pixiRenderHeight);
 					// center layout frame in renderer
 					x = (pixiRenderWidth - bestFit.widthPixels) / 2;
 					y = (pixiRenderHeight - bestFit.lengthPixels) / 2;
 					break;
-				case PixiLayout.FitType.FitTypeX:
+				case FitType.FitTypeX:
 					bestFit.lengthPixels = (dims.length * pixiRenderWidth) / dims.width;
 					// center layout frame in renderer
 					y = (pixiRenderHeight - lengthPixels) / 2;
 					break;
-				case PixiLayout.FitType.FitTypeY:
+				case FitType.FitTypeY:
 					bestFit.widthPixels = (dims.width * pixiRenderHeight) / dims.length;
 					// center layout frame in renderer
 					x = (pixiRenderWidth - widthPixels) / 2;
@@ -709,14 +711,13 @@ PixiLayout = (function () {
 	};
 
 	return {
-		pixiRenderer: _pixiRenderer,
+		getScalePixelToReal: _getScalePixelToReal,
 		isValid: _isValid,
 		createLayout: _createLayout,
 		destroyLayout: _destroyLayout,
 		resizeLayout: _resizeLayout,
 		startAnimation: _startAnimation,
 		enableAnimation: _enableAnimation,
-		FitType: FitType,
 		setGridEnabled: _setGridEnabled,
 		enableSelectBox: _enableSelectBox,
 		enableMouseSprite: _enableMouseSprite,
@@ -735,3 +736,7 @@ PixiLayout = (function () {
 		addTestItem: _addTestItem
 	};
 })();
+
+Meteor.startup(function () {
+	LayoutManager.setPluginRenderer(PixiLayout);
+});
