@@ -254,6 +254,14 @@ PixiLayout = (function () {
 	var _drawSelectBoxPublic = function _drawSelectBoxPublic () {
 		_drawSelectBox(_mouseDownPt, _mouseMovePt);
 	};
+	
+	var _pointInBox = function _pointInBox (pt, box) {
+		var outside = (pt.x < box.x ||
+						pt.y < box.y ||
+						pt.x > (box.x + box.width) ||
+						pt.y > (box.y + box.height));
+		return !outside;
+	};
 
 	/**
 	 * _finishSelectBox function - draws final select box or a point if fromPt === toPt
@@ -270,6 +278,20 @@ PixiLayout = (function () {
 			_selectBox.drawCircle(toPt.x, toPt.y, 3);
 			// Store a select point, indicate with w, h == 0
 			_selectBox.currentBox = {x: toPt.x, y: toPt.y, w: 0, h: 0};
+			console.log('_finishSelectBox: toPt: [' + toPt.x + ',' + toPt.y +'], children.length: ' + _parts.children.length);
+			// Assume sorted by z order, => search from back of list forward to find first selectable item under a point
+			var parts = _parts.children;
+			for (var len=parts.length, i=len-1; i >= 0; i--) {
+				let part = parts[i];
+				let ul = _snapToGrid(part.position.x, part.position.y);
+				let rect = {x: ul.x, y: ul.y, width: part.width, height: part.height};
+				console.log('_finishSelectBox: part[' + i + ']: [' + rect.x + ',' + rect.y + ':' + rect.width + ',' + rect.height + ']');
+				if (_pointInBox(toPt, rect)) {
+					// satisfied
+					console.log('_finishSelectBox: ptInBox found at i: ' + i);
+					break;
+				}
+			}
 		}
 	};
 
@@ -389,8 +411,7 @@ PixiLayout = (function () {
 		if (_mouseUpHandler) {
 			_mouseUpHandler(_mouseUpPt);
 		}
-		//_addTestItem(_mouseUpPt.x, _mouseUpPt.y, 100, 100);
-		console.log('mouseup: xreal: ' + _mouseUpPt.x * _scalePixelToReal + ', yreal: ' + _mouseUpPt.y * _scalePixelToReal);
+		console.log('mouseup: : x' + _mouseUpPt.x + ', y: ' + _mouseUpPt.y);
 		//}
 	};
 
