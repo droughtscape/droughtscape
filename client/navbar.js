@@ -78,12 +78,11 @@ var _parseEventId = function _parseEventId (eventId) {
 Template.nav_bar.events({
 	'click .action-button': function (event) {
 		console.log('action_button: ' + event.currentTarget.id);
-		// event encodes message and target MBus
-		let {action, topic} = _parseEventId(event.currentTarget.id);
-		MBus.publish(topic, new Message.Action(action));
+		MBus.publish(this.tagParent, new Message.Action(this.tagAction));
 	},
 	'click .dropdownTag': function (event) {
 		console.log('dropdownTag: ' + event);
+		MBus.publish(this.tagParent, new Message.Action(this.tagAction));
 	},
 	'click .dropdown-button': function (event) {
 		console.log('dropdown: ' + event);

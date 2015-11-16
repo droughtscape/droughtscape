@@ -70,9 +70,26 @@ var _renderRender = function _renderRender () {
  */
 var _handleResizeEvent = Utils.createDeferredFunction(_renderRender);
 
+var unsubscribe = null;
+
+var _handleRenderMessages = function _handleRenderMessages (message) {
+	if (MBus.validateMessage(message)) {
+		switch (message.value.action) {
+		default :
+			console.log('_handleRenderMessages: action: ' + message.value.action);
+			break;
+		}
+	}
+	else {
+		console.log('_handleRenderMessages:ERROR, invalid message: ' + message);
+	}
+};
+
 Template.render_lawn.onCreated(function () {
 	runAnimation = true;
 	window.addEventListener('resize', _handleResizeEvent);
+	// NavBar events
+	unsubscribe = MBus.subscribe(Constants.mbus_render, _handleRenderMessages);
 });
 
 Template.render_lawn.onDestroyed(function () {
@@ -81,6 +98,7 @@ Template.render_lawn.onDestroyed(function () {
 	threeScene = null;
 	runAnimation = false;
 	window.removeEventListener('resize', _handleResizeEvent);
+	unsubscribe.remove();
 });
 
 /**

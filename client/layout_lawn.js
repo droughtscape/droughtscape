@@ -68,13 +68,19 @@ var unsubscribe = null;
 var _handleLayoutMessages = function _handleLayoutMessages (message) {
 	if (MBus.validateMessage(message)) {
 		switch (message.value.action) {
-		case 'select':
-			console.log('_handleLayoutMessages[' + message.topic + ']: ' + message.type + ' --> ' + message.value);
-			LayoutManager.setCurrentLayoutPart(null);
+		case NavBarTagActionType.SelectMode:
+			LayoutManager.setCurrentAbstractPart(null);
 			if (_currentMouseMode != LayoutManager.MOUSE_MODE.Select) {
 				_currentMouseMode = LayoutManager.MOUSE_MODE.Select;
 				LayoutManager.setMouseMode(_currentMouseMode);
 			}
+			break;
+		case NavBarTagActionType.MoveToBack:
+		case NavBarTagActionType.MoveToFront:
+		case NavBarTagActionType.MoveBackward:
+		case NavBarTagActionType.MoveForward:
+		default :
+			console.log('_handleLayoutMessages: action: ' + message.value.action);
 			break;
 		}
 	}
@@ -86,8 +92,7 @@ var _handleLayoutMessages = function _handleLayoutMessages (message) {
 Template.layout_lawn.onCreated(function () {
 	LayoutManager.enableAnimation(true);
 	window.addEventListener('resize', _handleResizeEvent);
-	
-	// Test code
+	// NavBar events
 	unsubscribe = MBus.subscribe(Constants.mbus_layout, _handleLayoutMessages);
 });
 
