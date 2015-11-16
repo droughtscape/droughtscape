@@ -1,7 +1,11 @@
 The next big push choices:
+- PixiLayout has more functionality
+	- point selection => see _finishSelectBox and finish it...
 - LayoutManager
-	- point selection
-	- area selection
+	- plugin support - move more functionality to the plugin (pixi) layer.
+	- callbacks? instead of MBus or in addition?
+	- point selection support
+	- area selection support
 	- cycle point selection
 		- How for mobile
 			Maybe just support front/back semantics
