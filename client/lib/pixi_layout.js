@@ -259,9 +259,30 @@ PixiLayout = (function () {
 	var _pointInBox = function _pointInBox (pt, box) {
 		var outside = (pt.x < box.x ||
 						pt.y < box.y ||
-						pt.x > (box.x + box.width) ||
-						pt.y > (box.y + box.height));
+						pt.x > (box.x + box.w) ||
+						pt.y > (box.y + box.h));
 		return !outside;
+	};
+	
+	var _boxIntersectBox = function _boxIntersectBox (box1, box2) {
+		var lrx1, lry1, lrx2, lry2;
+		if ((lrx1 = box1.x + box1.w) < box2.x) {
+			// box1 left of box2
+			return false;
+		}
+		else if ((lry1 = box1.y + box1.h) < box2.y) {
+			// box1 above box2
+			return false;
+		}
+		else if ((lrx2 = box2.x + box2.w) < box1.x) {
+			// box2 left of box1
+			return false;
+		}
+		else if ((lry2 = box2.y + box2.h) < box1.y) {
+			// box2 above box1
+			return false;
+		}
+		return true;
 	};
 	
 	var _selectPart = function _selectPart (part) {
@@ -270,12 +291,14 @@ PixiLayout = (function () {
 		if (index > -1) {
 			// already in array, clear tint and remove
 			part.tint = 0xFFFFFF;
+			part.alpha = 1.0;
 			_selected.splice(index, 1);
 		}
 		else {
 			// push onto _selected, set tint
 			_selected.push(part);
 			part.tint = 0xFF0000;
+			part.alpha = 0.5;
 		}
 	};
 	
@@ -284,6 +307,21 @@ PixiLayout = (function () {
 			_selected[i].tint = 0xFFFFFF;
 		}
 		_selected = [];
+	};
+	
+	var _enumerateParts = function _enumerateParts () {
+		var parts = _parts.children;
+		for (var len=parts.length, i=len-1; i >= 0; i--) {
+			let part = parts[i];
+			let ul = _snapToGrid(part.position.x, part.position.y);
+			let rect = {x: ul.x, y: ul.y, w: part.width, h: part.height};
+			if (_boxIntersectBox(rect, selectBox)) {
+				// satisfied
+				console.log('_finishSelectBox: ptInBox found at i: ' + i);
+				// Highlight via tint, if not selected, set to red, if selected, clear to white
+				_selectPart(part);
+			}
+		}
 	};
 
 	/**
@@ -294,6 +332,23 @@ PixiLayout = (function () {
 	var _finishSelectBox = function _finishSelectBox(fromPt, toPt) {
 		if (!_isSame(fromPt, toPt)) {
 			_drawSelectBox(fromPt, toPt);
+			_clearSelection();
+			let parts = _parts.children;
+			let selectBox = _selectBox.currentBox;
+			for (let len=parts.length, i=len-1; i >= 0; i--) {
+				let part = parts[i];
+				let ul = _snapToGrid(part.position.x, part.position.y);
+				let rect = {x: ul.x, y: ul.y, w: part.width, h: part.height};
+				console.log('_finishSelectBox: part[' + i + ']: [' + rect.x + ',' + rect.y + ':' + rect.width + ',' + rect.height + ']');
+				console.log('_finishSelectBox: part[' + i + ']: containsPoint: ' + part.containsPoint(new PIXI.Point(toPt.x, toPt.y)));
+				if (_boxIntersectBox(rect, selectBox)) {
+					// satisfied
+					console.log('_finishSelectBox: ptInBox found at i: ' + i);
+					// Highlight via tint, if not selected, set to red, if selected, clear to white
+					_selectPart(part);
+				}
+			}
+			_selectBox.visible = false;
 		}
 		else {
 			_selectBox.beginFill(0xFF0000);
@@ -303,12 +358,12 @@ PixiLayout = (function () {
 			_selectBox.currentBox = {x: toPt.x, y: toPt.y, w: 0, h: 0};
 			console.log('_finishSelectBox: toPt: [' + toPt.x + ',' + toPt.y +'], children.length: ' + _parts.children.length);
 			// Assume sorted by z order, => search from back of list forward to find first selectable item under a point
-			var parts = _parts.children;
 			_clearSelection();
-			for (var len=parts.length, i=len-1; i >= 0; i--) {
+			let parts = _parts.children;
+			for (let len=parts.length, i=len-1; i >= 0; i--) {
 				let part = parts[i];
 				let ul = _snapToGrid(part.position.x, part.position.y);
-				let rect = {x: ul.x, y: ul.y, width: part.width, height: part.height};
+				let rect = {x: ul.x, y: ul.y, w: part.width, h: part.height};
 				console.log('_finishSelectBox: part[' + i + ']: [' + rect.x + ',' + rect.y + ':' + rect.width + ',' + rect.height + ']');
 				console.log('_finishSelectBox: part[' + i + ']: containsPoint: ' + part.containsPoint(new PIXI.Point(toPt.x, toPt.y)));
 				if (_pointInBox(toPt, rect)) {
