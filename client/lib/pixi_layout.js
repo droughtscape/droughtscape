@@ -309,21 +309,17 @@ PixiLayout = (function () {
 		_selected = [];
 	};
 	
-	var _enumerateParts = function _enumerateParts () {
+	var _enumerateParts = function _enumerateParts (enumFn) {
 		var parts = _parts.children;
 		for (var len=parts.length, i=len-1; i >= 0; i--) {
 			let part = parts[i];
-			let ul = _snapToGrid(part.position.x, part.position.y);
-			let rect = {x: ul.x, y: ul.y, w: part.width, h: part.height};
-			if (_boxIntersectBox(rect, selectBox)) {
-				// satisfied
-				console.log('_finishSelectBox: ptInBox found at i: ' + i);
-				// Highlight via tint, if not selected, set to red, if selected, clear to white
-				_selectPart(part);
+			if (enumFn(part)) {
+				return false;
 			}
 		}
+		return true;
 	};
-
+	
 	/**
 	 * _finishSelectBox function - draws final select box or a point if fromPt === toPt
 	 * @param {object} fromPt - x, y location we were at
@@ -333,10 +329,8 @@ PixiLayout = (function () {
 		if (!_isSame(fromPt, toPt)) {
 			_drawSelectBox(fromPt, toPt);
 			_clearSelection();
-			let parts = _parts.children;
 			let selectBox = _selectBox.currentBox;
-			for (let len=parts.length, i=len-1; i >= 0; i--) {
-				let part = parts[i];
+			_enumerateParts(function (part) {
 				let ul = _snapToGrid(part.position.x, part.position.y);
 				let rect = {x: ul.x, y: ul.y, w: part.width, h: part.height};
 				console.log('_finishSelectBox: part[' + i + ']: [' + rect.x + ',' + rect.y + ':' + rect.width + ',' + rect.height + ']');
@@ -347,11 +341,12 @@ PixiLayout = (function () {
 					// Highlight via tint, if not selected, set to red, if selected, clear to white
 					_selectPart(part);
 				}
-			}
+				return false;
+			});
 			_selectBox.visible = false;
 		}
 		else {
-			_selectBox.beginFill(0xFF0000);
+			_selectBox.beginFill(0xFF0000, 0.5);
 			toPt = _snapToGrid(toPt.x, toPt.y);
 			_selectBox.drawCircle(toPt.x, toPt.y, 3);
 			// Store a select point, indicate with w, h == 0
@@ -359,9 +354,7 @@ PixiLayout = (function () {
 			console.log('_finishSelectBox: toPt: [' + toPt.x + ',' + toPt.y +'], children.length: ' + _parts.children.length);
 			// Assume sorted by z order, => search from back of list forward to find first selectable item under a point
 			_clearSelection();
-			let parts = _parts.children;
-			for (let len=parts.length, i=len-1; i >= 0; i--) {
-				let part = parts[i];
+			_enumerateParts(function (part) {
 				let ul = _snapToGrid(part.position.x, part.position.y);
 				let rect = {x: ul.x, y: ul.y, w: part.width, h: part.height};
 				console.log('_finishSelectBox: part[' + i + ']: [' + rect.x + ',' + rect.y + ':' + rect.width + ',' + rect.height + ']');
@@ -371,9 +364,10 @@ PixiLayout = (function () {
 					console.log('_finishSelectBox: ptInBox found at i: ' + i);
 					// Highlight via tint, if not selected, set to red, if selected, clear to white
 					_selectPart(part);
-					break;
+					return true;
 				}
-			}
+				return false;
+			});
 		}
 	};
 
