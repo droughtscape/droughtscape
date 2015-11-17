@@ -33,6 +33,7 @@ PixiLayout = (function () {
 	var _pixiContainer = null;
 	var _layoutFrame = null;
 	var _runAnimation = false;
+	var _selected = [];
 	
 	var _getLayoutFrame = function _getLayoutFrame () {
 		if (_layoutFrame === null) {
@@ -262,6 +263,28 @@ PixiLayout = (function () {
 						pt.y > (box.y + box.height));
 		return !outside;
 	};
+	
+	var _selectPart = function _selectPart (part) {
+		// if already in _selectList, remove it
+		var index = _selected.indexOf(part);
+		if (index > -1) {
+			// already in array, clear tint and remove
+			part.tint = 0xFFFFFF;
+			_selected.splice(index, 1);
+		}
+		else {
+			// push onto _selected, set tint
+			_selected.push(part);
+			part.tint = 0xFF0000;
+		}
+	};
+	
+	var _clearSelection = function _clearSelection () {
+		for (var i=0, len=_selected.length; i < len; ++i) {
+			_selected[i].tint = 0xFFFFFF;
+		}
+		_selected = [];
+	};
 
 	/**
 	 * _finishSelectBox function - draws final select box or a point if fromPt === toPt
@@ -281,14 +304,18 @@ PixiLayout = (function () {
 			console.log('_finishSelectBox: toPt: [' + toPt.x + ',' + toPt.y +'], children.length: ' + _parts.children.length);
 			// Assume sorted by z order, => search from back of list forward to find first selectable item under a point
 			var parts = _parts.children;
+			_clearSelection();
 			for (var len=parts.length, i=len-1; i >= 0; i--) {
 				let part = parts[i];
 				let ul = _snapToGrid(part.position.x, part.position.y);
 				let rect = {x: ul.x, y: ul.y, width: part.width, height: part.height};
 				console.log('_finishSelectBox: part[' + i + ']: [' + rect.x + ',' + rect.y + ':' + rect.width + ',' + rect.height + ']');
+				console.log('_finishSelectBox: part[' + i + ']: containsPoint: ' + part.containsPoint(new PIXI.Point(toPt.x, toPt.y)));
 				if (_pointInBox(toPt, rect)) {
 					// satisfied
 					console.log('_finishSelectBox: ptInBox found at i: ' + i);
+					// Highlight via tint, if not selected, set to red, if selected, clear to white
+					_selectPart(part);
 					break;
 				}
 			}
@@ -646,6 +673,8 @@ PixiLayout = (function () {
 		layoutPart.sprite = sprite;
 		sprite.layoutPart = layoutPart;
 		_parts.addChild(sprite);
+		_clearSelection();
+		_selectPart(sprite);
 		return layoutPart;
 	};
 
