@@ -1,6 +1,9 @@
 The next big push choices:
+- Front/Back arrange
 - PixiLayout has more functionality
-	- point selection => see _finishSelectBox and finish it...
+	+ point selection => see _finishSelectBox and finish it...
+	+ box selection
+	- add/del from selection
 - LayoutManager
 	- plugin support - move more functionality to the plugin (pixi) layer.
 	- callbacks? instead of MBus or in addition?
