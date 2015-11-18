@@ -278,8 +278,8 @@ PixiLayout = (function () {
 	};
 	
 	var _boxIntersectBox = function _boxIntersectBox (box1, box2) {
-		var lrx1, lry1, lrx2, lry2;
-		if ((lrx1 = box1.x + box1.w) < box2.x) {
+		var lry1, lrx2;
+		if ((box1.x + box1.w) < box2.x) {
 			// box1 left of box2
 			return false;
 		}
@@ -291,7 +291,7 @@ PixiLayout = (function () {
 			// box2 left of box1
 			return false;
 		}
-		else if ((lry2 = box2.y + box2.h) < box1.y) {
+		else if ((box2.y + box2.h) < box1.y) {
 			// box2 above box1
 			return false;
 		}
@@ -327,6 +327,17 @@ PixiLayout = (function () {
 		for (var len=parts.length, i=len-1; i >= 0; i--) {
 			let part = parts[i];
 			if (enumFn(part)) {
+				return false;
+			}
+		}
+		return true;
+	};
+	
+	var _enumeratePartsExcludePart = function _enumeratePartsExcludePart (enumFn, excludePart) {
+		var parts = _parts.children;
+		for (var len=parts.length, i=len-1; i >= 0; i--) {
+			let part = parts[i];
+			if (part !== excludePart && enumFn(part)) {
 				return false;
 			}
 		}
@@ -757,16 +768,14 @@ PixiLayout = (function () {
 			let targetPart = _selected[0];
 			let targetRect = _rectFromPart(targetPart);
 			let itemsNotTarget = [];
-			_enumerateParts(function (part) {
+			_enumeratePartsExcludePart(function (part) {
 				// examine everything except targetPart 
-				if (part !== targetPart) {
-					if (_boxIntersectBox(_rectFromPart(part), targetRect)) {
-						// satisfied, store it
-						itemsNotTarget.push(part);
-					}
+				if (_boxIntersectBox(_rectFromPart(part), targetRect)) {
+					// satisfied, store it
+					itemsNotTarget.push(part);
 				}
 				return false;
-			});
+			}, targetPart);
 			if (itemsNotTarget.length > 0) {
 				// Find highest z-order
 				let maxZ = -10000;
@@ -788,16 +797,14 @@ PixiLayout = (function () {
 			let targetPart = _selected[0];
 			let targetRect = _rectFromPart(targetPart);
 			let itemsNotTarget = [];
-			_enumerateParts(function (part) {
+			_enumeratePartsExcludePart(function (part) {
 				// examine everything except targetPart 
-				if (part !== targetPart) {
-					if (_boxIntersectBox(_rectFromPart(part), targetRect)) {
-						// satisfied, store it
-						itemsNotTarget.push(part);
-					}
+				if (_boxIntersectBox(_rectFromPart(part), targetRect)) {
+					// satisfied, store it
+					itemsNotTarget.push(part);
 				}
 				return false;
-			});
+			}, targetPart);
 			if (itemsNotTarget.length > 0) {
 				// Find highest z-order
 				let minZ = 10000;
@@ -819,16 +826,14 @@ PixiLayout = (function () {
 			let targetPart = _selected[0];
 			let targetRect = _rectFromPart(targetPart);
 			let itemsNotTarget = [];
-			_enumerateParts(function (part) {
+			_enumeratePartsExcludePart(function (part) {
 				// examine everything except targetPart 
-				if (part !== targetPart) {
-					if (_boxIntersectBox(_rectFromPart(part), targetRect)) {
-						// satisfied, store it
-						itemsNotTarget.push(part);
-					}
+				if (_boxIntersectBox(_rectFromPart(part), targetRect)) {
+					// satisfied, store it
+					itemsNotTarget.push(part);
 				}
 				return false;
-			});
+			}, targetPart);
 			if (itemsNotTarget.length > 0) {
 				if (itemsNotTarget.length > 1) {
 					itemsNotTarget.sort(depthCompare);
@@ -857,16 +862,14 @@ PixiLayout = (function () {
 			let targetPart = _selected[0];
 			let targetRect = _rectFromPart(targetPart);
 			let itemsNotTarget = [];
-			_enumerateParts(function (part) {
-				// examine everything except targetPart 
-				if (part !== targetPart) {
-					if (_boxIntersectBox(_rectFromPart(part), targetRect)) {
-						// satisfied, store it
-						itemsNotTarget.push(part);
-					}
+			_enumeratePartsExcludePart(function (part) {
+				// called for all items except targetPart 
+				if (_boxIntersectBox(_rectFromPart(part), targetRect)) {
+					// satisfied, store it
+					itemsNotTarget.push(part);
 				}
 				return false;
-			});
+			}, targetPart);
 			if (itemsNotTarget.length > 0) {
 				if (itemsNotTarget.length > 1) {
 					itemsNotTarget.sort(depthCompare);
