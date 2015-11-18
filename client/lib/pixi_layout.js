@@ -35,6 +35,10 @@ PixiLayout = (function () {
 	var _runAnimation = false;
 	var _selected = [];
 	
+	var _validSelection = function _validSelection () {
+		return _selected.length;
+	};
+	
 	var _getLayoutFrame = function _getLayoutFrame () {
 		if (_layoutFrame === null) {
 			_layoutFrame = new LayoutFrame();
@@ -47,6 +51,15 @@ PixiLayout = (function () {
 			_pixiContainer = _getLayoutFrame().getLayoutFrame();
 		}
 		return _pixiContainer;
+	};
+	var _blink = function _blink (color) {
+		// default blink color is red
+		var blinkColor = color || 0xFF0000;
+		var originalTint = _background.tint;
+		_background.tint = 0xFF0000;
+		setTimeout(function () {
+			_background.tint = originalTint;
+		}, 100);
 	};
 	var _pixiAnimate = function _pixiAnimate () {
 		if (_runAnimation) {
@@ -331,11 +344,7 @@ PixiLayout = (function () {
 			_clearSelection();
 			let selectBox = _selectBox.currentBox;
 			_enumerateParts(function (part) {
-				let ul = _snapToGrid(part.position.x, part.position.y);
-				let rect = {x: ul.x, y: ul.y, w: part.width, h: part.height};
-				console.log('_finishSelectBox: part[' + i + ']: [' + rect.x + ',' + rect.y + ':' + rect.width + ',' + rect.height + ']');
-				console.log('_finishSelectBox: part[' + i + ']: containsPoint: ' + part.containsPoint(new PIXI.Point(toPt.x, toPt.y)));
-				if (_boxIntersectBox(rect, selectBox)) {
+				if (_boxIntersectBox(_rectFromPart(part), selectBox)) {
 					// satisfied
 					console.log('_finishSelectBox: ptInBox found at i: ' + i);
 					// Highlight via tint, if not selected, set to red, if selected, clear to white
@@ -351,17 +360,11 @@ PixiLayout = (function () {
 			_selectBox.drawCircle(toPt.x, toPt.y, 3);
 			// Store a select point, indicate with w, h == 0
 			_selectBox.currentBox = {x: toPt.x, y: toPt.y, w: 0, h: 0};
-			console.log('_finishSelectBox: toPt: [' + toPt.x + ',' + toPt.y +'], children.length: ' + _parts.children.length);
 			// Assume sorted by z order, => search from back of list forward to find first selectable item under a point
 			_clearSelection();
 			_enumerateParts(function (part) {
-				let ul = _snapToGrid(part.position.x, part.position.y);
-				let rect = {x: ul.x, y: ul.y, w: part.width, h: part.height};
-				console.log('_finishSelectBox: part[' + i + ']: [' + rect.x + ',' + rect.y + ':' + rect.width + ',' + rect.height + ']');
-				console.log('_finishSelectBox: part[' + i + ']: containsPoint: ' + part.containsPoint(new PIXI.Point(toPt.x, toPt.y)));
-				if (_pointInBox(toPt, rect)) {
+				if (_pointInBox(toPt, _rectFromPart(part))) {
 					// satisfied
-					console.log('_finishSelectBox: ptInBox found at i: ' + i);
 					// Highlight via tint, if not selected, set to red, if selected, clear to white
 					_selectPart(part);
 					return true;
@@ -719,12 +722,174 @@ PixiLayout = (function () {
 		sprite.height = layoutPart.height * _scaleRealToPixel;
 		sprite.x = layoutPart.x * _scaleRealToPixel;
 		sprite.y = layoutPart.y * _scaleRealToPixel;
+		sprite.z = layoutPart.z;
 		layoutPart.sprite = sprite;
 		sprite.layoutPart = layoutPart;
 		_parts.addChild(sprite);
 		_clearSelection();
 		_selectPart(sprite);
 		return layoutPart;
+	};
+
+	function depthCompare(a,b) {
+		if (a.z < b.z)
+			return -1;
+		if (a.z > b.z)
+			return 1;
+		return 0;
+	}
+
+	/**
+	 * Helper function for frequent activity computing a part's rect
+	 * @param {object} part - PIXI.Sprite representation of the part
+	 * @returns {{x: (number|*), y: (number|*), w: *, h: *}}
+	 * @private
+	 */
+	var _rectFromPart = function _rectFromPart (part) {
+		let ul = _snapToGrid(part.position.x, part.position.y);
+		return {x: ul.x, y: ul.y, w: part.width, h: part.height};
+	};
+	
+	// arranging parts in front to back order
+	var _moveToFront = function _moveToFront () {
+		// Must be a valid single selected item
+		if (_selected.length === 1) {
+			let targetPart = _selected[0];
+			let targetRect = _rectFromPart(targetPart);
+			let itemsNotTarget = [];
+			_enumerateParts(function (part) {
+				// examine everything except targetPart 
+				if (part !== targetPart) {
+					if (_boxIntersectBox(_rectFromPart(part), targetRect)) {
+						// satisfied, store it
+						itemsNotTarget.push(part);
+					}
+				}
+				return false;
+			});
+			if (itemsNotTarget.length > 0) {
+				// Find highest z-order
+				let maxZ = -10000;
+				for (var i=0, len=itemsNotTarget.length; i < len; ++i) {
+					maxZ = (maxZ > itemsNotTarget[i].z) ? maxZ : itemsNotTarget[i].z;
+				}
+				// store into layout part as well
+				targetPart.layoutPart.setZ(targetPart.z = maxZ + 1);
+				// sort
+				_parts.sort(depthCompare);
+			}
+		}
+		else {
+			_blink();
+		}
+	};
+	var _moveToBack = function _moveToBack () {
+		if (_selected.length === 1) {
+			let targetPart = _selected[0];
+			let targetRect = _rectFromPart(targetPart);
+			let itemsNotTarget = [];
+			_enumerateParts(function (part) {
+				// examine everything except targetPart 
+				if (part !== targetPart) {
+					if (_boxIntersectBox(_rectFromPart(part), targetRect)) {
+						// satisfied, store it
+						itemsNotTarget.push(part);
+					}
+				}
+				return false;
+			});
+			if (itemsNotTarget.length > 0) {
+				// Find highest z-order
+				let minZ = 10000;
+				for (var i=0, len=itemsNotTarget.length; i < len; ++i) {
+					minZ = (minZ < itemsNotTarget[i].z) ? minZ : itemsNotTarget[i].z;
+				}
+				// store into layout part as well
+				targetPart.layoutPart.setZ(targetPart.z = minZ - 1);
+				// sort
+				_parts.sort(depthCompare);
+			}
+		}
+		else {
+			_blink();
+		}
+	};
+	var _moveForward = function _moveForward () {
+		if (_selected.length === 1) {
+			let targetPart = _selected[0];
+			let targetRect = _rectFromPart(targetPart);
+			let itemsNotTarget = [];
+			_enumerateParts(function (part) {
+				// examine everything except targetPart 
+				if (part !== targetPart) {
+					if (_boxIntersectBox(_rectFromPart(part), targetRect)) {
+						// satisfied, store it
+						itemsNotTarget.push(part);
+					}
+				}
+				return false;
+			});
+			if (itemsNotTarget.length > 0) {
+				if (itemsNotTarget.length > 1) {
+					itemsNotTarget.sort(depthCompare);
+				}
+				// find the item we are immediately behind (<) and move in front with z value and resort
+				let stopZ = targetPart.z;
+				for (var i=0, len=itemsNotTarget.length; i < len; ++i) {
+					if (itemsNotTarget[i].z > stopZ) {
+						targetPart.z = itemsNotTarget[i].z;
+						targetPart.layoutPart.setZ(targetPart.z);
+						itemsNotTarget[i].z = stopZ;
+						itemsNotTarget[i].layoutPart.setZ(itemsNotTarget[i].z);
+						break;
+					}
+				}
+				// sort
+				_parts.sort(depthCompare);
+			}
+		}
+		else {
+			_blink();
+		}
+	};
+	var _moveBackward = function _moveBackward () {
+		if (_selected.length === 1) {
+			let targetPart = _selected[0];
+			let targetRect = _rectFromPart(targetPart);
+			let itemsNotTarget = [];
+			_enumerateParts(function (part) {
+				// examine everything except targetPart 
+				if (part !== targetPart) {
+					if (_boxIntersectBox(_rectFromPart(part), targetRect)) {
+						// satisfied, store it
+						itemsNotTarget.push(part);
+					}
+				}
+				return false;
+			});
+			if (itemsNotTarget.length > 0) {
+				if (itemsNotTarget.length > 1) {
+					itemsNotTarget.sort(depthCompare);
+				}
+				// find the item we are immediately before (<) and move behind with z value and resort
+				let stopZ = targetPart.z;
+				// iterate end to start of itemsNotTarget array
+				for (var len=itemsNotTarget.length, i=len-1; i >= 0; --i) {
+					if (itemsNotTarget[i].z < stopZ) {
+						targetPart.z = itemsNotTarget[i].z;
+						targetPart.layoutPart.setZ(targetPart.z);
+						itemsNotTarget[i].z = stopZ;
+						itemsNotTarget[i].layoutPart.setZ(itemsNotTarget[i].z);
+						break;
+					}
+				}
+				// sort
+				_parts.sort(depthCompare);
+			}
+		}
+		else {
+			_blink();
+		}
 	};
 
 	/**
@@ -832,6 +997,11 @@ PixiLayout = (function () {
 		drawSelectBox: _drawSelectBoxPublic,
 		moveMouseSprite: _moveMouseSprite,
 		finishSelectBox: _finishSelectBoxPublic,
+		validSelection: _validSelection,
+		moveToFront: _moveToFront,
+		moveToBack: _moveToBack,
+		moveForward: _moveForward,
+		moveBackward: _moveBackward,
 		addTestItem: _addTestItem
 	};
 })();

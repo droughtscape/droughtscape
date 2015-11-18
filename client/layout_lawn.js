@@ -76,9 +76,17 @@ var _handleLayoutMessages = function _handleLayoutMessages (message) {
 			}
 			break;
 		case NavBarTagActionType.MoveToBack:
+			LayoutManager.moveToBack();
+			break;
 		case NavBarTagActionType.MoveToFront:
+			LayoutManager.moveToFront();
+			break;
 		case NavBarTagActionType.MoveBackward:
+			LayoutManager.moveBackward();
+			break;
 		case NavBarTagActionType.MoveForward:
+			LayoutManager.moveForward();
+			break;
 		default :
 			console.log('_handleLayoutMessages: action: ' + message.value.action);
 			break;
