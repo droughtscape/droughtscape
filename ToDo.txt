@@ -28,6 +28,7 @@ The next big push choices:
 => 3d render needs basic LayoutManager functionality
 	
 - add Path part => filled pathway.  
+	+ Add to part selection
 	- constant slope
 	- stepped slope
 	- fill types
