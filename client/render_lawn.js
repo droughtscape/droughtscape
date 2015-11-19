@@ -123,17 +123,9 @@ var getRenderer = function getRenderer (canvas) {
 	return Detector.webgl? new THREE.WebGLRenderer({canvas: canvas}): new THREE.CanvasRenderer({canvas: canvas});
 };
 
-var _renderLayout = function _renderLayout () {
-	var layoutItems = LayoutManager.currentLayout;
-	console.log('renderLawn: layoutItems.length: ' + layoutItems.length);
-	for (var i=0, len=layoutItems.length; i<len; ++i) {
-		
-	}
-};
-
 var _callbackLayoutPart = function _callbackLayoutPart (part) {
 	console.log('_callbackLayoutPart: part: [' + part.locus.x + ', ' + part.locus.y + ', ' + part.locus.z + 
-		']' + '[' + part.locus.z + ']');
+		']' + '[' + part.locus.rotation + ']');
 };
 
 Template.render_lawn.onRendered(function () {
