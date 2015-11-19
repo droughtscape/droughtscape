@@ -1,5 +1,7 @@
 The next big push choices:
-+ Front/Back arrange
+- 3d rendering
+	- convert layout to render format
+	- camera view control
 - PixiLayout has more functionality
 	+ point selection => see _finishSelectBox and finish it...
 	+ box selection
@@ -12,7 +14,7 @@ The next big push choices:
 	- cycle point selection
 		- How for mobile
 			Maybe just support front/back semantics
-- 3d rendering
+	- undo support
 - collections
 - administrative views
 
@@ -63,6 +65,7 @@ The next big push choices:
 		change the border highlight.
 		=> Temp fix
 		
++ Front/Back arrange
 + Clean up constants
 + Will lawns fit under AbstractParts or will we generate AbstractLawns => DOH, it will be a separate type: AbstractLawn
 + Create test all_parts, my_parts with typed AbstractParts
