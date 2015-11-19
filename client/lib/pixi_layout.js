@@ -151,19 +151,33 @@ PixiLayout = (function () {
 		_enableSelectBox(false);
 		return _pixiRenderer;
 	};
-
+	/**
+	 * Callback to allow adjusting pixi renderer when user changes window size dynamically
+	 * @param {number} newWidth - in pixels
+	 * @param {number} newHeight - in pixels
+	 * @param {number} fitMode - resize method
+	 * @private
+	 */
 	var _resizeLayout = function _resizeLayout (newWidth, newHeight, fitMode) {
 		if (_pixiRenderer) {
 			_pixiRenderer.resize(newWidth, newHeight);
 		}
 		_getLayoutFrame().fit(fitMode);
 	};
-
+	/**
+	 * Starts animation.  Note, this is more than just moving stuff around, it also affects
+	 * refresh which is also on the animation function.  Also initiates initial RAF call
+	 * @private
+	 */
 	var _startAnimation = function _startAnimation () {
 		_runAnimation = true;
 		requestAnimationFrame(_pixiAnimate);
 	};
-
+	/**
+	 * Controls whether any rendering happens in the animation engine
+	 * @param {boolean} enable - self evident
+	 * @private
+	 */
 	var _enableAnimation = function _enableAnimation (enable) {
 		_runAnimation = enable;
 	};
@@ -204,7 +218,9 @@ PixiLayout = (function () {
 	};
 
 	/**
-	 * _mouseOut function - callback from PIXI.InteractiveManager on mouse entering render area
+	 * callback from PIXI.InteractiveManager on mouse entering render area
+	 * @param {object} interactionData - PIXI interaction object
+	 * @private
 	 */
 	var _mouseOver = function _mouseOver(interactionData) {
 		console.log('_mouseOver');
@@ -219,8 +235,8 @@ PixiLayout = (function () {
 	 * _mouseOut function - callback from PIXI.InteractiveManager on mouse leaving render area
 	 */
 	/**
-	 * 
-	 * @param interactionData
+	 * callback from PIXI.InteractiveManager when mouse leaves area
+	 * @param interactionData - PIXI interaction data
 	 * @private
 	 */
 	var _mouseOut = function _mouseOut(interactionData) {
@@ -328,7 +344,13 @@ PixiLayout = (function () {
 	var _drawSelectBoxPublic = function _drawSelectBoxPublic () {
 		_drawSelectBox(_mouseDownPt, _mouseMovePt);
 	};
-	
+	/**
+	 * Utility to determine when a pt is in box.  Used in selection
+	 * @param {object} pt - x, y coordinates in pixels
+	 * @param {object} box - x, y, w, h in pixels
+	 * @returns {boolean}
+	 * @private
+	 */
 	var _pointInBox = function _pointInBox (pt, box) {
 		var outside = (pt.x < box.x ||
 						pt.y < box.y ||
@@ -336,7 +358,13 @@ PixiLayout = (function () {
 						pt.y > (box.y + box.h));
 		return !outside;
 	};
-	
+	/**
+	 * Utility to determine when a box intersects another box
+	 * @param {object} box1 - x, y, w, h in pixels
+	 * @param {object} box2 - x, y, w, h in pixels
+	 * @returns {boolean}
+	 * @private
+	 */
 	var _boxIntersectBox = function _boxIntersectBox (box1, box2) {
 		var lry1, lrx2;
 		if ((box1.x + box1.w) < box2.x) {
@@ -357,7 +385,11 @@ PixiLayout = (function () {
 		}
 		return true;
 	};
-	
+	/**
+	 * Manages the _selected array as well as tinting any selected part
+	 * @param part
+	 * @private
+	 */
 	var _selectPart = function _selectPart (part) {
 		// if already in _selectList, remove it
 		var index = _selected.indexOf(part);
@@ -374,14 +406,24 @@ PixiLayout = (function () {
 			part.alpha = 0.5;
 		}
 	};
-	
+	/**
+	 * resets tinting on any selected part
+	 * clears the _selected list
+	 * @private
+	 */
 	var _clearSelection = function _clearSelection () {
 		for (var i=0, len=_selected.length; i < len; ++i) {
 			_selected[i].tint = 0xFFFFFF;
+			_selected[i].alpha = 1.0;
 		}
 		_selected = [];
 	};
-	
+	/**
+	 * Encapsulates forward enumeration of the _parts children
+	 * @param {object} enumFn - callback on each enumerated part.  Return true to stop enumeration, false to continue
+	 * @returns {boolean} - false if enumeration was stopped, true if finished for all items
+	 * @private
+	 */
 	var _enumeratePartsFwd = function _enumeratePartsFwd (enumFn) {
 		var parts = _parts.children;
 		for (var len=parts.length, i=0; i < len; ++i) {
@@ -392,6 +434,12 @@ PixiLayout = (function () {
 		}
 		return true;
 	};
+	/**
+	 * Encapsulates reverse enumeration of the _parts children
+	 * @param {object} enumFn - callback on each enumerated part.  Return true to stop enumeration, false to continue
+	 * @returns {boolean} - false if enumeration was stopped, true if finished for all items
+	 * @private
+	 */
 	var _enumeratePartsRev = function _enumerateParts (enumFn) {
 		var parts = _parts.children;
 		for (var len=parts.length, i=len-1; i >= 0; i--) {
@@ -402,7 +450,13 @@ PixiLayout = (function () {
 		}
 		return true;
 	};
-	
+
+	/**
+	 * Encapsulates reverse enumeration of the _parts children, excluding a callback on excludePart
+	 * @param {object} enumFn - callback on each enumerated part.  Return true to stop enumeration, false to continue
+	 * @returns {boolean} - false if enumeration was stopped, true if finished for all items
+	 * @private
+	 */
 	var _enumeratePartsExcludePartRev = function _enumeratePartsExcludePartRev (enumFn, excludePart) {
 		var parts = _parts.children;
 		for (var len=parts.length, i=len-1; i >= 0; i--) {
@@ -465,7 +519,12 @@ PixiLayout = (function () {
 	var _mouseSprite = null;
 	var _mouseMask = null;
 	var _unitW = 50;
-	
+	/**
+	 * Computes the center point of a part
+	 * @param {object} pixelPt - pixel x, y
+	 * @returns {{}} - computed center point
+	 * @private
+	 */
 	var _computeCenterPt = function _computeCenterPt (pixelPt) {
 		let centerPt = {};
 		centerPt.x = pixelPt.x - (_unitW / 2);
@@ -812,6 +871,12 @@ PixiLayout = (function () {
 		return layoutPart;
 	};
 
+	/**
+	 * Helper for sorting parts when arranging them
+	 * @param a
+	 * @param b
+	 * @returns {number}
+	 */
 	function depthCompare(a,b) {
 		if (a.z < b.z)
 			return -1;
