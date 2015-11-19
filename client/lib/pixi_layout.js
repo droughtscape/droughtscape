@@ -454,6 +454,7 @@ PixiLayout = (function () {
 	/**
 	 * Encapsulates reverse enumeration of the _parts children, excluding a callback on excludePart
 	 * @param {object} enumFn - callback on each enumerated part.  Return true to stop enumeration, false to continue
+	 * @param {object} excludePart - this part will not be passed to enumFn(part)
 	 * @returns {boolean} - false if enumeration was stopped, true if finished for all items
 	 * @private
 	 */
@@ -860,9 +861,9 @@ PixiLayout = (function () {
 		var sprite = new PIXI.Sprite(pixiTexture);
 		sprite.width = layoutPart.width * _scaleRealToPixel;
 		sprite.height = layoutPart.height * _scaleRealToPixel;
-		sprite.x = layoutPart.x * _scaleRealToPixel;
-		sprite.y = layoutPart.y * _scaleRealToPixel;
-		sprite.z = layoutPart.z;
+		sprite.x = layoutPart.locus.x * _scaleRealToPixel;
+		sprite.y = layoutPart.locus.y * _scaleRealToPixel;
+		sprite.z = layoutPart.locus.z;
 		layoutPart.sprite = sprite;
 		sprite.layoutPart = layoutPart;
 		_parts.addChild(sprite);
@@ -940,7 +941,7 @@ PixiLayout = (function () {
 					maxZ = (maxZ > itemsNotTarget[i].z) ? maxZ : itemsNotTarget[i].z;
 				}
 				// store into layout part as well
-				targetPart.layoutPart.setZ(targetPart.z = maxZ + 1);
+				targetPart.layoutPart.locus.z = targetPart.z = (maxZ + 1);
 				// sort
 				_parts.children.sort(depthCompare);
 				_testArrangement();
@@ -974,7 +975,7 @@ PixiLayout = (function () {
 					minZ = (minZ < itemsNotTarget[i].z) ? minZ : itemsNotTarget[i].z;
 				}
 				// store into layout part as well
-				targetPart.layoutPart.setZ(targetPart.z = minZ - 1);
+				targetPart.layoutPart.locus.z = targetPart.z = (minZ - 1);
 				// sort
 				_parts.children.sort(depthCompare);
 				_testArrangement();
@@ -1001,13 +1002,13 @@ PixiLayout = (function () {
 				if (part !== targetPart && _boxIntersectBox(_rectFromPart(part), targetRect)) {
 					// satisfied, store it
 					part.z = z_order;
-					part.layoutPart.setZ(z_order);
+					part.layoutPart.locus.z = z_order;
 					++z_order;
 					itemsNotTarget.push(part);
 				}
 				else if (part === targetPart) {
 					part.z = z_order;
-					part.layoutPart.setZ(z_order);
+					part.layoutPart.locus.z = z_order;
 					++z_order;
 				}
 				return false;
@@ -1020,9 +1021,9 @@ PixiLayout = (function () {
 				for (var i=0, len=itemsNotTarget.length; i < len; ++i) {
 					if (itemsNotTarget[i].z > stopZ) {
 						targetPart.z = itemsNotTarget[i].z;
-						targetPart.layoutPart.setZ(targetPart.z);
+						targetPart.layoutPart.locus.z = targetPart.z;
 						itemsNotTarget[i].z = stopZ;
-						itemsNotTarget[i].layoutPart.setZ(itemsNotTarget[i].z);
+						itemsNotTarget[i].layoutPart.locus.z = itemsNotTarget[i].z;
 						break;
 					}
 				}
@@ -1053,13 +1054,13 @@ PixiLayout = (function () {
 				if (part !== targetPart && _boxIntersectBox(_rectFromPart(part), targetRect)) {
 					// satisfied, store it
 					part.z = z_order;
-					part.layoutPart.setZ(z_order);
+					part.layoutPart.locus.z = z_order;
 					++z_order;
 					itemsNotTarget.push(part);
 				}
 				else if (part === targetPart) {
 					part.z = z_order;
-					part.layoutPart.setZ(z_order);
+					part.layoutPart.locus.z = z_order;
 					++z_order;
 				}
 				return false;
@@ -1075,9 +1076,9 @@ PixiLayout = (function () {
 				for (var len=itemsNotTarget.length, i=len-1; i >= 0; --i) {
 					if (itemsNotTarget[i].z < stopZ) {
 						targetPart.z = itemsNotTarget[i].z;
-						targetPart.layoutPart.setZ(targetPart.z);
+						targetPart.layoutPart.locus.z = targetPart.z;
 						itemsNotTarget[i].z = stopZ;
-						itemsNotTarget[i].layoutPart.setZ(itemsNotTarget[i].z);
+						itemsNotTarget[i].layoutPart.locus.z = itemsNotTarget[i].z;
 						break;
 					}
 				}
@@ -1090,6 +1091,12 @@ PixiLayout = (function () {
 		else {
 			_blink();
 		}
+	};
+	
+	var _enumerateLayoutParts = function _enumerateLayoutParts (callback) {
+		_enumeratePartsFwd(function (part) {
+			return callback(part.layoutPart);
+		});
 	};
 
 	/**
@@ -1177,6 +1184,7 @@ PixiLayout = (function () {
 	return {
 		getScalePixelToReal: _getScalePixelToReal,
 		isValid: _isValid,
+		enumerateLayoutParts: _enumerateLayoutParts,
 		createLayout: _createLayout,
 		destroyLayout: _destroyLayout,
 		resizeLayout: _resizeLayout,

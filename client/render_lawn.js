@@ -131,6 +131,11 @@ var _renderLayout = function _renderLayout () {
 	}
 };
 
+var _callbackLayoutPart = function _callbackLayoutPart (part) {
+	console.log('_callbackLayoutPart: part: [' + part.locus.x + ', ' + part.locus.y + ', ' + part.locus.z + 
+		']' + '[' + part.locus.z + ']');
+};
+
 Template.render_lawn.onRendered(function () {
 	// Start dropdowns
 	$(".dropdown-button").dropdown();
@@ -159,6 +164,9 @@ Template.render_lawn.onRendered(function () {
 	}
 	//renderer.setSize(window.innerWidth, window.innerHeight);
 	//document.body.appendChild(renderer.domElement);
+	
+	// Now see if we can get the real stuff
+	LayoutManager.enumerateLayout(_callbackLayoutPart);
 
 	geometry = new THREE.BoxGeometry( 10, 1, 1 );
 	material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
