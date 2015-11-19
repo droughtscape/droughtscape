@@ -1,5 +1,7 @@
 The next big push choices:
 - groundcovers must expand to borders or edge of lawn.
+	- layout mode, alpha must be transparent
+	- arrange order?  Manual or force to back?  Probably manual since we can have layered ground cover
 - 3d rendering
 	- convert layout to render format
 	- camera view control
@@ -25,6 +27,10 @@ The next big push choices:
 	=> Needs underlying LayoutManager to handle the data and proxy the collections
 => 3d render needs basic LayoutManager functionality
 	
+- add Path part => filled pathway.  
+	- constant slope
+	- stepped slope
+	- fill types
 - implement data/control path for dropdown clicks
 
 - Make lawn template dynamic
