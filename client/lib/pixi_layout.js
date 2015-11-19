@@ -34,11 +34,20 @@ PixiLayout = (function () {
 	var _layoutFrame = null;
 	var _runAnimation = false;
 	var _selected = [];
-	
+	/**
+	 * Exports the validity (length) of the current selection.  It does NOT export the selection since that type is
+	 * private to PixiLayout
+	 * @returns {number} - length of the _selected list
+	 * @private
+	 */
 	var _validSelection = function _validSelection () {
 		return _selected.length;
 	};
-	
+	/**
+	 * Getter for singleton LayoutFrame, creates if not yet created.
+	 * @returns {object} - singleton LayoutFrame instance
+	 * @private
+	 */
 	var _getLayoutFrame = function _getLayoutFrame () {
 		if (_layoutFrame === null) {
 			_layoutFrame = new LayoutFrame();
@@ -46,21 +55,56 @@ PixiLayout = (function () {
 		return _layoutFrame;
 	};
 
+	/**
+	 * Getter for singleton PIXI layoutFrame container, creates if not yet created.
+	 * @returns {object} - layout frame container
+	 * @private
+	 */
 	var _getPixiContainer = function _getPixiContainer () {
 		if (_pixiContainer === null) {
 			_pixiContainer = _getLayoutFrame().getLayoutFrame();
 		}
 		return _pixiContainer;
 	};
+	/**
+	 * Blinks the background
+	 * @param {number} color - set background.tint to this and restore on timer expiry
+	 * @private
+	 */
 	var _blink = function _blink (color) {
-		// default blink color is red
-		var blinkColor = color || 0xFF0000;
-		var originalTint = _background.tint;
-		_background.tint = 0xFF0000;
-		setTimeout(function () {
-			_background.tint = originalTint;
-		}, 100);
+		_blinkPart(_background, color);
+		//// default blink color is red
+		//var blinkColor = color || 0xFF0000;
+		//var originalTint = _background.tint;
+		//_background.tint = 0xFF0000;
+		//setTimeout(function () {
+		//	_background.tint = originalTint;
+		//}, 100);
 	};
+	/**
+	 * Blinks a part
+	 * @param {object} part - pixi item to blink
+	 * @param {number} color - to set part.tint to 
+	 * @param {number} duration - ms to blink
+	 * @param {object} nextFn - chaining function for sequential blinking
+	 * @private
+	 */
+	var _blinkPart = function _blinkPart (part, color, duration, nextFn) {
+		var blinkColor = color || 0xFF0000;
+		var blinkDuration = duration || 200;
+		var originalTint = part.tint;
+		part.tint = blinkColor;
+		setTimeout(function () {
+			part.tint = originalTint;
+			if (nextFn) {
+				nextFn();
+			}
+		}, blinkDuration);
+	};
+	/**
+	 * Basic PIXI animation function
+	 * @private
+	 */
 	var _pixiAnimate = function _pixiAnimate () {
 		if (_runAnimation) {
 			requestAnimationFrame(_pixiAnimate);
@@ -72,10 +116,22 @@ PixiLayout = (function () {
 			console.log('_pixiAnimate: stopping animation');
 		}
 	};
+	/**
+	 * Defines when pixi is correctly setup
+	 * @returns {boolean}
+	 * @private
+	 */
 	var _isValid = function _isValid () {
 		return _pixiRenderer !== null;
 	};
-
+	/**
+	 * Setup the basic canvas view of pixi
+	 * @param {object} canvas - html canvas
+	 * @param {number} w - width of canvas in pixels
+	 * @param {number} h - height of canvas in pixels
+	 * @returns {*} - browser compatible renderer, prefer WebGL but can be Canvas fallback
+	 * @private
+	 */
 	var _createLayout = function _createLayout (canvas, w, h) {
 		_getPixiContainer();
 		if (_pixiRenderer === null) {
@@ -83,7 +139,11 @@ PixiLayout = (function () {
 		}
 		return _pixiRenderer;
 	};
-
+	/**
+	 * Cleanup on layout exit
+	 * @returns {*} - null _pixiRenderer
+	 * @private
+	 */
 	var _destroyLayout = function _destroyLayout () {
 		_pixiRenderer = null;
 		// disable select box on exit to handle timing issues when this template is 
@@ -322,7 +382,17 @@ PixiLayout = (function () {
 		_selected = [];
 	};
 	
-	var _enumerateParts = function _enumerateParts (enumFn) {
+	var _enumeratePartsFwd = function _enumeratePartsFwd (enumFn) {
+		var parts = _parts.children;
+		for (var len=parts.length, i=0; i < len; ++i) {
+			let part = parts[i];
+			if (enumFn(part)) {
+				return false;
+			}
+		}
+		return true;
+	};
+	var _enumeratePartsRev = function _enumerateParts (enumFn) {
 		var parts = _parts.children;
 		for (var len=parts.length, i=len-1; i >= 0; i--) {
 			let part = parts[i];
@@ -333,10 +403,10 @@ PixiLayout = (function () {
 		return true;
 	};
 	
-	var _enumeratePartsExcludePart = function _enumeratePartsExcludePart (enumFn, excludePart) {
+	var _enumeratePartsExcludePartRev = function _enumeratePartsExcludePartRev (enumFn, excludePart) {
 		var parts = _parts.children;
 		for (var len=parts.length, i=len-1; i >= 0; i--) {
-			let part = parts[i];
+			var part = parts[i];
 			if (part !== excludePart && enumFn(part)) {
 				return false;
 			}
@@ -354,7 +424,7 @@ PixiLayout = (function () {
 			_drawSelectBox(fromPt, toPt);
 			_clearSelection();
 			let selectBox = _selectBox.currentBox;
-			_enumerateParts(function (part) {
+			_enumeratePartsRev(function (part) {
 				if (_boxIntersectBox(_rectFromPart(part), selectBox)) {
 					// satisfied
 					console.log('_finishSelectBox: ptInBox found at i: ' + i);
@@ -373,7 +443,7 @@ PixiLayout = (function () {
 			_selectBox.currentBox = {x: toPt.x, y: toPt.y, w: 0, h: 0};
 			// Assume sorted by z order, => search from back of list forward to find first selectable item under a point
 			_clearSelection();
-			_enumerateParts(function (part) {
+			_enumeratePartsRev(function (part) {
 				if (_pointInBox(toPt, _rectFromPart(part))) {
 					// satisfied
 					// Highlight via tint, if not selected, set to red, if selected, clear to white
@@ -762,13 +832,35 @@ PixiLayout = (function () {
 	};
 	
 	// arranging parts in front to back order
+	var _enableTestArrangement = false;
+	/**
+	 * Blink the parts list in order to allow debugging arrangement functions
+	 * @private
+	 */
+	var _testArrangement = function _testArrangement () {
+		if (_enableTestArrangement) {
+			var current = 0;
+			if (current < _parts.children.length) {
+				var nextFn = function () {
+					if (current < _parts.children.length) {
+						_blinkPart(_parts.children[current++], 0x00FF00, 500, nextFn)
+					}
+				};
+				_blinkPart(_parts.children[current++], 0x00FF00, 500, nextFn);
+			}
+		}
+	};
+	/**
+	 * Tests for valid selection and if found moves it to the front of all items occluding that selection
+	 * @private
+	 */
 	var _moveToFront = function _moveToFront () {
 		// Must be a valid single selected item
 		if (_selected.length === 1) {
-			let targetPart = _selected[0];
-			let targetRect = _rectFromPart(targetPart);
-			let itemsNotTarget = [];
-			_enumeratePartsExcludePart(function (part) {
+			var targetPart = _selected[0];
+			var targetRect = _rectFromPart(targetPart);
+			var itemsNotTarget = [];
+			_enumeratePartsExcludePartRev(function (part) {
 				// examine everything except targetPart 
 				if (_boxIntersectBox(_rectFromPart(part), targetRect)) {
 					// satisfied, store it
@@ -778,26 +870,31 @@ PixiLayout = (function () {
 			}, targetPart);
 			if (itemsNotTarget.length > 0) {
 				// Find highest z-order
-				let maxZ = -10000;
+				var maxZ = -10000;
 				for (var i=0, len=itemsNotTarget.length; i < len; ++i) {
 					maxZ = (maxZ > itemsNotTarget[i].z) ? maxZ : itemsNotTarget[i].z;
 				}
 				// store into layout part as well
 				targetPart.layoutPart.setZ(targetPart.z = maxZ + 1);
 				// sort
-				_parts.sort(depthCompare);
+				_parts.children.sort(depthCompare);
+				_testArrangement();
 			}
 		}
 		else {
 			_blink();
 		}
 	};
+	/**
+	 * Tests for valid selection and if found moves it to the back of all items occluding that selection
+	 * @private
+	 */
 	var _moveToBack = function _moveToBack () {
 		if (_selected.length === 1) {
 			let targetPart = _selected[0];
 			let targetRect = _rectFromPart(targetPart);
 			let itemsNotTarget = [];
-			_enumeratePartsExcludePart(function (part) {
+			_enumeratePartsExcludePartRev(function (part) {
 				// examine everything except targetPart 
 				if (_boxIntersectBox(_rectFromPart(part), targetRect)) {
 					// satisfied, store it
@@ -814,31 +911,46 @@ PixiLayout = (function () {
 				// store into layout part as well
 				targetPart.layoutPart.setZ(targetPart.z = minZ - 1);
 				// sort
-				_parts.sort(depthCompare);
+				_parts.children.sort(depthCompare);
+				_testArrangement();
 			}
 		}
 		else {
 			_blink();
 		}
 	};
+	/**
+	 * Tests for valid selection and if found moves it in front of any item immediately occluding that selection
+	 * @private
+	 */
 	var _moveForward = function _moveForward () {
 		if (_selected.length === 1) {
 			let targetPart = _selected[0];
 			let targetRect = _rectFromPart(targetPart);
+			// Since the parts list order of occurrence => z-order, we impose an arbitrary
+			// z-order on the items as they are scanned.
+			let z_order = 0;
 			let itemsNotTarget = [];
-			_enumeratePartsExcludePart(function (part) {
-				// examine everything except targetPart 
-				if (_boxIntersectBox(_rectFromPart(part), targetRect)) {
+			_enumeratePartsFwd(function (part) {
+				// save and order everything involved in the targetRect 
+				if (part !== targetPart && _boxIntersectBox(_rectFromPart(part), targetRect)) {
 					// satisfied, store it
+					part.z = z_order;
+					part.layoutPart.setZ(z_order);
+					++z_order;
 					itemsNotTarget.push(part);
 				}
-				return false;
-			}, targetPart);
-			if (itemsNotTarget.length > 0) {
-				if (itemsNotTarget.length > 1) {
-					itemsNotTarget.sort(depthCompare);
+				else if (part === targetPart) {
+					part.z = z_order;
+					part.layoutPart.setZ(z_order);
+					++z_order;
 				}
-				// find the item we are immediately behind (<) and move in front with z value and resort
+				return false;
+			});
+			// The above ordering => the code below can assume valid, non-identical z-order sorted list
+			if (itemsNotTarget.length > 0) {
+				// find the item we are immediately behind (<) and move in front with z value and re-sort
+				// there is a possibility that all items have the same z order.
 				let stopZ = targetPart.z;
 				for (var i=0, len=itemsNotTarget.length; i < len; ++i) {
 					if (itemsNotTarget[i].z > stopZ) {
@@ -850,26 +962,44 @@ PixiLayout = (function () {
 					}
 				}
 				// sort
-				_parts.sort(depthCompare);
+				_parts.children.sort(depthCompare);
+				_testArrangement();
+
 			}
 		}
 		else {
 			_blink();
 		}
 	};
+	/**
+	 * Tests for valid selection and if found moves it behind any item occluded by that selection
+	 * @private
+	 */
 	var _moveBackward = function _moveBackward () {
 		if (_selected.length === 1) {
 			let targetPart = _selected[0];
 			let targetRect = _rectFromPart(targetPart);
+			// Since the parts list order of occurrence => z-order, we impose an arbitrary
+			// z-order on the items as they are scanned.
+			let z_order = 0;
 			let itemsNotTarget = [];
-			_enumeratePartsExcludePart(function (part) {
-				// called for all items except targetPart 
-				if (_boxIntersectBox(_rectFromPart(part), targetRect)) {
+			_enumeratePartsFwd(function (part) {
+				// save and order everything involved in the targetRect 
+				if (part !== targetPart && _boxIntersectBox(_rectFromPart(part), targetRect)) {
 					// satisfied, store it
+					part.z = z_order;
+					part.layoutPart.setZ(z_order);
+					++z_order;
 					itemsNotTarget.push(part);
 				}
+				else if (part === targetPart) {
+					part.z = z_order;
+					part.layoutPart.setZ(z_order);
+					++z_order;
+				}
 				return false;
-			}, targetPart);
+			});
+			// The above ordering => the code below can assume valid, non-identical z-order sorted list
 			if (itemsNotTarget.length > 0) {
 				if (itemsNotTarget.length > 1) {
 					itemsNotTarget.sort(depthCompare);
@@ -887,7 +1017,9 @@ PixiLayout = (function () {
 					}
 				}
 				// sort
-				_parts.sort(depthCompare);
+				_parts.children.sort(depthCompare);
+				_testArrangement();
+
 			}
 		}
 		else {
