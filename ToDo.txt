@@ -1,4 +1,5 @@
 The next big push choices:
+- groundcovers must expand to borders or edge of lawn.
 - 3d rendering
 	- convert layout to render format
 	- camera view control
