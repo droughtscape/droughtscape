@@ -166,7 +166,7 @@ var _buildGround = function _buildGround () {
 	//var material = new THREE.MeshPhongMaterial({ ambient: 0x050505, color: 0x0033ff, specular: 0x555555, shininess: 30 });
 	var material = new THREE.MeshBasicMaterial( { color: 0xd2b48c } );
 	var mesh = new THREE.Mesh(geometry, material);
-	mesh.position.y = -5;
+	mesh.position.y = -20;
 	mesh.rotation.x = -Math.PI/2; //-90 degrees around the xaxis
 	mesh.doubleSided = true;
 	return mesh;

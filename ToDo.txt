@@ -1,7 +1,14 @@
 The next big push choices:
 - 3d rendering
 	- convert layout to render format
-	- camera view control
+	- camera view control - right bar
+	- test understanding controls - right bar
+	- slope 
+		- how best to show
+		- convert delta-y to radians via pythagorus
+	- ground 
+		- controllable alpha
+	- lawn - controllable alpha
 - groundcovers must expand to borders or edge of lawn.
 	- layout mode, alpha must be transparent
 	- arrange order?  Manual or force to back?  Probably manual since we can have layered ground cover
