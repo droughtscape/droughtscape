@@ -124,8 +124,8 @@ var getRenderer = function getRenderer (canvas) {
 };
 
 var _callbackLayoutPart = function _callbackLayoutPart (part) {
-	console.log('_callbackLayoutPart: part: [' + part.locus.x + ', ' + part.locus.y + ', ' + part.locus.z + 
-		']' + '[' + part.locus.rotation + ']');
+	console.log('_callbackLayoutPart: part: location[' + part.locus.x + ', ' + part.locus.y + ', ' + part.locus.z + 
+		']' + ', rotation[' + part.locus.rotation + ']');
 };
 
 Template.render_lawn.onRendered(function () {
