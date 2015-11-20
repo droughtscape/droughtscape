@@ -34,8 +34,8 @@ var cube;
 var threeAnimate = function threeAnimate () {
 	if (runAnimation) {
 		requestAnimationFrame(threeAnimate);
-		cube.rotation.x += 0.1;
-		cube.rotation.y += 0.1;
+		//cube.rotation.x += 0.1;
+		//cube.rotation.y += 0.1;
 		threeRenderer.render(threeScene, threeCamera)
 	}
 };
@@ -128,6 +128,50 @@ var _callbackLayoutPart = function _callbackLayoutPart (part) {
 		']' + ', rotation[' + part.locus.rotation + ']');
 };
 
+var _buildSky = function _buildSky () {
+	// ref: http://joshondesign.com/p/books/canvasdeepdive/chapter11.html
+	var urls = [
+		'sky.png',
+		'sky.png',
+		'sky.png',
+		'sky.png',
+		'sky.png',
+		'sky.png'
+	];
+	var size = 10000;
+	var geometry = new THREE.BoxGeometry(size, size, size);
+	//var material = new THREE.MeshPhongMaterial({ ambient: 0x050505, color: 0x0033ff, specular: 0x555555, shininess: 30 });
+	var material = new THREE.MeshBasicMaterial( { color: 0x87ceeb } );
+	var mesh = new THREE.Mesh(geometry, material);
+	mesh.flipSided = true;
+	return mesh;
+	
+	//var textureCube = THREE.ImageUtils.loadTextureCube(urls);
+	////setup the cube shader 
+	//var shader = THREE.ShaderUtils.lib["cube"];
+	//var uniforms = THREE.UniformsUtils.clone(shader.uniforms);
+	//uniforms['tCube'].texture = textureCube;
+	//var material = new THREE.ShaderMaterial({
+	//	fragmentShader : shader.fragmentShader,
+	//	vertexShader   : shader.vertexShader,
+	//	uniforms       : uniforms
+	//});
+	//return material;
+};
+
+var _buildGround = function _buildGround () {
+	var w = 100;
+	var h = 40;
+	var geometry = new THREE.PlaneGeometry(w, h);
+	//var material = new THREE.MeshPhongMaterial({ ambient: 0x050505, color: 0x0033ff, specular: 0x555555, shininess: 30 });
+	var material = new THREE.MeshBasicMaterial( { color: 0xd2b48c } );
+	var mesh = new THREE.Mesh(geometry, material);
+	mesh.position.y = -5;
+	mesh.rotation.x = -Math.PI/2; //-90 degrees around the xaxis
+	mesh.doubleSided = true;
+	return mesh;
+};
+
 Template.render_lawn.onRendered(function () {
 	// Start dropdowns
 	$(".dropdown-button").dropdown();
@@ -159,13 +203,24 @@ Template.render_lawn.onRendered(function () {
 	
 	// Now see if we can get the real stuff
 	LayoutManager.enumerateLayout(_callbackLayoutPart);
+	var skyMesh = _buildSky();
+	skyMesh.position.z = -50;
+	threeScene.add(skyMesh);
+	
+	var ground = _buildGround();
+	threeScene.add(ground);
+	
+	//geometry = new THREE.BoxGeometry( 10, 1, 1 );
+	//material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+	//cube = new THREE.Mesh( geometry, material );
+	//threeScene.add( cube );
+	
+	//add sunlight 
+	var light = new THREE.SpotLight();
+	light.position.set(0,500,0);
+	//threeScene.add(light);
 
-	geometry = new THREE.BoxGeometry( 10, 1, 1 );
-	material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
-	cube = new THREE.Mesh( geometry, material );
-	threeScene.add( cube );
-
-	threeCamera.position.z = 5;
+	threeCamera.position.z = 100;
 
 	threeAnimate();
 	console.log('render_lawn.onCreated, threeScene: ' + threeScene + ', threeRenderer: ' + threeRenderer);
