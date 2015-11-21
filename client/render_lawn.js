@@ -126,6 +126,7 @@ var getRenderer = function getRenderer (canvas) {
 var _callbackLayoutPart = function _callbackLayoutPart (part) {
 	console.log('_callbackLayoutPart: part: location[' + part.locus.x + ', ' + part.locus.y + ', ' + part.locus.z + 
 		']' + ', rotation[' + part.locus.rotation + ']');
+	console.log('_callbackLayoutPart: abstractPart.id: ' + part.abstractPart.id.value + ', depth: ' + part.abstractPart.depth);
 };
 
 var _buildSky = function _buildSky () {

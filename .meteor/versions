@@ -44,6 +44,7 @@ iron:middleware-stack@1.0.11
 iron:router@1.0.12
 iron:url@1.0.11
 jquery@1.11.4
+kevohagan:sweetalert@1.0.0
 launch-screen@1.0.4
 limemakers:three@0.71.0
 livedata@1.0.15
@@ -73,7 +74,7 @@ routepolicy@1.0.6
 service-configuration@1.0.5
 session@1.1.1
 sha@1.0.4
-softwarerero:accounts-t9n@1.1.4
+softwarerero:accounts-t9n@1.1.6
 spacebars@1.0.7
 spacebars-compiler@1.0.7
 srp@1.0.4

@@ -29,6 +29,9 @@ The next big push choices:
 	
 - collections
 - administrative views
+- sweetalert instead of toast
+	- http://t4t5.github.io/sweetalert/
+	- on atmosphere
 
 => collections probably waits on prototype 3d render
 => sufficient functionality in the api for either of the other two
