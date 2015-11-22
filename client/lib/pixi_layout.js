@@ -23,12 +23,6 @@
  */
 PixiLayout = (function () {
 
-	/** @enum {number} */
-	//this.FitType = {
-	//	FitTypeXY: 0,
-	//	FitTypeX: 1,
-	//	FitTypeY: 2
-	//};
 	var _pixiRenderer = null;
 	var _pixiContainer = null;
 	var _layoutFrame = null;

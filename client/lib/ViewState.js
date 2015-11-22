@@ -28,130 +28,131 @@
  */
 /**
  * ViewState - Type defining object
- * @type {Function}
+ * @type {ViewState}
  * @parameter view - the current view 
  * @parameter navBar - name of the navBar contents associated with this view
  * @parameter rightBar - name of the rightBar contents associated with this view
  * @parameter clearOnPush - on any push, clear the ViewState stack
  */
-ViewState = (function (view, navBar, rightBar, clearOnPush) {
-	return {
-		view: view,
-		navBar: navBar,
-		rightBar: rightBar,
-		clearOnPush: clearOnPush
+ViewState = class ViewState  {
+	constructor (view, navBar, rightBar, clearOnPush) {
+		this.view = view;
+		this.navBar = navBar;
+		this.rightBar = rightBar;
+		this.clearOnPush = clearOnPush;
 	}
-});
+};
+
 
 /**
- * Implements a stack of ViewState and also changes to particular ViewStates
- * @class ViewStack
+ * Public namespace ViewStack.  Creates s singleton to control view selection and movement
+ * @namespace ViewStack
  */
 ViewStack = (function () {
-	// Predefined targets
-	var _targets = {};
-	
-	var _initTargets = function _initTargets () {
-		// Have to init in a function to avoid load order issues
-		_targets[ViewTargetType.about] 					= new ViewState(RenderViewType.about, NavBarType.home, RightBarType.home, false);
-		_targets[ViewTargetType.home] 					= new ViewState(RenderViewType.splash, NavBarType.home, RightBarType.home, true);
-		_targets[ViewTargetType.signIn] 				= new ViewState(RenderViewType.signin, NavBarType.home, RightBarType.home, false);
-		_targets[ViewTargetType.create] 				= new ViewState(RenderViewType.create, NavBarType.home, RightBarType.none, false);
-		_targets[ViewTargetType.createShapeLawn] 		= new ViewState(RenderViewType.shape_lawn, NavBarType.home, RightBarType.none, false);
-		_targets[ViewTargetType.createMeasureLawn] 		= new ViewState(RenderViewType.measure_lawn, NavBarType.home, RightBarType.none, false);
-		_targets[ViewTargetType.createBuildLawn] 		= new ViewState(RenderViewType.build_lawn, NavBarType.create, RightBarType.none, false);
-		_targets[ViewTargetType.createLayoutLawn] 		= new ViewState(RenderViewType.layout_lawn, NavBarType.layout, RightBarType.layout_lawn, true);
-		_targets[ViewTargetType.createLayoutSettings] 	= new ViewState(RenderViewType.layout_settings, NavBarType.create, RightBarType.none, false);
-		_targets[ViewTargetType.createRenderLawn] 		= new ViewState(RenderViewType.render_lawn, NavBarType.render, RightBarType.render_lawn, true);
-		_targets[ViewTargetType.createSelectParts] 		= new ViewState(RenderViewType.select_parts, NavBarType.create, RightBarType.select_parts, false);
-		_targets[ViewTargetType.createFinishLawn] 		= new ViewState(RenderViewType.finish_lawn, NavBarType.home, RightBarType.finish_lawn, false);
-		_targets[ViewTargetType.createInfoPart] 		= new ViewState(RenderViewType.info_part, NavBarType.create, RightBarType.create_info_item, false);
-		_targets[ViewTargetType.infoLawn] 				= new ViewState(RenderViewType.info_lawn, NavBarType.home, RightBarType.none, false);
-		_targets[ViewTargetType.infoPart] 				= new ViewState(RenderViewType.info_part, NavBarType.home, RightBarType.part_info_item, false);
-		_targets[ViewTargetType.newPart] 				= new ViewState(RenderViewType.new_part, NavBarType.home, RightBarType.parts, false);
-		_targets[ViewTargetType.parts] 					= new ViewState(RenderViewType.parts, NavBarType.home, RightBarType.parts, false);
-		_targets[ViewTargetType.lawns] 					= new ViewState(RenderViewType.lawns, NavBarType.home, RightBarType.lawns, false);
-		_targets[ViewTargetType.personalize] 			= new ViewState(RenderViewType.personalize, NavBarType.home, RightBarType.home, false);
-		_targets[ViewTargetType.community] 				= new ViewState(RenderViewType.community, NavBarType.home, RightBarType.home, false);
-		_targets[ViewTargetType.rebates] 				= new ViewState(RenderViewType.rebates, NavBarType.home, RightBarType.home, false);
-		_targets[ViewTargetType.waterCalc] 				= new ViewState(RenderViewType.watercalc, NavBarType.home, RightBarType.none, false);
-		_targets[ViewTargetType.waterSmart] 			= new ViewState(RenderViewType.watersmart, NavBarType.home, RightBarType.none, false);
-		_targets[ViewTargetType.favorites] 				= new ViewState(RenderViewType.favorites, NavBarType.home, RightBarType.home, false);
-		_targets[ViewTargetType.partSelectParts] 		= new ViewState(RenderViewType.select_parts, NavBarType.home, RightBarType.new_parts, false);
-
-	};
-	
-	var _stack = [];
-	var _pushTarget = function _pushTarget (target) {
-		if (_targets.hasOwnProperty(target)) {
-			_pushState(_targets[target]);
+	// Note, although it seems a little odd to place the class inside the module, when I inspect in chrome,
+	// putting the class outside the ViewStack and then instantiating the singleton, results in an extra closure.
+	// When it is inside as here, there is only the single expected closure.
+	/**
+	 * Intenal class implementing the ViewStack
+	 * @type {ViewStackInternal}
+	 */
+	var ViewStackInternal = class ViewStackInternal {
+		constructor () {
+			this.targets = {};
+			this.stack = [];
 		}
-	};
-	
-	/**
-	 * @namespace ViewStack
-	 * @function _pushState - pushes viewState on stack, executes a change of view to the pushed state
-	 * @param {object} viewState - the target viewState to push and move to
-	 */
-	var _pushState = function _pushState (viewState) {
-		if (viewState.clearOnPush) {
-			_clearState();
+		initTargets () {
+			// Have to init in a function to avoid load order issues
+			this.targets[ViewTargetType.about] 					= new ViewState(RenderViewType.about, NavBarType.home, RightBarType.home, false);
+			this.targets[ViewTargetType.home] 					= new ViewState(RenderViewType.splash, NavBarType.home, RightBarType.home, true);
+			this.targets[ViewTargetType.signIn] 				= new ViewState(RenderViewType.signin, NavBarType.home, RightBarType.home, false);
+			this.targets[ViewTargetType.create] 				= new ViewState(RenderViewType.create, NavBarType.home, RightBarType.none, false);
+			this.targets[ViewTargetType.createShapeLawn] 		= new ViewState(RenderViewType.shape_lawn, NavBarType.home, RightBarType.none, false);
+			this.targets[ViewTargetType.createMeasureLawn] 		= new ViewState(RenderViewType.measure_lawn, NavBarType.home, RightBarType.none, false);
+			this.targets[ViewTargetType.createBuildLawn] 		= new ViewState(RenderViewType.build_lawn, NavBarType.create, RightBarType.none, false);
+			this.targets[ViewTargetType.createLayoutLawn] 		= new ViewState(RenderViewType.layout_lawn, NavBarType.layout, RightBarType.layout_lawn, true);
+			this.targets[ViewTargetType.createLayoutSettings] 	= new ViewState(RenderViewType.layout_settings, NavBarType.create, RightBarType.none, false);
+			this.targets[ViewTargetType.createRenderLawn] 		= new ViewState(RenderViewType.render_lawn, NavBarType.render, RightBarType.render_lawn, true);
+			this.targets[ViewTargetType.createSelectParts] 		= new ViewState(RenderViewType.select_parts, NavBarType.create, RightBarType.select_parts, false);
+			this.targets[ViewTargetType.createFinishLawn] 		= new ViewState(RenderViewType.finish_lawn, NavBarType.home, RightBarType.finish_lawn, false);
+			this.targets[ViewTargetType.createInfoPart] 		= new ViewState(RenderViewType.info_part, NavBarType.create, RightBarType.create_info_item, false);
+			this.targets[ViewTargetType.infoLawn] 				= new ViewState(RenderViewType.info_lawn, NavBarType.home, RightBarType.none, false);
+			this.targets[ViewTargetType.infoPart] 				= new ViewState(RenderViewType.info_part, NavBarType.home, RightBarType.part_info_item, false);
+			this.targets[ViewTargetType.newPart] 				= new ViewState(RenderViewType.new_part, NavBarType.home, RightBarType.parts, false);
+			this.targets[ViewTargetType.parts] 					= new ViewState(RenderViewType.parts, NavBarType.home, RightBarType.parts, false);
+			this.targets[ViewTargetType.lawns] 					= new ViewState(RenderViewType.lawns, NavBarType.home, RightBarType.lawns, false);
+			this.targets[ViewTargetType.personalize] 			= new ViewState(RenderViewType.personalize, NavBarType.home, RightBarType.home, false);
+			this.targets[ViewTargetType.community] 				= new ViewState(RenderViewType.community, NavBarType.home, RightBarType.home, false);
+			this.targets[ViewTargetType.rebates] 				= new ViewState(RenderViewType.rebates, NavBarType.home, RightBarType.home, false);
+			this.targets[ViewTargetType.waterCalc] 				= new ViewState(RenderViewType.watercalc, NavBarType.home, RightBarType.none, false);
+			this.targets[ViewTargetType.waterSmart] 			= new ViewState(RenderViewType.watersmart, NavBarType.home, RightBarType.none, false);
+			this.targets[ViewTargetType.favorites] 				= new ViewState(RenderViewType.favorites, NavBarType.home, RightBarType.home, false);
+			this.targets[ViewTargetType.partSelectParts] 		= new ViewState(RenderViewType.select_parts, NavBarType.home, RightBarType.new_parts, false);
 		}
-		_stack.push(viewState);
-		_goToState(viewState);
-	};
-
-	/**
-	 * @namespace ViewStack
-	 * @function _popState - pops viewState off stack, executes a change of view to the popped state
-	 * @param {boolean} restore - controls whether we want to "goto" the popped state or just pop off stack
-	 */
-	var _popState = function _popState (restore) {
-		_stack.pop();
-		if (restore) {
-			_goToState(_peekState());
+		pushTarget (target) {
+			if (this.targets.hasOwnProperty(target)) {
+				this.pushState(this.targets[target]);
+			}
 		}
-	};
-	
-	var _peekState = function _peekState () {
-		return _stack[_stack.length-1];
+		/**
+		 * @namespace ViewStack
+		 * @function pushState - pushes viewState on stack, executes a change of view to the pushed state
+		 * @param {object} viewState - the target viewState to push and move to
+		 */
+		pushState (viewState) {
+			if (viewState.clearOnPush) {
+				this.clearState();
+			}
+			this.stack.push(viewState);
+			this.goToState(viewState);
+		}
+
+		/**
+		 * @namespace ViewStack
+		 * @function popState - pops viewState off stack, executes a change of view to the popped state
+		 * @param {boolean} restore - controls whether we want to "goto" the popped state or just pop off stack
+		 */
+		popState (restore) {
+			this.stack.pop();
+			if (restore) {
+				this.goToState(peekState());
+			}
+		}
+
+		peekState () {
+			return this.stack[this.stack.length-1];
+		}
+
+		/**
+		 * @namespace ViewStack
+		 * @function goToState - executes a change of view to the pushed state
+		 * @param {object} viewState - the target viewState to change to
+		 */
+		goToState (viewState) {
+			Session.set(Constants.navBarConfig, viewState.navBar);
+			Session.set(Constants.rightBarConfig, viewState.rightBar);
+			Session.set(Constants.renderView, viewState.view);
+		}
+
+		/**
+		 * @namespace ViewStack
+		 * @function clearState - clears the stack of all states
+		 */
+		clearState () {
+			this.stack = [];
+		}
+
+		/**
+		 * @namespace ViewStack
+		 * @function length - exposes stack.length
+		 */
+		length () {
+			return this.stack.length;
+		};
 	};
 
-	/**
-	 * @namespace ViewStack
-	 * @function _goToState - executes a change of view to the pushed state
-	 * @param {object} viewState - the target viewState to change to
-	 */
-	var _goToState = function _goToState (viewState) {
-		Session.set(Constants.navBarConfig, viewState.navBar);
-		Session.set(Constants.rightBarConfig, viewState.rightBar);
-		Session.set(Constants.renderView, viewState.view);
-	};
-
-	/**
-	 * @namespace ViewStack
-	 * @function _clearState - clears the _stack of all states
-	 */
-	var _clearState = function _clearState () {
-		_stack = [];
-	};
-
-	/**
-	 * @namespace ViewStack
-	 * @function _length - exposes _stack.length
-	 */
-	var _length = function _length () {
-		return _stack.length;
-	};
-	
-	return {
-		initTargets: _initTargets,
-		pushTarget: _pushTarget,
-		pushState: _pushState,
-		popState: _popState,
-		peekState: _peekState,
-		clearState: _clearState,
-		length: _length
-	};
+	let SINGLETON = new ViewStackInternal();
+	return SINGLETON;
 })();
+
 
