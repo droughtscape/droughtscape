@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 PixiLayout = (function () {
-
+	const ArrangeErrorMsg = 'Please select item and try again';
 	var _pixiRenderer = null;
 	var _pixiContainer = null;
 	var _layoutFrame = null;
@@ -63,17 +63,16 @@ PixiLayout = (function () {
 	/**
 	 * Blinks the background
 	 * @param {number} color - set background.tint to this and restore on timer expiry
+	 * @param {string} msg - error message
 	 * @private
 	 */
-	var _blink = function _blink (color) {
+	var _blink = function _blink (color, msg) {
 		_blinkPart(_background, color);
-		//// default blink color is red
-		//var blinkColor = color || 0xFF0000;
-		//var originalTint = _background.tint;
-		//_background.tint = 0xFF0000;
-		//setTimeout(function () {
-		//	_background.tint = originalTint;
-		//}, 100);
+		swal({   
+			title: 'Oops!',   
+			text: msg,   
+			timer: 2000,   
+			showConfirmButton: true });
 	};
 	/**
 	 * Blinks a part
@@ -942,7 +941,7 @@ PixiLayout = (function () {
 			}
 		}
 		else {
-			_blink();
+			_blink(0xFF0000, ArrangeErrorMsg);
 		}
 	};
 	/**
@@ -976,7 +975,7 @@ PixiLayout = (function () {
 			}
 		}
 		else {
-			_blink();
+			_blink(0xFF0000, ArrangeErrorMsg);
 		}
 	};
 	/**
@@ -1028,7 +1027,7 @@ PixiLayout = (function () {
 			}
 		}
 		else {
-			_blink();
+			_blink(0xFF0000, ArrangeErrorMsg);
 		}
 	};
 	/**
@@ -1083,7 +1082,7 @@ PixiLayout = (function () {
 			}
 		}
 		else {
-			_blink();
+			_blink(0xFF0000, ArrangeErrorMsg);
 		}
 	};
 	
