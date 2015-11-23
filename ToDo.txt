@@ -1,7 +1,7 @@
 The next big push choices:
 - 3d rendering
-	- camera view control - right bar
-	- test understanding controls - right bar
+	+ camera view control - right bar
+	+ test understanding controls - right bar
 	- convert layout to render format
 	- slope 
 		- how best to show
@@ -29,7 +29,7 @@ The next big push choices:
 	
 - collections
 - administrative views
-- sweetalert instead of toast
++ sweetalert instead of toast
 	- http://t4t5.github.io/sweetalert/
 	- on atmosphere
 

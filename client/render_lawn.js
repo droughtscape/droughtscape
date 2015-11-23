@@ -40,6 +40,10 @@ var threeAnimate = function threeAnimate () {
 	}
 };
 
+var _midX;
+var _midZ;
+var _degreeToRad = Math.PI / 180;
+
 /**
  * _renderRender function to redraw the render
  * typically called from Meteor.defer so that window dimensions
@@ -73,9 +77,42 @@ var _handleResizeEvent = Utils.createDeferredFunction(_renderRender);
 
 var unsubscribe = null;
 
+var _rotateCameraAroundScene = function (rotSpeed, direction) {
+	var x = threeCamera.position.x,
+		z = threeCamera.position.z;
+
+	if (direction === 'left'){
+		threeCamera.position.x = x * Math.cos(rotSpeed) + z * Math.sin(rotSpeed);
+		threeCamera.position.z = z * Math.cos(rotSpeed) - x * Math.sin(rotSpeed);
+	} else if (direction === 'right'){
+		threeCamera.position.x = x * Math.cos(rotSpeed) - z * Math.sin(rotSpeed);
+		threeCamera.position.z = z * Math.cos(rotSpeed) + x * Math.sin(rotSpeed);
+	}
+
+	threeCamera.lookAt(scene.position);
+};
+
 var _handleRenderMessages = function _handleRenderMessages (message) {
 	if (MBus.validateMessage(message)) {
 		switch (message.value.action) {
+		case RightBarTagActionType.ZoomIn:
+			threeCamera.position.z -= 10;
+			break;
+		case RightBarTagActionType.ZoomOut:
+			threeCamera.position.z += 10;
+			break;
+		case RightBarTagActionType.MoveCameraUp:
+			threeCamera.position.y += 10;
+			break;
+		case RightBarTagActionType.MoveCameraDn:
+			threeCamera.position.y -= 10;
+			break;
+		case RightBarTagActionType.RotateCameraLt:
+			_rotateCameraAroundScene(.02, 'left');
+			break;
+		case RightBarTagActionType.RotateCameraRt:
+			_rotateCameraAroundScene(.02, 'right');
+			break;
 		default :
 			console.log('_handleRenderMessages: action: ' + message.value.action);
 			break;
@@ -96,6 +133,7 @@ Template.render_lawn.onDestroyed(function () {
 	threeCamera = null;
 	threeRenderer = null;
 	threeScene = null;
+	threeControls = null;
 	runAnimation = false;
 	window.removeEventListener('resize', _handleResizeEvent);
 	unsubscribe.remove();
@@ -127,6 +165,38 @@ var _callbackLayoutPart = function _callbackLayoutPart (part) {
 	console.log('_callbackLayoutPart: part: location[' + part.locus.x + ', ' + part.locus.y + ', ' + part.locus.z + 
 		']' + ', rotation[' + part.locus.rotation + ']');
 	console.log('_callbackLayoutPart: abstractPart.id: ' + part.abstractPart.id.value + ', depth: ' + part.abstractPart.depth);
+	_buildPart(part);
+};
+
+var _buildPart = function _buildPart (part) {
+	console.log('_buildPart: class: ' + part.abstractPart.constructor.name);
+	let abstractPart = part.abstractPart;
+	let bitmap = new Image();
+	bitmap.src = abstractPart.url;
+	bitmap.onerror = function () {
+		console.error('Error loading: ' + bitmap.src);
+	};
+	let width = abstractPart.width * 10;
+	let height = abstractPart.height * 10;
+	let depth = abstractPart.depth * 10;
+	let geometry;
+	let texture = THREE.ImageUtils.loadTexture(bitmap.src);
+	let material = new THREE.MeshPhongMaterial({ map: texture });
+	switch (abstractPart.renderShape) {
+	case RenderShapeType.sphere:
+		geometry = new THREE.SphereGeometry(depth / 2, 64, 64);
+		break;
+	default:
+		geometry = new THREE.BoxGeometry(width, height, depth);
+		break;
+	}
+	let mesh = new THREE.Mesh(geometry, material);
+	mesh.position.y = -20 + (depth / 2);
+	mesh.rotation.y = -Math.PI/2; //-90 degrees around the yaxis
+	// adjust x
+	mesh.position.x = (part.locus.x - _midX) * 10;
+	mesh.position.z = (part.locus.y - _midZ) * 10;
+	threeScene.add(mesh);
 };
 
 var _buildSky = function _buildSky () {
@@ -160,9 +230,9 @@ var _buildSky = function _buildSky () {
 	//return material;
 };
 
-var _buildGround = function _buildGround () {
-	var w = 100;
-	var h = 40;
+var _buildGround = function _buildGround (dims) {
+	var w = dims.width * 10;
+	var h = dims.length * 10;
 	var geometry = new THREE.PlaneGeometry(w, h);
 	//var material = new THREE.MeshPhongMaterial({ ambient: 0x050505, color: 0x0033ff, specular: 0x555555, shininess: 30 });
 	var material = new THREE.MeshBasicMaterial( { color: 0xd2b48c } );
@@ -217,25 +287,29 @@ Template.render_lawn.onRendered(function () {
 	}
 	//renderer.setSize(window.innerWidth, window.innerHeight);
 	//document.body.appendChild(renderer.domElement);
+	let dims = CreateLawnData.lawnData.shape.dims;
+	console.log('dims: ' + dims.width + ', ' + dims.length + ' : ' + dims.slope);
+	_midX = dims.width / 2;
+	_midZ = dims.length / 2;
 	
-	// Now see if we can get the real stuff
-	LayoutManager.enumerateLayout(_callbackLayoutPart);
 	var skyMesh = _buildSky();
 	skyMesh.position.z = -50;
 	threeScene.add(skyMesh);
 	
-	var ground = _buildGround();
+	var ground = _buildGround(dims);
 	threeScene.add(ground);
-	
+
+	// Now see if we can get the real stuff
+	LayoutManager.enumerateLayout(_callbackLayoutPart);
 	//geometry = new THREE.BoxGeometry( 10, 1, 1 );
 	//material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
 	//cube = new THREE.Mesh( geometry, material );
 	//threeScene.add( cube );
 	
 	//add sunlight 
-	var light = new THREE.SpotLight();
-	light.position.set(0,500,0);
-	//threeScene.add(light);
+	var light = new THREE.SpotLight(0xFFFFFF);
+	light.position.set(100,100,2500);
+	threeScene.add(light);
 
 	threeCamera.position.z = 100;
 

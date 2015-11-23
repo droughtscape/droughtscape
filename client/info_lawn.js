@@ -66,7 +66,11 @@ Template.info_lawn.helpers({
 		return {topic: Constants.mbus_infoItem_carousel, html: carouselIdElt, type: "infoItem", subType: null};
 	},
 	alertNoItem: function () {
-		Materialize.toast('No lawn selected!', 3000, 'rounded red-text');
+		swal({
+			title: 'Oops!',
+			text: 'No lawn selected!',
+			timer: 2000,
+			showConfirmButton: true });
 		ViewStack.popState(true);
 	},
 	itemType: function () {

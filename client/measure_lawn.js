@@ -167,7 +167,11 @@ Template.measure_lawn.events({
 			else {
 				// send an alert toast and stay here.  If the user wants to abort or go back, 
 				// they can use the appropriate buttons
-				Materialize.toast('Zero width or length!', 3000, 'rounded red-text');
+				swal({
+					title: 'Oops!',
+					text: 'Zero width or length!',
+					timer: 2000,
+					showConfirmButton: true });
 			}
 		}
 	}
