@@ -27,6 +27,7 @@
 var threeScene = null;
 var threeRenderer = null;
 var threeCamera = null;
+var threeControls = null;
 var runAnimation = false;
 var WIDTH = 400, HEIGHT = 300;
 var VIEW_ANGLE = 75, ASPECT = WIDTH / HEIGHT, NEAR = 0.1, FAR = 1000;
@@ -34,8 +35,7 @@ var cube;
 var threeAnimate = function threeAnimate () {
 	if (runAnimation) {
 		requestAnimationFrame(threeAnimate);
-		//cube.rotation.x += 0.1;
-		//cube.rotation.y += 0.1;
+		threeControls.update();
 		threeRenderer.render(threeScene, threeCamera)
 	}
 };
@@ -60,6 +60,7 @@ var _renderRender = function _renderRender () {
 	var renderCanvas = document.getElementById('render-canvas');
 	renderCanvas.height = height;
 	renderCanvas.width = width;
+	threeControls.handleResize();
 };
 
 /**
@@ -91,7 +92,6 @@ Template.render_lawn.onCreated(function () {
 	// NavBar events
 	unsubscribe = MBus.subscribe(Constants.mbus_render, _handleRenderMessages);
 });
-
 Template.render_lawn.onDestroyed(function () {
 	threeCamera = null;
 	threeRenderer = null;
@@ -101,16 +101,16 @@ Template.render_lawn.onDestroyed(function () {
 	unsubscribe.remove();
 });
 
-/**
- * render function to furnish animation energy using requestAnimationFrame()
- * Currently this just animates a test case.
- */
-var render = function render () {
-	requestAnimationFrame( render );
-	cube.rotation.x += 0.1;
-	cube.rotation.y += 0.1;
-	threeRenderer.render( threeScene, threeCamera );
-};
+///**
+// * render function to furnish animation energy using requestAnimationFrame()
+// * Currently this just animates a test case.
+// */
+//var render = function render () {
+//	requestAnimationFrame( render );
+//	cube.rotation.x += 0.1;
+//	cube.rotation.y += 0.1;
+//	threeRenderer.render( threeScene, threeCamera );
+//};
 
 var testMode = true;
 
@@ -199,6 +199,22 @@ Template.render_lawn.onRendered(function () {
 	if (threeRenderer === null) {
 		threeRenderer = getRenderer(renderCanvas);
 	}
+	if (threeControls === null) {
+		threeControls = new THREE.TrackballControls(threeCamera);
+		threeControls.rotateSpeed = 1.0;
+		threeControls.zoomSpeed = 1.2;
+		threeControls.panSpeed = 0.8;
+
+		threeControls.noZoom = false;
+		threeControls.noPan = false;
+
+		threeControls.staticMoving = true;
+		threeControls.dynamicDampingFactor = 0.3;
+
+		threeControls.keys = [ 65, 83, 68 ];
+
+		threeControls.addEventListener( 'change', render );	
+	}
 	//renderer.setSize(window.innerWidth, window.innerHeight);
 	//document.body.appendChild(renderer.domElement);
 	
@@ -224,5 +240,10 @@ Template.render_lawn.onRendered(function () {
 	threeCamera.position.z = 100;
 
 	threeAnimate();
+	render();
 	console.log('render_lawn.onCreated, threeScene: ' + threeScene + ', threeRenderer: ' + threeRenderer);
 });
+
+var render = function render () {
+	threeRenderer.render( threeScene, threeCamera );
+};

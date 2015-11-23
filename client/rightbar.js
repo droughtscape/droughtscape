@@ -88,7 +88,8 @@ Template.right_bar.helpers({
 	dynamicTemplate: function () {
 		// Contents of session variable renderView will 
 		// fill the content area
-		return Session.get(Constants.renderView);
+		//return Session.get(Constants.renderView);
+		return (this.name === 'divider') ? 'divider' : 'right_button';
 	},
 	rightButtons: function () {
 		// Key off navBarConfig, defer recalculating dom measurements until
@@ -109,16 +110,19 @@ Template.right_bar.events({
 		console.log('Template.right_bar.events: ' + event);
 		// See if click item is active
 		if (!this.hasOwnProperty('disabled') || this.disabled !== 'disabled') {
-			var id = event.currentTarget.id;
+			var id = this.name;
 			switch (id) {
 			case 'about':
 				ViewStack.pushTarget(ViewTargetType.about);
 				break;
 			default:
-				let currentViewState = ViewStack.peekState();
-				let target = NavConfig.getRightBarTarget(currentViewState.rightBar, id);
-				console.log('target: ' + target);
-				ViewStack.pushTarget(target);
+				if (this.hasOwnProperty('target')) {
+					ViewStack.pushTarget(this.target);
+				}
+				else if (this.hasOwnProperty('tagAction')) {
+					console.log('take action: ' + this.action);
+					MBus.publish(this.tagParent, new Message.Action(this.tagAction));
+				}
 				break;
 			}
 		}

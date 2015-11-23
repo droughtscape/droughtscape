@@ -3,9 +3,9 @@
         <hr>
 		{{#each rightButtons}}
             <div class="row">
-				{{> right_button}}
+                {{> Template.dynamic template=dynamicTemplate}}
+				<!--{{> right_button}}-->
             </div>
-            <hr>
 		{{/each}}
         <div id="spacer"></div>
         <div id="bottom-nav">
@@ -32,5 +32,9 @@
 <template name="right_button">
     <a id="{{name}}" class="col s12 waves-effect waves-light btn-large {{disabled}}">
     <i class={{icon}}></i>{{friendlyName}}</a>
+</template>
+
+<template name="divider">
+    <hr>
 </template>
 
