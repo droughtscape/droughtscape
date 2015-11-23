@@ -86,10 +86,17 @@ var _checkInfoEnable = function _checkInfoEnable (rightButtons) {
 
 Template.right_bar.helpers({
 	dynamicTemplate: function () {
-		// Contents of session variable renderView will 
-		// fill the content area
-		//return Session.get(Constants.renderView);
-		return (this.name === 'divider') ? 'divider' : 'right_button';
+		// dynamically set the type of the button here
+		if (this.name === 'divider') {
+			return 'divider';
+		}
+		else if (this.name === 'navCompass') {
+			return 'compass';
+		}
+		else {
+			return 'right_button';
+		}
+		//return (this.name === 'divider') ? 'divider' : 'right_button';
 	},
 	rightButtons: function () {
 		// Key off navBarConfig, defer recalculating dom measurements until
@@ -115,6 +122,9 @@ Template.right_bar.events({
 			case 'about':
 				ViewStack.pushTarget(ViewTargetType.about);
 				break;
+			case 'navCompass':
+				// Compute quadrant we are in based on position of the click
+				break;
 			default:
 				if (this.hasOwnProperty('target')) {
 					ViewStack.pushTarget(this.target);
@@ -127,6 +137,40 @@ Template.right_bar.events({
 			}
 		}
 	}
+});
+
+Template.compass.events({
+	'click': function (event) {
+		console.log('Template.compass.events: ' + event);
+		let target = event.currentTarget;
+		let x = target.x;
+		let y = target.y;
+		let w = target.width;
+		let h = target.height;
+		let panelH = h / 3;
+		let halfW = w / 2;
+		let up = {x: x, y: y, w: w, h: panelH};
+		let pt = {x: event.clientX, y: event.clientY};
+		if (Utils.pointInBox(pt, up)) {
+            MBus.publish(this.tagParent, new Message.Action(this.upAction));
+            return;
+		}
+        let dn = {x: x, y: y + (panelH * 2), w: w, h: panelH};
+		if (Utils.pointInBox(pt, dn)) {
+            MBus.publish(this.tagParent, new Message.Action(this.dnAction));
+            return;
+		}
+        let lt = {x: x, y: y + panelH, w: halfW, h: panelH};
+		if (Utils.pointInBox(pt, lt)) {
+            MBus.publish(this.tagParent, new Message.Action(this.ltAction));
+            return;
+		}
+        let rt = {x: x + halfW, y: y + panelH, w: halfW, h: panelH};
+		if (Utils.pointInBox(pt, rt)) {
+            MBus.publish(this.tagParent, new Message.Action(this.rtAction));
+            return;
+		}
+ 	}
 });
 
 

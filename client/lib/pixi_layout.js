@@ -338,47 +338,6 @@ PixiLayout = (function () {
 		_drawSelectBox(_mouseDownPt, _mouseMovePt);
 	};
 	/**
-	 * Utility to determine when a pt is in box.  Used in selection
-	 * @param {object} pt - x, y coordinates in pixels
-	 * @param {object} box - x, y, w, h in pixels
-	 * @returns {boolean}
-	 * @private
-	 */
-	var _pointInBox = function _pointInBox (pt, box) {
-		var outside = (pt.x < box.x ||
-						pt.y < box.y ||
-						pt.x > (box.x + box.w) ||
-						pt.y > (box.y + box.h));
-		return !outside;
-	};
-	/**
-	 * Utility to determine when a box intersects another box
-	 * @param {object} box1 - x, y, w, h in pixels
-	 * @param {object} box2 - x, y, w, h in pixels
-	 * @returns {boolean}
-	 * @private
-	 */
-	var _boxIntersectBox = function _boxIntersectBox (box1, box2) {
-		var lry1, lrx2;
-		if ((box1.x + box1.w) < box2.x) {
-			// box1 left of box2
-			return false;
-		}
-		else if ((lry1 = box1.y + box1.h) < box2.y) {
-			// box1 above box2
-			return false;
-		}
-		else if ((lrx2 = box2.x + box2.w) < box1.x) {
-			// box2 left of box1
-			return false;
-		}
-		else if ((box2.y + box2.h) < box1.y) {
-			// box2 above box1
-			return false;
-		}
-		return true;
-	};
-	/**
 	 * Manages the _selected array as well as tinting any selected part
 	 * @param part
 	 * @private
@@ -473,7 +432,7 @@ PixiLayout = (function () {
 			_clearSelection();
 			let selectBox = _selectBox.currentBox;
 			_enumeratePartsRev(function (part) {
-				if (_boxIntersectBox(_rectFromPart(part), selectBox)) {
+				if (Utils.boxIntersectBox(_rectFromPart(part), selectBox)) {
 					// satisfied
 					console.log('_finishSelectBox: ptInBox found at i: ' + i);
 					// Highlight via tint, if not selected, set to red, if selected, clear to white
@@ -492,7 +451,7 @@ PixiLayout = (function () {
 			// Assume sorted by z order, => search from back of list forward to find first selectable item under a point
 			_clearSelection();
 			_enumeratePartsRev(function (part) {
-				if (_pointInBox(toPt, _rectFromPart(part))) {
+				if (Utils.pointInBox(toPt, _rectFromPart(part))) {
 					// satisfied
 					// Highlight via tint, if not selected, set to red, if selected, clear to white
 					_selectPart(part);
@@ -921,7 +880,7 @@ PixiLayout = (function () {
 			var itemsNotTarget = [];
 			_enumeratePartsExcludePartRev(function (part) {
 				// examine everything except targetPart 
-				if (_boxIntersectBox(_rectFromPart(part), targetRect)) {
+				if (Utils.boxIntersectBox(_rectFromPart(part), targetRect)) {
 					// satisfied, store it
 					itemsNotTarget.push(part);
 				}
@@ -955,7 +914,7 @@ PixiLayout = (function () {
 			let itemsNotTarget = [];
 			_enumeratePartsExcludePartRev(function (part) {
 				// examine everything except targetPart 
-				if (_boxIntersectBox(_rectFromPart(part), targetRect)) {
+				if (Utils.boxIntersectBox(_rectFromPart(part), targetRect)) {
 					// satisfied, store it
 					itemsNotTarget.push(part);
 				}
@@ -992,7 +951,7 @@ PixiLayout = (function () {
 			let itemsNotTarget = [];
 			_enumeratePartsFwd(function (part) {
 				// save and order everything involved in the targetRect 
-				if (part !== targetPart && _boxIntersectBox(_rectFromPart(part), targetRect)) {
+				if (part !== targetPart && Utils.boxIntersectBox(_rectFromPart(part), targetRect)) {
 					// satisfied, store it
 					part.z = z_order;
 					part.layoutPart.locus.z = z_order;
@@ -1044,7 +1003,7 @@ PixiLayout = (function () {
 			let itemsNotTarget = [];
 			_enumeratePartsFwd(function (part) {
 				// save and order everything involved in the targetRect 
-				if (part !== targetPart && _boxIntersectBox(_rectFromPart(part), targetRect)) {
+				if (part !== targetPart && Utils.boxIntersectBox(_rectFromPart(part), targetRect)) {
 					// satisfied, store it
 					part.z = z_order;
 					part.layoutPart.locus.z = z_order;

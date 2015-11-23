@@ -4,7 +4,6 @@
 		{{#each rightButtons}}
             <div class="row">
                 {{> Template.dynamic template=dynamicTemplate}}
-				<!--{{> right_button}}-->
             </div>
 		{{/each}}
         <div id="spacer"></div>
@@ -36,5 +35,16 @@
 
 <template name="divider">
     <hr>
+</template>
+
+<template name="compass">
+    <img src="{{url}}" style="width: 200px;height: 100px;">
+    <!--<img src={{url}} usemap="#compassmap" style="width: 200px;height: 100px;">-->
+    <!--<map name="compassmap">-->
+        <!--<area class="compassup" shape="rect" coords="0,0,200,33">-->
+        <!--<area class="compassdn" shape="rect" coords="0,66,200,33">-->
+        <!--<area class="compasslt" shape="rect" coords="0,33,66,33">-->
+        <!--<area class="compassrt" shape="rect" coords="0,33,133,33">-->
+    <!--</map>-->
 </template>
 
