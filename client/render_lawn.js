@@ -77,7 +77,7 @@ var _handleResizeEvent = Utils.createDeferredFunction(_renderRender);
 
 var unsubscribe = null;
 
-var _rotateCameraAroundScene = function (rotSpeed, direction) {
+var _rotateCameraAroundScene = function _rotateCameraAroundScene (rotSpeed, direction) {
 	var x = threeCamera.position.x,
 		z = threeCamera.position.z;
 
@@ -89,7 +89,18 @@ var _rotateCameraAroundScene = function (rotSpeed, direction) {
 		threeCamera.position.z = z * Math.cos(rotSpeed) + x * Math.sin(rotSpeed);
 	}
 
-	threeCamera.lookAt(scene.position);
+	threeCamera.lookAt(threeScene.position);
+};
+
+var _panCameraAcrossScene = function _panCameraAcrossScene (direction) {
+    let delta = 5;
+    if (direction === 'left') {
+        threeScene.position.x -= delta;
+    }
+    else if (direction === 'right') {
+        threeScene.position.x += delta;
+    }
+    threeCamera.lookAt(threeScene.position);
 };
 
 var _handleRenderMessages = function _handleRenderMessages (message) {
@@ -113,6 +124,12 @@ var _handleRenderMessages = function _handleRenderMessages (message) {
 		case RightBarTagActionType.RotateCameraRt:
 			_rotateCameraAroundScene(.02, 'right');
 			break;
+        case RightBarTagActionType.PanCameraLeft:
+            _panCameraAcrossScene('left');
+            break;
+        case RightBarTagActionType.PanCameraRight:
+            _panCameraAcrossScene('right');
+            break;
 		default :
 			console.log('_handleRenderMessages: action: ' + message.value.action);
 			break;

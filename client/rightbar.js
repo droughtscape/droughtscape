@@ -96,6 +96,9 @@ Template.right_bar.helpers({
 		else if (this.name === 'navCompass') {
 			return 'compass';
 		}
+        else if (this.name === 'navRotate') {
+            return 'rotate';
+        }
 		else {
 			return 'right_button';
 		}
@@ -162,26 +165,26 @@ Template.compass.events({
 		let normalImage = this.url;
 		if (Utils.pointInBox(pt, up)) {
             MBus.publish(this.tagParent, new Message.Action(this.upAction));
-			_highlightGraphic(graphic, 'rendernavup.png', normalImage);
+			_highlightGraphic(graphic, 'panup.png', normalImage);
             return;
 		}
         let dn = {x: 0, y: (panelH * 2), w: w, h: panelH};
 		if (Utils.pointInBox(pt, dn)) {
             MBus.publish(this.tagParent, new Message.Action(this.dnAction));
-			_highlightGraphic(graphic, 'rendernavdown.png', normalImage);
+			_highlightGraphic(graphic, 'pandn.png', normalImage);
             return;
 		}
 		let halfW = w / 2;
         let lt = {x: 0, y: panelH, w: halfW, h: panelH};
 		if (Utils.pointInBox(pt, lt)) {
             MBus.publish(this.tagParent, new Message.Action(this.ltAction));
-			_highlightGraphic(graphic, 'rendernavleft.png', normalImage);
+			_highlightGraphic(graphic, 'panlt.png', normalImage);
             return;
 		}
         let rt = {x: halfW, y: panelH, w: halfW, h: panelH};
 		if (Utils.pointInBox(pt, rt)) {
             MBus.publish(this.tagParent, new Message.Action(this.rtAction));
-			_highlightGraphic(graphic, 'rendernavright.png', normalImage);
+			_highlightGraphic(graphic, 'panrt.png', normalImage);
             return;
 		}
  	}
@@ -210,5 +213,29 @@ Template.zoom.events({
 			return;
 		}
 	}
+});
+
+Template.rotate.events({
+    'click': function (event) {
+        console.log('Template.rotate.events: ' + event);
+        let target = event.currentTarget;
+        let w = target.width;
+        let h = target.height;
+        let halfWidth = w / 2;
+        let zoomIn = {x: 0, y: 0, w: halfWidth, h: h};
+        let pt = {x: event.offsetX, y: event.offsetY};
+        let graphic = document.getElementById(this.name);
+        let normalImage = this.url;
+        if (Utils.pointInBox(pt, zoomIn)) {
+            MBus.publish(this.tagParent, new Message.Action(this.inAction));
+            _highlightGraphic(graphic, 'rotateleft.png', normalImage);
+            return;
+        }
+        let zoomOut = {x: halfWidth, y: 0, w: halfWidth, h: h};
+        if (Utils.pointInBox(pt, zoomOut)) {
+            MBus.publish(this.tagParent, new Message.Action(this.outAction));
+            _highlightGraphic(graphic, 'rotateright.png', normalImage);
+            return;
+        }    }
 });
 
