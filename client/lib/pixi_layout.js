@@ -1050,6 +1050,7 @@ PixiLayout = (function () {
 		if (_selected.length >= 1) {
 			for (var i=0, len=_selected.length; i < len; ++i) {
 				_parts.removeChild(_selected[i]);
+				// TODO store the removed parts to undo buffer
 			}
 			_selected = [];
 		}
