@@ -42,7 +42,7 @@ var _renderRightBar = function _renderRightBar () {
 		var bottomTop = rightNavPos.y + (rightNavHeight - (bottomDiv.offsetHeight + aboutbtn.offsetHeight + magicSpacing));
 		var spacer = document.getElementById('spacer');
 		var spacerPos = getPosition(spacer);
-		spacer.style.height = bottomTop - spacerPos.y + 'px';
+		spacer.style.height = ((bottomTop > spacerPos.y) ? bottomTop - spacerPos.y : 0) + 'px';
 	}
 };
 
@@ -90,13 +90,15 @@ Template.right_bar.helpers({
 		if (this.name === 'divider') {
 			return 'divider';
 		}
+		else if (this.name === 'navZoom') {
+			return 'zoom';
+		}
 		else if (this.name === 'navCompass') {
 			return 'compass';
 		}
 		else {
 			return 'right_button';
 		}
-		//return (this.name === 'divider') ? 'divider' : 'right_button';
 	},
 	rightButtons: function () {
 		// Key off navBarConfig, defer recalculating dom measurements until
@@ -113,38 +115,37 @@ Template.right_bar.helpers({
 
 Template.right_bar.events({
 	// We follow the convention that the currentTarget.id is the renderView target template
-	'click': function (event) {
+	'click .rightBarButton': function (event) {
 		console.log('Template.right_bar.events: ' + event);
 		// See if click item is active
 		if (!this.hasOwnProperty('disabled') || this.disabled !== 'disabled') {
-			var id = this.name;
-			switch (id) {
-			case 'about':
-				ViewStack.pushTarget(ViewTargetType.about);
-				break;
-			case 'navCompass':
-				// Compute quadrant we are in based on position of the click
-				break;
-			default:
-				if (this.hasOwnProperty('target')) {
-					ViewStack.pushTarget(this.target);
-				}
-				else if (this.hasOwnProperty('tagAction')) {
-					console.log('take action: ' + this.action);
-					MBus.publish(this.tagParent, new Message.Action(this.tagAction));
-				}
-				break;
+			// The way we get away with the fact that click events are 
+			if (this.hasOwnProperty('target')) {
+				ViewStack.pushTarget(this.target);
+			}
+			else if (this.hasOwnProperty('tagAction')) {
+				console.log('take action: ' + this.action);
+				MBus.publish(this.tagParent, new Message.Action(this.tagAction));
 			}
 		}
-	}
+	},
+	'click #about': function () {
+		ViewStack.pushTarget(ViewTargetType.about);
+	} 
 });
-
-var _highlightCompass = function _highlightCompass (highlightImage) {
-    let compass = document.getElementById('compass');
-    if (compass) {
-        compass.src = highlightImage;
+/**
+ * Supports general highlight of images.
+ * @param {object} graphic - dom graphic element
+ * @param {string} highlightImage - url of highlight image
+ * @param {string} normalImage - url of normal image to return to after highlight
+ * @private
+ */
+var _highlightGraphic = function _highlightGraphic (graphic, highlightImage, normalImage) {
+    if (graphic) {
+		graphic.src = highlightImage;
         setTimeout(function () {
-            compass.src = 'rendernav.png';
+			// TODO maybe animate or transition here
+			graphic.src = normalImage;
         }, 200);
     }
 };
@@ -152,38 +153,62 @@ Template.compass.events({
 	'click': function (event) {
 		console.log('Template.compass.events: ' + event);
 		let target = event.currentTarget;
-		let x = target.x;
-		let y = target.y;
 		let w = target.width;
 		let h = target.height;
 		let panelH = h / 3;
-		let halfW = w / 2;
 		let up = {x: 0, y: 0, w: w, h: panelH};
 		let pt = {x: event.offsetX, y: event.offsetY};
+		let graphic = document.getElementById(this.name);
+		let normalImage = this.url;
 		if (Utils.pointInBox(pt, up)) {
             MBus.publish(this.tagParent, new Message.Action(this.upAction));
-            _highlightCompass('rendernavup.png');
+			_highlightGraphic(graphic, 'rendernavup.png', normalImage);
             return;
 		}
         let dn = {x: 0, y: (panelH * 2), w: w, h: panelH};
 		if (Utils.pointInBox(pt, dn)) {
             MBus.publish(this.tagParent, new Message.Action(this.dnAction));
-            _highlightCompass('rendernavdown.png');
+			_highlightGraphic(graphic, 'rendernavdown.png', normalImage);
             return;
 		}
+		let halfW = w / 2;
         let lt = {x: 0, y: panelH, w: halfW, h: panelH};
 		if (Utils.pointInBox(pt, lt)) {
             MBus.publish(this.tagParent, new Message.Action(this.ltAction));
-            _highlightCompass('rendernavleft.png');
+			_highlightGraphic(graphic, 'rendernavleft.png', normalImage);
             return;
 		}
         let rt = {x: halfW, y: panelH, w: halfW, h: panelH};
 		if (Utils.pointInBox(pt, rt)) {
             MBus.publish(this.tagParent, new Message.Action(this.rtAction));
-            _highlightCompass('rendernavright.png');
+			_highlightGraphic(graphic, 'rendernavright.png', normalImage);
             return;
 		}
  	}
 });
 
+Template.zoom.events({
+	'click': function (event) {
+		console.log('Template.zoom.events: ' + event);
+		let target = event.currentTarget;
+		let w = target.width;
+		let h = target.height;
+		let halfWidth = w / 2;
+		let zoomIn = {x: 0, y: 0, w: halfWidth, h: h};
+		let pt = {x: event.offsetX, y: event.offsetY};
+		let graphic = document.getElementById(this.name);
+		let normalImage = this.url;
+		if (Utils.pointInBox(pt, zoomIn)) {
+			MBus.publish(this.tagParent, new Message.Action(this.inAction));
+			_highlightGraphic(graphic, 'zoomin.png', normalImage);
+			return;
+		}
+		let zoomOut = {x: halfWidth, y: 0, w: halfWidth, h: h};
+		if (Utils.pointInBox(pt, zoomOut)) {
+			MBus.publish(this.tagParent, new Message.Action(this.outAction));
+			_highlightGraphic(graphic, 'zoomout.png', normalImage);
+			return;
+		}
+	}
+});
 

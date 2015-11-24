@@ -29,7 +29,7 @@
 </template>
 
 <template name="right_button">
-    <a id="{{name}}" class="col s12 waves-effect waves-light btn-large {{disabled}}">
+    <a id="{{name}}" class="rightBarButton col s12 waves-effect waves-light btn-large {{disabled}}">
     <i class={{icon}}></i>{{friendlyName}}</a>
 </template>
 
@@ -39,7 +39,13 @@
 
 <template name="compass">
     <div>
-        <img id="compass" src="{{url}}" style="display: block; margin: 0 auto; width: 200px; height: 100px;">
+        <img id="{{name}}" src="{{url}}" style="display: block; margin: 0 auto; width: 200px; height: 80px;">
+    </div>
+</template>
+
+<template name="zoom">
+    <div>
+        <img id="{{name}}" src="{{url}}" style="display: block; margin: 0 auto; width: 200px; height: 60px;">
     </div>
 </template>
 
