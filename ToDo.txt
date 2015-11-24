@@ -26,6 +26,9 @@ The next big push choices:
 			Maybe just support front/back semantics
 	- undo support
 	- remove obsolete api items
+	- delete
+	- move
+	- copy
 	
 - collections
 - administrative views
