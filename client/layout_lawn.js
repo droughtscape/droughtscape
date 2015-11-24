@@ -96,6 +96,9 @@ var _handleLayoutMessages = function _handleLayoutMessages (message) {
 			break;
 		case NavBarTagActionType.Paste:
 			break;
+        case NavBarTagActionType.Undo:
+            LayoutManager.undoLastAction();
+            break;
 		default :
 			console.log('_handleLayoutMessages: action: ' + message.value.action);
 			break;

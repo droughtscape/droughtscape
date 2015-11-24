@@ -29,6 +29,61 @@ PixiLayout = (function () {
 	var _layoutFrame = null;
 	var _runAnimation = false;
 	var _selected = [];
+    
+    var UndoType = {
+        Undelete: 0
+    };
+    
+    class UndoItem {
+        constructor (undoType) {
+            this.undoType = undoType;
+        }
+        
+        undoMe () {}
+    }
+    class UndoDeleteItem extends UndoItem {
+        constructor (deletedItems) {
+            super(UndoType.Undelete);
+            // copy this or is a ref good enough?
+            this.deletedItems = deletedItems;
+        }
+        undoMe () {
+            for (var i=0, len=this.deletedItems.length; i < len; ++i) {
+                _parts.addChild(this.deletedItems[i]);
+            }
+            _parts.children.sort(depthCompare);
+        }
+    }
+    class UndoStack {
+        constructor () {
+            this.UndoType = {
+                Undelete: 0
+            };
+            this.maxUndoActions = 100;
+            this.undoStack = [];
+        }
+        
+        pushUndelete (items) {
+            this.undoStack.push(new UndoDeleteItem(items));
+        }
+        
+        clearUndoStack () {
+            this.undoStack = [];
+        }
+        
+        popUndoStack () {
+            if (this.undoStack.length > 0) {
+                let undoItem = this.undoStack.pop();
+                undoItem.undoMe();
+            }
+            else {
+                _blink(0xFF0000, 'Nothing to undo');
+            }
+        }
+    }
+    
+    var _undoStack = new UndoStack();
+    
 	/**
 	 * Exports the validity (length) of the current selection.  It does NOT export the selection since that type is
 	 * private to PixiLayout
@@ -1049,9 +1104,14 @@ PixiLayout = (function () {
 	var _deleteItems = function _deleteItems () {
 		if (_selected.length >= 1) {
 			for (var i=0, len=_selected.length; i < len; ++i) {
-				_parts.removeChild(_selected[i]);
+                // Remove select highlight
+                let part = _selected[i];
+                part.tint = 0xFFFFFF;
+                part.alpha = 1.0;
+                _parts.removeChild(part);
 				// TODO store the removed parts to undo buffer
 			}
+            _undoStack.pushUndelete(_selected);
 			_selected = [];
 		}
 		else {
@@ -1059,6 +1119,10 @@ PixiLayout = (function () {
 		}
 	};
 	
+    var _undoLastAction = function _undoLastAction () {
+        _undoStack.popUndoStack();
+    };
+    
 	var _enumerateLayoutParts = function _enumerateLayoutParts (callback) {
 		_enumeratePartsFwd(function (part) {
 			return callback(part.layoutPart);
@@ -1146,7 +1210,7 @@ PixiLayout = (function () {
 		LayoutFrame.prototype.pan = function pan(dx, dy) {
 		};
 	};
-
+    
 	return {
 		getScalePixelToReal: _getScalePixelToReal,
 		isValid: _isValid,
@@ -1177,6 +1241,7 @@ PixiLayout = (function () {
 		moveForward: _moveForward,
 		moveBackward: _moveBackward,
 		deleteItems: _deleteItems,
+        undoLastAction: _undoLastAction,
 		addTestItem: _addTestItem
 	};
 })();
