@@ -139,6 +139,15 @@ Template.right_bar.events({
 	}
 });
 
+var _highlightCompass = function _highlightCompass (highlightImage) {
+    let compass = document.getElementById('compass');
+    if (compass) {
+        compass.src = highlightImage;
+        setTimeout(function () {
+            compass.src = 'rendernav.png';
+        }, 200);
+    }
+};
 Template.compass.events({
 	'click': function (event) {
 		console.log('Template.compass.events: ' + event);
@@ -153,21 +162,25 @@ Template.compass.events({
 		let pt = {x: event.clientX, y: event.clientY};
 		if (Utils.pointInBox(pt, up)) {
             MBus.publish(this.tagParent, new Message.Action(this.upAction));
+            _highlightCompass('rendernavup.png');
             return;
 		}
         let dn = {x: x, y: y + (panelH * 2), w: w, h: panelH};
 		if (Utils.pointInBox(pt, dn)) {
             MBus.publish(this.tagParent, new Message.Action(this.dnAction));
+            _highlightCompass('rendernavdown.png');
             return;
 		}
         let lt = {x: x, y: y + panelH, w: halfW, h: panelH};
 		if (Utils.pointInBox(pt, lt)) {
             MBus.publish(this.tagParent, new Message.Action(this.ltAction));
+            _highlightCompass('rendernavleft.png');
             return;
 		}
         let rt = {x: x + halfW, y: y + panelH, w: halfW, h: panelH};
 		if (Utils.pointInBox(pt, rt)) {
             MBus.publish(this.tagParent, new Message.Action(this.rtAction));
+            _highlightCompass('rendernavright.png');
             return;
 		}
  	}
