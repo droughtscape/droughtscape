@@ -87,6 +87,15 @@ var _handleLayoutMessages = function _handleLayoutMessages (message) {
 		case NavBarTagActionType.MoveForward:
 			LayoutManager.moveForward();
 			break;
+		case NavBarTagActionType.Delete:
+			LayoutManager.deleteItems();
+			break;
+		case NavBarTagActionType.Move:
+			break;
+		case NavBarTagActionType.Copy:
+			break;
+		case NavBarTagActionType.Paste:
+			break;
 		default :
 			console.log('_handleLayoutMessages: action: ' + message.value.action);
 			break;

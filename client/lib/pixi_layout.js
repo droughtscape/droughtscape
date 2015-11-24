@@ -23,6 +23,7 @@
  */
 PixiLayout = (function () {
 	const ArrangeErrorMsg = 'Please select item and try again';
+	const DeleteErrorMsg = 'Please select item(s) and try again';
 	var _pixiRenderer = null;
 	var _pixiContainer = null;
 	var _layoutFrame = null;
@@ -1045,6 +1046,18 @@ PixiLayout = (function () {
 		}
 	};
 	
+	var _deleteItems = function _deleteItems () {
+		if (_selected.length >= 1) {
+			for (var i=0, len=_selected.length; i < len; ++i) {
+				_parts.removeChild(_selected[i]);
+			}
+			_selected = [];
+		}
+		else {
+			_blink(0xFF0000, DeleteErrorMsg);
+		}
+	};
+	
 	var _enumerateLayoutParts = function _enumerateLayoutParts (callback) {
 		_enumeratePartsFwd(function (part) {
 			return callback(part.layoutPart);
@@ -1162,6 +1175,7 @@ PixiLayout = (function () {
 		moveToBack: _moveToBack,
 		moveForward: _moveForward,
 		moveBackward: _moveBackward,
+		deleteItems: _deleteItems,
 		addTestItem: _addTestItem
 	};
 })();
