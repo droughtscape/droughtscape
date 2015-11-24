@@ -158,26 +158,26 @@ Template.compass.events({
 		let h = target.height;
 		let panelH = h / 3;
 		let halfW = w / 2;
-		let up = {x: x, y: y, w: w, h: panelH};
-		let pt = {x: event.clientX, y: event.clientY};
+		let up = {x: 0, y: 0, w: w, h: panelH};
+		let pt = {x: event.offsetX, y: event.offsetY};
 		if (Utils.pointInBox(pt, up)) {
             MBus.publish(this.tagParent, new Message.Action(this.upAction));
             _highlightCompass('rendernavup.png');
             return;
 		}
-        let dn = {x: x, y: y + (panelH * 2), w: w, h: panelH};
+        let dn = {x: 0, y: (panelH * 2), w: w, h: panelH};
 		if (Utils.pointInBox(pt, dn)) {
             MBus.publish(this.tagParent, new Message.Action(this.dnAction));
             _highlightCompass('rendernavdown.png');
             return;
 		}
-        let lt = {x: x, y: y + panelH, w: halfW, h: panelH};
+        let lt = {x: 0, y: panelH, w: halfW, h: panelH};
 		if (Utils.pointInBox(pt, lt)) {
             MBus.publish(this.tagParent, new Message.Action(this.ltAction));
             _highlightCompass('rendernavleft.png');
             return;
 		}
-        let rt = {x: x + halfW, y: y + panelH, w: halfW, h: panelH};
+        let rt = {x: halfW, y: panelH, w: halfW, h: panelH};
 		if (Utils.pointInBox(pt, rt)) {
             MBus.publish(this.tagParent, new Message.Action(this.rtAction));
             _highlightCompass('rendernavright.png');
