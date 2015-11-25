@@ -71,15 +71,28 @@ Template.right_bar.onRendered(function () {
 var _checkInfoEnable = function _checkInfoEnable (rightButtons) {
 	for (var i=0,len=rightButtons.length; i<len; ++i) {
 		// look for string containing 'info_'
-		if (rightButtons[i].name.indexOf('info_') > -1) {
-			// Found, now check to see if we have a valid selection
-			let rightButton = rightButtons[i];
-			if (!Session.get('currentSelection')) {
-				rightButton.disabled = 'disabled';
+		//if (rightButtons[i].name.indexOf('info_') > -1) {
+		let button = rightButtons[i];
+		switch (button.target) {
+		case ViewTargetType.infoPart:
+		case ViewTargetType.createInfoPart:
+			// For these, we check the currentSelection session variable
+			if (!Session.get(Constants.currentSelection)) {
+				button.disabled = 'disabled';
 			}
 			else {
-				rightButton.disabled = '';
+				button.disabled = '';
 			}
+			break;
+		case ViewTargetType.layoutInfoPart:
+			// This one needs a single valid layout selection
+			if (Session.get(Constants.layoutSelection) === 1) {
+				button.disabled = '';
+			}
+			else {
+				button.disabled = 'disabled';
+			}
+			break;
 		}
 	}
 };

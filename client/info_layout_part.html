@@ -1,0 +1,18 @@
+<template name="info_layout_part">
+    <h3>
+        Info Layout Part
+    </h3>
+
+    <div>
+        {{#if validItem}}
+            <h4>
+                {{itemType.itemId}}
+                <br>
+                {{> carousel id=carouselId context=infoItemMode}}
+            </h4>
+            x location: {{location.x}} M, y location: {{location.y}} M
+        {{else}}
+            {{alertNoItem}}
+        {{/if}}
+    </div>
+</template>

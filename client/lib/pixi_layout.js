@@ -56,15 +56,16 @@ PixiLayout = (function () {
     }
     class UndoStack {
         constructor () {
-            this.UndoType = {
-                Undelete: 0
-            };
             this.maxUndoActions = 100;
             this.undoStack = [];
         }
         
         pushUndelete (items) {
             this.undoStack.push(new UndoDeleteItem(items));
+			if (this.undoStack.length > this.maxUndoActions) {
+				// trim array, discarding oldest event this.undoStack[0]
+				this.undoStack.slice(1);
+			}
         }
         
         clearUndoStack () {
@@ -92,6 +93,12 @@ PixiLayout = (function () {
 	 */
 	var _validSelection = function _validSelection () {
 		return _selected.length;
+	};
+	var _getSelectedPart = function _getSelectedPart () {
+		if (_selected.length > 0) {
+			return _selected[0].layoutPart;
+		}
+		return null;
 	};
 	/**
 	 * Getter for singleton LayoutFrame, creates if not yet created.
@@ -412,6 +419,7 @@ PixiLayout = (function () {
 			_selected.push(part);
 			part.tint = 0xFF0000;
 			part.alpha = 0.5;
+			Session.set(Constants.layoutSelection, _selected.length);
 		}
 	};
 	/**
@@ -425,6 +433,7 @@ PixiLayout = (function () {
 			_selected[i].alpha = 1.0;
 		}
 		_selected = [];
+		Session.set(Constants.layoutSelection, 0);
 	};
 	/**
 	 * Encapsulates forward enumeration of the _parts children
@@ -1113,6 +1122,7 @@ PixiLayout = (function () {
 			}
             _undoStack.pushUndelete(_selected);
 			_selected = [];
+			Session.set(Constants.layoutSelection, 0)
 		}
 		else {
 			_blink(0xFF0000, DeleteErrorMsg);
@@ -1236,6 +1246,8 @@ PixiLayout = (function () {
 		moveMouseSprite: _moveMouseSprite,
 		finishSelectBox: _finishSelectBoxPublic,
 		validSelection: _validSelection,
+		clearSelection: _clearSelection,
+		getSelectedPart: _getSelectedPart,
 		moveToFront: _moveToFront,
 		moveToBack: _moveToBack,
 		moveForward: _moveForward,

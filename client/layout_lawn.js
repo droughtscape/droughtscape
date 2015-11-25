@@ -111,6 +111,7 @@ var _handleLayoutMessages = function _handleLayoutMessages (message) {
 
 Template.layout_lawn.onCreated(function () {
 	LayoutManager.enableAnimation(true);
+	LayoutManager.clearSelection();
 	window.addEventListener('resize', _handleResizeEvent);
 	// NavBar events
 	unsubscribe = MBus.subscribe(Constants.mbus_layout, _handleLayoutMessages);
@@ -122,6 +123,7 @@ Template.layout_lawn.onDestroyed(function () {
 	LayoutManager.destroyLayout();
 	// disable select box on exit to handle timing issues when this template is 
 	// reentered.  We reenable on first mouse down which ensures graphic state is ok
+	// Note, do NOT clearSelection here or we will fail on info_layout_part when it tries to find selected part
 	window.removeEventListener('resize', _handleResizeEvent);
 	unsubscribe.remove();
 });

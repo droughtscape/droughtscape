@@ -37,12 +37,12 @@ var _handleInfoPartCarouselMessages = function _handleInfoPartCarouselMessages (
 	}
 };
 
-Template.info_part.onCreated(function () {
-	_selectedItem = SelectionManager.getSelection();
+Template.info_layout_part.onCreated(function () {
+	_selectedItem = LayoutManager.getSelectedPart();
 	unsubscribeInfoItem = MBus.subscribe(Constants.mbus_infoItem_carousel, _handleInfoPartCarouselMessages);
 	// if we have a valid part, load it up into the carousel
 	if (_selectedItem) {
-		let part = PartsManager.getPartByItemId(_selectedItem.itemId);
+		let part = PartsManager.getPartByItemId(_selectedItem.abstractPart.itemId);
 		if (part) {
 			Meteor.defer(function () {
 				MBus.publish(Constants.mbus_carousel_add, new Message.Add(carouselIdElt, '500px', '500px', [part]));
@@ -51,11 +51,15 @@ Template.info_part.onCreated(function () {
 	}
 });
 
-Template.info_part.onDestroyed(function () {
+Template.info_layout_part.onDestroyed(function () {
 	unsubscribeInfoItem.remove();
 });
 
-Template.info_part.helpers({
+Template.info_layout_part.helpers({
+	location: function () {
+		console.log('location');
+		return {x: _selectedItem.locus.x, y: _selectedItem.locus.y};
+	},
 	carouselId: function () {
 		return carouselId;
 	},
@@ -74,7 +78,8 @@ Template.info_part.helpers({
 		ViewStack.popState(true);
 	},
 	itemType: function () {
-		let part = PartsManager.getPartByItemId(_selectedItem.itemId);
-		return { itemId: _selectedItem.itemId, url: (part) ? part.url : ''};
+		let itemId = _selectedItem.abstractPart.itemId
+		let part = PartsManager.getPartByItemId(itemId);
+		return { itemId: itemId, url: (part) ? part.url : ''};
 	}
 });

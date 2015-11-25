@@ -33,8 +33,9 @@ Router.map(function () {
 // => see ViewState.js
 // Admin rights of logged in user
 Session.setDefault(Constants.adminRights, undefined);
-Session.setDefault('currentSelection', false);
+Session.setDefault(Constants.currentSelection, false);
 Session.setDefault(Constants.userUnitsOfMeasure, Constants.Metric);
+Session.setDefault(Constants.layoutSelection, 0);
 
 // TestLoader
 testLoader = new TestLoader();
