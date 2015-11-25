@@ -1201,14 +1201,24 @@ PixiLayout = (function () {
 					// error, no effect
 					break;
 				}
-				_scaleRealToPixel = bestFit.lengthPixels / dims.length;
-				_scalePixelToReal = 1.0 / _scaleRealToPixel;
+				_updateScale(bestFit.lengthPixels, dims.length);
 				_modifyRectangle(self.layoutFrame, x, y, bestFit.widthPixels, bestFit.lengthPixels, 4);
 			}
 			else {
 				// really an error since there is no renderer but just in case we get invoked too soon noop this
 				//_modifyRectangle(self.layoutFrame, 0, 0, (border.width === 200) ? 100 : 200, 300, 4);
 			}
+		};
+		var _updateScale = function _updateScale (lengthPixels, lengthMeters) {
+			_scaleRealToPixel = lengthPixels / lengthMeters;
+			_scalePixelToReal = 1.0 / _scaleRealToPixel;
+			// Have to adjust all sprites pixel positions
+			_enumeratePartsFwd(function (part) {
+				part.x = part.layoutPart.locus.x * _scaleRealToPixel;
+				part.y = part.layoutPart.locus.y * _scaleRealToPixel;
+				part.width = part.layoutPart.width * _scaleRealToPixel;
+				part.height = part.layoutPart.height * _scaleRealToPixel;
+			});
 		};
 		/**
 		 * pans the frame
