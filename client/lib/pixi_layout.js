@@ -29,9 +29,11 @@ PixiLayout = (function () {
 	var _layoutFrame = null;
 	var _runAnimation = false;
 	var _selected = [];
+	var _selectedBox = null;
     
     var UndoType = {
-        Undelete: 0
+        Undelete: 0,
+		Unmove: 1
     };
     
     class UndoItem {
@@ -54,6 +56,31 @@ PixiLayout = (function () {
             _parts.children.sort(depthCompare);
         }
     }
+	class UndoMoveItem extends UndoItem {
+		/**
+		 * 
+		 * @param {[]} movedItems - items moved
+		 * @param {number} dx - real world units dx
+		 * @param {number} dy - real world units dy
+		 * @param {number} scaleRealToPixel - cached value
+		 */
+		constructor (movedItems, dx, dy, scaleRealToPixel) {
+			super(UndoType.Unmove);
+			this.movedItems = movedItems;
+			// cache current scale in case we do a zoom before undo
+			this.scaleRealToPixel = scaleRealToPixel;
+			this.dx = -dx;
+			this.dy = -dy;
+		}
+		undoMe () {
+			for (var i=0, len=this.movedItems.length; i< len; ++i) {
+				let part = this.movedItems[i];
+				part.layoutPart.moveMe(this.dx, this.dy);
+				part.x = part.layoutPart.locus.x * this.scaleRealToPixel;
+				part.y = part.layoutPart.locus.y * this.scaleRealToPixel;
+			}
+		}
+	}
     class UndoStack {
         constructor () {
             this.maxUndoActions = 100;
@@ -68,6 +95,13 @@ PixiLayout = (function () {
 			}
         }
         
+		pushUnmove (items, dx, dy) {
+			this.undoStack.push(new UndoMoveItem(items, dx, dy, _scaleRealToPixel));
+			if (this.undoStack.length > this.maxUndoActions) {
+				// trim array, discarding oldest event this.undoStack[0]
+				this.undoStack.slice(1);
+			}
+		}
         clearUndoStack () {
             this.undoStack = [];
         }
@@ -417,6 +451,7 @@ PixiLayout = (function () {
 		else {
 			// push onto _selected, set tint
 			_selected.push(part);
+			_selectedBox = Utils.boxUnionBox(_selectedBox, {x: part.x, y: part.y, w: part.width, h: part.height});
 			part.tint = 0xFF0000;
 			part.alpha = 0.5;
 			Session.set(Constants.layoutSelection, _selected.length);
@@ -433,7 +468,11 @@ PixiLayout = (function () {
 			_selected[i].alpha = 1.0;
 		}
 		_selected = [];
+		_selectedBox = null;
 		Session.set(Constants.layoutSelection, 0);
+	};
+	var _ptOnSelection = function _ptOnSelection (pt) {
+		return Utils.pointInBox(pt, _selectedBox);
 	};
 	/**
 	 * Encapsulates forward enumeration of the _parts children
@@ -446,6 +485,14 @@ PixiLayout = (function () {
 		for (var len=parts.length, i=0; i < len; ++i) {
 			let part = parts[i];
 			if (enumFn(part)) {
+				return false;
+			}
+		}
+		return true;
+	};
+	var _enumerateSelection = function _enumerateSelection (enumFn) {
+		for (var i=0, len=_selected.length; i < len; ++i) {
+			if (enumFn(_selected[i])) {
 				return false;
 			}
 		}
@@ -524,6 +571,40 @@ PixiLayout = (function () {
 				}
 				return false;
 			});
+		}
+	};
+	
+	var _selectAtPoint = function _selectAtPoint (pixelPt) {
+		pixelPt = _snapToGrid(pixelPt.x, pixelPt.y);
+		// Assume sorted by z order, => search from back of list forward to find first selectable item under a point
+		_clearSelection();
+		// _enumeratePartsRev returns false if a valid selection is made so reverse bool on return
+		return !_enumeratePartsRev(function (part) {
+			if (Utils.pointInBox(pixelPt, _rectFromPart(part))) {
+				// satisfied
+				// Highlight via tint, if not selected, set to red, if selected, clear to white
+				_selectPart(part);
+				return true;
+			}
+			return false;
+		});
+	};
+	
+	var _finishMoveSelection = function _finishMoveSelection () {
+		if (!_isSame(_mouseDownPt, _mouseUpPt)) {
+			let dx = (_mouseUpPt.x - _mouseDownPt.x) * _scalePixelToReal;
+			let dy = (_mouseUpPt.y - _mouseDownPt.y) * _scalePixelToReal;
+			// clear _selectedBox so we can rebuild the selectedBox with the moved parts
+			_selectedBox = null;
+			_enumerateSelection(function (part) {
+				part.layoutPart.moveMe(dx, dy);
+				part.x = part.layoutPart.locus.x * _scaleRealToPixel;
+				part.y = part.layoutPart.locus.y * _scaleRealToPixel;
+				// Rebuild the selectedBox with the moved parts
+				_selectedBox = Utils.boxUnionBox(_selectedBox, {x: part.x, y: part.y, w: part.width, h: part.height});
+				return false;
+			});
+			_undoStack.pushUnmove(_selected, dx, dy);
 		}
 	};
 
@@ -1112,14 +1193,12 @@ PixiLayout = (function () {
 	
 	var _deleteItems = function _deleteItems () {
 		if (_selected.length >= 1) {
-			for (var i=0, len=_selected.length; i < len; ++i) {
-                // Remove select highlight
-                let part = _selected[i];
-                part.tint = 0xFFFFFF;
-                part.alpha = 1.0;
-                _parts.removeChild(part);
-				// TODO store the removed parts to undo buffer
-			}
+			_enumerateSelection(function (part) {
+				part.tint = 0xFFFFFF;
+				part.alpha = 1.0;
+				_parts.removeChild(part);
+				return false;
+			});
             _undoStack.pushUndelete(_selected);
 			_selected = [];
 			Session.set(Constants.layoutSelection, 0)
@@ -1254,10 +1333,13 @@ PixiLayout = (function () {
 		isMouseUpDnSame: _isMouseUpDnSame,
 		drawSelectBox: _drawSelectBoxPublic,
 		moveMouseSprite: _moveMouseSprite,
+		finishMoveSelection: _finishMoveSelection,
 		finishSelectBox: _finishSelectBoxPublic,
 		validSelection: _validSelection,
 		clearSelection: _clearSelection,
 		getSelectedPart: _getSelectedPart,
+		ptOnSelection: _ptOnSelection,
+		selectAtPoint: _selectAtPoint,
 		moveToFront: _moveToFront,
 		moveToBack: _moveToBack,
 		moveForward: _moveForward,
