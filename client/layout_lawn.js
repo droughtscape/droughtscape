@@ -90,11 +90,11 @@ var _handleLayoutMessages = function _handleLayoutMessages (message) {
 		case NavBarTagActionType.Delete:
 			LayoutManager.deleteItems();
 			break;
-		case NavBarTagActionType.Move:
-			break;
 		case NavBarTagActionType.Copy:
+			LayoutManager.copySelection();
 			break;
 		case NavBarTagActionType.Paste:
+			LayoutManager.pasteCopy();
 			break;
         case NavBarTagActionType.Undo:
             LayoutManager.undoLastAction();

@@ -30,10 +30,17 @@ PixiLayout = (function () {
 	var _runAnimation = false;
 	var _selected = [];
 	var _selectedBox = null;
-    
+	var _copyBuffer = [];
+	
+    var UndoState = {
+		Enable: 0,
+		Disable: 1
+	};
     var UndoType = {
         Undelete: 0,
-		Unmove: 1
+		Unmove: 1,
+		Uncopy: 2,
+		Unpaste: 3
     };
     
     class UndoItem {
@@ -47,7 +54,7 @@ PixiLayout = (function () {
         constructor (deletedItems) {
             super(UndoType.Undelete);
             // copy this or is a ref good enough?
-            this.deletedItems = deletedItems;
+            this.deletedItems = deletedItems.slice();
         }
         undoMe () {
             for (var i=0, len=this.deletedItems.length; i < len; ++i) {
@@ -66,7 +73,7 @@ PixiLayout = (function () {
 		 */
 		constructor (movedItems, dx, dy, scaleRealToPixel) {
 			super(UndoType.Unmove);
-			this.movedItems = movedItems;
+			this.movedItems = movedItems.slice();
 			// cache current scale in case we do a zoom before undo
 			this.scaleRealToPixel = scaleRealToPixel;
 			this.dx = -dx;
@@ -79,6 +86,28 @@ PixiLayout = (function () {
 				part.x = part.layoutPart.locus.x * this.scaleRealToPixel;
 				part.y = part.layoutPart.locus.y * this.scaleRealToPixel;
 			}
+		}
+	}
+	class UndoCopySelection extends UndoItem {
+		constructor () {
+			super(UndoType.Uncopy);
+		}
+		undoMe () {
+			_copyBuffer = [];
+		}
+	}
+	class UndoPaste extends UndoItem {
+		constructor (items) {
+			super(UndoType.Unpaste);
+			this.pasteItems = items.slice();
+		}
+		undoMe () {
+			// create a clean selected list of the pasteItems and then delete them with _delete's undo disabled
+			_clearSelection();
+			for (var i=0, len=this.pasteItems.length; i < len; ++i) {
+				_selectPart(this.pasteItems[i]);
+			}
+			_deleteItems(UndoState.Disable);
 		}
 	}
     class UndoStack {
@@ -97,6 +126,22 @@ PixiLayout = (function () {
         
 		pushUnmove (items, dx, dy) {
 			this.undoStack.push(new UndoMoveItem(items, dx, dy, _scaleRealToPixel));
+			if (this.undoStack.length > this.maxUndoActions) {
+				// trim array, discarding oldest event this.undoStack[0]
+				this.undoStack.slice(1);
+			}
+		}
+		
+		pushUncopy () {
+			this.undoStack.push(new UndoCopySelection());
+			if (this.undoStack.length > this.maxUndoActions) {
+				// trim array, discarding oldest event this.undoStack[0]
+				this.undoStack.slice(1);
+			}
+		}
+		
+		pushUnpaste (items) {
+			this.undoStack.push(new UndoPaste(items));
 			if (this.undoStack.length > this.maxUndoActions) {
 				// trim array, discarding oldest event this.undoStack[0]
 				this.undoStack.slice(1);
@@ -128,6 +173,11 @@ PixiLayout = (function () {
 	var _validSelection = function _validSelection () {
 		return _selected.length;
 	};
+	/**
+	 * 
+	 * @returns {*} - the layoutPart attribute of the first selected item or null
+	 * @private
+	 */
 	var _getSelectedPart = function _getSelectedPart () {
 		if (_selected.length > 0) {
 			return _selected[0].layoutPart;
@@ -471,8 +521,15 @@ PixiLayout = (function () {
 		_selectedBox = null;
 		Session.set(Constants.layoutSelection, 0);
 	};
+	/**
+	 * 
+	 * @param {object} pt - {x, y}
+	 * @returns {boolean|*} - true if pt is on the box covering the entire selection
+	 * @private
+	 */
 	var _ptOnSelection = function _ptOnSelection (pt) {
-		return Utils.pointInBox(pt, _selectedBox);
+		// Heads up, _selectedBox can be null
+		return (_selectedBox === null) ? false : Utils.pointInBox(pt, _selectedBox);
 	};
 	/**
 	 * Encapsulates forward enumeration of the _parts children
@@ -490,6 +547,12 @@ PixiLayout = (function () {
 		}
 		return true;
 	};
+	/**
+	 * Encapsulates enumeration of the _selected list
+	 * @param {object} enumFn - callback on each enumerated part.  Return true to stop enumeration, false to continue
+	 * @returns {boolean} - false if enumeration was stopped, true if finished for all items
+	 * @private
+	 */
 	var _enumerateSelection = function _enumerateSelection (enumFn) {
 		for (var i=0, len=_selected.length; i < len; ++i) {
 			if (enumFn(_selected[i])) {
@@ -573,7 +636,12 @@ PixiLayout = (function () {
 			});
 		}
 	};
-	
+	/**
+	 * select top item touching point
+	 * @param {object} pixelPt - x, y in pixels to look for item
+	 * @returns {boolean} - true if we selected one
+	 * @private
+	 */
 	var _selectAtPoint = function _selectAtPoint (pixelPt) {
 		pixelPt = _snapToGrid(pixelPt.x, pixelPt.y);
 		// Assume sorted by z order, => search from back of list forward to find first selectable item under a point
@@ -589,7 +657,10 @@ PixiLayout = (function () {
 			return false;
 		});
 	};
-	
+	/**
+	 * handles mouse up after selection box
+	 * @private
+	 */
 	var _finishMoveSelection = function _finishMoveSelection () {
 		if (!_isSame(_mouseDownPt, _mouseUpPt)) {
 			let dx = (_mouseUpPt.x - _mouseDownPt.x) * _scalePixelToReal;
@@ -613,6 +684,40 @@ PixiLayout = (function () {
 	 */
 	var _finishSelectBoxPublic = function _finishSelectBoxPublic() {
 		_finishSelectBox(_mouseDownPt, _mouseUpPt);
+	};
+	/**
+	 * Enumerates the current selection copies onto _copyBuffer for paste.  Undo is enabled to erase the copy
+	 * @private
+	 */
+	var _copySelection = function _copySelection () {
+		_copyBuffer = [];
+		_enumerateSelection(function (part) {
+			_copyBuffer.push(part.layoutPart.copyMe());
+			return false;
+		});
+		_undoStack.pushUncopy();
+	};
+	/**
+	 * Pastes anything in the _copyBuffer.  Undo is enable to delete any pasted items on undo
+	 * @private
+	 */
+	var _pasteCopy = function _pasteCopy () {
+		_clearSelection();
+		for (var i=0, len=_copyBuffer.length; i < len; ++i) {
+			let layoutPart = _copyBuffer[i];
+			var pixiTexture = PIXI.Texture.fromImage(layoutPart.imageUrl);
+			var sprite = new PIXI.Sprite(pixiTexture);
+			sprite.width = layoutPart.width * _scaleRealToPixel;
+			sprite.height = layoutPart.height * _scaleRealToPixel;
+			sprite.x = layoutPart.locus.x * _scaleRealToPixel;
+			sprite.y = layoutPart.locus.y * _scaleRealToPixel;
+			sprite.z = layoutPart.locus.z;
+			layoutPart.sprite = sprite;
+			sprite.layoutPart = layoutPart;
+			_parts.addChild(sprite);
+			_selectPart(sprite);
+		}
+		_undoStack.pushUnpaste(_selected);
 	};
 
 	var _mouseSprite = null;
@@ -1190,8 +1295,13 @@ PixiLayout = (function () {
 			_blink(0xFF0000, ArrangeErrorMsg);
 		}
 	};
-	
-	var _deleteItems = function _deleteItems () {
+	/**
+	 * Deletes items in _selected.  undoState controls whether we push an undo for this
+	 * @param undoState
+	 * @private
+	 */
+	var _deleteItems = function _deleteItems (undoState) {
+		let enableUndo = (undoState || UndoState.Enable) === UndoState.Enable;
 		if (_selected.length >= 1) {
 			_enumerateSelection(function (part) {
 				part.tint = 0xFFFFFF;
@@ -1199,7 +1309,9 @@ PixiLayout = (function () {
 				_parts.removeChild(part);
 				return false;
 			});
-            _undoStack.pushUndelete(_selected);
+			if (enableUndo) {
+				_undoStack.pushUndelete(_selected);
+			}
 			_selected = [];
 			Session.set(Constants.layoutSelection, 0)
 		}
@@ -1207,11 +1319,18 @@ PixiLayout = (function () {
 			_blink(0xFF0000, DeleteErrorMsg);
 		}
 	};
-	
+	/**
+	 * Exposes popUndoStack from the plugin
+	 * @private
+	 */
     var _undoLastAction = function _undoLastAction () {
         _undoStack.popUndoStack();
     };
-    
+	/**
+	 * Exposes enumeration of all parts from the plugin
+	 * @param callback
+	 * @private
+	 */
 	var _enumerateLayoutParts = function _enumerateLayoutParts (callback) {
 		_enumeratePartsFwd(function (part) {
 			return callback(part.layoutPart);
@@ -1334,6 +1453,8 @@ PixiLayout = (function () {
 		drawSelectBox: _drawSelectBoxPublic,
 		moveMouseSprite: _moveMouseSprite,
 		finishMoveSelection: _finishMoveSelection,
+		copySelection: _copySelection,
+		pasteCopy: _pasteCopy,
 		finishSelectBox: _finishSelectBoxPublic,
 		validSelection: _validSelection,
 		clearSelection: _clearSelection,
