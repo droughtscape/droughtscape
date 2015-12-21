@@ -39,6 +39,12 @@ AbstractAction = class AbstractAction {
 	constructor () {}
 };
 
+ActionInitLawn = class ActionInitLawn extends AbstractAction {
+	constructor () {
+		super();
+	}
+};
+
 ActionZoom = class ActionZoom extends AbstractAction {
 	constructor (direction, delta) {
 		super();
@@ -153,9 +159,13 @@ ThreeJSViewActionStore = (function () {
 		}
 	});
 	
-	var handleRenderEvent = function handleRenderEvent (rightBarAction) {
-		console.log('handleRenderEvent: rightBarAction: ' + rightBarAction);
-		switch (rightBarAction) {
+	var handleRenderEvent = function handleRenderEvent (action) {
+		console.log('handleRenderEvent: action: ' + action);
+		switch (action) {
+		case RenderActionType.Init:
+			_state.action = new ActionInitLawn();
+			EventEx.emit(EVENT_TYPE, {data: null});
+			break;
 		case RightBarTagActionType.ZoomIn:
 			break;
 		case RightBarTagActionType.ZoomOut:

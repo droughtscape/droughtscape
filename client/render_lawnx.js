@@ -24,6 +24,10 @@
 // For a rendered view, we will use a true 3D engine so that we can move the
 // camera around so the user can see what the droughtscape will look like.
 // We will use a perspective camera.
+Template.render_lawnx.onRendered(function () {
+	Dispatcher.dispatch('render', new Message.Action(RenderActionType.Init));
+});
+
 Template.render_lawnx.helpers({
 	ThreeJSView: function () {
 		return ThreeJSView;
