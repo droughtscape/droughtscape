@@ -30,3 +30,7 @@ spacebars
 check
 ecmascript
 kevohagan:sweetalert
+raix:eventemitter
+react
+react-template-helper
+meteorflux:dispatcher

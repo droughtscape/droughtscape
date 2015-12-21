@@ -68,6 +68,9 @@ var _renderContent = function _renderContent() {
 
 var _handleResizeEvent = Utils.createDeferredFunction(_renderContent);
 
+EventEx = new EventEmitter();
+console.log('EventEx: ' + EventEx);
+
 Meteor.startup(function () {
 	// Dynamically resize content when window resizes.
 	// Just use the Meteor.defer() so that the DOM is fully

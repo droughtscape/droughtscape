@@ -216,12 +216,15 @@ Template.zoom.events({
 		let normalImage = this.url;
 		if (Utils.pointInBox(pt, zoomIn)) {
 			MBus.publish(this.tagParent, new Message.Action(this.inAction));
+			let message = new Message.Action(this.inAction);
+			Dispatcher.dispatch(this.tagParent, message);
 			_highlightGraphic(graphic, 'zoomin.png', normalImage);
 			return;
 		}
 		let zoomOut = {x: halfWidth, y: 0, w: halfWidth, h: h};
 		if (Utils.pointInBox(pt, zoomOut)) {
 			MBus.publish(this.tagParent, new Message.Action(this.outAction));
+			Dispatcher.dispatch(this.tagParent, new Message.Action(this.outAction));
 			_highlightGraphic(graphic, 'zoomout.png', normalImage);
 			return;
 		}
