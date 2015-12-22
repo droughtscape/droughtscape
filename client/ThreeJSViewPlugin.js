@@ -47,6 +47,9 @@ ThreeJSViewPlugin = class ThreeJSViewPlugin {
 	handleAction (action) {
 		var delta;
 		switch (action.constructor.name) {
+		case 'ActionInitLawn':
+			this.initLawn(action);
+			break;
 		case 'ActionZoom':
 			this.zoomCameraOnScene(action.direction, action.delta);
 			break;
@@ -66,7 +69,9 @@ ThreeJSViewPlugin = class ThreeJSViewPlugin {
 		}
 	}
 	zoomCameraOnScene (direction, delta) {
-		delta = (direction === ActionType.ZoomIn) ? 0.2 : -0.2;
+		if (direction === ActionType.ZoomOut) {
+			delta = -delta;
+		}
 		this.threeCamera.zoom += delta;
 		this.threeCamera.updateProjectionMatrix();
 		this.threeCamera.lookAt(this.threeScene.position);
@@ -104,6 +109,69 @@ ThreeJSViewPlugin = class ThreeJSViewPlugin {
 			this.threeScene.position.x += delta;
 		}
 		this.threeCamera.lookAt(this.threeScene.position);
+	}
+	callbackLayoutPart (part) {
+		console.log('_callbackLayoutPart: part: location[' + part.locus.x + ', ' + part.locus.y + ', ' + part.locus.z +
+			']' + ', rotation[' + part.locus.rotation + ']');
+		console.log('_callbackLayoutPart: abstractPart.id: ' + part.abstractPart.id.value + ', depth: ' + part.abstractPart.depth);
+		this.buildPart(part);
+	}
+	buildPart (part) {
+		console.log('_buildPart: class: ' + part.abstractPart.constructor.name);
+		let abstractPart = part.abstractPart;
+		let bitmap = new Image();
+		bitmap.src = abstractPart.url;
+		bitmap.onerror = function () {
+			console.error('Error loading: ' + bitmap.src);
+		};
+		let width = abstractPart.width * 10;
+		let height = abstractPart.height * 10;
+		let depth = abstractPart.depth * 10;
+		let geometry;
+		let texture = THREE.ImageUtils.loadTexture(bitmap.src);
+		let material = new THREE.MeshPhongMaterial({ map: texture });
+		switch (abstractPart.renderShape) {
+		case RenderShapeType.sphere:
+			geometry = new THREE.SphereGeometry(depth / 2, 64, 64);
+			break;
+		default:
+			geometry = new THREE.BoxGeometry(width, height, depth);
+			break;
+		}
+		let mesh = new THREE.Mesh(geometry, material);
+		mesh.position.y = -20 + (depth / 2);
+		mesh.rotation.y = -Math.PI/2; //-90 degrees around the yaxis
+		// adjust x
+		mesh.position.x = (part.locus.x - this.midX) * 10;
+		mesh.position.z = (part.locus.y - this.midZ) * 10;
+		this.threeScene.add(mesh);
+	}
+	initLawn (action) {
+		let dims = action.dims;
+		this.midX = dims.width / 2;
+		this.midZ = dims.length / 2;
+		let ground = this.buildGround(dims);
+		this.threeScene.add(ground);
+		// enumerate the 2D layout
+		LayoutManager.enumerateLayout((part) => this.callbackLayoutPart(part));
+	}
+	/**
+	 * Builds a reference ground plane
+	 * @param dims
+	 * @returns {THREE.Mesh}
+	 * @private
+	 */
+	static buildGround (dims) {
+		var w = dims.width * 10;
+		var h = dims.length * 10;
+		var geometry = new THREE.PlaneGeometry(w, h);
+		//var material = new THREE.MeshPhongMaterial({ ambient: 0x050505, color: 0x0033ff, specular: 0x555555, shininess: 30 });
+		var material = new THREE.MeshBasicMaterial( { color: 0xd2b48c } );
+		var mesh = new THREE.Mesh(geometry, material);
+		mesh.position.y = -20;
+		mesh.rotation.x = -Math.PI/2; //-90 degrees around the xaxis
+		mesh.doubleSided = true;
+		return mesh;
 	}
 };
 

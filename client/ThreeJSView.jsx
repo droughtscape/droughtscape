@@ -81,8 +81,15 @@ ThreeJSView = React.createClass({
 				let storeName = this.props.store.name;
 				let listener = function () {
 					console.log('Event: ' + storeName);
-					// Pass the state to the real component whenever the store updates the state
-					this.setState(this.getStateFromStore());
+					// Guard setState with isMounted()
+					if (this.isMounted()) {
+						console.log('Event: ' + storeName + ', mounted');
+						// Pass the state to the real component whenever the store updates the state
+						this.setState(this.getStateFromStore());
+					}
+					else {
+						console.log('Event: ' + storeName + ', Not mounted');
+					}
 				}.bind(this);
 				EventEx.on(storeName, listener);
 			}

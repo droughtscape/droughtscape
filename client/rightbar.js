@@ -177,26 +177,26 @@ Template.compass.events({
 		let graphic = document.getElementById(this.name);
 		let normalImage = this.url;
 		if (Utils.pointInBox(pt, up)) {
-            MBus.publish(this.tagParent, new Message.Action(this.upAction));
+			Dispatcher.dispatch(this.tagParent, new Message.Action(this.upAction));
 			_highlightGraphic(graphic, 'panup.png', normalImage);
             return;
 		}
         let dn = {x: 0, y: (panelH * 2), w: w, h: panelH};
 		if (Utils.pointInBox(pt, dn)) {
-            MBus.publish(this.tagParent, new Message.Action(this.dnAction));
+			Dispatcher.dispatch(this.tagParent, new Message.Action(this.dnAction));
 			_highlightGraphic(graphic, 'pandn.png', normalImage);
             return;
 		}
 		let halfW = w / 2;
         let lt = {x: 0, y: panelH, w: halfW, h: panelH};
 		if (Utils.pointInBox(pt, lt)) {
-            MBus.publish(this.tagParent, new Message.Action(this.ltAction));
+			Dispatcher.dispatch(this.tagParent, new Message.Action(this.ltAction));
 			_highlightGraphic(graphic, 'panlt.png', normalImage);
             return;
 		}
         let rt = {x: halfW, y: panelH, w: halfW, h: panelH};
 		if (Utils.pointInBox(pt, rt)) {
-            MBus.publish(this.tagParent, new Message.Action(this.rtAction));
+			Dispatcher.dispatch(this.tagParent, new Message.Action(this.rtAction));
 			_highlightGraphic(graphic, 'panrt.png', normalImage);
             return;
 		}
@@ -215,15 +215,12 @@ Template.zoom.events({
 		let graphic = document.getElementById(this.name);
 		let normalImage = this.url;
 		if (Utils.pointInBox(pt, zoomIn)) {
-			MBus.publish(this.tagParent, new Message.Action(this.inAction));
-			let message = new Message.Action(this.inAction);
-			Dispatcher.dispatch(this.tagParent, message);
+			Dispatcher.dispatch(this.tagParent, new Message.Action(this.inAction));
 			_highlightGraphic(graphic, 'zoomin.png', normalImage);
 			return;
 		}
 		let zoomOut = {x: halfWidth, y: 0, w: halfWidth, h: h};
 		if (Utils.pointInBox(pt, zoomOut)) {
-			MBus.publish(this.tagParent, new Message.Action(this.outAction));
 			Dispatcher.dispatch(this.tagParent, new Message.Action(this.outAction));
 			_highlightGraphic(graphic, 'zoomout.png', normalImage);
 			return;
@@ -238,20 +235,21 @@ Template.rotate.events({
         let w = target.width;
         let h = target.height;
         let halfWidth = w / 2;
-        let zoomIn = {x: 0, y: 0, w: halfWidth, h: h};
+        let rotRt = {x: 0, y: 0, w: halfWidth, h: h};
         let pt = {x: event.offsetX, y: event.offsetY};
         let graphic = document.getElementById(this.name);
         let normalImage = this.url;
-        if (Utils.pointInBox(pt, zoomIn)) {
-            MBus.publish(this.tagParent, new Message.Action(this.inAction));
+        if (Utils.pointInBox(pt, rotRt)) {
+			Dispatcher.dispatch(this.tagParent, new Message.Action(this.ltAction));
             _highlightGraphic(graphic, 'rotateleft.png', normalImage);
             return;
         }
-        let zoomOut = {x: halfWidth, y: 0, w: halfWidth, h: h};
-        if (Utils.pointInBox(pt, zoomOut)) {
-            MBus.publish(this.tagParent, new Message.Action(this.outAction));
+        let rotLt = {x: halfWidth, y: 0, w: halfWidth, h: h};
+        if (Utils.pointInBox(pt, rotLt)) {
+			Dispatcher.dispatch(this.tagParent, new Message.Action(this.rtAction));
             _highlightGraphic(graphic, 'rotateright.png', normalImage);
             return;
-        }    }
+        }    
+	}
 });
 
