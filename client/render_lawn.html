@@ -1,6 +1,6 @@
 <template name="render_lawn">
     {{> lawn_info}}
     <div id="render-div-container" align="center" style="position: absolute; left: 0; width: 100%; height: 100%">
-        <canvas id="render-canvas" style="display: table-row; background-color: #222222"></canvas>
+        <div>{{> React component=ThreeJSView store=store }} </div>
     </div>
 </template>

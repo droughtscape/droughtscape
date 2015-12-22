@@ -150,7 +150,7 @@ ThreeJSViewPlugin = class ThreeJSViewPlugin {
 		let dims = action.dims;
 		this.midX = dims.width / 2;
 		this.midZ = dims.length / 2;
-		let ground = this.buildGround(dims);
+		let ground = ThreeJSViewPlugin.buildGround(dims);
 		this.threeScene.add(ground);
 		// enumerate the 2D layout
 		LayoutManager.enumerateLayout((part) => this.callbackLayoutPart(part));
