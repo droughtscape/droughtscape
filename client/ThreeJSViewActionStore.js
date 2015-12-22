@@ -40,8 +40,9 @@ AbstractAction = class AbstractAction {
 };
 
 ActionInitLawn = class ActionInitLawn extends AbstractAction {
-	constructor () {
+	constructor (dims) {
 		super();
+        this.dims = dims;
 	}
 };
 
@@ -163,7 +164,7 @@ ThreeJSViewActionStore = (function () {
 		console.log('handleRenderEvent: action: ' + action);
 		switch (action) {
 		case RenderActionType.Init:
-			_state.action = new ActionInitLawn();
+			_state.action = new ActionInitLawn(CreateLawnData.lawnData.shape.dims);
 			EventEx.emit(EVENT_TYPE, {data: null});
 			break;
 		case RightBarTagActionType.ZoomIn:
