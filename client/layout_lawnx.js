@@ -109,7 +109,7 @@ var _handleLayoutMessages = function _handleLayoutMessages (message) {
 	}
 };
 
-Template.layout_lawn.onCreated(function () {
+Template.layout_lawnx.onCreated(function () {
 	LayoutManager.enableAnimation(true);
 	LayoutManager.clearSelection();
 	window.addEventListener('resize', _handleResizeEvent);
@@ -117,7 +117,7 @@ Template.layout_lawn.onCreated(function () {
 	unsubscribe = MBus.subscribe(Constants.mbus_layout, _handleLayoutMessages);
 });
 
-Template.layout_lawn.onDestroyed(function () {
+Template.layout_lawnx.onDestroyed(function () {
 	// Have to stop animation and renderer
 	LayoutManager.enableAnimation(false);
 	LayoutManager.destroyLayout();
@@ -128,10 +128,9 @@ Template.layout_lawn.onDestroyed(function () {
 	unsubscribe.remove();
 });
 
-Template.layout_lawn.onRendered(function () {
+Template.layout_lawnx.onRendered(function () {
 	// Start dropdowns
 	$(".dropdown-button").dropdown();
-	Dispatcher.dispatch('layout', new Message.Action(LayoutActionType.Init));
 
 	var lawnShape = CreateLawnData.lawnData.shape;
 	lawnShape.printMe();
@@ -156,15 +155,6 @@ Template.layout_lawn.onRendered(function () {
 	console.log('layout_lawn.onRendered');
 });
 
-Template.layout_lawn.helpers({
-	PixiJSView: function () {
-		return PixiJSView;
-	},
-	store: function () {
-		return PixiJSViewActionStore;
-	}
-});
-
 var testLayoutCreate = function testLayoutCreate () {
 	console.log('testLayoutCreate: ENTRY');
 };
@@ -182,10 +172,10 @@ Template.layout_settings.onCreated(function () {
 
 });
 
-Template.layout_settings.onDestroyed(function () {
+Template.layout_settingsx.onDestroyed(function () {
 });
 
-Template.layout_settings.helpers({
+Template.layout_settingsx.helpers({
 	gridSpacing: function () {
 		var spacing = _settings.gridSpacing;
 		spacing = (Session.get(Constants.userUnitsOfMeasure) === Constants.English) ? Utils.convertMetersToInches(spacing/100) : spacing;
@@ -203,7 +193,7 @@ Template.layout_settings.helpers({
 	}
 });
 
-Template.layout_settings.events({
+Template.layout_settingsx.events({
 	'click #grid-on': function () {
 		_settings.gridEnabled = true;
 	},

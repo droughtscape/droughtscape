@@ -104,44 +104,38 @@ ThreeJSViewActionStore = (function () {
 	
 	var handleRenderEvent = function handleRenderEvent (action) {
 		console.log('handleRenderEvent: action: ' + action);
+		// Currently, every action requires emit so we can fire the emit after the case.
+		// if it turns out we have to build state with multiple actions, then we have to emit on each branch
 		switch (action) {
 		case RenderActionType.Init:
 			_state.action = new ActionInitLawn(CreateLawnData.lawnData.shape.dims);
-			EventEx.emit(EVENT_TYPE, {data: null});
 			break;
 		case RightBarTagActionType.ZoomIn:
 			_state.action = new ActionZoom(ActionType.ZoomIn, 0.2);
-			EventEx.emit(EVENT_TYPE, {data: null});
 			break;
 		case RightBarTagActionType.ZoomOut:
 			_state.action = new ActionZoom(ActionType.ZoomOut, 0.2);
-			EventEx.emit(EVENT_TYPE, {data: null});
 			break;
 		case RightBarTagActionType.PanCameraLeft:
 			_state.action = new ActionPan(ActionType.PanLt, 10);
-			EventEx.emit(EVENT_TYPE, {data: null});
 			break;
 		case RightBarTagActionType.PanCameraRight:
 			_state.action = new ActionPan(ActionType.PanRt, 10);
-			EventEx.emit(EVENT_TYPE, {data: null});
 			break;
 		case RightBarTagActionType.MoveCameraDn:
 			_state.action = new ActionCamera(ActionType.CameraDn, 10);
-			EventEx.emit(EVENT_TYPE, {data: null});
 			break;
 		case RightBarTagActionType.MoveCameraUp:
 			_state.action = new ActionCamera(ActionType.CameraUp, 10);
-			EventEx.emit(EVENT_TYPE, {data: null});
 			break;
 		case RightBarTagActionType.RotateCameraLt:
 			_state.action = new ActionRotate(ActionType.RotateLt, 0.2);
-			EventEx.emit(EVENT_TYPE, {data: null});
 			break;
 		case RightBarTagActionType.RotateCameraRt:
 			_state.action = new ActionRotate(ActionType.RotateRt, 0.2);
-			EventEx.emit(EVENT_TYPE, {data: null});
 			break;
 		}
+		EventEx.emit(EVENT_TYPE, {data: null});
 	};
 	
 	var _state = {

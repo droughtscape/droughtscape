@@ -1,11 +1,11 @@
-<template name="layout_lawn">
+<template name="layout_lawnx">
     {{> lawn_info}}
     <div id="layout-div-container" align="center" style="position: absolute; left: 0; width: 100%; height: 100%">
-        <div>{{> React component=PixiJSView store=store }} </div>
+        <canvas id="layout-canvas" style="display: table-row; background-color: #222222"></canvas>
     </div>
 </template>
 
-<template name="layout_settings">
+<template name="layout_settingsx">
     {{> lawn_info}}
     Settings
     <hr>
