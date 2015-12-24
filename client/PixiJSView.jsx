@@ -133,6 +133,7 @@ PixiJSView = React.createClass({
 	 * Clear out pixijs context on unmount
 	 */
 	componentWillUnmount: function componentWillUnmount () {
+		this.runAnimation = false;
 		this.pixiRootContainer = null;
 		this.pixiRenderer = null;
 		window.removeEventListener('resize', this.handleResize)

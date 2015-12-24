@@ -71,8 +71,8 @@ LayoutFrame = class LayoutFrame {
 		background.drawRect(0, 0, width, height);
 		background.beginFill(0xFFFFFF);
 		background.drawRect(borderWidth, borderWidth, background.innerWidth, background.innerHeight);
-		rectangle.position.x = x;
-		rectangle.position.y = y;
+		this.box.position.x = x;
+		this.box.position.y = y;
 		// Safest to use the real session variables to determine _grid
 		this.gridEnabled = Session.get(Constants.gridEnabled);
 		this.gridSpacing = Session.get(Constants.gridSpacing);
@@ -87,7 +87,7 @@ LayoutFrame = class LayoutFrame {
 		pixiRenderer.bgndOffY = y;
 	}
 	drawGrid (gridEnabled, gridSpacing) {
-		console.log('_drawGrid: ENTRY');
+		console.log('LayoutFrame.drawGrid: ENTRY, gridEnabled: ' + gridEnabled + ', gridSpacing: ' + gridSpacing);
 		// Clear the _grid before we draw it so we don't accumulate graphics
 		// Always clear since it handles the !gridEnabled case too.
 		let grid = this.grid,
@@ -136,6 +136,46 @@ LayoutFrame = class LayoutFrame {
 			part.height = part.layoutPart.height * scaleRealToPixel;
 		});
 	}
+	fit (fitMode) {
+		console.log('LayoutFrame.prototype.fit: ' + fitMode);
+		if (this.pixiRenderer) {
+			let pixiRenderer = this.pixiRenderer;
+			// set some locals and set defaults
+			var pixiRenderWidth = pixiRenderer.width;
+			var pixiRenderHeight = pixiRenderer.height;
+			var dims = CreateLawnData.lawnData.shape.dims;
+			var x = 0, y = 0;
+			var bestFit = {widthPixels: pixiRenderWidth, lengthPixels: pixiRenderHeight};
+			// based on fitMode, adjust values, then modify the fitted frame
+			switch (fitMode) {
+			case FitType.FitTypeXY:
+				bestFit = Utils.computeLayoutFrame(dims.width, dims.length, pixiRenderWidth, pixiRenderHeight);
+				// center layout frame in renderer
+				x = (pixiRenderWidth - bestFit.widthPixels) / 2;
+				y = (pixiRenderHeight - bestFit.lengthPixels) / 2;
+				break;
+			case FitType.FitTypeX:
+				bestFit.lengthPixels = (dims.length * pixiRenderWidth) / dims.width;
+				// center layout frame in renderer
+				y = (pixiRenderHeight - lengthPixels) / 2;
+				break;
+			case FitType.FitTypeY:
+				bestFit.widthPixels = (dims.width * pixiRenderHeight) / dims.length;
+				// center layout frame in renderer
+				x = (pixiRenderWidth - widthPixels) / 2;
+				break;
+			default :
+				// error, no effect
+				break;
+			}
+			this.updateScale(bestFit.lengthPixels, dims.length);
+			this.modifyLayoutFrame(x, y, bestFit.widthPixels, bestFit.lengthPixels, 4);
+		}
+		else {
+			// really an error since there is no renderer but just in case we get invoked too soon noop this
+			//_modifyRectangle(self.layoutFrame, 0, 0, (border.width === 200) ? 100 : 200, 300, 4);
+		}
+	}
 	/**
 	 * Encapsulates forward enumeration of the _parts children
 	 * @param {object} enumFn - callback on each enumerated part.  Return true to stop enumeration, false to continue
@@ -180,7 +220,9 @@ PixiJSViewPlugin = class PixiJSViewPlugin {
 	handleAction (action) {
 		switch (action.constructor.name) {
 		case 'ActionInitLayout':
-			this.addBackground(0xFEFEFE, 0xFF0000);
+			//this.addBackground(0xFEFEFE, 0xFF0000);
+			this.pixiRootContainer.addChild(this.layoutFrame.createLayoutFrame(0, 0));
+			this.layoutFrame.fit(action.fitMode);
 			break;
 		case 'ActionAddBackground':
 			this.addBackground(action.color, action.borderColor);
