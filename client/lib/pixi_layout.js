@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-PixiLayout = (function () {
+PixiLayoutx = (function () {
 	const ArrangeErrorMsg = 'Please select item and try again';
 	const DeleteErrorMsg = 'Please select item(s) and try again';
 	var _pixiRenderer = null;

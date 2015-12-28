@@ -110,49 +110,52 @@ var _handleLayoutMessages = function _handleLayoutMessages (message) {
 };
 
 Template.layout_lawn.onCreated(function () {
-	LayoutManager.enableAnimation(true);
-	LayoutManager.clearSelection();
-	window.addEventListener('resize', _handleResizeEvent);
-	// NavBar events
-	unsubscribe = MBus.subscribe(Constants.mbus_layout, _handleLayoutMessages);
+	//LayoutManager.enableAnimation(true);
+	//LayoutManager.clearSelection();
+	//window.addEventListener('resize', _handleResizeEvent);
+	//// NavBar events
+	//unsubscribe = MBus.subscribe(Constants.mbus_layout, _handleLayoutMessages);
 });
 
 Template.layout_lawn.onDestroyed(function () {
 	// Have to stop animation and renderer
-	LayoutManager.enableAnimation(false);
-	LayoutManager.destroyLayout();
+	//LayoutManager.enableAnimation(false);
+	//LayoutManager.destroyLayout();
 	// disable select box on exit to handle timing issues when this template is 
 	// reentered.  We reenable on first mouse down which ensures graphic state is ok
 	// Note, do NOT clearSelection here or we will fail on info_layout_part when it tries to find selected part
-	window.removeEventListener('resize', _handleResizeEvent);
-	unsubscribe.remove();
+	//window.removeEventListener('resize', _handleResizeEvent);
+	//unsubscribe.remove();
 });
 
 Template.layout_lawn.onRendered(function () {
 	// Start dropdowns
 	$(".dropdown-button").dropdown();
-	Dispatcher.dispatch('layout', new Message.Action(LayoutActionType.Init));
 
 	var lawnShape = CreateLawnData.lawnData.shape;
 	lawnShape.printMe();
 	
 	var infoContainer = document.getElementById('info-container');
 	var offset = infoContainer.offsetTop + infoContainer.clientHeight;
+
+	Dispatcher.dispatch('layout', new Message.ActionInit(LayoutActionType.Init, offset));
+	
+	// TBD have to get the offset to the store/plugin
 	
 	// See onDestroyed() which is stopping animation and destroys layout
 	// => every time we enter onRendered(), create layout again
-	if (!LayoutManager.isValid()) {
-		var layout = document.getElementById('layout-canvas');
-		var layoutContainer = document.getElementById('layout-div-container');
-		var width = (layoutContainer) ? layoutContainer.clientWidth : 800;
-		var height = (layoutContainer) ? layoutContainer.clientHeight : 600;
-		height -= offset;
-		LayoutManager.createLayout(layout, width, height);
-		// By here the layout is set up and has the correct pixel render area
-		_renderLayout();
-		
-		LayoutManager.startAnimation();
-	}
+	//if (!LayoutManager.isValid()) {
+	//	var layout = document.getElementById('layout-canvas');
+	//	var layoutContainer = document.getElementById('layout-div-container');
+	//	var width = (layoutContainer) ? layoutContainer.clientWidth : 800;
+	//	var height = (layoutContainer) ? layoutContainer.clientHeight : 600;
+	//	height -= offset;
+	//	LayoutManager.createLayout(layout, width, height);
+	//	// By here the layout is set up and has the correct pixel render area
+	//	_renderLayout();
+	//	
+	//	LayoutManager.startAnimation();
+	//}
 	console.log('layout_lawn.onRendered');
 });
 

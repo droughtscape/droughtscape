@@ -27,15 +27,23 @@ FitType = {
 	FitTypeY: 2
 };
 
+MouseMode = {
+	Select: 0,
+	Create: 1,
+	Move: 2
+};
+
 // Sample actions
 AbstractAction = class AbstractAction {
 	constructor () {}
 };
 
 ActionInitLayout = class ActionInitLayout extends AbstractAction {
-	constructor (fitMode) {
+	constructor (fitMode, offset) {
 		super();
 		this.fitMode = fitMode;
+		this.offset = offset;
+		this.mouseMode = MouseMode.Select;
 	}
 };
 
@@ -78,7 +86,7 @@ PixiJSViewActionStore = (function () {
 	const EVENT_TYPE = 'PixiJSViewActionStore';
 	Dispatcher.register(function (action) {
 		if (action.type === 'layout') {
-			handleLayoutEvent(action.action);
+			handleLayoutEvent(action);
 		}
 		else {
 			switch (action.type) {
@@ -99,11 +107,13 @@ PixiJSViewActionStore = (function () {
 			}
 		}
 	});
+	var _currentMouseState;
 	
 	var handleLayoutEvent = function handleLayoutEvent (action) {
-		switch (action) {
+		switch (action.action) {
 		case LayoutActionType.Init:
-			_state.action = new ActionInitLayout(FitType.FitTypeXY);
+			_state.action = new ActionInitLayout(FitType.FitTypeXY, action.offset);
+			_currentMouseMode = _state.action.mouseMode;
 			break;
 		case NavBarTagActionType.Fit:
 			break;
