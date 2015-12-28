@@ -203,8 +203,8 @@ PixiLayout = (function () {
 			// Even though we reset the mouse handlers, there seems to be some state bug.
 			if (interactionData.data.global.x !== Infinity) {
 				let {x, y, valid} = this.computeRelativeMouseLocation(interactionData.data.global);
-				_mouseMovePt = _snapToGrid(x, y);
-				//console.log('_mouseMove: ' + _mouseMovePt.x + ', ' + _mouseMovePt.y + ' : valid: ' + valid);
+				this.mouseMvPt = _snapToGrid(x, y);
+				console.log('mouseMove: ' + this.mouseMvPt.x + ', ' + this.mouseMvPt.x + ' : valid: ' + valid);
 
 				// Try to detect mouseover, mouseout
 				if (this.currentMoveState) {
@@ -224,15 +224,15 @@ PixiLayout = (function () {
 						console.log('_mouseMove: ENTER');
 						// We just moved in, fire handler, set _currentMoveState to in
 						if (this.mouseEnterHandler) {
-							this.mouseEnterHandler(_mouseMovePt);
+							this.mouseEnterHandler(this.mouseMvPt);
 						}
 						this.currentMoveState = valid;
 					}
 				}
 
-				//console.log('_mouseMove: ' + _mouseMovePt);
-				if (_mouseMoveHandler) {
-					_mouseMoveHandler(_mouseDownPt, _mouseMovePt);
+				console.log('mouseMove: ' + this.mouseMvPt);
+				if (this.mouseMvHandler) {
+					this.mouseMvHandler(this.mouseDnPt, this.mouseMvPt);
 				}
 			}
 		}
@@ -276,10 +276,10 @@ PixiLayout = (function () {
 			}
 		}
 		mouseMvSelectHandler (pixelPt) {
-			_selectionMgr.drawSelectBox();
+			_selectionMgr.drawSelectBox(this.mouseDnPt, this.mouseMvPt);
 		}
 		mouseUpSelectHandler (pixelPt) {
-			this.mouseMvHandler = null
+			this.mouseMvHandler = null;
 			_selectionMgr.finishSelectBox(this.mouseDnPt, this.mouseUpPt);
 		}
 		mouseMvMoveHandler (pixelPt) {}
@@ -528,9 +528,9 @@ PixiLayout = (function () {
 			console.log('createLayoutFrame');
 			this.box = new PIXI.Container();
 			this.box.interactive = true;
-			this.box.mousedown = (interactionData) => _mouseMgr.mouseDown (interactionData);
-			this.box.mouseup = (interactionData) => _mouseMgr.mouseUp (interactionData);
-			//this.box.mousemove = _mouseMgr.mouseMove;
+			this.box.mousedown = (interactionData) => _mouseMgr.mouseDown(interactionData);
+			this.box.mouseup = (interactionData) => _mouseMgr.mouseUp(interactionData);
+			this.box.mousemove = (interactionData) => _mouseMgr.mouseMove(interactionData);
 			_background = new PIXI.Graphics();
 			_gridEnabled = false;
 			_gridSpacing = 0;
