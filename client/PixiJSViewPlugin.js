@@ -137,23 +137,20 @@ PixiLayout = (function () {
 				targetMvHandler = (pixelPt) => this.mouseMvSelectHandler(pixelPt);
 				break;
 			case LayoutManager.MOUSE_MODE.Create:
-				//targetEnterHandler = (pixelPt) => _mouseEnterCreateHandler(pixelPt);
-				//targetLeaveHandler = () => _mouseLeaveCreateHandler();
-				//targetUpHandler = (pixelPt) => _mouseUpCreateHandler(pixelPt);
+				targetEnterHandler = (pixelPt) => this.mouseEnterCreateHandler(pixelPt);
+				targetLeaveHandler = () => this.mouseLeaveCreateHandler();
+				targetUpHandler = (pixelPt) => this.mouseUpCreateHandler(pixelPt);
 				break;
 			case LayoutManager.MOUSE_MODE.Move:
-				//targetMvHandler = (pixelPt) => _mouseMvMoveHandler(pixelPt);
-				//targetUpHandler = (pixelPt) => _mouseUpMoveHandler(pixelPt);
+				targetMvHandler = (pixelPt) => this.mouseMvMoveHandler(pixelPt);
+				targetUpHandler = (pixelPt) => this.mouseUpMoveHandler(pixelPt);
 				break;
 			}
 			this.mouseDnHandler = targetDnHandler;
 			this.mouseUpHandler = targetUpHandler;
 			this.mouseMvHandler = null;
-			//_pluginRenderer.setMouseDnHandler(targetDnHandler);
-			//_pluginRenderer.setMouseMvHandler(targetMvHandler);
-			//_pluginRenderer.setMouseUpHandler(targetUpHandler);
-			//_pluginRenderer.setMouseEnterHandler(targetEnterHandler);
-			//_pluginRenderer.setMouseLeaveHandler(targetLeaveHandler);
+			this.mouseEnterHandler = targetEnterHandler;
+			this.mouseEnterHandler = targetLeaveHandler;
 			
 		}
 		/**
