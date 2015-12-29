@@ -29,8 +29,6 @@ PixiLayout = (function () {
 	var _pixiRenderer = null;
 	var _background = null;
 	var _parts;
-	var _selected = [];
-	var _selectedBox = null;
 	var _copyBuffer = [];
 	var _selectBox;
 	var _mouseMgr = null;
@@ -223,9 +221,9 @@ PixiLayout = (function () {
 		}
 		undoMe () {
 			// create a clean selected list of the pasteItems and then delete them with _delete's undo disabled
-			_clearSelection();
+			_selectionMgr.clearSelection();
 			for (var i=0, len=this.pasteItems.length; i < len; ++i) {
-				SelectionMgr.selectPart(this.pasteItems[i]);
+				_selectionMgr.selectPart(this.pasteItems[i]);
 			}
 			PartsMgr.deleteItems(UndoState.Disable);
 		}
@@ -543,22 +541,24 @@ PixiLayout = (function () {
 	SelectionMgr = class SelectionMgr {
 		constructor () {
 			this.selectedBox = null;
+			this.selected = [];
 		}
 		validSelection () {
-			return _selected.length;
+			return this.selected.length;
 		}
 		/**
 		 * resets tinting on any selected part
-		 * clears the _selected list
+		 * clears the selected list
 		 * @private
 		 */
 		clearSelection () {
-			for (var i=0, len=_selected.length; i < len; ++i) {
-				_selected[i].tint = 0xFFFFFF;
-				_selected[i].alpha = 1.0;
+			let selected = this.selected;
+			for (var i=0, len=selected.length; i < len; ++i) {
+				selected[i].tint = 0xFFFFFF;
+				selected[i].alpha = 1.0;
 			}
-			_selected = [];
-			_selectedBox = null;
+			this.selected = [];
+			this.selectedBox = null;
 			Session.set(Constants.layoutSelection, 0);
 			Dispatcher.dispatch('layout', new Message.ActionNotifySelectedPart(null));
 		}
@@ -570,7 +570,7 @@ PixiLayout = (function () {
 		 * @private
 		 */
 		ptOnSelection (pt) {
-			// Heads up, _selectedBox can be null
+			// Heads up, this.selectedBox can be null
 			return (this.selectedBox === null) ? false : Utils.pointInBox(pt, this.selectedBox);
 		}
         /**
@@ -578,24 +578,25 @@ PixiLayout = (function () {
          * @param part
          * @private
          */
-        static selectPart (part) {
+        selectPart (part) {
             // if already in _selectList, remove it
-            var index = _selected.indexOf(part);
+			let selected = this.selected;
+            var index = selected.indexOf(part);
             if (index > -1) {
                 // already in array, clear tint and remove
                 part.tint = 0xFFFFFF;
                 part.alpha = 1.0;
-                _selected.splice(index, 1);
+				selected.splice(index, 1);
             }
             else {
-                // push onto _selected, set tint
-                _selected.push(part);
-                _selectedBox = Utils.boxUnionBox(_selectedBox, {x: part.x, y: part.y, w: part.width, h: part.height});
+                // push onto selected, set tint
+				this.selected.push(part);
+                this.selectedBox = Utils.boxUnionBox(this.selectedBox, {x: part.x, y: part.y, w: part.width, h: part.height});
                 part.tint = 0xFF0000;
                 part.alpha = 0.5;
-                Session.set(Constants.layoutSelection, _selected.length);
+                Session.set(Constants.layoutSelection, selected.length);
             }
-			Dispatcher.dispatch('layout', new Message.ActionNotifySelectedPart((_selected.length === 1)? _selected[0].layoutPart : null));
+			Dispatcher.dispatch('layout', new Message.ActionNotifySelectedPart((selected.length === 1)? selected[0].layoutPart : null));
 		}
 		/**
 		 * select top item touching point
@@ -608,11 +609,12 @@ PixiLayout = (function () {
 			// Assume sorted by z order, => search from back of list forward to find first selectable item under a point
 			this.clearSelection();
 			// enumeratePartsRev returns false if a valid selection is made so reverse bool on return
-			return !PartsMgr.enumeratePartsRev(function (part) {
+			//let fn = (part) => this.selectPart(part);
+			return !PartsMgr.enumeratePartsRev((part) => {
 				if (Utils.pointInBox(pixelPt, _rectFromPart(part))) {
 					// satisfied
 					// Highlight via tint, if not selected, set to red, if selected, clear to white
-					SelectionMgr.selectPart(part);
+					this.selectPart(part);
 					return true;
 				}
 				return false;
@@ -658,12 +660,13 @@ PixiLayout = (function () {
 				this.drawSelectBox(fromPt, toPt);
 				this.clearSelection();
 				let selectBox = _selectBox.currentBox;
+				let fn = (part) => this.selectPart(part);
 				PartsMgr.enumeratePartsRev(function (part) {
 					if (Utils.boxIntersectBox(_rectFromPart(part), selectBox)) {
 						// satisfied
 						console.log('_finishSelectBox: ptInBox found at i: ' + i);
 						// Highlight via tint, if not selected, set to red, if selected, clear to white
-						SelectionMgr.selectPart(part);
+						fn(part);
 					}
 					return false;
 				});
@@ -681,7 +684,7 @@ PixiLayout = (function () {
 					if (Utils.pointInBox(toPt, _rectFromPart(part))) {
 						// satisfied
 						// Highlight via tint, if not selected, set to red, if selected, clear to white
-						SelectionMgr.selectPart(part);
+						this.selectPart(part);
 						return true;
 					}
 					return false;
@@ -696,28 +699,29 @@ PixiLayout = (function () {
 			if (!_isSame(mouseDnPt, mouseUpPt)) {
 				let dx = (mouseUpPt.x - mouseDnPt.x) * _scalePixelToReal;
 				let dy = (mouseUpPt.y - mouseDnPt.y) * _scalePixelToReal;
-				// clear _selectedBox so we can rebuild the selectedBox with the moved parts
-				_selectedBox = null;
+				// clear this.selectedBox so we can rebuild the selectedBox with the moved parts
+				this.selectedBox = null;
 				SelectionMgr.enumerateSelection(function (part) {
 					part.layoutPart.moveMe(dx, dy);
 					part.x = part.layoutPart.locus.x * _scaleRealToPixel;
 					part.y = part.layoutPart.locus.y * _scaleRealToPixel;
 					// Rebuild the selectedBox with the moved parts
-					_selectedBox = Utils.boxUnionBox(_selectedBox, {x: part.x, y: part.y, w: part.width, h: part.height});
+					this.selectedBox = Utils.boxUnionBox(this.selectedBox, {x: part.x, y: part.y, w: part.width, h: part.height});
 					return false;
 				});
-				_undoStack.pushUnmove(_selected, dx, dy);
+				_undoStack.pushUnmove(this.selected, dx, dy);
 			}
 		}
         /**
-         * Encapsulates enumeration of the _selected list
+         * Encapsulates enumeration of the selected list
          * @param {object} enumFn - callback on each enumerated part.  Return true to stop enumeration, false to continue
          * @returns {boolean} - false if enumeration was stopped, true if finished for all items
          * @private
          */
         static enumerateSelection (enumFn) {
-            for (var i=0, len=_selected.length; i < len; ++i) {
-                if (enumFn(_selected[i])) {
+			let selected = this.selected;
+            for (var i=0, len=selected.length; i < len; ++i) {
+                if (enumFn(selected[i])) {
                     return false;
                 }
             }
@@ -810,7 +814,7 @@ PixiLayout = (function () {
 			sprite.layoutPart = layoutPart;
 			_parts.addChild(sprite);
 			_selectionMgr.clearSelection();
-			SelectionMgr.selectPart(sprite);
+			_selectionMgr.selectPart(sprite);
 			return layoutPart;
 		}
 		/**
@@ -820,7 +824,7 @@ PixiLayout = (function () {
 		static moveToFront () {
 			// Must be a valid single selected item
 			if (_selectionMgr.validSelection() === 1) {
-				var targetPart = _selected[0];
+				var targetPart = _selectionMgr.selected[0];
 				var targetRect = _rectFromPart(targetPart);
 				var itemsNotTarget = [];
 				PartsMgr.enumeratePartsExcludePartRev(function (part) {
@@ -854,7 +858,7 @@ PixiLayout = (function () {
 		 */
 		static moveToBack () {
 			if (_selectionMgr.validSelection() === 1) {
-				let targetPart = _selected[0];
+				let targetPart = _selectionMgr.selected[0];
 				let targetRect = _rectFromPart(targetPart);
 				let itemsNotTarget = [];
 				PartsMgr.enumeratePartsExcludePartRev(function (part) {
@@ -884,7 +888,7 @@ PixiLayout = (function () {
 		};
 		static moveForward () {
 			if (_selectionMgr.validSelection() === 1) {
-				let targetPart = _selected[0];
+				let targetPart = _selectionMgr.selected[0];
 				let targetRect = _rectFromPart(targetPart);
 				// Since the parts list order of occurrence => z-order, we impose an arbitrary
 				// z-order on the items as they are scanned.
@@ -932,7 +936,7 @@ PixiLayout = (function () {
 		}
 		static moveBackward () {
 			if (_selectionMgr.validSelection() === 1) {
-				let targetPart = _selected[0];
+				let targetPart = _selectionMgr.selected[0];
 				let targetRect = _rectFromPart(targetPart);
 				// Since the parts list order of occurrence => z-order, we impose an arbitrary
 				// z-order on the items as they are scanned.
@@ -982,13 +986,13 @@ PixiLayout = (function () {
 			}
 		}
 		/**
-		 * Deletes items in _selected.  undoState controls whether we push an undo for this
+		 * Deletes items in _selectionMgr.selected.  undoState controls whether we push an undo for this
 		 * @param undoState
 		 * @private
 		 */
 		static deleteItems (undoState) {
 			let enableUndo = (undoState || UndoState.Enable) === UndoState.Enable;
-			if (_selected.length >= 1) {
+			if (_selectionMgr.validSelection()) {
 				SelectionMgr.enumerateSelection(function (part) {
 					part.tint = 0xFFFFFF;
 					part.alpha = 1.0;
@@ -996,9 +1000,9 @@ PixiLayout = (function () {
 					return false;
 				});
 				if (enableUndo) {
-					_undoStack.pushUndelete(_selected);
+					_undoStack.pushUndelete(_selectionMgr.selected);
 				}
-				_selected = [];
+				_selectionMgr.selected = [];
 				Session.set(Constants.layoutSelection, 0)
 			}
 			else {
@@ -1035,9 +1039,9 @@ PixiLayout = (function () {
 				layoutPart.sprite = sprite;
 				sprite.layoutPart = layoutPart;
 				_parts.addChild(sprite);
-				SelectionMgr.selectPart(sprite);
+				_selectionMgr.selectPart(sprite);
 			}
-			_undoStack.pushUnpaste(_selected);
+			_undoStack.pushUnpaste(_selectionMgr.selected);
 		}
 	};
 
