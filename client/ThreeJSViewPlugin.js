@@ -164,8 +164,10 @@ ThreeJSViewPlugin = class ThreeJSViewPlugin {
 		let ground = ThreeJSViewPlugin.buildGround(dims);
 		this.threeScene.add(ground);
 		// enumerate the 2D layout
-		// TBD, change this to dispatch event with callbackLayoutPart passed as a parameter
-		//LayoutManager.enumerateLayout((part) => this.callbackLayoutPart(part));
+		// This is done by dispatching ActionEnumerateParts to the 'layout' store with 'render' as the sender
+		// This causes the layout component to enumerate its parts and dispatch NewPart messages to the render store
+		// and these then get proxied to this plugin as ActionNewPart events that populate the threejs threeScene
+		// Must use setTimeout to decouple as the dispatch cannot be from within a current dispatch
 		setTimeout(function () {
 			Dispatcher.dispatch('layout', new Message.ActionEnumerateParts(LayoutActionType.EnumerateParts, 'render'));
 		}, 0);

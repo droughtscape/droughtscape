@@ -38,7 +38,7 @@ var _handleInfoPartCarouselMessages = function _handleInfoPartCarouselMessages (
 };
 
 Template.info_layout_part.onCreated(function () {
-	_selectedItem = LayoutManager.getSelectedPart();
+	_selectedItem = PixiJSViewActionStore.getSelectedPart();
 	unsubscribeInfoItem = MBus.subscribe(Constants.mbus_infoItem_carousel, _handleInfoPartCarouselMessages);
 	// if we have a valid part, load it up into the carousel
 	if (_selectedItem) {

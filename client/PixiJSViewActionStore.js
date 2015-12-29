@@ -69,6 +69,54 @@ ActionSetMouseMode = class ActionSetMouseMode extends AbstractAction {
 	}
 };
 
+ActionDeleteItems = class ActionDeleteItems extends AbstractAction {
+	constructor () {
+		super();
+	}
+};
+
+ActionCopyItems = class ActionCopyItems extends AbstractAction {
+	constructor () {
+		super();
+	}
+};
+
+ActionPasteItems = class ActionPasteItems extends AbstractAction {
+	constructor () {
+		super();
+	}
+};
+
+ActionUndo = class ActionUndo extends AbstractAction {
+	constructor () {
+		super();
+	}
+};
+
+ActionMoveToFront = class ActionMoveToFront extends AbstractAction {
+	constructor () {
+		super();
+	}
+};
+
+ActionMoveToBack = class ActionMoveToBack extends AbstractAction {
+	constructor () {
+		super();
+	}
+};
+
+ActionMoveForward = class ActionMoveForward extends AbstractAction {
+	constructor () {
+		super();
+	}
+};
+
+ActionMoveBackward = class ActionMoveBackward extends AbstractAction {
+	constructor () {
+		super();
+	}
+};
+
 ActionAddBackground = class ActionAddBackground extends AbstractAction {
 	constructor (color, borderColor) {
 		super();
@@ -131,7 +179,7 @@ PixiJSViewActionStore = (function () {
 	});
 	var _currentMouseState;
 	var _currentAbstractPart = null;
-	
+	var _currentSelectedPart = null;
 	
 	var handleLayoutEvent = function handleLayoutEvent (action) {
 		let emit = true;
@@ -155,6 +203,10 @@ PixiJSViewActionStore = (function () {
 			}
 			emit = false;
 			break;
+		case LayoutActionType.NotifySelectedPart:
+			_currentSelectedPart = action.selectedPart;
+			emit = false;
+			break;
 		case NavBarTagActionType.Fit:
 			break;
 		case NavBarTagActionType.FitWidth:
@@ -172,20 +224,28 @@ PixiJSViewActionStore = (function () {
 		case NavBarTagActionType.Zoom100:
 			break;
 		case NavBarTagActionType.Delete:
+			_state.action = new ActionDeleteItems();
 			break;
 		case NavBarTagActionType.Copy:
+			_state.action = new ActionCopyItems();
 			break;
 		case NavBarTagActionType.Paste:
+			_state.action = new ActionPasteItems();
 			break;
 		case NavBarTagActionType.Undo:
+			_state.action = new ActionUndo();
 			break;
 		case NavBarTagActionType.MoveToBack:
+			_state.action = new ActionMoveToBack();
 			break;
 		case NavBarTagActionType.MoveToFront:
+			_state.action = new ActionMoveToFront();
 			break;
 		case NavBarTagActionType.MoveBackward:
+			_state.action = new ActionMoveBackward();
 			break;
 		case NavBarTagActionType.MoveForward:
+			_state.action = new ActionMoveForward();
 			break;
 		case NavBarTagActionType.Rotate90:
 			break;
@@ -223,12 +283,17 @@ PixiJSViewActionStore = (function () {
 		return _state;
 	};
 	
+	var _getCurrentSelectedPart = function () {
+		return _currentSelectedPart;
+	};
+	
 	return {
 		/**
 		 * name is a string constant that must match the store variable name
 		 */
 		name: 'PixiJSViewActionStore',
 		setPlugin: _setPlugin,
-		getAll: _getAll
+		getAll: _getAll,
+		getSelectedPart: _getCurrentSelectedPart
 	}
 })();

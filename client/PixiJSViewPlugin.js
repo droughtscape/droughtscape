@@ -39,8 +39,8 @@ PixiLayout = (function () {
 	var _currentAbstractPart = null;
 	var _unitW = 50;
 
-	var _mouseDownPt;
-	var _mouseUpPt;
+	var mouseDnPt;
+	var mouseUpPt;
 	var _mouseMovePt;
 	var _gridEnabled;
 	var _gridSpacing;
@@ -118,7 +118,171 @@ PixiLayout = (function () {
 		let ul = _snapToGrid(part.position.x, part.position.y);
 		return {x: ul.x, y: ul.y, w: part.width, h: part.height};
 	};
+	/**
+	 * Blinks a part
+	 * @param {object} part - pixi item to blink
+	 * @param {number} color - to set part.tint to
+	 * @param {number} duration - ms to blink
+	 * @param {object} nextFn - chaining function for sequential blinking
+	 * @private
+	 */
+	var _blinkPart = function _blinkPart (part, color, duration, nextFn) {
+		var blinkColor = color || 0xFF0000;
+		var blinkDuration = duration || 200;
+		var originalTint = part.tint;
+		part.tint = blinkColor;
+		setTimeout(function () {
+			part.tint = originalTint;
+			if (nextFn) {
+				nextFn();
+			}
+		}, blinkDuration);
+	};
 
+	/**
+	 * Helper for sorting parts when arranging them
+	 * @param a
+	 * @param b
+	 * @returns {number}
+	 */
+	function depthCompare(a,b) {
+		if (a.z < b.z)
+			return -1;
+		if (a.z > b.z)
+			return 1;
+		return 0;
+	}
+	var UndoState = {
+		Enable: 0,
+		Disable: 1
+	};
+	var UndoType = {
+		Undelete: 0,
+		Unmove: 1,
+		Uncopy: 2,
+		Unpaste: 3
+	};
+
+	class UndoItem {
+		constructor (undoType) {
+			this.undoType = undoType;
+		}
+
+		undoMe () {}
+	}
+	class UndoDeleteItem extends UndoItem {
+		constructor (deletedItems) {
+			super(UndoType.Undelete);
+			// copy this or is a ref good enough?
+			this.deletedItems = deletedItems.slice();
+		}
+		undoMe () {
+			for (var i=0, len=this.deletedItems.length; i < len; ++i) {
+				_parts.addChild(this.deletedItems[i]);
+			}
+			_parts.children.sort(depthCompare);
+		}
+	}
+	class UndoMoveItem extends UndoItem {
+		/**
+		 *
+		 * @param {[]} movedItems - items moved
+		 * @param {number} dx - real world units dx
+		 * @param {number} dy - real world units dy
+		 * @param {number} scaleRealToPixel - cached value
+		 */
+		constructor (movedItems, dx, dy, scaleRealToPixel) {
+			super(UndoType.Unmove);
+			this.movedItems = movedItems.slice();
+			// cache current scale in case we do a zoom before undo
+			this.scaleRealToPixel = scaleRealToPixel;
+			this.dx = -dx;
+			this.dy = -dy;
+		}
+		undoMe () {
+			for (var i=0, len=this.movedItems.length; i< len; ++i) {
+				let part = this.movedItems[i];
+				part.layoutPart.moveMe(this.dx, this.dy);
+				part.x = part.layoutPart.locus.x * this.scaleRealToPixel;
+				part.y = part.layoutPart.locus.y * this.scaleRealToPixel;
+			}
+		}
+	}
+	class UndoCopySelection extends UndoItem {
+		constructor () {
+			super(UndoType.Uncopy);
+		}
+		undoMe () {
+			_copyBuffer = [];
+		}
+	}
+	class UndoPaste extends UndoItem {
+		constructor (items) {
+			super(UndoType.Unpaste);
+			this.pasteItems = items.slice();
+		}
+		undoMe () {
+			// create a clean selected list of the pasteItems and then delete them with _delete's undo disabled
+			_clearSelection();
+			for (var i=0, len=this.pasteItems.length; i < len; ++i) {
+				SelectionMgr.selectPart(this.pasteItems[i]);
+			}
+			PartsMgr.deleteItems(UndoState.Disable);
+		}
+	}
+	class UndoStack {
+		constructor () {
+			this.maxUndoActions = 100;
+			this.undoStack = [];
+		}
+
+		pushUndelete (items) {
+			this.undoStack.push(new UndoDeleteItem(items));
+			if (this.undoStack.length > this.maxUndoActions) {
+				// trim array, discarding oldest event this.undoStack[0]
+				this.undoStack.slice(1);
+			}
+		}
+
+		pushUnmove (items, dx, dy) {
+			this.undoStack.push(new UndoMoveItem(items, dx, dy, _scaleRealToPixel));
+			if (this.undoStack.length > this.maxUndoActions) {
+				// trim array, discarding oldest event this.undoStack[0]
+				this.undoStack.slice(1);
+			}
+		}
+
+		pushUncopy () {
+			this.undoStack.push(new UndoCopySelection());
+			if (this.undoStack.length > this.maxUndoActions) {
+				// trim array, discarding oldest event this.undoStack[0]
+				this.undoStack.slice(1);
+			}
+		}
+
+		pushUnpaste (items) {
+			this.undoStack.push(new UndoPaste(items));
+			if (this.undoStack.length > this.maxUndoActions) {
+				// trim array, discarding oldest event this.undoStack[0]
+				this.undoStack.slice(1);
+			}
+		}
+		clearUndoStack () {
+			this.undoStack = [];
+		}
+
+		popUndoStack () {
+			if (this.undoStack.length > 0) {
+				let undoItem = this.undoStack.pop();
+				undoItem.undoMe();
+			}
+			else {
+				LayoutFrame.blink(0xFF0000, 'Nothing to undo');
+			}
+		}
+	}
+
+	var _undoStack = new UndoStack();
 
 	MouseMgr = class MouseMgr {
 		constructor () {
@@ -136,17 +300,17 @@ PixiLayout = (function () {
 			// fat arrow (=>) function syntax to ensure bind correct this
 			switch (mouseMode) {
 			default:
-			case LayoutManager.MOUSE_MODE.Select:
+			case MouseMode.Select:
 				targetDnHandler = (pixelPt) => this.mouseDnSelectHandler(pixelPt);
 				targetUpHandler = (pixelPt) => this.mouseUpSelectHandler(pixelPt);
 				targetMvHandler = (pixelPt) => this.mouseMvSelectHandler(pixelPt);
 				break;
-			case LayoutManager.MOUSE_MODE.Create:
+			case MouseMode.Create:
 				targetEnterHandler = (pixelPt) => this.mouseEnterCreateHandler(pixelPt);
 				targetLeaveHandler = () => this.mouseLeaveCreateHandler();
 				targetUpHandler = (pixelPt) => this.mouseUpCreateHandler(pixelPt);
 				break;
-			case LayoutManager.MOUSE_MODE.Move:
+			case MouseMode.Move:
 				targetMvHandler = (pixelPt) => this.mouseMvMoveHandler(pixelPt);
 				targetUpHandler = (pixelPt) => this.mouseUpMoveHandler(pixelPt);
 				break;
@@ -189,7 +353,7 @@ PixiLayout = (function () {
 		mouseUp(interactionData) {
 			let mouseUpPt = this.computeRelativeMouseLocation(interactionData.data.global);
 			this.mouseUpPt = _snapToGrid(mouseUpPt.x, mouseUpPt.y);
-			//console.log('console: ' + _mouseUpPt);
+			//console.log('console: ' + mouseUpPt);
 			if (this.mouseUpHandler) {
 				this.mouseUpHandler(mouseUpPt);
 			}
@@ -212,7 +376,7 @@ PixiLayout = (function () {
 				if (this.currentMoveState) {
 					// The last state was inside
 					if (!valid) {
-						console.log('_mouseMove: LEAVE');
+						//console.log('_mouseMove: LEAVE');
 						// We just moved out, fire handler, set _currentMoveState to out
 						if (this.mouseLeaveHandler) {
 							this.mouseLeaveHandler();
@@ -223,7 +387,7 @@ PixiLayout = (function () {
 				else {
 					// The last state was outside
 					if (valid) {
-						console.log('_mouseMove: ENTER');
+						//console.log('_mouseMove: ENTER');
 						// We just moved in, fire handler, set _currentMoveState to in
 						if (this.mouseEnterHandler) {
 							this.mouseEnterHandler(this.mouseMvPt);
@@ -304,7 +468,7 @@ PixiLayout = (function () {
 		}
 		mouseUpMoveHandler (pixelPt) {
 			this.mouseMvHandler = null;
-			this.finishMoveSelection();
+			_selectionMgr.finishMoveSelection(this.mouseDnPt, this.mouseUpPt);
 		}
 		// Mouse utils
 		/**
@@ -396,6 +560,7 @@ PixiLayout = (function () {
 			_selected = [];
 			_selectedBox = null;
 			Session.set(Constants.layoutSelection, 0);
+			Dispatcher.dispatch('layout', new Message.ActionNotifySelectedPart(null));
 		}
 
 		/**
@@ -430,7 +595,8 @@ PixiLayout = (function () {
                 part.alpha = 0.5;
                 Session.set(Constants.layoutSelection, _selected.length);
             }
-        }
+			Dispatcher.dispatch('layout', new Message.ActionNotifySelectedPart((_selected.length === 1)? _selected[0].layoutPart : null));
+		}
 		/**
 		 * select top item touching point
 		 * @param {object} pixelPt - x, y in pixels to look for item
@@ -460,7 +626,7 @@ PixiLayout = (function () {
 		enableSelectBox (enable) {
 			_selectBox.visible = enable;
 			_selectBox.clear();
-			_selectBox.startSelect = _mouseDownPt;
+			_selectBox.startSelect = mouseDnPt;
 			//console.log('_mouseDown: x: ' + _selectBox.startSelect.x + ', y: ' + _selectBox.startSelect.y + 
 			//	', background.x: ' + background.innerX + ', background.y: ' + background.innerY);
 			_selectBox.currentBox = null;
@@ -526,10 +692,10 @@ PixiLayout = (function () {
 		 * handles mouse up after selection box
 		 * @private
 		 */
-		finishMoveSelection () {
-			if (!_isSame(_mouseDownPt, _mouseUpPt)) {
-				let dx = (_mouseUpPt.x - _mouseDownPt.x) * _scalePixelToReal;
-				let dy = (_mouseUpPt.y - _mouseDownPt.y) * _scalePixelToReal;
+		finishMoveSelection (mouseDnPt, mouseUpPt) {
+			if (!_isSame(mouseDnPt, mouseUpPt)) {
+				let dx = (mouseUpPt.x - mouseDnPt.x) * _scalePixelToReal;
+				let dy = (mouseUpPt.y - mouseDnPt.y) * _scalePixelToReal;
 				// clear _selectedBox so we can rebuild the selectedBox with the moved parts
 				_selectedBox = null;
 				SelectionMgr.enumerateSelection(function (part) {
@@ -647,7 +813,233 @@ PixiLayout = (function () {
 			SelectionMgr.selectPart(sprite);
 			return layoutPart;
 		}
-    };
+		/**
+		 * Tests for valid selection and if found moves it to the front of all items occluding that selection
+		 * @private
+		 */
+		static moveToFront () {
+			// Must be a valid single selected item
+			if (_selectionMgr.validSelection() === 1) {
+				var targetPart = _selected[0];
+				var targetRect = _rectFromPart(targetPart);
+				var itemsNotTarget = [];
+				PartsMgr.enumeratePartsExcludePartRev(function (part) {
+					// examine everything except targetPart 
+					if (Utils.boxIntersectBox(_rectFromPart(part), targetRect)) {
+						// satisfied, store it
+						itemsNotTarget.push(part);
+					}
+					return false;
+				}, targetPart);
+				if (itemsNotTarget.length > 0) {
+					// Find highest z-order
+					var maxZ = -10000;
+					for (var i=0, len=itemsNotTarget.length; i < len; ++i) {
+						maxZ = (maxZ > itemsNotTarget[i].z) ? maxZ : itemsNotTarget[i].z;
+					}
+					// store into layout part as well
+					targetPart.layoutPart.locus.z = targetPart.z = (maxZ + 1);
+					// sort
+					_parts.children.sort(depthCompare);
+					//_testArrangement();
+				}
+			}
+			else {
+				LayoutFrame.blink(0xFF0000, ArrangeErrorMsg);
+			}
+		}
+		/**
+		 * Tests for valid selection and if found moves it to the back of all items occluding that selection
+		 * @private
+		 */
+		static moveToBack () {
+			if (_selectionMgr.validSelection() === 1) {
+				let targetPart = _selected[0];
+				let targetRect = _rectFromPart(targetPart);
+				let itemsNotTarget = [];
+				PartsMgr.enumeratePartsExcludePartRev(function (part) {
+					// examine everything except targetPart 
+					if (Utils.boxIntersectBox(_rectFromPart(part), targetRect)) {
+						// satisfied, store it
+						itemsNotTarget.push(part);
+					}
+					return false;
+				}, targetPart);
+				if (itemsNotTarget.length > 0) {
+					// Find highest z-order
+					let minZ = 10000;
+					for (var i=0, len=itemsNotTarget.length; i < len; ++i) {
+						minZ = (minZ < itemsNotTarget[i].z) ? minZ : itemsNotTarget[i].z;
+					}
+					// store into layout part as well
+					targetPart.layoutPart.locus.z = targetPart.z = (minZ - 1);
+					// sort
+					_parts.children.sort(depthCompare);
+					//_testArrangement();
+				}
+			}
+			else {
+				LayoutFrame.blink(0xFF0000, ArrangeErrorMsg);
+			}
+		};
+		static moveForward () {
+			if (_selectionMgr.validSelection() === 1) {
+				let targetPart = _selected[0];
+				let targetRect = _rectFromPart(targetPart);
+				// Since the parts list order of occurrence => z-order, we impose an arbitrary
+				// z-order on the items as they are scanned.
+				let z_order = 0;
+				let itemsNotTarget = [];
+				PartsMgr.enumeratePartsFwd(function (part) {
+					// save and order everything involved in the targetRect 
+					if (part !== targetPart && Utils.boxIntersectBox(_rectFromPart(part), targetRect)) {
+						// satisfied, store it
+						part.z = z_order;
+						part.layoutPart.locus.z = z_order;
+						++z_order;
+						itemsNotTarget.push(part);
+					}
+					else if (part === targetPart) {
+						part.z = z_order;
+						part.layoutPart.locus.z = z_order;
+						++z_order;
+					}
+					return false;
+				});
+				// The above ordering => the code below can assume valid, non-identical z-order sorted list
+				if (itemsNotTarget.length > 0) {
+					// find the item we are immediately behind (<) and move in front with z value and re-sort
+					// there is a possibility that all items have the same z order.
+					let stopZ = targetPart.z;
+					for (var i=0, len=itemsNotTarget.length; i < len; ++i) {
+						if (itemsNotTarget[i].z > stopZ) {
+							targetPart.z = itemsNotTarget[i].z;
+							targetPart.layoutPart.locus.z = targetPart.z;
+							itemsNotTarget[i].z = stopZ;
+							itemsNotTarget[i].layoutPart.locus.z = itemsNotTarget[i].z;
+							break;
+						}
+					}
+					// sort
+					_parts.children.sort(depthCompare);
+					//_testArrangement();
+
+				}
+			}
+			else {
+				LayoutFrame.blink(0xFF0000, ArrangeErrorMsg);
+			}
+		}
+		static moveBackward () {
+			if (_selectionMgr.validSelection() === 1) {
+				let targetPart = _selected[0];
+				let targetRect = _rectFromPart(targetPart);
+				// Since the parts list order of occurrence => z-order, we impose an arbitrary
+				// z-order on the items as they are scanned.
+				let z_order = 0;
+				let itemsNotTarget = [];
+				PartsMgr.enumeratePartsFwd(function (part) {
+					// save and order everything involved in the targetRect 
+					if (part !== targetPart && Utils.boxIntersectBox(_rectFromPart(part), targetRect)) {
+						// satisfied, store it
+						part.z = z_order;
+						part.layoutPart.locus.z = z_order;
+						++z_order;
+						itemsNotTarget.push(part);
+					}
+					else if (part === targetPart) {
+						part.z = z_order;
+						part.layoutPart.locus.z = z_order;
+						++z_order;
+					}
+					return false;
+				});
+				// The above ordering => the code below can assume valid, non-identical z-order sorted list
+				if (itemsNotTarget.length > 0) {
+					if (itemsNotTarget.length > 1) {
+						itemsNotTarget.sort(depthCompare);
+					}
+					// find the item we are immediately before (<) and move behind with z value and resort
+					let stopZ = targetPart.z;
+					// iterate end to start of itemsNotTarget array
+					for (var len=itemsNotTarget.length, i=len-1; i >= 0; --i) {
+						if (itemsNotTarget[i].z < stopZ) {
+							targetPart.z = itemsNotTarget[i].z;
+							targetPart.layoutPart.locus.z = targetPart.z;
+							itemsNotTarget[i].z = stopZ;
+							itemsNotTarget[i].layoutPart.locus.z = itemsNotTarget[i].z;
+							break;
+						}
+					}
+					// sort
+					_parts.children.sort(depthCompare);
+					//_testArrangement();
+
+				}
+			}
+			else {
+				LayoutFrame.blink(0xFF0000, ArrangeErrorMsg);
+			}
+		}
+		/**
+		 * Deletes items in _selected.  undoState controls whether we push an undo for this
+		 * @param undoState
+		 * @private
+		 */
+		static deleteItems (undoState) {
+			let enableUndo = (undoState || UndoState.Enable) === UndoState.Enable;
+			if (_selected.length >= 1) {
+				SelectionMgr.enumerateSelection(function (part) {
+					part.tint = 0xFFFFFF;
+					part.alpha = 1.0;
+					_parts.removeChild(part);
+					return false;
+				});
+				if (enableUndo) {
+					_undoStack.pushUndelete(_selected);
+				}
+				_selected = [];
+				Session.set(Constants.layoutSelection, 0)
+			}
+			else {
+				LayoutFrame.blink(0xFF0000, DeleteErrorMsg);
+			}
+		}
+		/**
+		 * Enumerates the current selection copies onto _copyBuffer for paste.  Undo is enabled to erase the copy
+		 * @private
+		 */
+		static copySelection () {
+			_copyBuffer = [];
+			SelectionMgr.enumerateSelection(function (part) {
+				_copyBuffer.push(part.layoutPart.copyMe());
+				return false;
+			});
+			_undoStack.pushUncopy();
+		}
+		/**
+		 * Pastes anything in the _copyBuffer.  Undo is enable to delete any pasted items on undo
+		 * @private
+		 */
+		static pasteCopy () {
+			_selectionMgr.clearSelection();
+			for (var i=0, len=_copyBuffer.length; i < len; ++i) {
+				let layoutPart = _copyBuffer[i];
+				var pixiTexture = PIXI.Texture.fromImage(layoutPart.imageUrl);
+				var sprite = new PIXI.Sprite(pixiTexture);
+				sprite.width = layoutPart.width * _scaleRealToPixel;
+				sprite.height = layoutPart.height * _scaleRealToPixel;
+				sprite.x = layoutPart.locus.x * _scaleRealToPixel;
+				sprite.y = layoutPart.locus.y * _scaleRealToPixel;
+				sprite.z = layoutPart.locus.z;
+				layoutPart.sprite = sprite;
+				sprite.layoutPart = layoutPart;
+				_parts.addChild(sprite);
+				SelectionMgr.selectPart(sprite);
+			}
+			_undoStack.pushUnpaste(_selected);
+		}
+	};
 
 	LayoutFrame = class LayoutFrame {
 		constructor () {
@@ -820,6 +1212,21 @@ PixiLayout = (function () {
 				//_modifyRectangle(self.layoutFrame, 0, 0, (border.width === 200) ? 100 : 200, 300, 4);
 			}
 		}
+		/**
+		 * Blinks the background
+		 * @param {number} color - set background.tint to this and restore on timer expiry
+		 * @param {string} msg - error message
+		 * @private
+		 */
+		static blink (color, msg) {
+			_blinkPart(_background, color);
+			swal({
+				title: 'Oops!',
+				text: msg,
+				timer: 2000,
+				showConfirmButton: true });
+		};
+
 	};
 
 	PixiJSViewPlugin = class PixiJSViewPlugin {
@@ -870,6 +1277,30 @@ PixiLayout = (function () {
 			case 'ActionSetMouseMode':
 				_mouseMgr.setMouseMode(action.mouseMode);
 				_currentAbstractPart = action.abstractPart;
+				break;
+			case 'ActionMoveToFront':
+				PartsMgr.moveToFront();
+				break;
+			case 'ActionMoveToBack':
+				PartsMgr.moveToBack();
+				break;
+			case 'ActionMoveForward':
+				PartsMgr.moveForward();
+				break;
+			case 'ActionMoveBackward':
+				PartsMgr.moveBackward();
+				break;
+			case 'ActionDeleteItems':
+				PartsMgr.deleteItems();
+				break;
+			case 'ActionCopyItems':
+				PartsMgr.copySelection();
+				break;
+			case 'ActionPasteItems':
+				PartsMgr.pasteCopy();
+				break;
+			case 'ActionUndo':
+				_undoStack.popUndoStack();
 				break;
 			case 'ActionAddBackground':
 				this.addBackground(action.color, action.borderColor);
