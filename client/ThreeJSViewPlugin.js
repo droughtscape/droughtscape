@@ -71,6 +71,14 @@ ThreeJSViewPlugin = class ThreeJSViewPlugin {
 			break;
 		}
 	}
+	/**
+	 * Called from ThreeJSView when it proxies action to here before the component is mounted -> no setState() can be done
+	 * This is strictly for actions that bypass the view
+	 * @param {object} action - See ActionClass and extensions in the store
+	 */
+	handleActionUnmounted (action) {
+		console.log('handleActionUnmounted: ' + action.constructor.name);
+	}
 	zoomCameraOnScene (direction, delta) {
 		if (direction === ActionType.ZoomOut) {
 			delta = -delta;

@@ -882,6 +882,28 @@ PixiLayout = (function () {
 				break;
 			}
 		}
+		/**
+		 * Called from PixiJSView when it proxies action to here before the component is mounted -> no setState() can be done
+		 * This is strictly for actions that bypass the view 
+		 * @param {object} action - See ActionClass and extensions in the store
+		 */
+		handleActionUnmounted (action) {
+			switch (action.constructor.name) {
+			case 'ActionEnumerateLayout':
+				console.log('handleAction[ActionEnumerateLayout] => ' + action.receiver);
+				setTimeout(function () {
+					PartsMgr.enumerateLayoutParts(function (part) {
+						Dispatcher.dispatch(action.receiver, new Message.ActionNewPart(RenderActionType.NewPart, part));
+						return false;
+					});
+				}, 0);
+				break;
+			case 'ActionSetAbstractPart':
+				console.log('handleAction[ActionSetAbstractPart]');
+				_currentAbstractPart = action.abstractPart;
+				break;
+			}
+		}
 
 		/**
 		 * Example of adding rectangle background as graphics

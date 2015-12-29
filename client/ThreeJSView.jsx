@@ -93,13 +93,15 @@ ThreeJSView = React.createClass({
 				let listener = function () {
 					console.log('Event: ' + storeName);
 					// Guard setState with isMounted()
+					// If we are mounted, setState() so any jsx view related stuff can be handled if needed
 					if (this.isMounted()) {
 						console.log('Event: ' + storeName + ', mounted');
 						// Pass the state to the real component whenever the store updates the state
 						this.setState(this.getStateFromStore());
 					}
 					else {
-						console.log('Event: ' + storeName + ', Not mounted');
+						// If not mounted, send state to the plugin and let it deal with it.  Caveat Emptor.
+						this.plugin.handleActionUnmounted(this.getStateFromStore().action);
 					}
 				}.bind(this);
 				EventEx.on(storeName, listener);
