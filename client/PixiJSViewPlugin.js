@@ -35,6 +35,7 @@ PixiLayout = (function () {
 	var _selectBox;
 	var _mouseMgr = null;
 	var _selectionMgr = null;
+    var _partsMgr;
 
 	var _mouseDownPt;
 	var _mouseUpPt;
@@ -201,7 +202,7 @@ PixiLayout = (function () {
 			if (interactionData.data.global.x !== Infinity) {
 				let {x, y, valid} = this.computeRelativeMouseLocation(interactionData.data.global);
 				this.mouseMvPt = _snapToGrid(x, y);
-				console.log('mouseMove: ' + this.mouseMvPt.x + ', ' + this.mouseMvPt.x + ' : valid: ' + valid);
+				//console.log('mouseMove: ' + this.mouseMvPt.x + ', ' + this.mouseMvPt.x + ' : valid: ' + valid);
 
 				// Try to detect mouseover, mouseout
 				if (this.currentMoveState) {
@@ -227,7 +228,6 @@ PixiLayout = (function () {
 					}
 				}
 
-				console.log('mouseMove: ' + this.mouseMvPt);
 				if (this.mouseMvHandler) {
 					this.mouseMvHandler(this.mouseDnPt, this.mouseMvPt);
 				}
@@ -398,6 +398,29 @@ PixiLayout = (function () {
 			// Heads up, _selectedBox can be null
 			return (this.selectedBox === null) ? false : Utils.pointInBox(pt, this.selectedBox);
 		}
+        /**
+         * Manages the selected array as well as tinting any selected part
+         * @param part
+         * @private
+         */
+        static selectPart (part) {
+            // if already in _selectList, remove it
+            var index = _selected.indexOf(part);
+            if (index > -1) {
+                // already in array, clear tint and remove
+                part.tint = 0xFFFFFF;
+                part.alpha = 1.0;
+                _selected.splice(index, 1);
+            }
+            else {
+                // push onto _selected, set tint
+                _selected.push(part);
+                _selectedBox = Utils.boxUnionBox(_selectedBox, {x: part.x, y: part.y, w: part.width, h: part.height});
+                part.tint = 0xFF0000;
+                part.alpha = 0.5;
+                Session.set(Constants.layoutSelection, _selected.length);
+            }
+        }
 		/**
 		 * select top item touching point
 		 * @param {object} pixelPt - x, y in pixels to look for item
@@ -409,11 +432,11 @@ PixiLayout = (function () {
 			// Assume sorted by z order, => search from back of list forward to find first selectable item under a point
 			this.clearSelection();
 			// enumeratePartsRev returns false if a valid selection is made so reverse bool on return
-			return !LayoutFrame.enumeratePartsRev(function (part) {
+			return !PartsMgr.enumeratePartsRev(function (part) {
 				if (Utils.pointInBox(pixelPt, _rectFromPart(part))) {
 					// satisfied
 					// Highlight via tint, if not selected, set to red, if selected, clear to white
-					LayoutFrame.selectPart(part);
+					SelectionMgr.selectPart(part);
 					return true;
 				}
 				return false;
@@ -459,12 +482,12 @@ PixiLayout = (function () {
 				this.drawSelectBox(fromPt, toPt);
 				this.clearSelection();
 				let selectBox = _selectBox.currentBox;
-				LayoutFrame.enumeratePartsRev(function (part) {
+				PartsMgr.enumeratePartsRev(function (part) {
 					if (Utils.boxIntersectBox(_rectFromPart(part), selectBox)) {
 						// satisfied
 						console.log('_finishSelectBox: ptInBox found at i: ' + i);
 						// Highlight via tint, if not selected, set to red, if selected, clear to white
-						this.selectPart(part);
+						SelectionMgr.selectPart(part);
 					}
 					return false;
 				});
@@ -478,11 +501,11 @@ PixiLayout = (function () {
 				_selectBox.currentBox = {x: toPt.x, y: toPt.y, w: 0, h: 0};
 				// Assume sorted by z order, => search from back of list forward to find first selectable item under a point
 				this.clearSelection();
-				LayoutFrame.enumeratePartsRev(function (part) {
+				PartsMgr.enumeratePartsRev(function (part) {
 					if (Utils.pointInBox(toPt, _rectFromPart(part))) {
 						// satisfied
 						// Highlight via tint, if not selected, set to red, if selected, clear to white
-						this.selectPart(part);
+						SelectionMgr.selectPart(part);
 						return true;
 					}
 					return false;
@@ -510,8 +533,86 @@ PixiLayout = (function () {
 				_undoStack.pushUnmove(_selected, dx, dy);
 			}
 		}
-
+        /**
+         * Encapsulates enumeration of the _selected list
+         * @param {object} enumFn - callback on each enumerated part.  Return true to stop enumeration, false to continue
+         * @returns {boolean} - false if enumeration was stopped, true if finished for all items
+         * @private
+         */
+        static enumerateSelection (enumFn) {
+            for (var i=0, len=_selected.length; i < len; ++i) {
+                if (enumFn(_selected[i])) {
+                    return false;
+                }
+            }
+            return true;
+        }
 	};
+    
+    PartsMgr = class PartsMgr {
+        constructor () {
+            this.parts = _parts = new PIXI.Container();
+        }
+        /**
+         * Encapsulates forward enumeration of the _parts children
+         * @param {object} enumFn - callback on each enumerated part.  Return true to stop enumeration, false to continue
+         * @returns {boolean} - false if enumeration was stopped, true if finished for all items
+         * @private
+         */
+        static enumeratePartsFwd (enumFn) {
+            var parts = _parts.children;
+            for (var len=parts.length, i=0; i < len; ++i) {
+                let part = parts[i];
+                if (enumFn(part)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        /**
+         * Encapsulates reverse enumeration of the _parts children
+         * @param {object} enumFn - callback on each enumerated part.  Return true to stop enumeration, false to continue
+         * @returns {boolean} - false if enumeration was stopped, true if finished for all items
+         * @private
+         */
+        static enumeratePartsRev (enumFn) {
+            var parts = _parts.children;
+            for (var len=parts.length, i=len-1; i >= 0; i--) {
+                let part = parts[i];
+                if (enumFn(part)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        /**
+         * Encapsulates reverse enumeration of the _parts children, excluding a callback on excludePart
+         * @param {object} enumFn - callback on each enumerated part.  Return true to stop enumeration, false to continue
+         * @param {object} excludePart - this part will not be passed to enumFn(part)
+         * @returns {boolean} - false if enumeration was stopped, true if finished for all items
+         * @private
+         */
+        static enumeratePartsExcludePartRev (enumFn, excludePart) {
+            var parts = _parts.children;
+            for (var len=parts.length, i=len-1; i >= 0; i--) {
+                var part = parts[i];
+                if (part !== excludePart && enumFn(part)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        /**
+         * Exposes enumeration of all parts from the plugin
+         * @param callback
+         * @private
+         */
+        static enumerateLayoutParts (callback) {
+            PartsMgr.enumeratePartsFwd(function (part) {
+                return callback(part.layoutPart);
+            });
+        }
+    };
 
 	LayoutFrame = class LayoutFrame {
 		constructor () {
@@ -519,6 +620,7 @@ PixiLayout = (function () {
 			_scaleRealToPixel = _scalePixelToReal = 1.0;
 			_selectionMgr = new SelectionMgr();
 			_mouseMgr = new MouseMgr();
+            _partsMgr = new PartsMgr();
 			_layoutFrame = this.createLayoutFrame();
 		}
 		createLayoutFrame (x, y) {
@@ -540,8 +642,7 @@ PixiLayout = (function () {
 			this.box.addChild(this.houseText);
 			this.curbText = new PIXI.Text('curb');
 			this.box.addChild(this.curbText);
-			_parts = new PIXI.Container();
-			this.box.addChild(_parts);
+			this.box.addChild(_partsMgr.parts);
 			_selectBox = new PIXI.Graphics();
 			_selectBox.visible = false;
 			this.box.addChild(_selectBox);
@@ -638,7 +739,7 @@ PixiLayout = (function () {
 			_scalePixelToReal = 1.0 / _scaleRealToPixel;
 			let scaleRealToPixel = _scaleRealToPixel, scalePixelToReal = _scalePixelToReal;
 			// Have to adjust all sprites pixel positions
-			this.enumeratePartsFwd(function (part) {
+			PartsMgr.enumeratePartsFwd(function (part) {
 				part.x = part.layoutPart.locus.x * scaleRealToPixel;
 				part.y = part.layoutPart.locus.y * scaleRealToPixel;
 				part.width = part.layoutPart.width * scaleRealToPixel;
@@ -708,102 +809,6 @@ PixiLayout = (function () {
 			_selectionMgr.clearSelection();
 			_selectionMgr.selectPart(sprite);
 			return layoutPart;
-		}
-		/**
-		 * Manages the selected array as well as tinting any selected part
-		 * @param part
-		 * @private
-		 */
-		static selectPart (part) {
-			// if already in _selectList, remove it
-			var index = _selected.indexOf(part);
-			if (index > -1) {
-				// already in array, clear tint and remove
-				part.tint = 0xFFFFFF;
-				part.alpha = 1.0;
-				_selected.splice(index, 1);
-			}
-			else {
-				// push onto _selected, set tint
-				_selected.push(part);
-				_selectedBox = Utils.boxUnionBox(_selectedBox, {x: part.x, y: part.y, w: part.width, h: part.height});
-				part.tint = 0xFF0000;
-				part.alpha = 0.5;
-				Session.set(Constants.layoutSelection, _selected.length);
-			}
-		}
-		/**
-		 * Encapsulates forward enumeration of the _parts children
-		 * @param {object} enumFn - callback on each enumerated part.  Return true to stop enumeration, false to continue
-		 * @returns {boolean} - false if enumeration was stopped, true if finished for all items
-		 * @private
-		 */
-		enumeratePartsFwd (enumFn) {
-			var parts = _parts.children;
-			for (var len=parts.length, i=0; i < len; ++i) {
-				let part = parts[i];
-				if (enumFn(part)) {
-					return false;
-				}
-			}
-			return true;
-		}
-		/**
-		 * Encapsulates reverse enumeration of the _parts children
-		 * @param {object} enumFn - callback on each enumerated part.  Return true to stop enumeration, false to continue
-		 * @returns {boolean} - false if enumeration was stopped, true if finished for all items
-		 * @private
-		 */
-		static enumeratePartsRev (enumFn) {
-			var parts = _parts.children;
-			for (var len=parts.length, i=len-1; i >= 0; i--) {
-				let part = parts[i];
-				if (enumFn(part)) {
-					return false;
-				}
-			}
-			return true;
-		}
-		/**
-		 * Encapsulates reverse enumeration of the _parts children, excluding a callback on excludePart
-		 * @param {object} enumFn - callback on each enumerated part.  Return true to stop enumeration, false to continue
-		 * @param {object} excludePart - this part will not be passed to enumFn(part)
-		 * @returns {boolean} - false if enumeration was stopped, true if finished for all items
-		 * @private
-		 */
-		enumeratePartsExcludePartRev (enumFn, excludePart) {
-			var parts = _parts.children;
-			for (var len=parts.length, i=len-1; i >= 0; i--) {
-				var part = parts[i];
-				if (part !== excludePart && enumFn(part)) {
-					return false;
-				}
-			}
-			return true;
-		}
-		/**
-		 * Exposes enumeration of all parts from the plugin
-		 * @param callback
-		 * @private
-		 */
-		enumerateLayoutParts (callback) {
-			this.enumeratePartsFwd(function (part) {
-				return callback(part.layoutPart);
-			});
-		}
-		/**
-		 * Encapsulates enumeration of the _selected list
-		 * @param {object} enumFn - callback on each enumerated part.  Return true to stop enumeration, false to continue
-		 * @returns {boolean} - false if enumeration was stopped, true if finished for all items
-		 * @private
-		 */
-		static enumerateSelection (enumFn) {
-			for (var i=0, len=_selected.length; i < len; ++i) {
-				if (enumFn(_selected[i])) {
-					return false;
-				}
-			}
-			return true;
 		}
 	};
 
