@@ -46,6 +46,13 @@ ActionInitLawn = class ActionInitLawn extends AbstractAction {
 	}
 };
 
+ActionNewPart = class ActionNewPart extends AbstractAction {
+	constructor (part) {
+		super();
+		this.part = part;
+	}
+};
+
 ActionZoom = class ActionZoom extends AbstractAction {
 	constructor (direction, delta) {
 		super();
@@ -98,7 +105,7 @@ ThreeJSViewActionStore = (function () {
 	const EVENT_TYPE = 'ThreeJSViewActionStore';
 	Dispatcher.register(function (action) {
 		if (action.type === 'render') {
-			handleRenderEvent(action.action);
+			handleRenderEvent(action);
 		}
 	});
 	
@@ -106,9 +113,12 @@ ThreeJSViewActionStore = (function () {
 		console.log('handleRenderEvent: action: ' + action);
 		// Currently, every action requires emit so we can fire the emit after the case.
 		// if it turns out we have to build state with multiple actions, then we have to emit on each branch
-		switch (action) {
+		switch (action.action) {
 		case RenderActionType.Init:
 			_state.action = new ActionInitLawn(CreateLawnData.lawnData.shape.dims);
+			break;
+		case RenderActionType.NewPart:
+			_state.action = new ActionNewPart(action.part);
 			break;
 		case RightBarTagActionType.ZoomIn:
 			_state.action = new ActionZoom(ActionType.ZoomIn, 0.2);

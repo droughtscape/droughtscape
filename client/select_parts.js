@@ -48,6 +48,7 @@ var _handleSelectCarouselMessage = function _handleSelectCarouselMessage(message
 		let abstractPart = PartsManager.getPartByItemId(itemId);
 		console.log('selected item: ' + itemId + ', abstractPart: ' + abstractPart);
 		LayoutManager.setCurrentAbstractPart(abstractPart);
+		Dispatcher.dispatch('layout', new Message.ActionNewPart(LayoutActionType.SetAbstractPart, abstractPart));
 		_unselectFromId(message.value.carouselId);
 	}
 	else {

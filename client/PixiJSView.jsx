@@ -65,7 +65,19 @@ PixiJSView = React.createClass({
 						this.setState(this.getStateFromStore());
 					}
 					else {
-						console.log('Event: ' + storeName + ', Not mounted');
+						let state = this.getStateFromStore();
+						// See if it is a non-view modifying state and if so, pass it through
+						switch (state.action.constructor.name) {
+						case 'ActionSetAbstractPart':
+						case 'ActionEnumerateLayout':
+							if (this.plugin) {
+								this.plugin.handleAction(state.action);
+							}
+							break;
+						default:
+							console.log('Event: ' + storeName + ', Not mounted state: ' + state.action.constructor.name);
+							break;
+						}
 					}
 				}.bind(this);
 				EventEx.on(storeName, listener);

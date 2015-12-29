@@ -36,6 +36,8 @@ PixiLayout = (function () {
 	var _mouseMgr = null;
 	var _selectionMgr = null;
     var _partsMgr;
+	var _currentAbstractPart = null;
+	var _unitW = 50;
 
 	var _mouseDownPt;
 	var _mouseUpPt;
@@ -72,10 +74,12 @@ PixiLayout = (function () {
 	/**
 	 * _isMouseUpDnSame function - determines if mouse up/dn points are the same
 	 * Mainly for external usage
+	 * @param {object} mouseDnPt - object, point {x, y}
+	 * @param {object} mouseUpPt - object, point {x, y}
 	 * @return {boolean} - true if same
 	 */
-	var _isMouseUpDnSame = function _isMouseUpDnSame() {
-		return _isSame(_mouseDownPt, _mouseUpPt);
+	var _isMouseUpDnSame = function _isMouseUpDnSame(mouseDnPt, mouseUpPt) {
+		return _isSame(mouseDnPt, mouseUpPt);
 	};
 	/**
 	 * _computeRect function - takes two arbitrary points and computes {ulx, uly, w, h)
@@ -151,7 +155,7 @@ PixiLayout = (function () {
 			this.mouseUpHandler = targetUpHandler;
 			this.mouseMvHandler = null;
 			this.mouseEnterHandler = targetEnterHandler;
-			this.mouseEnterHandler = targetLeaveHandler;
+			this.mouseLeaveHandler = targetLeaveHandler;
 			
 		}
 		/**
@@ -284,17 +288,17 @@ PixiLayout = (function () {
 			this.moveMouseSprite(pixelPt);
 		}
 		mouseEnterCreateHandler (pixelPt) {
-			this.mouseMvHandler = (noop, pixelPt) => _mouseMvCreateHandler(noop, pixelPt);
-			this.enableMouseSprite(true, pixelPt, _activeLayoutPart);
+			this.mouseMvHandler = (noop, pixelPt) => this.mouseMvCreateHandler(noop, pixelPt);
+			this.enableMouseSprite(true, pixelPt, _currentAbstractPart);
 		}
 		mouseLeaveCreateHandler () {
 			this.mouseMvHandler = null;
 			this.enableMouseSprite(false);
 		}
 		mouseUpCreateHandler (pixelPt) {
-			if (_isMouseUpDnSame() && _activeLayoutPart) {
+			if (_isMouseUpDnSame(this.mouseDnPt, this.mouseUpPt) && _currentAbstractPart) {
 				var scalePixelToReal = _scalePixelToReal;
-				LayoutFrame.createLayoutPart(_addItem(_activeLayoutPart, pixelPt.x * scalePixelToReal, pixelPt.y * scalePixelToReal),
+				PartsMgr.createLayoutPart(new LayoutPart(_currentAbstractPart, pixelPt.x * scalePixelToReal, pixelPt.y * scalePixelToReal),
 					pixelPt.x, pixelPt.y);
 			}
 		}
@@ -320,7 +324,7 @@ PixiLayout = (function () {
 					this.mouseSprite.width = _unitW;
 					this.mouseSprite.height = (_unitW * abstractPart.height) / abstractPart.width;
 					// Center the sprite
-					this.mouseSprite.position = _computeCenterPt(pixelPt);
+					this.mouseSprite.position = this.computeCenterPt(pixelPt);
 					// For rectangular masking, just adjust the height and compute center point
 					// For ellipse, center point is computed identically but we have to make a mask
 					if (abstractPart.footprint === LayoutFootprintType.ellipse) {
@@ -357,12 +361,18 @@ PixiLayout = (function () {
 		moveMouseSprite (pixelPt) {
 			if (_selectBox.visible && this.mouseSprite) {
 				// Center the sprite
-				this.mouseSprite.position = _computeCenterPt(pixelPt);
+				this.mouseSprite.position = this.computeCenterPt(pixelPt);
 				if (this.mouseMask) {
 					this.mouseMask.position.x = this.mouseSprite.position.x;
 					this.mouseMask.position.y = this.mouseSprite.position.y;
 				}
 			}
+		}
+		computeCenterPt (pixelPt) {
+			let centerPt = {};
+			centerPt.x = pixelPt.x - (_unitW / 2);
+			centerPt.y = pixelPt.y - (this.mouseSprite.height / 2);
+			return centerPt;
 		}
 	};
 	
@@ -612,6 +622,31 @@ PixiLayout = (function () {
                 return callback(part.layoutPart);
             });
         }
+		/**
+		 * @function createLayoutPart - Factory that creates a LayoutPart instance and an associated PIXI Sprite and adds the sprite to the parts container
+		 * Also augments sprite with the layoutPart instance and layoutPart with the sprite instance
+		 * @param {object} layoutPart - This should be common across all instances of this part
+		 * @param {number} xPixel - x position in pixels
+		 * @param {number} yPixel - y position in pixels
+		 * @param {number} rotation - clockwise rotation in degrees
+		 * @return {LayoutPart} -
+		 * @private
+		 */
+		static createLayoutPart(layoutPart, xPixel, yPixel, rotation) {
+			var pixiTexture = PIXI.Texture.fromImage(layoutPart.imageUrl);
+			var sprite = new PIXI.Sprite(pixiTexture);
+			sprite.width = layoutPart.width * _scaleRealToPixel;
+			sprite.height = layoutPart.height * _scaleRealToPixel;
+			sprite.x = layoutPart.locus.x * _scaleRealToPixel;
+			sprite.y = layoutPart.locus.y * _scaleRealToPixel;
+			sprite.z = layoutPart.locus.z;
+			layoutPart.sprite = sprite;
+			sprite.layoutPart = layoutPart;
+			_parts.addChild(sprite);
+			_selectionMgr.clearSelection();
+			SelectionMgr.selectPart(sprite);
+			return layoutPart;
+		}
     };
 
 	LayoutFrame = class LayoutFrame {
@@ -785,31 +820,6 @@ PixiLayout = (function () {
 				//_modifyRectangle(self.layoutFrame, 0, 0, (border.width === 200) ? 100 : 200, 300, 4);
 			}
 		}
-		/**
-		 * @function _createLayoutPart - Factory that creates a LayoutPart instance and an associated PIXI Sprite and adds the sprite to the parts container
-		 * Also augments sprite with the layoutPart instance and layoutPart with the sprite instance
-		 * @param {object} layoutPart - This should be common across all instances of this part
-		 * @param {number} xPixel - x position in pixels
-		 * @param {number} yPixel - y position in pixels
-		 * @param {number} rotation - clockwise rotation in degrees
-		 * @return {LayoutPart} -
-		 * @private
-		 */
-		static createLayoutPart(layoutPart, xPixel, yPixel, rotation) {
-			var pixiTexture = PIXI.Texture.fromImage(layoutPart.imageUrl);
-			var sprite = new PIXI.Sprite(pixiTexture);
-			sprite.width = layoutPart.width * _scalePixelToReal;
-			sprite.height = layoutPart.height * _scalePixelToReal;
-			sprite.x = layoutPart.locus.x * _scalePixelToReal;
-			sprite.y = layoutPart.locus.y * _scalePixelToReal;
-			sprite.z = layoutPart.locus.z;
-			layoutPart.sprite = sprite;
-			sprite.layoutPart = layoutPart;
-			_parts.addChild(sprite);
-			_selectionMgr.clearSelection();
-			_selectionMgr.selectPart(sprite);
-			return layoutPart;
-		}
 	};
 
 	PixiJSViewPlugin = class PixiJSViewPlugin {
@@ -842,6 +852,20 @@ PixiLayout = (function () {
 				this.pixiRootContainer.addChild(_layoutFrame.createLayoutFrame(0, 0));
 				_layoutFrame.fit(action.fitMode);
 				_mouseMgr.setMouseMode(action.mouseMode);
+				_currentAbstractPart = action.currentAbstractPart;
+				break;
+			case 'ActionEnumerateLayout':
+				console.log('handleAction[ActionEnumerateLayout] => ' + action.receiver);
+				setTimeout(function () {
+					PartsMgr.enumerateLayoutParts(function (part) {
+						Dispatcher.dispatch(action.receiver, new Message.ActionNewPart(RenderActionType.NewPart, part));
+						return false;
+					});
+				}, 0);
+				break;
+			case 'ActionSetAbstractPart':
+				console.log('handleAction[ActionSetAbstractPart]');
+				_currentAbstractPart = action.abstractPart;
 				break;
 			case 'ActionAddBackground':
 				this.addBackground(action.color, action.borderColor);

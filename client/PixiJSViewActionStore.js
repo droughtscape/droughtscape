@@ -47,6 +47,20 @@ ActionInitLayout = class ActionInitLayout extends AbstractAction {
 	}
 };
 
+ActionEnumerateLayout = class ActionEnumerateLayout extends AbstractAction {
+	constructor (receiver) {
+		super();
+		this.receiver = receiver;
+	}
+};
+
+ActionSetAbstractPart = class ActionSetAbstractPart extends AbstractAction {
+	constructor (abstractPart) {
+		super();
+		this.abstractPart = abstractPart;
+	}
+};
+
 ActionAddBackground = class ActionAddBackground extends AbstractAction {
 	constructor (color, borderColor) {
 		super();
@@ -108,12 +122,30 @@ PixiJSViewActionStore = (function () {
 		}
 	});
 	var _currentMouseState;
+	var _currentAbstractPart = null;
+	
 	
 	var handleLayoutEvent = function handleLayoutEvent (action) {
+		let emit = true;
 		switch (action.action) {
 		case LayoutActionType.Init:
 			_state.action = new ActionInitLayout(FitType.FitTypeXY, action.offset);
+			_state.action.mouseMode = (_currentAbstractPart) ? MouseMode.Create : MouseMode.Select;
+			_state.action.currentAbstractPart = _currentAbstractPart;
 			_currentMouseMode = _state.action.mouseMode;
+			break;
+		case LayoutActionType.EnumerateParts:
+			_state.action = new ActionEnumerateLayout(action.receiver);
+			break;
+		case LayoutActionType.SetAbstractPart:
+			// Duplicate events can occur, filter them here
+			if ((_currentAbstractPart === null) ||
+				(action.part === null) || 
+				(_currentAbstractPart.itemId !== action.part.itemId)) {
+				_currentAbstractPart = action.part;
+				//_state.action = new ActionSetAbstractPart(action.part);
+			}
+			emit = false;
 			break;
 		case NavBarTagActionType.Fit:
 			break;
@@ -156,7 +188,9 @@ PixiJSViewActionStore = (function () {
 		case NavBarTagActionType.SelectMode:
 			break;
 		}
-		EventEx.emit(EVENT_TYPE, {data: null});
+		if (emit) {
+			EventEx.emit(EVENT_TYPE, {data: null});
+		}
 
 	};
 	

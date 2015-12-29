@@ -38,6 +38,7 @@ Template.create.onCreated(function(){
 	//	return 'Your work will be lost';
 	//};
 	LayoutManager.setCurrentAbstractPart(null);
+	Dispatcher.dispatch('layout', new ActionNewPart(LayoutActionType.SetAbstractPart, null));
 	Session.set(Constants.computedArea, 0);
 	console.log('history.state: ' + history.state);
 	// On initial entry reset the state to shape_lawn

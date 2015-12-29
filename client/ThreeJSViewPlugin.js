@@ -50,6 +50,9 @@ ThreeJSViewPlugin = class ThreeJSViewPlugin {
 		case 'ActionInitLawn':
 			this.initLawn(action);
 			break;
+		case 'ActionNewPart':
+			this.newPart(action.part);
+			break;
 		case 'ActionZoom':
 			this.zoomCameraOnScene(action.direction, action.delta);
 			break;
@@ -154,7 +157,14 @@ ThreeJSViewPlugin = class ThreeJSViewPlugin {
 		this.threeScene.add(ground);
 		// enumerate the 2D layout
 		// TBD, change this to dispatch event with callbackLayoutPart passed as a parameter
-		LayoutManager.enumerateLayout((part) => this.callbackLayoutPart(part));
+		//LayoutManager.enumerateLayout((part) => this.callbackLayoutPart(part));
+		setTimeout(function () {
+			Dispatcher.dispatch('layout', new Message.ActionEnumerateParts(LayoutActionType.EnumerateParts, 'render'));
+		}, 0);
+	}
+	newPart (part) {
+		console.log('newPart: part: ' + part);
+		this.buildPart(part);
 	}
 	/**
 	 * Builds a reference ground plane
