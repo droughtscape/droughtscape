@@ -61,6 +61,14 @@ ActionSetAbstractPart = class ActionSetAbstractPart extends AbstractAction {
 	}
 };
 
+ActionSetMouseMode = class ActionSetMouseMode extends AbstractAction {
+	constructor (mouseMode, abstractPart) {
+		super();
+		this.mouseMode = mouseMode;
+		this.abstractPart = abstractPart;
+	}
+};
+
 ActionAddBackground = class ActionAddBackground extends AbstractAction {
 	constructor (color, borderColor) {
 		super();
@@ -186,6 +194,7 @@ PixiJSViewActionStore = (function () {
 		case NavBarTagActionType.FlipHorizontal:
 			break;
 		case NavBarTagActionType.SelectMode:
+			_state.action = new ActionSetMouseMode(MouseMode.Select, null);
 			break;
 		}
 		if (emit) {

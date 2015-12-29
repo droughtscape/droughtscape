@@ -79,10 +79,12 @@ Template.nav_bar.events({
 	'click .action-button': function (event) {
 		console.log('action_button: ' + event.currentTarget.id);
 		MBus.publish(this.tagParent, new Message.Action(this.tagAction));
+		Dispatcher.dispatch(this.tagParent, new Message.Action(this.tagAction));
 	},
 	'click .dropdownTag': function (event) {
 		console.log('dropdownTag: ' + event);
 		MBus.publish(this.tagParent, new Message.Action(this.tagAction));
+		Dispatcher.dispatch(this.tagParent, new Message.Action(this.tagAction));
 	},
 	'click .dropdown-button': function (event) {
 		console.log('dropdown: ' + event);

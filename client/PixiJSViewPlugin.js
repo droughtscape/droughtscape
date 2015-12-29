@@ -867,6 +867,10 @@ PixiLayout = (function () {
 				console.log('handleAction[ActionSetAbstractPart]');
 				_currentAbstractPart = action.abstractPart;
 				break;
+			case 'ActionSetMouseMode':
+				_mouseMgr.setMouseMode(action.mouseMode);
+				_currentAbstractPart = action.abstractPart;
+				break;
 			case 'ActionAddBackground':
 				this.addBackground(action.color, action.borderColor);
 				break;
