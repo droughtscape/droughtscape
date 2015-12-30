@@ -147,7 +147,6 @@ PixiJSView = React.createClass({
 	 * @returns {boolean}
 	 */
 	shouldComponentUpdate: function shouldComponentUpdate (nextProps, nextState) {
-		console.log('PixiJSView: shouldComponentUpdate: ENTRY');
 		let action = nextState.action;
 		if (this.plugin) {
 			this.plugin.handleAction(action);

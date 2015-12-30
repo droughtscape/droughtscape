@@ -1343,8 +1343,8 @@ PixiLayout = (function () {
 		 * @param {object} action - See ActionClass and extensions in the store
 		 */
 		handleAction (action) {
-			switch (action.constructor.name) {
-			case 'ActionInitLayout':
+			switch (action.constructor) {
+			case ActionInitLayout:
 				this.offset = action.offset;
 				this.pixiRootContainer.addChild(_layoutFrame.createLayoutFrame(0, 0));
 				this.fitMode = action.fitMode;
@@ -1354,7 +1354,7 @@ PixiLayout = (function () {
 				// Force a reset to get size correct
 				window.dispatchEvent(new Event('resize'));
 				break;
-			case 'ActionEnumerateLayout':
+			case ActionEnumerateLayout:
 				console.log('handleAction[ActionEnumerateLayout] => ' + action.receiver);
 				setTimeout(function () {
 					_partsMgr.enumerateLayoutParts(function (part) {
@@ -1363,36 +1363,36 @@ PixiLayout = (function () {
 					});
 				}, 0);
 				break;
-			case 'ActionSetAbstractPart':
+			case ActionSetAbstractPart:
 				console.log('handleAction[ActionSetAbstractPart]');
 				_currentAbstractPart = action.abstractPart;
 				break;
-			case 'ActionSetMouseMode':
+			case ActionSetMouseMode:
 				_mouseMgr.setMouseMode(action.mouseMode);
 				_currentAbstractPart = action.abstractPart;
 				break;
-			case 'ActionMoveToFront':
+			case ActionMoveToFront:
 				_partsMgr.moveToFront();
 				break;
-			case 'ActionMoveToBack':
+			case ActionMoveToBack:
 				_partsMgr.moveToBack();
 				break;
-			case 'ActionMoveForward':
+			case ActionMoveForward:
 				_partsMgr.moveForward();
 				break;
-			case 'ActionMoveBackward':
+			case ActionMoveBackward:
 				_partsMgr.moveBackward();
 				break;
-			case 'ActionDeleteItems':
+			case ActionDeleteItems:
 				_partsMgr.deleteItems();
 				break;
-			case 'ActionCopyItems':
+			case ActionCopyItems:
 				_partsMgr.copySelection();
 				break;
-			case 'ActionPasteItems':
+			case ActionPasteItems:
 				_partsMgr.pasteCopy();
 				break;
-			case 'ActionUndo':
+			case ActionUndo:
 				_undoStack.popUndoStack();
 				break;
 			}
@@ -1403,8 +1403,8 @@ PixiLayout = (function () {
 		 * @param {object} action - See ActionClass and extensions in the store
 		 */
 		handleActionUnmounted (action) {
-			switch (action.constructor.name) {
-			case 'ActionEnumerateLayout':
+			switch (action.constructor) {
+			case ActionEnumerateLayout:
 				console.log('handleAction[ActionEnumerateLayout] => ' + action.receiver);
 				setTimeout(function () {
 					_partsMgr.enumerateLayoutParts(function (part) {
@@ -1413,7 +1413,7 @@ PixiLayout = (function () {
 					});
 				}, 0);
 				break;
-			case 'ActionSetAbstractPart':
+			case ActionSetAbstractPart:
 				console.log('handleAction[ActionSetAbstractPart]');
 				_currentAbstractPart = action.abstractPart;
 				break;

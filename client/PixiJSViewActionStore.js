@@ -39,11 +39,12 @@ AbstractAction = class AbstractAction {
 };
 
 ActionInitLayout = class ActionInitLayout extends AbstractAction {
-	constructor (fitMode, offset) {
+	constructor (fitMode, offset, mouseMode, currentAbstractPart) {
 		super();
 		this.fitMode = fitMode;
 		this.offset = offset;
-		this.mouseMode = MouseMode.Select;
+		this.mouseMode = mouseMode;
+		this.currentAbstractPart = currentAbstractPart;
 	}
 };
 
@@ -168,12 +169,15 @@ PixiJSViewActionStore = (function () {
 	 */
 	var handleLayoutEvent = function handleLayoutEvent (action) {
 		let emit = true;
+		console.log('handleLayoutEvent:ENTRY action.action: ' + action.action);
 		switch (action.action) {
 		case LayoutActionType.Init:
-			_state.action = new ActionInitLayout(FitType.FitTypeXY, action.offset);
-			_state.action.mouseMode = (_currentAbstractPart) ? MouseMode.Create : MouseMode.Select;
-			_state.action.currentAbstractPart = _currentAbstractPart;
+			_state.action = new ActionInitLayout(FitType.FitTypeXY, 
+				action.offset, 
+				(_currentAbstractPart) ? MouseMode.Create : MouseMode.Select, 
+				_currentAbstractPart);
 			_currentMouseMode = _state.action.mouseMode;
+			console.log('handleLayoutEvent:INFO action: ' + _state.action.constructor.name);
 			break;
 		case LayoutActionType.EnumerateParts:
 			_state.action = new ActionEnumerateLayout(action.receiver);

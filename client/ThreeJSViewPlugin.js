@@ -46,30 +46,30 @@ ThreeJSViewPlugin = class ThreeJSViewPlugin {
 	 */
 	handleAction (action) {
 		var delta;
-		switch (action.constructor.name) {
-		case 'ActionInitLawn':
+		switch (action.constructor) {
+		case ActionInitLawn:
 			this.offset = action.offset;
 			this.initLawn(action);
 			// Force a reset to get size correct
 			window.dispatchEvent(new Event('resize'));
 			break;
-		case 'ActionNewPart':
+		case ActionNewPart:
 			this.newPart(action.part);
 			break;
-		case 'ActionZoom':
+		case ActionZoom:
 			this.zoomCameraOnScene(action.direction, action.delta);
 			break;
-		case 'ActionRotate':
+		case ActionRotate:
 			this.rotateCameraAroundScene(action.speed, action.direction);
 			break;
-		case 'ActionPan':
+		case ActionPan:
 			this.panCameraAcrossScene(action.direction, action.delta);
 			break;
-		case 'ActionCamera':
+		case ActionCamera:
 			delta = (action.direction === ActionType.CameraUp) ? action.delta : -action.delta;
 			this.threeCamera.position.y += delta;
 			break;
-		case 'ActionAddMesh':
+		case ActionAddMesh:
 			this.threeScene.add(action.mesh);
 			break;
 		}
