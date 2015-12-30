@@ -182,7 +182,7 @@ PixiJSView = React.createClass({
 		if (this.resizeLayout) {
 			this.resizeLayout(renderCanvas.width, renderCanvas.height);
 		}
-		if (this.plugin) {
+		else if (this.plugin) {
 			if (this.plugin.resizeLayout) {
 				this.resizeLayout = function (w, h) {
 					this.plugin.resizeLayout(w, h);

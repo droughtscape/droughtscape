@@ -25,7 +25,9 @@
 // camera around so the user can see what the droughtscape will look like.
 // We will use a perspective camera.
 Template.render_lawn.onRendered(function () {
-	Dispatcher.dispatch('render', new Message.Action(RenderActionType.Init));
+	var infoContainer = document.getElementById('info-container');
+	var offset = infoContainer.offsetTop + infoContainer.clientHeight;
+	Dispatcher.dispatch('render', new Message.ActionInit(RenderActionType.Init, offset));
 });
 
 Template.render_lawn.helpers({

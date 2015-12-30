@@ -48,7 +48,10 @@ ThreeJSViewPlugin = class ThreeJSViewPlugin {
 		var delta;
 		switch (action.constructor.name) {
 		case 'ActionInitLawn':
+			this.offset = action.offset;
 			this.initLawn(action);
+			// Force a reset to get size correct
+			window.dispatchEvent(new Event('resize'));
 			break;
 		case 'ActionNewPart':
 			this.newPart(action.part);
@@ -175,6 +178,15 @@ ThreeJSViewPlugin = class ThreeJSViewPlugin {
 	newPart (part) {
 		console.log('newPart: part: ' + part);
 		this.buildPart(part);
+	}
+
+	/**
+	 * NOOP
+	 * @param {number} w
+	 * @param {number} h
+	 */
+	resizeLayout (w, h) {
+		// For ThreeJSView, nothing to do
 	}
 	/**
 	 * Builds a reference ground plane

@@ -149,7 +149,7 @@ ActionText = class ActionText extends AbstractAction {
 };
 
 /**
- * Singleton sample store
+ * Singleton layout store
  * @type {{setPlugin, getAll, getState}}
  */
 PixiJSViewActionStore = (function () {
@@ -158,29 +158,14 @@ PixiJSViewActionStore = (function () {
 		if (action.type === 'layout') {
 			handleLayoutEvent(action);
 		}
-		else {
-			switch (action.type) {
-			case 'ADD_BACKGROUND':
-				_state.action = new ActionAddBackground(0xFFFFFF, 0x0000FF);
-				EventEx.emit(EVENT_TYPE, {data: null});
-				break;
-			case 'BLINK_BACKGROUND':
-				console.log('BLINK_BACKGROUND');
-				_state.action = new ActionBlink(0xFF0000, 'testing blink');
-				EventEx.emit(EVENT_TYPE, {data: null});
-				break;
-			case 'ADD_HELLO':
-				console.log('ADD_HELLO');
-				_state.action = new ActionText(0x00FF00, 'Hello');
-				EventEx.emit(EVENT_TYPE, {data: null});
-				break;
-			}
-		}
 	});
 	var _currentMouseState;
 	var _currentAbstractPart = null;
 	var _currentSelectedPart = null;
-	
+	/**
+	 * Handle state of store, emit appropriate actions to the view/plugin
+	 * @param {object} action
+	 */
 	var handleLayoutEvent = function handleLayoutEvent (action) {
 		let emit = true;
 		switch (action.action) {
@@ -264,8 +249,7 @@ PixiJSViewActionStore = (function () {
 
 	};
 	
-	var _state = {
-	};
+	var _state = {};
 
 	/**
 	 * callback to get the plugin which supports app specific rendering
@@ -283,7 +267,11 @@ PixiJSViewActionStore = (function () {
 	var _getAll = function _getAll () {
 		return _state;
 	};
-	
+	/**
+	 * API to allow retrieving the _currentSelectedPart which is set via LayoutActionType.NotifySelectedPart
+	 * @returns {*}
+	 * @private
+	 */
 	var _getCurrentSelectedPart = function () {
 		return _currentSelectedPart;
 	};

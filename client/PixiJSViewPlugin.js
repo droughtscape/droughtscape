@@ -217,6 +217,10 @@ PixiLayout = (function () {
 			this.undoStack = [];
 		}
 
+		/**
+		 * Push a list of items to undelete onto the undoStack
+		 * @param {object} items
+		 */
 		pushUndelete (items) {
 			this.undoStack.push(new UndoDeleteItem(items));
 			if (this.undoStack.length > this.maxUndoActions) {
@@ -225,6 +229,12 @@ PixiLayout = (function () {
 			}
 		}
 
+		/**
+		 * Push a list of items to unmove as well as the dx, dy to revert
+		 * @param {object} items
+		 * @param {number} dx
+		 * @param {number} dy
+		 */
 		pushUnmove (items, dx, dy) {
 			this.undoStack.push(new UndoMoveItem(items, dx, dy, _scaleRealToPixel));
 			if (this.undoStack.length > this.maxUndoActions) {
@@ -233,6 +243,9 @@ PixiLayout = (function () {
 			}
 		}
 
+		/**
+		 * push UndoCopySelection action
+		 */
 		pushUncopy () {
 			this.undoStack.push(new UndoCopySelection());
 			if (this.undoStack.length > this.maxUndoActions) {
@@ -241,6 +254,10 @@ PixiLayout = (function () {
 			}
 		}
 
+		/**
+		 * Push items to unpaste
+		 * @param {object} items
+		 */
 		pushUnpaste (items) {
 			this.undoStack.push(new UndoPaste(items));
 			if (this.undoStack.length > this.maxUndoActions) {
@@ -248,10 +265,17 @@ PixiLayout = (function () {
 				this.undoStack.slice(1);
 			}
 		}
+
+		/**
+		 * clear the undoStack
+		 */
 		clearUndoStack () {
 			this.undoStack = [];
 		}
 
+		/**
+		 * pop the undoStack and "undo" the item
+		 */
 		popUndoStack () {
 			if (this.undoStack.length > 0) {
 				let undoItem = this.undoStack.pop();
@@ -262,7 +286,6 @@ PixiLayout = (function () {
 			}
 		}
 	}
-
 	var _undoStack = new UndoStack();
 
 	MouseMgr = class MouseMgr {
@@ -271,6 +294,11 @@ PixiLayout = (function () {
 			this.currentMoveState = false;
 			this.mouseSprite = null;
 		}
+
+		/**
+		 * Sets the appropriate handlers based on mouseMode
+		 * @param {MouseMode} mouseMode
+		 */
 		setMouseMode (mouseMode) {
 			this.mouseMode = mouseMode;
 			let targetEnterHandler = null,
@@ -527,13 +555,17 @@ PixiLayout = (function () {
 			this.selectedBox = null;
 			this.selected = [];
 		}
+
+		/**
+		 * Return length of this.selected.  Allows it to be used as a boolean test as well as looking at the length
+		 * @returns {*}
+		 */
 		validSelection () {
 			return this.selected.length;
 		}
 		/**
 		 * resets tinting on any selected part
 		 * clears the selected list
-		 * @private
 		 */
 		clearSelection () {
 			let selected = this.selected;
@@ -552,7 +584,6 @@ PixiLayout = (function () {
 		 *
 		 * @param {object} pt - {x, y}
 		 * @returns {boolean|*} - true if pt is on the box covering the entire selection
-		 * @private
 		 */
 		ptOnSelection (pt) {
 			// Heads up, this.selectedBox can be null
@@ -560,8 +591,7 @@ PixiLayout = (function () {
 		}
         /**
          * Manages the selected array as well as tinting any selected part
-         * @param part
-         * @private
+         * @param {object} part
          */
         selectPart (part) {
             // if already in _selectList, remove it
@@ -587,7 +617,6 @@ PixiLayout = (function () {
 		 * select top item touching point
 		 * @param {object} pixelPt - x, y in pixels to look for item
 		 * @returns {boolean} - true if we selected one
-		 * @private
 		 */
 		selectAtPoint (pixelPt) {
 			pixelPt = _layoutFrame.snapToGrid(pixelPt);
@@ -681,7 +710,8 @@ PixiLayout = (function () {
 		}
 		/**
 		 * handles mouse up after selection box
-		 * @private
+		 * @param {object} mouseDnPt
+		 * @param {object} mouseUpPt
 		 */
 		finishMoveSelection (mouseDnPt, mouseUpPt) {
 			if (!_isSame(mouseDnPt, mouseUpPt)) {
@@ -704,7 +734,6 @@ PixiLayout = (function () {
          * Encapsulates enumeration of the selected list
          * @param {object} enumFn - callback on each enumerated part.  Return true to stop enumeration, false to continue
          * @returns {boolean} - false if enumeration was stopped, true if finished for all items
-         * @private
          */
         enumerateSelection (enumFn) {
 			let selected = this.selected;
@@ -726,7 +755,6 @@ PixiLayout = (function () {
          * Encapsulates forward enumeration of the this.parts children
          * @param {object} enumFn - callback on each enumerated part.  Return true to stop enumeration, false to continue
          * @returns {boolean} - false if enumeration was stopped, true if finished for all items
-         * @private
          */
         enumeratePartsFwd (enumFn) {
             var parts = this.parts.children;
@@ -742,7 +770,6 @@ PixiLayout = (function () {
          * Encapsulates reverse enumeration of the this.parts children
          * @param {object} enumFn - callback on each enumerated part.  Return true to stop enumeration, false to continue
          * @returns {boolean} - false if enumeration was stopped, true if finished for all items
-         * @private
          */
         enumeratePartsRev (enumFn) {
             var parts = this.parts.children;
@@ -759,7 +786,6 @@ PixiLayout = (function () {
          * @param {object} enumFn - callback on each enumerated part.  Return true to stop enumeration, false to continue
          * @param {object} excludePart - this part will not be passed to enumFn(part)
          * @returns {boolean} - false if enumeration was stopped, true if finished for all items
-         * @private
          */
         enumeratePartsExcludePartRev (enumFn, excludePart) {
             var parts = this.parts.children;
@@ -774,7 +800,6 @@ PixiLayout = (function () {
         /**
          * Exposes enumeration of all parts from the plugin
          * @param callback
-         * @private
          */
         enumerateLayoutParts (callback) {
             this.enumeratePartsFwd(function (part) {
@@ -788,8 +813,7 @@ PixiLayout = (function () {
 		 * @param {number} xPixel - x position in pixels
 		 * @param {number} yPixel - y position in pixels
 		 * @param {number} rotation - clockwise rotation in degrees
-		 * @return {LayoutPart} -
-		 * @private
+		 * @returns {LayoutPart} - The layoutPart with the created PIXI.Sprite embedded
 		 */
 		createLayoutPart(layoutPart, xPixel, yPixel, rotation) {
 			var pixiTexture = PIXI.Texture.fromImage(layoutPart.imageUrl);
@@ -808,7 +832,6 @@ PixiLayout = (function () {
 		}
 		/**
 		 * Tests for valid selection and if found moves it to the front of all items occluding that selection
-		 * @private
 		 */
 		moveToFront () {
 			// Must be a valid single selected item
@@ -843,7 +866,6 @@ PixiLayout = (function () {
 		}
 		/**
 		 * Tests for valid selection and if found moves it to the back of all items occluding that selection
-		 * @private
 		 */
 		moveToBack () {
 			if (_selectionMgr.validSelection() === 1) {
@@ -875,6 +897,9 @@ PixiLayout = (function () {
 				LayoutFrame.blink(0xFF0000, ArrangeErrorMsg);
 			}
 		};
+		/**
+		 * Tests for valid selection and if found moves it in front of any item immediately occluding that selection
+		 */
 		moveForward () {
 			if (_selectionMgr.validSelection() === 1) {
 				let targetPart = _selectionMgr.selected[0];
@@ -923,6 +948,9 @@ PixiLayout = (function () {
 				LayoutFrame.blink(0xFF0000, ArrangeErrorMsg);
 			}
 		}
+		/**
+		 * Tests for valid selection and if found moves it behind any item occluded by that selection
+		 */
 		moveBackward () {
 			if (_selectionMgr.validSelection() === 1) {
 				let targetPart = _selectionMgr.selected[0];
@@ -977,7 +1005,6 @@ PixiLayout = (function () {
 		/**
 		 * Deletes items in _selectionMgr.selected.  undoState controls whether we push an undo for this
 		 * @param undoState
-		 * @private
 		 */
 		deleteItems (undoState) {
 			let enableUndo = (undoState || UndoState.Enable) === UndoState.Enable;
@@ -1000,7 +1027,6 @@ PixiLayout = (function () {
 		}
 		/**
 		 * Enumerates the current selection copies onto copyBuffer for paste.  Undo is enabled to erase the copy
-		 * @private
 		 */
 		copySelection () {
 			this.copyBuffer = [];
@@ -1046,6 +1072,12 @@ PixiLayout = (function () {
             _partsMgr = new PartsMgr();
 			this.createLayoutFrame();
 		}
+		/**
+		 * Creates initial layout frame
+		 * @param {number} x - x pixel position of frame - Allows centering
+		 * @param {number} y - y pixel position of frame - Allows centering
+		 * @return {object} this.box => frame PIXI.Container
+		 */
 		createLayoutFrame (x, y) {
 			console.log('createLayoutFrame');
 			this.box = new PIXI.Container();
@@ -1071,7 +1103,16 @@ PixiLayout = (function () {
 			this.box.addChild(this.selectBox);
 			return this.box;
 		}
-		modifyLayoutFrame (x, y,width, height, borderWidth) {
+		/**
+		 * modifyLayoutFrame function - Does the heavy lifting for fit, scale to modify the frame
+		 * Also draws any gridding
+		 * @param {number} x - x pixel position of frame - Allows centering
+		 * @param {number} y - y pixel position of frame - Allows centering
+		 * @param {number} width - pixel width of frame
+		 * @param {number} height - pixel height of frame
+		 * @param {number} borderWidth - pixel width of border
+		 */
+		modifyLayoutFrame (x, y, width, height, borderWidth) {
 			let box = this.box,
 				houseText = this.houseText,
 				curbText = this.curbText;
@@ -1104,6 +1145,11 @@ PixiLayout = (function () {
 			_plugin.pixiRenderer.bgndOffX = x;
 			_plugin.pixiRenderer.bgndOffY = y;
 		}
+		/**
+		 * drawGrid function - draws a grid with xy spacing in the frame.  spacing is in cm
+		 * @param {boolean} gridEnabled - draw or clear grid
+		 * @param {number} gridSpacing - grid spacing in cm
+		 */
 		drawGrid (gridEnabled, gridSpacing) {
 			console.log('LayoutFrame.drawGrid: ENTRY, gridEnabled: ' + gridEnabled + ', gridSpacing: ' + gridSpacing);
 			// Clear the _grid before we draw it so we don't accumulate graphics
@@ -1111,7 +1157,6 @@ PixiLayout = (function () {
 			let grid = this.grid;
 			grid.clear();
 			if (gridEnabled) {
-				console.log('_drawGrid, drawing _grid');
 				// pixel positions
 				var startX = this.background.position.x;
 				var startY = this.background.position.y;
@@ -1157,6 +1202,11 @@ PixiLayout = (function () {
 			return {x: snapped.x, y: snapped.y};
 		}
 
+		/**
+		 * Update scale factors and part locations
+		 * @param {number} lengthPixels
+		 * @param {number} lengthMeters
+		 */
 		updateScale (lengthPixels, lengthMeters) {
 			_scaleRealToPixel = lengthPixels / lengthMeters;
 			_scalePixelToReal = 1.0 / _scaleRealToPixel;
@@ -1169,6 +1219,11 @@ PixiLayout = (function () {
 				part.height = part.layoutPart.height * scaleRealToPixel;
 			});
 		}
+
+		/**
+		 * Fits the layout into the current pixiRenderer dimensions
+		 * @param {FitType} fitMode - Type of fit
+		 */
 		fit (fitMode) {
 			console.log('LayoutFrame.prototype.fit: ' + fitMode);
 			if (_plugin.pixiRenderer) {
@@ -1229,6 +1284,7 @@ PixiLayout = (function () {
 			this.pixiRenderer = null;
 			_layoutFrame = null;
 			_plugin = this;
+			this.offset = 0;
 		}
 
 		/**
@@ -1251,11 +1307,14 @@ PixiLayout = (function () {
 		handleAction (action) {
 			switch (action.constructor.name) {
 			case 'ActionInitLayout':
-				//this.addBackground(0xFEFEFE, 0xFF0000);
+				this.offset = action.offset;
 				this.pixiRootContainer.addChild(_layoutFrame.createLayoutFrame(0, 0));
+				this.fitMode = action.fitMode;
 				_layoutFrame.fit(action.fitMode);
 				_mouseMgr.setMouseMode(action.mouseMode);
 				_currentAbstractPart = action.currentAbstractPart;
+				// Force a reset to get size correct
+				window.dispatchEvent(new Event('resize'));
 				break;
 			case 'ActionEnumerateLayout':
 				console.log('handleAction[ActionEnumerateLayout] => ' + action.receiver);
@@ -1323,8 +1382,15 @@ PixiLayout = (function () {
 			}
 		}
 
+		/**
+		 * Adjust the pixiRenderer by height less offset (h - this.offset) => implicitly modifies the canvas
+		 * @param {number} w
+		 * @param {number} h
+		 */
 		resizeLayout (w, h) {
 			console.log('resizeLayout(' + w + ', ' + h +')');
+			this.pixiRenderer.resize(w, (h - this.offset));
+			_layoutFrame.fit(this.fitMode);
 		}
 	};
 

@@ -40,9 +40,10 @@ AbstractAction = class AbstractAction {
 };
 
 ActionInitLawn = class ActionInitLawn extends AbstractAction {
-	constructor (dims) {
+	constructor (dims, offset) {
 		super();
         this.dims = dims;
+		this.offset = offset;
 	}
 };
 
@@ -108,14 +109,17 @@ ThreeJSViewActionStore = (function () {
 			handleRenderEvent(action);
 		}
 	});
-	
+	/**
+	 * Handle state of store, emit appropriate actions to the view/plugin
+	 * @param {object} action
+	 */
 	var handleRenderEvent = function handleRenderEvent (action) {
 		console.log('handleRenderEvent: action: ' + action);
 		// Currently, every action requires emit so we can fire the emit after the case.
 		// if it turns out we have to build state with multiple actions, then we have to emit on each branch
 		switch (action.action) {
 		case RenderActionType.Init:
-			_state.action = new ActionInitLawn(CreateLawnData.lawnData.shape.dims);
+			_state.action = new ActionInitLawn(CreateLawnData.lawnData.shape.dims, action.offset);
 			break;
 		case RenderActionType.NewPart:
 			_state.action = new ActionNewPart(action.part);
@@ -160,6 +164,11 @@ ThreeJSViewActionStore = (function () {
 	var _setPlugin = function _setPlugin (plugin) {
 		_state.plugin = plugin;
 	};
+	/**
+	 * API to retrieve the state
+	 * @returns {{}}
+	 * @private
+	 */
 	var _getAll = function _getAll () {
 		return _state;
 	};
