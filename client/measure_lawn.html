@@ -3,10 +3,10 @@
     <h2>Measure your lawn</h2>
 
     <form action="#">
-        <input class="unit-select" name="unit-type" type="radio" id="English" {{englishDefault}}/>
-        <label for="English" style="color: {{englishLabelColor}}">English</label>
         <input class="unit-select" name="unit-type" type="radio" id="Metric" {{metricDefault}}/>
         <label for="Metric" style="color: {{metricLabelColor}}">Metric</label>
+        <input class="unit-select" name="unit-type" type="radio" id="English" {{englishDefault}}/>
+        <label for="English" style="color: {{englishLabelColor}}">English</label>
     </form>
     <hr>
     {{> Template.dynamic template=measureLawnShape}}

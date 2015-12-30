@@ -22,11 +22,6 @@
  * THE SOFTWARE.
  */
 
-// Units of measure global setting to work across any create submenus.
-// Note, within the system, we will translate to metric and do all calculations in metric and
-// convert back out to the current setting.  Valid settings: English, Metric
-Session.setDefault(Constants.userUnitsOfMeasure, Constants.English);
-
 Session.setDefault(Constants.computedArea, 0);
 
 Template.create.onCreated(function(){
