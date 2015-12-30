@@ -133,6 +133,44 @@ PixiLayout = (function () {
 			return 1;
 		return 0;
 	}
+
+	/**
+	 * Layout Instance of abstractPart
+	 * @type {LayoutPart}
+	 * @parameter {object} abstractPart - underlying abstractPart
+	 * @parameter {number} x - center x in real world units (meters)
+	 * @parameter {number} y - center y in real world units (meters)
+	 * @parameter {number} z - z order, not real world units
+	 * @parameter {number} rotation - clockwise in degrees
+	 */
+	LayoutPart = class LayoutPart {
+		constructor (abstractPart, x, y, z, rotation) {
+			this.abstractPart = abstractPart;
+			this.locus = new AbstractLayoutLocus(x, y, z, rotation);
+			this.width = abstractPart.width;
+			this.height = abstractPart.height;
+			this.imageUrl = abstractPart.url;
+			this.locus.x = this.locus.x - (this.width / 2);
+			this.locus.y = this.locus.y - (this.height / 2);
+		}
+
+		copyMe () {
+			let copy = new LayoutPart(this.abstractPart,
+				this.locus.x,
+				this.locus.y,
+				this.locus.z,
+				this.locus.rotation);
+			copy.locus.x = this.locus.x;
+			copy.locus.y = this.locus.y;
+			return copy;
+		}
+
+		moveMe (dx, dy) {
+			this.locus.x += dx;
+			this.locus.y += dy;
+		}
+	};
+	
 	var UndoState = {
 		Enable: 0,
 		Disable: 1
