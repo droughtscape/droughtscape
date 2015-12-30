@@ -1148,6 +1148,7 @@ PixiLayout = (function () {
 		 * @param {number} borderWidth - pixel width of border
 		 */
 		modifyLayoutFrame (x, y, width, height, borderWidth) {
+			console.log('modifyLayoutFrame: ' + x + ', ' + y + ' : ' + width + ', ' + height + ' : ' + borderWidth)
 			let box = this.box,
 				houseText = this.houseText,
 				curbText = this.curbText;
@@ -1279,12 +1280,12 @@ PixiLayout = (function () {
 				case FitType.FitTypeX:
 					bestFit.lengthPixels = (dims.length * pixiRenderWidth) / dims.width;
 					// center layout frame in renderer
-					y = (pixiRenderHeight - lengthPixels) / 2;
+					y = (pixiRenderHeight - bestFit.lengthPixels) / 2;
 					break;
 				case FitType.FitTypeY:
 					bestFit.widthPixels = (dims.width * pixiRenderHeight) / dims.length;
 					// center layout frame in renderer
-					x = (pixiRenderWidth - widthPixels) / 2;
+					x = (pixiRenderWidth - bestFit.widthPixels) / 2;
 					break;
 				default :
 					// error, no effect
@@ -1292,6 +1293,10 @@ PixiLayout = (function () {
 				}
 				this.updateScale(bestFit.lengthPixels, dims.length);
 				this.modifyLayoutFrame(x, y, bestFit.widthPixels, bestFit.lengthPixels, 4);
+				if (fitMode !== FitType.FitTypeY) {
+					// Bogus, repeat the modifyLayoutFrame, why????
+					this.modifyLayoutFrame(x, y, bestFit.widthPixels, bestFit.lengthPixels, 4);
+				}
 			}
 			else {
 				// really an error since there is no renderer but just in case we get invoked too soon noop this
@@ -1392,6 +1397,10 @@ PixiLayout = (function () {
 			case ActionUndo:
 				_undoStack.popUndoStack();
 				break;
+			case ActionFitLayout:
+				this.fitMode = action.fitMode;
+				_layoutFrame.fit(this.fitMode);
+				break;
 			}
 		}
 		/**
@@ -1424,8 +1433,28 @@ PixiLayout = (function () {
 		 */
 		resizeLayout (w, h) {
 			console.log('resizeLayout(' + w + ', ' + h +')');
-			this.pixiRenderer.resize(w, (h - this.offset));
-			_layoutFrame.fit(this.fitMode);
+			this.rtime = new Date();
+			this.timeout = false;
+			this.delta = 200;
+			this.resizeFn = () => {
+				if (new Date() - this.rtime < this.delta) {
+					setTimeout(function () {
+						this.resizeFn();
+					}.bind(this), this.delta)
+				}
+				else {
+					this.timeout = false;
+					console.log('resizeFn FIRES: w: ' + w + ', h: ' + h)
+					this.pixiRenderer.resize(w, (h - this.offset));
+					_layoutFrame.fit(this.fitMode);
+				}
+			};
+			if (this.timeout === false) {
+				this.timeout = true;
+				setTimeout(function () {
+					this.resizeFn();
+				}.bind(this), this.delta);
+			}
 		}
 	};
 

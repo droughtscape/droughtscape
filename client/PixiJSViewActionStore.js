@@ -197,10 +197,13 @@ PixiJSViewActionStore = (function () {
 			emit = false;
 			break;
 		case NavBarTagActionType.Fit:
+			_state.action = new ActionFitLayout(FitType.FitTypeXY);
 			break;
 		case NavBarTagActionType.FitWidth:
+			_state.action = new ActionFitLayout(FitType.FitTypeX);
 			break;
 		case NavBarTagActionType.FitHeight:
+			_state.action = new ActionFitLayout(FitType.FitTypeY);
 			break;
 		case NavBarTagActionType.FitToBox:
 			break;
