@@ -25,107 +25,10 @@ Session.setDefault(Constants.gridEnabled, true);
 // this is always in cm
 Session.setDefault(Constants.gridSpacing, 24);
 
-var defaultFitMode = LayoutManager.getDefaultFitMode();
-
-/**
- * @var {array} _lawnParts - current working set of lawn parts
- */
-var _currentMouseMode = LayoutManager.MOUSE_MODE.Select;
-
-
-
-/**
- * _renderLayout function to redraw the layout
- * typically called from Meteor.defer so that window dimensions
- * are already finalized and usable for scaling
- */
-var _renderLayout = function _renderLayout () {
-	var layoutContainer = document.getElementById('layout-div-container');
-	var width = (layoutContainer) ? layoutContainer.clientWidth : 800;
-	var height = (layoutContainer) ? layoutContainer.clientHeight : 600;
-	console.log('_renderLayout: width: ' + width + ', height: ' + height);
-	LayoutManager.resizeLayout(width, height, defaultFitMode);
-	// Test mousehandler
-	if (LayoutManager.setActiveLayoutPart(LayoutManager.getCurrentAbstractPart())) {
-		_currentMouseMode = LayoutManager.MOUSE_MODE.Create;
-	}
-	else {
-		_currentMouseMode = LayoutManager.MOUSE_MODE.Select;
-	}
-	LayoutManager.setMouseMode(_currentMouseMode);
-};
-
-/**
- * _handleResizeEvent function to handle the resize event.
- * Dynamically resize rightBar height when window resizes.
- * Just use the Meteor.defer() so that the DOM is fully
- * rendered before we call _renderRightBar()
- */
-var _handleResizeEvent = Utils.createDeferredFunction(_renderLayout);
-
-var unsubscribe = null;
-
-var _handleLayoutMessages = function _handleLayoutMessages (message) {
-	if (MBus.validateMessage(message)) {
-		switch (message.value.action) {
-		case NavBarTagActionType.SelectMode:
-			LayoutManager.setCurrentAbstractPart(null);
-			if (_currentMouseMode != LayoutManager.MOUSE_MODE.Select) {
-				_currentMouseMode = LayoutManager.MOUSE_MODE.Select;
-				LayoutManager.setMouseMode(_currentMouseMode);
-			}
-			break;
-		case NavBarTagActionType.MoveToBack:
-			LayoutManager.moveToBack();
-			break;
-		case NavBarTagActionType.MoveToFront:
-			LayoutManager.moveToFront();
-			break;
-		case NavBarTagActionType.MoveBackward:
-			LayoutManager.moveBackward();
-			break;
-		case NavBarTagActionType.MoveForward:
-			LayoutManager.moveForward();
-			break;
-		case NavBarTagActionType.Delete:
-			LayoutManager.deleteItems();
-			break;
-		case NavBarTagActionType.Copy:
-			LayoutManager.copySelection();
-			break;
-		case NavBarTagActionType.Paste:
-			LayoutManager.pasteCopy();
-			break;
-        case NavBarTagActionType.Undo:
-            LayoutManager.undoLastAction();
-            break;
-		default :
-			console.log('_handleLayoutMessages: action: ' + message.value.action);
-			break;
-		}
-	}
-	else {
-		console.log('_handleLayoutMessages:ERROR, invalid message: ' + message);
-	}
-};
-
 Template.layout_lawn.onCreated(function () {
-	//LayoutManager.enableAnimation(true);
-	//LayoutManager.clearSelection();
-	//window.addEventListener('resize', _handleResizeEvent);
-	//// NavBar events
-	//unsubscribe = MBus.subscribe(Constants.mbus_layout, _handleLayoutMessages);
 });
 
 Template.layout_lawn.onDestroyed(function () {
-	// Have to stop animation and renderer
-	//LayoutManager.enableAnimation(false);
-	//LayoutManager.destroyLayout();
-	// disable select box on exit to handle timing issues when this template is 
-	// reentered.  We reenable on first mouse down which ensures graphic state is ok
-	// Note, do NOT clearSelection here or we will fail on info_layout_part when it tries to find selected part
-	//window.removeEventListener('resize', _handleResizeEvent);
-	//unsubscribe.remove();
 });
 
 Template.layout_lawn.onRendered(function () {
@@ -139,23 +42,6 @@ Template.layout_lawn.onRendered(function () {
 	var offset = infoContainer.offsetTop + infoContainer.clientHeight;
 
 	Dispatcher.dispatch('layout', new Message.ActionInit(LayoutActionType.Init, offset));
-	
-	// TBD have to get the offset to the store/plugin
-	
-	// See onDestroyed() which is stopping animation and destroys layout
-	// => every time we enter onRendered(), create layout again
-	//if (!LayoutManager.isValid()) {
-	//	var layout = document.getElementById('layout-canvas');
-	//	var layoutContainer = document.getElementById('layout-div-container');
-	//	var width = (layoutContainer) ? layoutContainer.clientWidth : 800;
-	//	var height = (layoutContainer) ? layoutContainer.clientHeight : 600;
-	//	height -= offset;
-	//	LayoutManager.createLayout(layout, width, height);
-	//	// By here the layout is set up and has the correct pixel render area
-	//	_renderLayout();
-	//	
-	//	LayoutManager.startAnimation();
-	//}
 	console.log('layout_lawn.onRendered');
 });
 
@@ -167,10 +53,6 @@ Template.layout_lawn.helpers({
 		return PixiJSViewActionStore;
 	}
 });
-
-var testLayoutCreate = function testLayoutCreate () {
-	console.log('testLayoutCreate: ENTRY');
-};
 
 var _settings = {
 	gridEnabled: Session.get(Constants.gridEnabled),

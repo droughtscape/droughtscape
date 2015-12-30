@@ -25,40 +25,23 @@
 PixiLayout = (function () {
 	const ArrangeErrorMsg = 'Please select item and try again';
 	const DeleteErrorMsg = 'Please select item(s) and try again';
+	// classes grouping functionality
 	var _plugin = null;
 	var _layoutFrame = null;
-	var _background = null;
-	var _parts;
-	var _copyBuffer = [];
-	var _selectBox;
 	var _mouseMgr = null;
 	var _selectionMgr = null;
     var _partsMgr;
+	
+	// module wide values
 	var _currentAbstractPart = null;
 	var _unitW = 50;
-
-	var mouseDnPt;
-	var mouseUpPt;
-	var _mouseMovePt;
-	var _gridEnabled;
-	var _gridSpacing;
 	var _scaleRealToPixel;
 	var _scalePixelToReal;
 
-	/**
-	 * _snapToGrid function - snaps the xy pixel coordinate to a grid point if _gridEnabled
-	 * if not _gridEnabled, just return original coordinates
-	 * @param {number} xPixel - x position to snap
-	 * @param {number} yPixel - x position to snap
-	 * @return {object} - {x, y} snapped points or raw points
-	 */
-	var _snapToGrid = function _snapToGrid(xPixel, yPixel) {
-		if (_gridEnabled) {
-			let gridPixelSpacing = (_gridSpacing / 100.0) * _scaleRealToPixel;
-			xPixel = Math.round(xPixel / gridPixelSpacing) * gridPixelSpacing;
-			yPixel = Math.round(yPixel / gridPixelSpacing) * gridPixelSpacing;
-		}
-		return {x: xPixel, y: yPixel};
+	var _safeDispatch = function _safeDispatch (target, message) {
+		setTimeout(function () {
+			Dispatcher.dispatch(target, message);
+		});
 	};
 	/**
 	 * _isSame function - determines if two points are identical
@@ -113,7 +96,7 @@ PixiLayout = (function () {
 	 * @private
 	 */
 	var _rectFromPart = function _rectFromPart (part) {
-		let ul = _snapToGrid(part.position.x, part.position.y);
+		let ul = _layoutFrame.snapToGrid(part.position);
 		return {x: ul.x, y: ul.y, w: part.width, h: part.height};
 	};
 	/**
@@ -176,9 +159,9 @@ PixiLayout = (function () {
 		}
 		undoMe () {
 			for (var i=0, len=this.deletedItems.length; i < len; ++i) {
-				_parts.addChild(this.deletedItems[i]);
+				_partsMgr.parts.addChild(this.deletedItems[i]);
 			}
-			_parts.children.sort(depthCompare);
+			_partsMgr.parts.children.sort(depthCompare);
 		}
 	}
 	class UndoMoveItem extends UndoItem {
@@ -211,7 +194,7 @@ PixiLayout = (function () {
 			super(UndoType.Uncopy);
 		}
 		undoMe () {
-			_copyBuffer = [];
+			_partsMgr.copyBuffer = [];
 		}
 	}
 	class UndoPaste extends UndoItem {
@@ -225,7 +208,7 @@ PixiLayout = (function () {
 			for (var i=0, len=this.pasteItems.length; i < len; ++i) {
 				_selectionMgr.selectPart(this.pasteItems[i]);
 			}
-			PartsMgr.deleteItems(UndoState.Disable);
+			_partsMgr.deleteItems(UndoState.Disable);
 		}
 	}
 	class UndoStack {
@@ -324,11 +307,11 @@ PixiLayout = (function () {
 		 * computeRelativeMouseLocation function - returns point location relative to background by
 		 *   computing offset point from background to _pixiRenderer
 		 * @param {object} absPt - object, point {x, y} - location relative to _pixiRenderer
-		 * @return {object} - point relative to background, valid if within the _background
+		 * @return {object} - point relative to background, valid if within the background
 		 */
 		computeRelativeMouseLocation(absPt) {
 			let point = {x: absPt.x - _plugin.pixiRenderer.bgndOffX, y: absPt.y - _plugin.pixiRenderer.bgndOffY, valid: true};
-			point.valid = (point.x <= _background.width) && (point.y <= _background.height) &&
+			point.valid = (point.x <= _layoutFrame.background.width) && (point.y <= _layoutFrame.background.height) &&
 				(point.x >= 0) && (point.y >= 0);
 			return point;
 		}
@@ -338,10 +321,10 @@ PixiLayout = (function () {
 		 */
 		mouseDown(interactionData) {
 			let mouseDnPt = this.computeRelativeMouseLocation(interactionData.data.global);
-			this.mouseDnPt = _snapToGrid(mouseDnPt.x, mouseDnPt.y);
+			this.mouseDnPt = _layoutFrame.snapToGrid(mouseDnPt);
 			//console.log('_mouseDown: ' + currentMouseLoc.x + ', ' + currentMouseLoc.y);
 			if (this.mouseDnHandler) {
-				this.mouseDnHandler(mouseDnPt);
+				this.mouseDnHandler(this.mouseDnPt);
 			}
 		}
 		/**
@@ -350,10 +333,10 @@ PixiLayout = (function () {
 		 */
 		mouseUp(interactionData) {
 			let mouseUpPt = this.computeRelativeMouseLocation(interactionData.data.global);
-			this.mouseUpPt = _snapToGrid(mouseUpPt.x, mouseUpPt.y);
+			this.mouseUpPt = _layoutFrame.snapToGrid(mouseUpPt);
 			//console.log('console: ' + mouseUpPt);
 			if (this.mouseUpHandler) {
-				this.mouseUpHandler(mouseUpPt);
+				this.mouseUpHandler(this.mouseUpPt);
 			}
 			console.log('mouseup: : x' + mouseUpPt.x + ', y: ' + mouseUpPt.y);
 		}
@@ -367,7 +350,7 @@ PixiLayout = (function () {
 			// Even though we reset the mouse handlers, there seems to be some state bug.
 			if (interactionData.data.global.x !== Infinity) {
 				let {x, y, valid} = this.computeRelativeMouseLocation(interactionData.data.global);
-				this.mouseMvPt = _snapToGrid(x, y);
+				this.mouseMvPt = _layoutFrame.snapToGrid({x: x, y: y});
 				//console.log('mouseMove: ' + this.mouseMvPt.x + ', ' + this.mouseMvPt.x + ' : valid: ' + valid);
 
 				// Try to detect mouseover, mouseout
@@ -460,7 +443,7 @@ PixiLayout = (function () {
 		mouseUpCreateHandler (pixelPt) {
 			if (_isMouseUpDnSame(this.mouseDnPt, this.mouseUpPt) && _currentAbstractPart) {
 				var scalePixelToReal = _scalePixelToReal;
-				PartsMgr.createLayoutPart(new LayoutPart(_currentAbstractPart, pixelPt.x * scalePixelToReal, pixelPt.y * scalePixelToReal),
+				_partsMgr.createLayoutPart(new LayoutPart(_currentAbstractPart, pixelPt.x * scalePixelToReal, pixelPt.y * scalePixelToReal),
 					pixelPt.x, pixelPt.y);
 			}
 		}
@@ -477,7 +460,8 @@ PixiLayout = (function () {
 		 * @param {object} abstractPart - the part we have selected to create, currently of type TestAbstractPart
 		 */
 		enableMouseSprite (enable, pixelPt, abstractPart) {
-			_selectBox.visible = enable;
+			let selectBox = _layoutFrame.selectBox;
+			selectBox.visible = enable;
 			// _unitW is currently 50, height of mouse sprite is relative to the ratio of w:h in the abstractPart.  
 			if (enable) {
 				if (!this.mouseSprite) {
@@ -498,20 +482,20 @@ PixiLayout = (function () {
 						this.mouseMask.position.x = this.mouseSprite.position.x;
 						this.mouseMask.position.y = this.mouseSprite.position.y;
 
-						_selectBox.addChild(this.mouseMask);
+						selectBox.addChild(this.mouseMask);
 						this.mouseSprite.mask = this.mouseMask;
 					}
 					else {
 						this.mouseMask = null;
 						this.mouseSprite.mask = null;
 					}
-					_selectBox.addChild(this.mouseSprite);
+					selectBox.addChild(this.mouseSprite);
 				}
 			}
 			else {
 				if (this.mouseSprite) {
 					// Remove from the 
-					_selectBox.removeChild(this.mouseSprite);
+					selectBox.removeChild(this.mouseSprite);
 					this.mouseSprite = null;
 				}
 			}
@@ -521,7 +505,7 @@ PixiLayout = (function () {
 		 * @param {object} pixelPt - location to place sprite if active
 		 */
 		moveMouseSprite (pixelPt) {
-			if (_selectBox.visible && this.mouseSprite) {
+			if (_layoutFrame.selectBox.visible && this.mouseSprite) {
 				// Center the sprite
 				this.mouseSprite.position = this.computeCenterPt(pixelPt);
 				if (this.mouseMask) {
@@ -560,7 +544,8 @@ PixiLayout = (function () {
 			this.selected = [];
 			this.selectedBox = null;
 			Session.set(Constants.layoutSelection, 0);
-			Dispatcher.dispatch('layout', new Message.ActionNotifySelectedPart(null));
+			// decouple to avoid dispatch in dispatch
+			_safeDispatch('layout', new Message.ActionNotifySelectedPart(null));
 		}
 
 		/**
@@ -596,7 +581,7 @@ PixiLayout = (function () {
                 part.alpha = 0.5;
                 Session.set(Constants.layoutSelection, selected.length);
             }
-			Dispatcher.dispatch('layout', new Message.ActionNotifySelectedPart((selected.length === 1)? selected[0].layoutPart : null));
+			_safeDispatch('layout', new Message.ActionNotifySelectedPart((selected.length === 1)? selected[0].layoutPart : null));
 		}
 		/**
 		 * select top item touching point
@@ -605,12 +590,12 @@ PixiLayout = (function () {
 		 * @private
 		 */
 		selectAtPoint (pixelPt) {
-			pixelPt = _snapToGrid(pixelPt.x, pixelPt.y);
+			pixelPt = _layoutFrame.snapToGrid(pixelPt);
 			// Assume sorted by z order, => search from back of list forward to find first selectable item under a point
 			this.clearSelection();
 			// enumeratePartsRev returns false if a valid selection is made so reverse bool on return
 			//let fn = (part) => this.selectPart(part);
-			return !PartsMgr.enumeratePartsRev((part) => {
+			return !_partsMgr.enumeratePartsRev((part) => {
 				if (Utils.pointInBox(pixelPt, _rectFromPart(part))) {
 					// satisfied
 					// Highlight via tint, if not selected, set to red, if selected, clear to white
@@ -626,12 +611,13 @@ PixiLayout = (function () {
 		 * @param {boolean} enable - true to turn on, false to turn off..
 		 */
 		enableSelectBox (enable) {
-			_selectBox.visible = enable;
-			_selectBox.clear();
-			_selectBox.startSelect = mouseDnPt;
-			//console.log('_mouseDown: x: ' + _selectBox.startSelect.x + ', y: ' + _selectBox.startSelect.y + 
+			let selectBox = _layoutFrame.selectBox;
+			selectBox.visible = enable;
+			selectBox.clear();
+			//_selectBox.startSelect = mouseDnPt;
+			//console.log('_mouseDown: x: ' + selectBox.startSelect.x + ', y: ' + selectBox.startSelect.y + 
 			//	', background.x: ' + background.innerX + ', background.y: ' + background.innerY);
-			_selectBox.currentBox = null;
+			selectBox.currentBox = null;
 		}
 		/**
 		 * drawSelectBox function - if in select mode, clear and redraw selection box if toPt != fromPt
@@ -639,14 +625,15 @@ PixiLayout = (function () {
 		 * @param {object} toPt - x, y location we are now at
 		 */
 		drawSelectBox(fromPt, toPt) {
-			if (_selectBox.visible) {
+			let selectBox = _layoutFrame.selectBox;
+			if (selectBox.visible) {
 				if (!_isSame(fromPt, toPt)) {
 					// Clear last box
-					_selectBox.clear();
+					selectBox.clear();
 					// Draw outline of final box
-					_selectBox.currentBox = _computeRect(fromPt, toPt);
-					_selectBox.beginFill(0xFF0000, 0.5);
-					_selectBox.drawRect(_selectBox.currentBox.x, _selectBox.currentBox.y, _selectBox.currentBox.w, _selectBox.currentBox.h);
+					selectBox.currentBox = _computeRect(fromPt, toPt);
+					selectBox.beginFill(0xFF0000, 0.5);
+					selectBox.drawRect(selectBox.currentBox.x, selectBox.currentBox.y, selectBox.currentBox.w, selectBox.currentBox.h);
 				}
 			}
 		}
@@ -656,13 +643,14 @@ PixiLayout = (function () {
 		 * @param {object} toPt - x, y location we are now at
 		 */
 		finishSelectBox (fromPt, toPt) {
+			let selectBox = _layoutFrame.selectBox;
 			if (!_isSame(fromPt, toPt)) {
 				this.drawSelectBox(fromPt, toPt);
 				this.clearSelection();
-				let selectBox = _selectBox.currentBox;
+				let currentBox = selectBox.currentBox;
 				let fn = (part) => this.selectPart(part);
-				PartsMgr.enumeratePartsRev(function (part) {
-					if (Utils.boxIntersectBox(_rectFromPart(part), selectBox)) {
+				_partsMgr.enumeratePartsRev(function (part) {
+					if (Utils.boxIntersectBox(_rectFromPart(part), currentBox)) {
 						// satisfied
 						console.log('_finishSelectBox: ptInBox found at i: ' + i);
 						// Highlight via tint, if not selected, set to red, if selected, clear to white
@@ -670,17 +658,17 @@ PixiLayout = (function () {
 					}
 					return false;
 				});
-				_selectBox.visible = false;
+				selectBox.visible = false;
 			}
 			else {
-				_selectBox.beginFill(0xFF0000, 0.5);
-				toPt = _snapToGrid(toPt.x, toPt.y);
-				_selectBox.drawCircle(toPt.x, toPt.y, 3);
+				selectBox.beginFill(0xFF0000, 0.5);
+				toPt = _layoutFrame.snapToGrid(toPt);
+				selectBox.drawCircle(toPt.x, toPt.y, 3);
 				// Store a select point, indicate with w, h == 0
-				_selectBox.currentBox = {x: toPt.x, y: toPt.y, w: 0, h: 0};
+				selectBox.currentBox = {x: toPt.x, y: toPt.y, w: 0, h: 0};
 				// Assume sorted by z order, => search from back of list forward to find first selectable item under a point
 				this.clearSelection();
-				PartsMgr.enumeratePartsRev(function (part) {
+				_partsMgr.enumeratePartsRev(function (part) {
 					if (Utils.pointInBox(toPt, _rectFromPart(part))) {
 						// satisfied
 						// Highlight via tint, if not selected, set to red, if selected, clear to white
@@ -731,16 +719,17 @@ PixiLayout = (function () {
     
     PartsMgr = class PartsMgr {
         constructor () {
-            this.parts = _parts = new PIXI.Container();
+            this.parts = new PIXI.Container();
+			this.copyBuffer = [];
         }
         /**
-         * Encapsulates forward enumeration of the _parts children
+         * Encapsulates forward enumeration of the this.parts children
          * @param {object} enumFn - callback on each enumerated part.  Return true to stop enumeration, false to continue
          * @returns {boolean} - false if enumeration was stopped, true if finished for all items
          * @private
          */
-        static enumeratePartsFwd (enumFn) {
-            var parts = _parts.children;
+        enumeratePartsFwd (enumFn) {
+            var parts = this.parts.children;
             for (var len=parts.length, i=0; i < len; ++i) {
                 let part = parts[i];
                 if (enumFn(part)) {
@@ -750,13 +739,13 @@ PixiLayout = (function () {
             return true;
         }
         /**
-         * Encapsulates reverse enumeration of the _parts children
+         * Encapsulates reverse enumeration of the this.parts children
          * @param {object} enumFn - callback on each enumerated part.  Return true to stop enumeration, false to continue
          * @returns {boolean} - false if enumeration was stopped, true if finished for all items
          * @private
          */
-        static enumeratePartsRev (enumFn) {
-            var parts = _parts.children;
+        enumeratePartsRev (enumFn) {
+            var parts = this.parts.children;
             for (var len=parts.length, i=len-1; i >= 0; i--) {
                 let part = parts[i];
                 if (enumFn(part)) {
@@ -766,14 +755,14 @@ PixiLayout = (function () {
             return true;
         }
         /**
-         * Encapsulates reverse enumeration of the _parts children, excluding a callback on excludePart
+         * Encapsulates reverse enumeration of the this.parts children, excluding a callback on excludePart
          * @param {object} enumFn - callback on each enumerated part.  Return true to stop enumeration, false to continue
          * @param {object} excludePart - this part will not be passed to enumFn(part)
          * @returns {boolean} - false if enumeration was stopped, true if finished for all items
          * @private
          */
-        static enumeratePartsExcludePartRev (enumFn, excludePart) {
-            var parts = _parts.children;
+        enumeratePartsExcludePartRev (enumFn, excludePart) {
+            var parts = this.parts.children;
             for (var len=parts.length, i=len-1; i >= 0; i--) {
                 var part = parts[i];
                 if (part !== excludePart && enumFn(part)) {
@@ -787,8 +776,8 @@ PixiLayout = (function () {
          * @param callback
          * @private
          */
-        static enumerateLayoutParts (callback) {
-            PartsMgr.enumeratePartsFwd(function (part) {
+        enumerateLayoutParts (callback) {
+            this.enumeratePartsFwd(function (part) {
                 return callback(part.layoutPart);
             });
         }
@@ -802,7 +791,7 @@ PixiLayout = (function () {
 		 * @return {LayoutPart} -
 		 * @private
 		 */
-		static createLayoutPart(layoutPart, xPixel, yPixel, rotation) {
+		createLayoutPart(layoutPart, xPixel, yPixel, rotation) {
 			var pixiTexture = PIXI.Texture.fromImage(layoutPart.imageUrl);
 			var sprite = new PIXI.Sprite(pixiTexture);
 			sprite.width = layoutPart.width * _scaleRealToPixel;
@@ -812,7 +801,7 @@ PixiLayout = (function () {
 			sprite.z = layoutPart.locus.z;
 			layoutPart.sprite = sprite;
 			sprite.layoutPart = layoutPart;
-			_parts.addChild(sprite);
+			this.parts.addChild(sprite);
 			_selectionMgr.clearSelection();
 			_selectionMgr.selectPart(sprite);
 			return layoutPart;
@@ -821,13 +810,13 @@ PixiLayout = (function () {
 		 * Tests for valid selection and if found moves it to the front of all items occluding that selection
 		 * @private
 		 */
-		static moveToFront () {
+		moveToFront () {
 			// Must be a valid single selected item
 			if (_selectionMgr.validSelection() === 1) {
 				var targetPart = _selectionMgr.selected[0];
 				var targetRect = _rectFromPart(targetPart);
 				var itemsNotTarget = [];
-				PartsMgr.enumeratePartsExcludePartRev(function (part) {
+				this.enumeratePartsExcludePartRev(function (part) {
 					// examine everything except targetPart 
 					if (Utils.boxIntersectBox(_rectFromPart(part), targetRect)) {
 						// satisfied, store it
@@ -844,7 +833,7 @@ PixiLayout = (function () {
 					// store into layout part as well
 					targetPart.layoutPart.locus.z = targetPart.z = (maxZ + 1);
 					// sort
-					_parts.children.sort(depthCompare);
+					this.parts.children.sort(depthCompare);
 					//_testArrangement();
 				}
 			}
@@ -856,12 +845,12 @@ PixiLayout = (function () {
 		 * Tests for valid selection and if found moves it to the back of all items occluding that selection
 		 * @private
 		 */
-		static moveToBack () {
+		moveToBack () {
 			if (_selectionMgr.validSelection() === 1) {
 				let targetPart = _selectionMgr.selected[0];
 				let targetRect = _rectFromPart(targetPart);
 				let itemsNotTarget = [];
-				PartsMgr.enumeratePartsExcludePartRev(function (part) {
+				this.enumeratePartsExcludePartRev(function (part) {
 					// examine everything except targetPart 
 					if (Utils.boxIntersectBox(_rectFromPart(part), targetRect)) {
 						// satisfied, store it
@@ -878,7 +867,7 @@ PixiLayout = (function () {
 					// store into layout part as well
 					targetPart.layoutPart.locus.z = targetPart.z = (minZ - 1);
 					// sort
-					_parts.children.sort(depthCompare);
+					this.parts.children.sort(depthCompare);
 					//_testArrangement();
 				}
 			}
@@ -886,7 +875,7 @@ PixiLayout = (function () {
 				LayoutFrame.blink(0xFF0000, ArrangeErrorMsg);
 			}
 		};
-		static moveForward () {
+		moveForward () {
 			if (_selectionMgr.validSelection() === 1) {
 				let targetPart = _selectionMgr.selected[0];
 				let targetRect = _rectFromPart(targetPart);
@@ -894,7 +883,7 @@ PixiLayout = (function () {
 				// z-order on the items as they are scanned.
 				let z_order = 0;
 				let itemsNotTarget = [];
-				PartsMgr.enumeratePartsFwd(function (part) {
+				this.enumeratePartsFwd(function (part) {
 					// save and order everything involved in the targetRect 
 					if (part !== targetPart && Utils.boxIntersectBox(_rectFromPart(part), targetRect)) {
 						// satisfied, store it
@@ -925,7 +914,7 @@ PixiLayout = (function () {
 						}
 					}
 					// sort
-					_parts.children.sort(depthCompare);
+					this.parts.children.sort(depthCompare);
 					//_testArrangement();
 
 				}
@@ -934,7 +923,7 @@ PixiLayout = (function () {
 				LayoutFrame.blink(0xFF0000, ArrangeErrorMsg);
 			}
 		}
-		static moveBackward () {
+		moveBackward () {
 			if (_selectionMgr.validSelection() === 1) {
 				let targetPart = _selectionMgr.selected[0];
 				let targetRect = _rectFromPart(targetPart);
@@ -942,7 +931,7 @@ PixiLayout = (function () {
 				// z-order on the items as they are scanned.
 				let z_order = 0;
 				let itemsNotTarget = [];
-				PartsMgr.enumeratePartsFwd(function (part) {
+				this.enumeratePartsFwd(function (part) {
 					// save and order everything involved in the targetRect 
 					if (part !== targetPart && Utils.boxIntersectBox(_rectFromPart(part), targetRect)) {
 						// satisfied, store it
@@ -976,7 +965,7 @@ PixiLayout = (function () {
 						}
 					}
 					// sort
-					_parts.children.sort(depthCompare);
+					this.parts.children.sort(depthCompare);
 					//_testArrangement();
 
 				}
@@ -990,13 +979,13 @@ PixiLayout = (function () {
 		 * @param undoState
 		 * @private
 		 */
-		static deleteItems (undoState) {
+		deleteItems (undoState) {
 			let enableUndo = (undoState || UndoState.Enable) === UndoState.Enable;
 			if (_selectionMgr.validSelection()) {
-				_selectionMgr.enumerateSelection(function (part) {
+				_selectionMgr.enumerateSelection((part) => {
 					part.tint = 0xFFFFFF;
 					part.alpha = 1.0;
-					_parts.removeChild(part);
+					this.parts.removeChild(part);
 					return false;
 				});
 				if (enableUndo) {
@@ -1010,25 +999,28 @@ PixiLayout = (function () {
 			}
 		}
 		/**
-		 * Enumerates the current selection copies onto _copyBuffer for paste.  Undo is enabled to erase the copy
+		 * Enumerates the current selection copies onto copyBuffer for paste.  Undo is enabled to erase the copy
 		 * @private
 		 */
-		static copySelection () {
-			_copyBuffer = [];
-			_selectionMgr.enumerateSelection(function (part) {
-				_copyBuffer.push(part.layoutPart.copyMe());
+		copySelection () {
+			this.copyBuffer = [];
+			//_selectionMgr.enumerateSelection(function (part) {
+			//	this.copyBuffer.push(part.layoutPart.copyMe());
+			//	return false;
+			_selectionMgr.enumerateSelection((part) => {
+				this.copyBuffer.push(part.layoutPart.copyMe());
 				return false;
 			});
 			_undoStack.pushUncopy();
 		}
 		/**
-		 * Pastes anything in the _copyBuffer.  Undo is enable to delete any pasted items on undo
+		 * Pastes anything in the copyBuffer.  Undo is enable to delete any pasted items on undo
 		 * @private
 		 */
-		static pasteCopy () {
+		pasteCopy () {
 			_selectionMgr.clearSelection();
-			for (var i=0, len=_copyBuffer.length; i < len; ++i) {
-				let layoutPart = _copyBuffer[i];
+			for (var i=0, len=this.copyBuffer.length; i < len; ++i) {
+				let layoutPart = this.copyBuffer[i];
 				var pixiTexture = PIXI.Texture.fromImage(layoutPart.imageUrl);
 				var sprite = new PIXI.Sprite(pixiTexture);
 				sprite.width = layoutPart.width * _scaleRealToPixel;
@@ -1038,7 +1030,7 @@ PixiLayout = (function () {
 				sprite.z = layoutPart.locus.z;
 				layoutPart.sprite = sprite;
 				sprite.layoutPart = layoutPart;
-				_parts.addChild(sprite);
+				this.parts.addChild(sprite);
 				_selectionMgr.selectPart(sprite);
 			}
 			_undoStack.pushUnpaste(_selectionMgr.selected);
@@ -1061,10 +1053,10 @@ PixiLayout = (function () {
 			this.box.mousedown = (interactionData) => _mouseMgr.mouseDown(interactionData);
 			this.box.mouseup = (interactionData) => _mouseMgr.mouseUp(interactionData);
 			this.box.mousemove = (interactionData) => _mouseMgr.mouseMove(interactionData);
-			_background = new PIXI.Graphics();
-			_gridEnabled = false;
-			_gridSpacing = 0;
-			this.box.addChild(_background);
+			this.background = new PIXI.Graphics();
+			this.gridEnabled = false;
+			this.gridSpacing = 0;
+			this.box.addChild(this.background);
 			this.grid = new PIXI.Graphics();
 			this.box.addChild(this.grid);
 			this.box.position.x = x;
@@ -1074,41 +1066,41 @@ PixiLayout = (function () {
 			this.curbText = new PIXI.Text('curb');
 			this.box.addChild(this.curbText);
 			this.box.addChild(_partsMgr.parts);
-			_selectBox = new PIXI.Graphics();
-			_selectBox.visible = false;
-			this.box.addChild(_selectBox);
+			this.selectBox = new PIXI.Graphics();
+			this.selectBox.visible = false;
+			this.box.addChild(this.selectBox);
 			return this.box;
 		}
 		modifyLayoutFrame (x, y,width, height, borderWidth) {
 			let box = this.box,
 				houseText = this.houseText,
 				curbText = this.curbText;
-			_background.clear();
+			this.background.clear();
 			// Now store positional info into background, even though we still have to explicitly draw
-			_background.innerWidth = width - (2 * borderWidth);
-			_background.innerHeight = height - (2 * borderWidth);
-			_background.innerX = borderWidth;
-			_background.innerY = borderWidth;
-			_background.width = width;
-			_background.height = height;
-			_background.position.x = 0;
-			_background.position.y = 0;
-			_background.beginFill(0xFF0000);
-			_background.drawRect(0, 0, width, height);
-			_background.beginFill(0xFFFFFF);
-			_background.drawRect(borderWidth, borderWidth, _background.innerWidth, _background.innerHeight);
-			this.box.position.x = x;
-			this.box.position.y = y;
+			this.background.innerWidth = width - (2 * borderWidth);
+			this.background.innerHeight = height - (2 * borderWidth);
+			this.background.innerX = borderWidth;
+			this.background.innerY = borderWidth;
+			this.background.width = width;
+			this.background.height = height;
+			this.background.position.x = 0;
+			this.background.position.y = 0;
+			this.background.beginFill(0xFF0000);
+			this.background.drawRect(0, 0, width, height);
+			this.background.beginFill(0xFFFFFF);
+			this.background.drawRect(borderWidth, borderWidth, this.background.innerWidth, this.background.innerHeight);
+			box.position.x = x;
+			box.position.y = y;
 			// Safest to use the real session variables to determine _grid
-			_gridEnabled = Session.get(Constants.gridEnabled);
-			_gridSpacing = Session.get(Constants.gridSpacing);
-			this.drawGrid(_gridEnabled, _gridSpacing);
+			this.gridEnabled = Session.get(Constants.gridEnabled);
+			this.gridSpacing = Session.get(Constants.gridSpacing);
+			this.drawGrid(this.gridEnabled, this.gridSpacing);
 			// center text horizontally, stick to top and bottom, house and curb respectively
 			let midX = width / 2;
 			houseText.x = midX - (houseText.width / 2);
 			houseText.y = borderWidth;
 			curbText.x = midX - (curbText.width / 2);
-			curbText.y = _background.height - curbText.height;
+			curbText.y = this.background.height - curbText.height;
 			_plugin.pixiRenderer.bgndOffX = x;
 			_plugin.pixiRenderer.bgndOffY = y;
 		}
@@ -1121,8 +1113,8 @@ PixiLayout = (function () {
 			if (gridEnabled) {
 				console.log('_drawGrid, drawing _grid');
 				// pixel positions
-				var startX = _background.position.x;
-				var startY = _background.position.y;
+				var startX = this.background.position.x;
+				var startY = this.background.position.y;
 				// spacing parameter is in cm, convert to pixels
 				var gridPixelSpacing = (gridSpacing / 100) * _scaleRealToPixel;
 				// Set _grid point color to teal
@@ -1131,16 +1123,16 @@ PixiLayout = (function () {
 				var innerWidth;
 				let gridInBorder = false;
 				if (gridInBorder) {
-					innerWidth = _background.innerWidth;
-					innerHeight = _background.innerHeight;
-					startX = _background.innerX;
-					startY = _background.innerY;
+					innerWidth = this.background.innerWidth;
+					innerHeight = this.background.innerHeight;
+					startX = this.background.innerX;
+					startY = this.background.innerY;
 				}
 				else {
-					innerWidth = _background.width;
-					innerHeight = _background.height;
-					startX = _background.position.x;
-					startY = _background.position.y;
+					innerWidth = this.background.width;
+					innerHeight = this.background.height;
+					startX = this.background.position.x;
+					startY = this.background.position.y;
 				}
 				for (var row = 0, lastRow = innerHeight; row < lastRow; row += gridPixelSpacing) {
 					for (var i = 0, stop = innerWidth; i < stop; i += gridPixelSpacing) {
@@ -1150,19 +1142,19 @@ PixiLayout = (function () {
 			}
 		}
 		/**
-		 * snapToGrid function - snaps the xy pixel coordinate to a grid point if _gridEnabled
-		 * if not _gridEnabled, just return original coordinates
-		 * @param {number} xPixel - x position to snap
-		 * @param {number} yPixel - x position to snap
+		 * snapToGrid function - snaps the xy pixel coordinate to a grid point if this.gridEnabled
+		 * if not this.gridEnabled, just return original coordinates
+		 * @param {object} raw - object with x, y
 		 * @return {object} - {x, y} snapped points or raw points
 		 */
-		snapToGrid (xPixel, yPixel) {
-			if (_gridEnabled) {
-				let gridPixelSpacing = (_gridSpacing / 100.0) * _scaleRealToPixel;
-				xPixel = Math.round(xPixel / gridPixelSpacing) * gridPixelSpacing;
-				yPixel = Math.round(yPixel / gridPixelSpacing) * gridPixelSpacing;
+		snapToGrid (raw) {
+			let snapped = {x:raw.x, y:raw.y};
+			if (this.gridEnabled) {
+				let gridPixelSpacing = (this.gridSpacing / 100.0) * _scaleRealToPixel;
+				snapped.x = Math.round(raw.x / gridPixelSpacing) * gridPixelSpacing;
+				snapped.y = Math.round(raw.y / gridPixelSpacing) * gridPixelSpacing;
 			}
-			return {x: xPixel, y: yPixel};
+			return {x: snapped.x, y: snapped.y};
 		}
 
 		updateScale (lengthPixels, lengthMeters) {
@@ -1170,7 +1162,7 @@ PixiLayout = (function () {
 			_scalePixelToReal = 1.0 / _scaleRealToPixel;
 			let scaleRealToPixel = _scaleRealToPixel, scalePixelToReal = _scalePixelToReal;
 			// Have to adjust all sprites pixel positions
-			PartsMgr.enumeratePartsFwd(function (part) {
+			_partsMgr.enumeratePartsFwd(function (part) {
 				part.x = part.layoutPart.locus.x * scaleRealToPixel;
 				part.y = part.layoutPart.locus.y * scaleRealToPixel;
 				part.width = part.layoutPart.width * scaleRealToPixel;
@@ -1220,10 +1212,9 @@ PixiLayout = (function () {
 		 * Blinks the background
 		 * @param {number} color - set background.tint to this and restore on timer expiry
 		 * @param {string} msg - error message
-		 * @private
 		 */
 		static blink (color, msg) {
-			_blinkPart(_background, color);
+			_blinkPart(_layoutFrame.background, color);
 			swal({
 				title: 'Oops!',
 				text: msg,
@@ -1269,8 +1260,8 @@ PixiLayout = (function () {
 			case 'ActionEnumerateLayout':
 				console.log('handleAction[ActionEnumerateLayout] => ' + action.receiver);
 				setTimeout(function () {
-					PartsMgr.enumerateLayoutParts(function (part) {
-						Dispatcher.dispatch(action.receiver, new Message.ActionNewPart(RenderActionType.NewPart, part));
+					_partsMgr.enumerateLayoutParts(function (part) {
+						_safeDispatch(action.receiver, new Message.ActionNewPart(RenderActionType.NewPart, part));
 						return false;
 					});
 				}, 0);
@@ -1284,25 +1275,25 @@ PixiLayout = (function () {
 				_currentAbstractPart = action.abstractPart;
 				break;
 			case 'ActionMoveToFront':
-				PartsMgr.moveToFront();
+				_partsMgr.moveToFront();
 				break;
 			case 'ActionMoveToBack':
-				PartsMgr.moveToBack();
+				_partsMgr.moveToBack();
 				break;
 			case 'ActionMoveForward':
-				PartsMgr.moveForward();
+				_partsMgr.moveForward();
 				break;
 			case 'ActionMoveBackward':
-				PartsMgr.moveBackward();
+				_partsMgr.moveBackward();
 				break;
 			case 'ActionDeleteItems':
-				PartsMgr.deleteItems();
+				_partsMgr.deleteItems();
 				break;
 			case 'ActionCopyItems':
-				PartsMgr.copySelection();
+				_partsMgr.copySelection();
 				break;
 			case 'ActionPasteItems':
-				PartsMgr.pasteCopy();
+				_partsMgr.pasteCopy();
 				break;
 			case 'ActionUndo':
 				_undoStack.popUndoStack();
@@ -1319,8 +1310,8 @@ PixiLayout = (function () {
 			case 'ActionEnumerateLayout':
 				console.log('handleAction[ActionEnumerateLayout] => ' + action.receiver);
 				setTimeout(function () {
-					PartsMgr.enumerateLayoutParts(function (part) {
-						Dispatcher.dispatch(action.receiver, new Message.ActionNewPart(RenderActionType.NewPart, part));
+					_partsMgr.enumerateLayoutParts(function (part) {
+						_safeDispatch(action.receiver, new Message.ActionNewPart(RenderActionType.NewPart, part));
 						return false;
 					});
 				}, 0);
@@ -1330,36 +1321,6 @@ PixiLayout = (function () {
 				_currentAbstractPart = action.abstractPart;
 				break;
 			}
-		}
-
-		/**
-		 * Blink "background"
-		 * @param {number} color
-		 * @param {string} msg
-		 */
-		blink (color, msg) {
-			this.blinkItem(_background, color);
-		}
-
-		/**
-		 * Blink specific item
-		 * This is a "tint" operation so color is blended and may not be what you expect, to really recolor, we have to redraw.
-		 * @param {object} item
-		 * @param {number} color
-		 * @param {number}duration
-		 * @param {function} nextFn
-		 */
-		blinkItem (item, color, duration, nextFn) {
-			var blinkColor = color || 0xFF0000;
-			var blinkDuration = duration || 200;
-			var originalTint = item.tint;
-			item.tint = blinkColor;
-			setTimeout(function () {
-				item.tint = originalTint;
-				if (nextFn) {
-					nextFn();
-				}
-			}, blinkDuration);
 		}
 
 		resizeLayout (w, h) {
