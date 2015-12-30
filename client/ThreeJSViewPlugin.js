@@ -54,7 +54,7 @@ ThreeJSViewPlugin = class ThreeJSViewPlugin {
 			window.dispatchEvent(new Event('resize'));
 			break;
 		case ActionNewPart:
-			this.newPart(action.part);
+			this.renderPart(action.part);
 			break;
 		case ActionZoom:
 			this.zoomCameraOnScene(action.direction, action.delta);
@@ -82,6 +82,12 @@ ThreeJSViewPlugin = class ThreeJSViewPlugin {
 	handleActionUnmounted (action) {
 		console.log('handleActionUnmounted: ' + action.constructor.name);
 	}
+
+	/**
+	 * Zooming functionality
+	 * @param {number} direction - scale in or out
+	 * @param {number} delta - magnitude of the zoom
+	 */
 	zoomCameraOnScene (direction, delta) {
 		if (direction === ActionType.ZoomOut) {
 			delta = -delta;
@@ -124,14 +130,34 @@ ThreeJSViewPlugin = class ThreeJSViewPlugin {
 		}
 		this.threeCamera.lookAt(this.threeScene.position);
 	}
-	callbackLayoutPart (part) {
-		console.log('_callbackLayoutPart: part: location[' + part.locus.x + ', ' + part.locus.y + ', ' + part.locus.z +
-			']' + ', rotation[' + part.locus.rotation + ']');
-		console.log('_callbackLayoutPart: abstractPart.id: ' + part.abstractPart.id.value + ', depth: ' + part.abstractPart.depth);
-		this.buildPart(part);
+
+	/**
+	 * Sample code from http://ourklass.my1.ru/engines/three/beginner/2-mouse.js.html
+	 * Reference only, not used
+	 * @param x
+	 * @param y
+	 * @param depth
+	 * @param position
+	 */
+	screenToWorld (x, y, depth, position) {
+		let camera = {};
+		camera.mouse = {};
+		camera.plane = {position: {x: x, y: y, z: -depth}};
+		
+		camera.plane.position.z = -depth;
+		camera.mouse.x = (x / renderer.domElement.width) * 2 - 1;
+		camera.mouse.y = -(y / renderer.domElement.height) * 2 + 1;
+		thiscamera.raycaster.setFromCamera(camera.mouse, this);
+		var object = this.raycaster.intersectObject(this.plane)[0];
+		position.copy(object !== undefined ? object.point : position);
 	}
-	buildPart (part) {
-		console.log('_buildPart: class: ' + part.abstractPart.constructor.name);
+
+	/**
+	 * Renders a three.js display only version of LayoutPart (part)
+	 * @param {LayoutPart} part - The LayoutPart to render
+	 */
+	renderPart (part) {
+		console.log('renderPart: class: ' + part.abstractPart.constructor.name);
 		let abstractPart = part.abstractPart;
 		let bitmap = new Image();
 		bitmap.src = abstractPart.url;
@@ -160,6 +186,11 @@ ThreeJSViewPlugin = class ThreeJSViewPlugin {
 		mesh.position.z = (part.locus.y - this.midZ) * 10;
 		this.threeScene.add(mesh);
 	}
+
+	/**
+	 * Setup the render surface
+	 * @param {object} action
+	 */
 	initLawn (action) {
 		let dims = action.dims;
 		this.midX = dims.width / 2;
@@ -174,10 +205,6 @@ ThreeJSViewPlugin = class ThreeJSViewPlugin {
 		setTimeout(function () {
 			Dispatcher.dispatch('layout', new Message.ActionEnumerateParts(LayoutActionType.EnumerateParts, 'render'));
 		}, 0);
-	}
-	newPart (part) {
-		console.log('newPart: part: ' + part);
-		this.buildPart(part);
 	}
 
 	/**

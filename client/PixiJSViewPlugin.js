@@ -53,16 +53,6 @@ PixiLayout = (function () {
 		return p1.x === p2.x && p1.y === p2.y;
 	};
 	/**
-	 * _isMouseUpDnSame function - determines if mouse up/dn points are the same
-	 * Mainly for external usage
-	 * @param {object} mouseDnPt - object, point {x, y}
-	 * @param {object} mouseUpPt - object, point {x, y}
-	 * @return {boolean} - true if same
-	 */
-	var _isMouseUpDnSame = function _isMouseUpDnSame(mouseDnPt, mouseUpPt) {
-		return _isSame(mouseDnPt, mouseUpPt);
-	};
-	/**
 	 * _computeRect function - takes two arbitrary points and computes {ulx, uly, w, h)
 	 * @param {object} p1 - object, point {x, y}
 	 * @param {object} p2 - object, point {x, y}
@@ -507,7 +497,7 @@ PixiLayout = (function () {
 			this.enableMouseSprite(false);
 		}
 		mouseUpCreateHandler (pixelPt) {
-			if (_isMouseUpDnSame(this.mouseDnPt, this.mouseUpPt) && _currentAbstractPart) {
+			if (this.isMouseUpDnSame() && _currentAbstractPart) {
 				var scalePixelToReal = _scalePixelToReal;
 				_partsMgr.createLayoutPart(new LayoutPart(_currentAbstractPart, pixelPt.x * scalePixelToReal, pixelPt.y * scalePixelToReal),
 					pixelPt.x, pixelPt.y);
@@ -518,6 +508,13 @@ PixiLayout = (function () {
 			_selectionMgr.finishMoveSelection(this.mouseDnPt, this.mouseUpPt);
 		}
 		// Mouse utils
+		/**
+		 * Determine if mouse dn/up is on the same location
+		 * @returns {boolean}
+		 */
+		isMouseUpDnSame () {
+			return _isSame(this.mouseDnPt, this.mouseUpPt);
+		}
 		/**
 		 * enableMouseSprite function - enable/disable the graphic cursor sprite.  Used to avoid any
 		 * timing issues when switching between windows
