@@ -138,7 +138,7 @@ PixiJSView = React.createClass({
 		this.runAnimation = false;
 		this.pixiRootContainer = null;
 		this.pixiRenderer = null;
-		window.removeEventListener('resize', this.handleResize)
+		window.removeEventListener('resize', this.handleResize);
 	},
 	/**
 	 * This is where we proxy action to plugin and also prevent vdom activity

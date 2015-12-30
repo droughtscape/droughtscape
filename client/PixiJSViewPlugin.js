@@ -25,8 +25,8 @@
 PixiLayout = (function () {
 	const ArrangeErrorMsg = 'Please select item and try again';
 	const DeleteErrorMsg = 'Please select item(s) and try again';
+	var _plugin = null;
 	var _layoutFrame = null;
-	var _pixiRenderer = null;
 	var _background = null;
 	var _parts;
 	var _copyBuffer = [];
@@ -327,7 +327,7 @@ PixiLayout = (function () {
 		 * @return {object} - point relative to background, valid if within the _background
 		 */
 		computeRelativeMouseLocation(absPt) {
-			let point = {x: absPt.x - _pixiRenderer.bgndOffX, y: absPt.y - _pixiRenderer.bgndOffY, valid: true};
+			let point = {x: absPt.x - _plugin.pixiRenderer.bgndOffX, y: absPt.y - _plugin.pixiRenderer.bgndOffY, valid: true};
 			point.valid = (point.x <= _background.width) && (point.y <= _background.height) &&
 				(point.x >= 0) && (point.y >= 0);
 			return point;
@@ -701,7 +701,7 @@ PixiLayout = (function () {
 				let dy = (mouseUpPt.y - mouseDnPt.y) * _scalePixelToReal;
 				// clear this.selectedBox so we can rebuild the selectedBox with the moved parts
 				this.selectedBox = null;
-				SelectionMgr.enumerateSelection(function (part) {
+				this.enumerateSelection(function (part) {
 					part.layoutPart.moveMe(dx, dy);
 					part.x = part.layoutPart.locus.x * _scaleRealToPixel;
 					part.y = part.layoutPart.locus.y * _scaleRealToPixel;
@@ -718,7 +718,7 @@ PixiLayout = (function () {
          * @returns {boolean} - false if enumeration was stopped, true if finished for all items
          * @private
          */
-        static enumerateSelection (enumFn) {
+        enumerateSelection (enumFn) {
 			let selected = this.selected;
             for (var i=0, len=selected.length; i < len; ++i) {
                 if (enumFn(selected[i])) {
@@ -993,7 +993,7 @@ PixiLayout = (function () {
 		static deleteItems (undoState) {
 			let enableUndo = (undoState || UndoState.Enable) === UndoState.Enable;
 			if (_selectionMgr.validSelection()) {
-				SelectionMgr.enumerateSelection(function (part) {
+				_selectionMgr.enumerateSelection(function (part) {
 					part.tint = 0xFFFFFF;
 					part.alpha = 1.0;
 					_parts.removeChild(part);
@@ -1015,7 +1015,7 @@ PixiLayout = (function () {
 		 */
 		static copySelection () {
 			_copyBuffer = [];
-			SelectionMgr.enumerateSelection(function (part) {
+			_selectionMgr.enumerateSelection(function (part) {
 				_copyBuffer.push(part.layoutPart.copyMe());
 				return false;
 			});
@@ -1052,7 +1052,7 @@ PixiLayout = (function () {
 			_selectionMgr = new SelectionMgr();
 			_mouseMgr = new MouseMgr();
             _partsMgr = new PartsMgr();
-			_layoutFrame = this.createLayoutFrame();
+			this.createLayoutFrame();
 		}
 		createLayoutFrame (x, y) {
 			console.log('createLayoutFrame');
@@ -1109,8 +1109,8 @@ PixiLayout = (function () {
 			houseText.y = borderWidth;
 			curbText.x = midX - (curbText.width / 2);
 			curbText.y = _background.height - curbText.height;
-			_pixiRenderer.bgndOffX = x;
-			_pixiRenderer.bgndOffY = y;
+			_plugin.pixiRenderer.bgndOffX = x;
+			_plugin.pixiRenderer.bgndOffY = y;
 		}
 		drawGrid (gridEnabled, gridSpacing) {
 			console.log('LayoutFrame.drawGrid: ENTRY, gridEnabled: ' + gridEnabled + ', gridSpacing: ' + gridSpacing);
@@ -1179,10 +1179,10 @@ PixiLayout = (function () {
 		}
 		fit (fitMode) {
 			console.log('LayoutFrame.prototype.fit: ' + fitMode);
-			if (_pixiRenderer) {
+			if (_plugin.pixiRenderer) {
 				// set some locals and set defaults
-				var pixiRenderWidth = _pixiRenderer.width;
-				var pixiRenderHeight = _pixiRenderer.height;
+				var pixiRenderWidth = _plugin.pixiRenderer.width;
+				var pixiRenderHeight = _plugin.pixiRenderer.height;
 				var dims = CreateLawnData.lawnData.shape.dims;
 				var x = 0, y = 0;
 				var bestFit = {widthPixels: pixiRenderWidth, lengthPixels: pixiRenderHeight};
@@ -1235,8 +1235,9 @@ PixiLayout = (function () {
 
 	PixiJSViewPlugin = class PixiJSViewPlugin {
 		constructor () {
-			_pixiRenderer = null;
+			this.pixiRenderer = null;
 			_layoutFrame = null;
+			_plugin = this;
 		}
 
 		/**
@@ -1246,7 +1247,7 @@ PixiLayout = (function () {
 		 * @param {object} pixiRootContainer
 		 */
 		setContext (pixiRenderer, pixiRootContainer) {
-			_pixiRenderer = pixiRenderer;
+			this.pixiRenderer = pixiRenderer;
 			this.pixiRootContainer = pixiRootContainer;
 			if (_layoutFrame === null) {
 				_layoutFrame = new LayoutFrame();
@@ -1306,15 +1307,6 @@ PixiLayout = (function () {
 			case 'ActionUndo':
 				_undoStack.popUndoStack();
 				break;
-			case 'ActionAddBackground':
-				this.addBackground(action.color, action.borderColor);
-				break;
-			case 'ActionBlink':
-				this.blink(action.color, action.msg);
-				break;
-			case 'ActionText':
-				this.addTextToBackground(action.color, action.text);
-				break;
 			}
 		}
 		/**
@@ -1338,21 +1330,6 @@ PixiLayout = (function () {
 				_currentAbstractPart = action.abstractPart;
 				break;
 			}
-		}
-
-		/**
-		 * Example of adding rectangle background as graphics
-		 * @param {number} color
-		 * @param {number} borderColor
-		 */
-		addBackground (color, borderColor) {
-			let background = new PIXI.Graphics();
-			background.beginFill(color);
-			background.lineStyle(5, borderColor);
-			background.drawRect(0, 0, _pixiRenderer.width, _pixiRenderer.height);
-			background.endFill();
-			this.pixiRootContainer.addChild(background);
-			_background = background;
 		}
 
 		/**
@@ -1385,21 +1362,6 @@ PixiLayout = (function () {
 			}, blinkDuration);
 		}
 
-		/**
-		 * Add text with color to background
-		 * @param {number} color
-		 * @param {string} text
-		 */
-		addTextToBackground (color, text) {
-			let style = {
-				fill: color
-			};
-			let testItem = new PIXI.Text(text, style);
-			testItem.x = 0;
-			testItem.y = 0;
-			_background.addChild(testItem);
-
-		}
 		resizeLayout (w, h) {
 			console.log('resizeLayout(' + w + ', ' + h +')');
 		}

@@ -255,6 +255,7 @@ PixiJSViewActionStore = (function () {
 			break;
 		case NavBarTagActionType.SelectMode:
 			_state.action = new ActionSetMouseMode(MouseMode.Select, null);
+			_currentAbstractPart = null;
 			break;
 		}
 		if (emit) {
