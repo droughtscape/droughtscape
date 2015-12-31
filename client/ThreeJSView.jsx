@@ -27,6 +27,8 @@ CameraType = {
 	orthographic: 1
 };
 
+var _testNoPlugin = true;
+
 ThreeJSView = React.createClass({
     proptypes: {
 		// optional
@@ -55,19 +57,40 @@ ThreeJSView = React.createClass({
 	handleResize: function (e) {
 		console.log('handleResize: ' + e);
 		let renderCanvas = this.refs.threeJSCanvas;
-		this.configureCanvas(renderCanvas);
-		this.threeControls.handleResize();
-		if (this.resizeLayout) {
-			this.resizeLayout(renderCanvas.width, renderCanvas.height);
-		}
-		else if (this.plugin) {
-			if (this.plugin.resizeLayout) {
-				this.resizeLayout = function (w, h) {
-					this.plugin.resizeLayout(w, h);
-				};
-				this.resizeLayout(renderCanvas.width, renderCanvas.height);
+		this.rtime = new Date();
+		this.timeout = false;
+		this.delta = 200;
+		this.resizeFn = () => {
+			if (new Date() - this.rtime < this.delta) {
+				setTimeout(function () {
+					this.resizeFn();
+				}.bind(this), this.delta)
 			}
+			else {
+				this.timeout = false;
+				console.log('handleResize: FIRES');
+				this.configureCanvas(renderCanvas);
+				this.threeControls.handleResize();
+				if (this.resizeLayout) {
+					this.resizeLayout(renderCanvas.width, renderCanvas.height);
+				}
+				else if (this.plugin) {
+					if (this.plugin.resizeLayout) {
+						this.resizeLayout = function (w, h) {
+							this.plugin.resizeLayout(w, h);
+						};
+						this.resizeLayout(renderCanvas.width, renderCanvas.height);
+					}
+				}
+			}
+		};
+		if (this.timeout === false) {
+			this.timeout = true;
+			setTimeout(function () {
+				this.resizeFn();
+			}.bind(this), this.delta);
 		}
+
 	},
 	getStateFromStore: function () {
 		return this.getBoundStateFromStore();
@@ -170,9 +193,13 @@ ThreeJSView = React.createClass({
 			this.threeControls.addEventListener('change', this.render);
 		}
 		this.threeControls.handleResize();
-		
-		if (this.plugin) {
-			this.plugin.setContext(this.threeScene, this.threeCamera, this.threeRenderer);
+		if (_testNoPlugin) {
+			Dispatcher.dispatch(this.props.store.name, new Message.SetThreeContext(this.threeScene, this.threeCamera, this.threeRenderer));
+		}
+		else {
+			if (this.plugin) {
+				this.plugin.setContext(this.threeScene, this.threeCamera, this.threeRenderer);
+			}
 		}
 		
 		var light = new THREE.SpotLight(0xFFFFFF);

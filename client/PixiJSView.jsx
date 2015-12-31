@@ -22,6 +22,8 @@
  * THE SOFTWARE.
  */
 
+var _testNoPlugin = true;
+
 PixiJSView = React.createClass({
     proptypes: {
 		// optional
@@ -120,9 +122,14 @@ PixiJSView = React.createClass({
 		if (!this.pixiRootContainer) {
 			this.pixiRootContainer = new PIXI.Container();
 		}
-		// Give the plugin renderer pixi context we setup here
-		if (this.plugin) {
-			this.plugin.setContext(this.pixiRenderer, this.pixiRootContainer);
+		if (_testNoPlugin) {
+			Dispatcher.dispatch(this.props.store.name, new Message.SetPixiContext(this.pixiRenderer, this.pixiRootContainer));
+		}
+		else {
+			// Give the plugin renderer pixi context we setup here
+			if (this.plugin) {
+				this.plugin.setContext(this.pixiRenderer, this.pixiRootContainer);
+			}
 		}
 		
 		// Enable animation
@@ -176,18 +183,38 @@ PixiJSView = React.createClass({
 	handleResize: function handleResize (e) {
 		console.log('handleResize: ' + e);
 		let renderCanvas = this.refs.pixiJSCanvas;
-		this.configureCanvas(renderCanvas);
-		this.pixiRenderer.resize(renderCanvas.width, renderCanvas.height);
-		if (this.resizeLayout) {
-			this.resizeLayout(renderCanvas.width, renderCanvas.height);
-		}
-		else if (this.plugin) {
-			if (this.plugin.resizeLayout) {
-				this.resizeLayout = function (w, h) {
-					this.plugin.resizeLayout(w, h);
-				};
-				this.resizeLayout(renderCanvas.width, renderCanvas.height);
+		this.rtime = new Date();
+		this.timeout = false;
+		this.delta = 200;
+		this.resizeFn = () => {
+			if (new Date() - this.rtime < this.delta) {
+				setTimeout(function () {
+					this.resizeFn();
+				}.bind(this), this.delta)
 			}
+			else {
+				this.timeout = false;
+				console.log('handleResize: FIRES');
+				this.configureCanvas(renderCanvas);
+				this.pixiRenderer.resize(renderCanvas.width, renderCanvas.height);
+				if (this.resizeLayout) {
+					this.resizeLayout(renderCanvas.width, renderCanvas.height);
+				}
+				else if (this.plugin) {
+					if (this.plugin.resizeLayout) {
+						this.resizeLayout = function (w, h) {
+							this.plugin.resizeLayout(w, h);
+						};
+						this.resizeLayout(renderCanvas.width, renderCanvas.height);
+					}
+				}
+			}
+		};
+		if (this.timeout === false) {
+			this.timeout = true;
+			setTimeout(function () {
+				this.resizeFn();
+			}.bind(this), this.delta);
 		}
 	},
 	/**

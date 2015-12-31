@@ -159,10 +159,26 @@ PixiJSViewActionStore = (function () {
 		if (action.type === 'layout') {
 			handleLayoutEvent(action);
 		}
+		if (action.type === EVENT_TYPE) {
+			console.log('register for: ' + EVENT_TYPE);
+			handleLayoutEventXX(action);
+		}
 	});
 	var _currentMouseState;
 	var _currentAbstractPart = null;
 	var _currentSelectedPart = null;
+	var _pixiRenderer = null;
+	var _pixiRootContainer = null;
+	var _plugin = null;
+	var handleLayoutEventXX = function handleLayoutEventXX (action) {
+		switch (action.constructor) {
+		case Message.SetPixiContext:
+			console.log('Message.SetPixiContext .. FOUND');
+			_pixiRenderer = action.pixiRenderer;
+			_pixiRootContainer = action.pixiRootContainer;
+			_plugin.setContext(_pixiRenderer, _pixiRootContainer);
+		}
+	};
 	/**
 	 * Handle state of store, emit appropriate actions to the view/plugin
 	 * @param {object} action
@@ -188,7 +204,6 @@ PixiJSViewActionStore = (function () {
 				(action.part === null) || 
 				(_currentAbstractPart.itemId !== action.part.itemId)) {
 				_currentAbstractPart = action.part;
-				//_state.action = new ActionSetAbstractPart(action.part);
 			}
 			emit = false;
 			break;
@@ -249,9 +264,12 @@ PixiJSViewActionStore = (function () {
 			_state.action = new ActionSetMouseMode(MouseMode.Select, null);
 			_currentAbstractPart = null;
 			break;
+		default:
+			emit = false;
+			break;
 		}
 		if (emit) {
-			EventEx.emit(EVENT_TYPE, {data: null});
+			_plugin.handleAction(_state.action);
 		}
 
 	};
@@ -265,6 +283,7 @@ PixiJSViewActionStore = (function () {
 	 */
 	var _setPlugin = function _setPlugin (plugin) {
 		_state.plugin = plugin;
+		_plugin = plugin;
 	};
 	/**
 	 * API to retrieve the state

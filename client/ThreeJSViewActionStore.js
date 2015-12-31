@@ -108,7 +108,24 @@ ThreeJSViewActionStore = (function () {
 		if (action.type === 'render') {
 			handleRenderEvent(action);
 		}
+		if (action.type === EVENT_TYPE) {
+			handleRenderEventXX(action);
+		}
 	});
+	var _threeScene = null;
+	var _threeCamera = null;
+	var _threeRenderer = null;
+	var _plugin = null;
+	var handleRenderEventXX = function handleRenderEventXX (action) {
+		switch (action.constructor) {
+		case Message.SetThreeContext:
+			console.log('Message.SetThreeContext .. FOUND');
+			_threeScene = action.threeScene;
+			_threeCamera = action.threeCamera;
+			_threeRenderer = action.threeRenderer;
+			_plugin.setContext(_threeScene, _threeCamera, _threeRenderer);
+		}
+	};
 	/**
 	 * Handle state of store, emit appropriate actions to the view/plugin
 	 * @param {object} action
@@ -149,7 +166,9 @@ ThreeJSViewActionStore = (function () {
 			_state.action = new ActionRotate(ActionType.RotateRt, 0.2);
 			break;
 		}
-		EventEx.emit(EVENT_TYPE, {data: null});
+		_plugin.handleAction(_state.action);
+		//
+		//EventEx.emit(EVENT_TYPE, {data: null});
 	};
 	
 	var _state = {
@@ -163,6 +182,7 @@ ThreeJSViewActionStore = (function () {
 	 */
 	var _setPlugin = function _setPlugin (plugin) {
 		_state.plugin = plugin;
+		_plugin = plugin;
 	};
 	/**
 	 * API to retrieve the state
