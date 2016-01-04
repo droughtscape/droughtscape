@@ -371,7 +371,7 @@ ThreeJSViewPlugin = class ThreeJSViewPlugin {
 			particles = new THREE.Geometry(),
 			pMaterial = new THREE.PointCloudMaterial({
 				color: 0xFF0000,
-				size: 1
+				size: .3
 			});
 
 		// now create the individual particles
@@ -381,7 +381,7 @@ ThreeJSViewPlugin = class ThreeJSViewPlugin {
 			// position values, -250 -> 250
 			var pX = Math.random() * 500 - 250,
 				pY = Math.random() * 500 - 250,
-				pZ = 1;
+				pZ = 0;
 
 			// add it to the geometry
 			particles.vertices.push(new THREE.Vector3(pX, pY, pZ));
