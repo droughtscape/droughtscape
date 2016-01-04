@@ -21,17 +21,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-// Sample store
+// ThreeJS store
+/**********************************************************************************************************
+ * We do not follow the traditional flux/react paradigm here since the component is simply implementing a
+ * container for ThreeJS which we directly manipulate outside the VDom
+ **********************************************************************************************************/
 ActionType = {
 	ZoomIn: 0,
 	ZoomOut: 1,
 	RotateRt: 2,
 	RotateLt: 3,
-	PanRt: 4,
-	PanLt: 5,
-	CameraUp: 6,
-	CameraDn: 7,
-	AddMesh: 8
+	RotateUp: 4,
+	RotateDn: 5,
+	PanRt: 6,
+	PanLt: 7,
+	CameraUp: 8,
+	CameraDn: 9,
+	AddMesh: 10
 };
 
 // Sample actions
@@ -109,14 +115,18 @@ ThreeJSViewActionStore = (function () {
 			handleRenderEvent(action);
 		}
 		if (action.type === EVENT_TYPE) {
-			handleRenderEventXX(action);
+			handleRenderViewEvents(action);
 		}
 	});
 	var _threeScene = null;
 	var _threeCamera = null;
 	var _threeRenderer = null;
 	var _plugin = null;
-	var handleRenderEventXX = function handleRenderEventXX (action) {
+	/**
+	 * Handle events originating in the view.  These will be targeted at the name of the store
+	 * @param {object} action
+	 */
+	var handleRenderViewEvents = function handleRenderViewEvents (action) {
 		switch (action.constructor) {
 		case Message.SetThreeContext:
 			console.log('Message.SetThreeContext .. FOUND');
@@ -154,9 +164,11 @@ ThreeJSViewActionStore = (function () {
 			_state.action = new ActionPan(ActionType.PanRt, 10);
 			break;
 		case RightBarTagActionType.MoveCameraDn:
+			//_state.action = new ActionRotate(ActionType.RotateDn, 0.2);
 			_state.action = new ActionCamera(ActionType.CameraDn, 10);
 			break;
 		case RightBarTagActionType.MoveCameraUp:
+			//_state.action = new ActionRotate(ActionType.RotateUp, 0.2);
 			_state.action = new ActionCamera(ActionType.CameraUp, 10);
 			break;
 		case RightBarTagActionType.RotateCameraLt:

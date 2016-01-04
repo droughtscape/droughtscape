@@ -21,6 +21,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+var testFlat = true;
+
 ThreeJSViewPlugin = class ThreeJSViewPlugin {
 	constructor () {
 		this.threeScene = null;
@@ -66,8 +68,14 @@ ThreeJSViewPlugin = class ThreeJSViewPlugin {
 			this.panCameraAcrossScene(action.direction, action.delta);
 			break;
 		case ActionCamera:
+			console.log('ActionCamera: xyz: ' + this.threeCamera.position.x + ', ' + this.threeCamera.position.y + ', ' + this.threeCamera.position.z);
 			delta = (action.direction === ActionType.CameraUp) ? action.delta : -action.delta;
 			this.threeCamera.position.y += delta;
+			this.threeCamera.position.z -= delta;
+			//let yOld = this.threeCamera.position.y;
+			//let zOld = this.threeCamera.position.z;
+			//this.threeCamera.position.y = zOld;
+			//this.threeCamera.position.z = yOld;
 			break;
 		case ActionAddMesh:
 			this.threeScene.add(action.mesh);
@@ -103,17 +111,58 @@ ThreeJSViewPlugin = class ThreeJSViewPlugin {
 	 */
 	rotateCameraAroundScene (rotSpeed, direction) {
 		var x = this.threeCamera.position.x,
+			y = this.threeCamera.position.y,
 			z = this.threeCamera.position.z;
 
-		if (direction === ActionType.RotateLt){
+		switch (direction) {
+		case ActionType.RotateLt:
 			this.threeCamera.position.x = x * Math.cos(rotSpeed) + z * Math.sin(rotSpeed);
 			this.threeCamera.position.z = z * Math.cos(rotSpeed) - x * Math.sin(rotSpeed);
-		} else if (direction === ActionType.RotateRt){
+			break;
+		case ActionType.RotateRt:
 			this.threeCamera.position.x = x * Math.cos(rotSpeed) - z * Math.sin(rotSpeed);
 			this.threeCamera.position.z = z * Math.cos(rotSpeed) + x * Math.sin(rotSpeed);
+			break;
+		case ActionType.RotateDn:
+			this.threeCamera.position.y = y * Math.cos(rotSpeed) + z * Math.sin(rotSpeed);
+			this.threeCamera.position.z = z * Math.cos(rotSpeed) - y * Math.sin(rotSpeed);
+			break;
+		case ActionType.RotateUp:
+			this.threeCamera.position.y = y * Math.cos(rotSpeed) - z * Math.sin(rotSpeed);
+			this.threeCamera.position.z = z * Math.cos(rotSpeed) + y * Math.sin(rotSpeed);
+			break;
 		}
+		console.log('rotateCameraAroundStore: ' + this.threeCamera.position.x + ', ' + this.threeCamera.position.y + ', ' + this.threeCamera.position.z);
+		// draw vector
+		//this.drawVector(this.threeCamera.position.x,this.threeCamera.position.y,this.threeCamera.position.z);
+		
+		//if (direction === ActionType.RotateLt){
+		//	this.threeCamera.position.x = x * Math.cos(rotSpeed) + z * Math.sin(rotSpeed);
+		//	this.threeCamera.position.z = z * Math.cos(rotSpeed) - x * Math.sin(rotSpeed);
+		//} else if (direction === ActionType.RotateRt){
+		//	this.threeCamera.position.x = x * Math.cos(rotSpeed) - z * Math.sin(rotSpeed);
+		//	this.threeCamera.position.z = z * Math.cos(rotSpeed) + x * Math.sin(rotSpeed);
+		//}
 
 		this.threeCamera.lookAt(this.threeScene.position);
+	}
+	
+	drawVector (x, y, z) {
+		if (this.cameraVector) {
+			let selectedObject = this.threeScene.getObjectByName('cameraVector');
+			this.threeScene.remove(selectedObject);
+		}
+
+		var material = new THREE.LineBasicMaterial({
+			color: 0x0000ff
+		});
+		var geometry = new THREE.Geometry();
+		geometry.vertices.push(new THREE.Vector3(x, y, z));
+		geometry.vertices.push(new THREE.Vector3(0, 0, 0));
+		//geometry.vertices.push(new THREE.Vector3(10, 0, 0));
+		var cameraVector = new THREE.Line(geometry, material);
+		cameraVector.name = 'cameraVector';
+		this.threeScene.add(cameraVector);
 	}
 
 	/**
@@ -123,10 +172,25 @@ ThreeJSViewPlugin = class ThreeJSViewPlugin {
 	 */
 	panCameraAcrossScene (direction, delta) {
 		if (direction === ActionType.PanLt) {
-			this.threeScene.position.x -= delta;
+			if (testFlat) {
+				// Set to layout mode
+				this.ground.visible = false;
+				this.lawn.position.y = 20;
+				this.lawn.rotation.x = 0;
+			}
+			else {
+				this.threeScene.position.x -= delta;
+			}
 		}
 		else if (direction === ActionType.PanRt) {
-			this.threeScene.position.x += delta;
+			if (testFlat) {
+				this.ground.visible = true;
+				this.lawn.position.y = -20;
+				this.lawn.rotation.x = -Math.PI/2; //-90 degrees around the xaxis
+			}
+			else {
+				this.threeScene.position.x += delta;
+			}
 		}
 		this.threeCamera.lookAt(this.threeScene.position);
 	}
@@ -179,12 +243,18 @@ ThreeJSViewPlugin = class ThreeJSViewPlugin {
 			break;
 		}
 		let mesh = new THREE.Mesh(geometry, material);
-		mesh.position.y = -20 + (depth / 2);
-		mesh.rotation.y = -Math.PI/2; //-90 degrees around the yaxis
-		// adjust x
-		mesh.position.x = (part.locus.x - this.midX) * 10;
-		mesh.position.z = (part.locus.y - this.midZ) * 10;
-		this.threeScene.add(mesh);
+		if (testFlat) {
+			mesh.position.x = part.locus.x * 10;
+			mesh.position.y = -(part.locus.y * 10);
+			mesh.rotation.y = Math.PI; //-90 degrees around the yaxis
+			this.lawn.add(mesh);
+		}
+		//mesh.position.y = -20 + (depth / 2);
+		//mesh.rotation.y = -Math.PI/2; //-90 degrees around the yaxis
+		//// adjust x
+		//mesh.position.x = (part.locus.x - this.midX) * 10;
+		//mesh.position.z = (part.locus.y - this.midZ) * 10;
+		//this.threeScene.add(mesh);
 	}
 
 	/**
@@ -195,8 +265,21 @@ ThreeJSViewPlugin = class ThreeJSViewPlugin {
 		let dims = action.dims;
 		this.midX = dims.width / 2;
 		this.midZ = dims.length / 2;
-		let ground = ThreeJSViewPlugin.buildGround(dims);
-		this.threeScene.add(ground);
+		this.layoutOutline = ThreeJSViewPlugin.buildLayoutOutline(dims);
+		this.layout = ThreeJSViewPlugin.buildLayout(dims);
+		this.grid = ThreeJSViewPlugin.buildGrid(dims);
+		this.ground = ThreeJSViewPlugin.buildGround(dims);
+		
+		this.lawn = new THREE.Group();
+		this.w = dims.width * 10;
+		this.h = dims.length * 10;
+		//this.lawn.add(this.layoutOutline);
+		this.lawn.add(this.layout);
+		this.lawn.add(this.grid);
+		this.lawn.add(this.ground);
+		this.threeScene.add(this.lawn);
+		this.lawn.position.x = -this.w/2;
+		this.lawn.position.y = this.h/2;
 		// enumerate the 2D layout
 		// This is done by dispatching ActionEnumerateParts to the 'layout' store with 'render' as the sender
 		// This causes the layout component to enumerate its parts and dispatch NewPart messages to the render store
@@ -205,6 +288,9 @@ ThreeJSViewPlugin = class ThreeJSViewPlugin {
 		setTimeout(function () {
 			Dispatcher.dispatch('layout', new Message.ActionEnumerateParts(LayoutActionType.EnumerateParts, 'render'));
 		}, 0);
+		
+		this.lawn.position.y = -20;
+		this.lawn.rotation.x = -Math.PI/2; //-90 degrees around the xaxis
 	}
 
 	/**
@@ -228,10 +314,86 @@ ThreeJSViewPlugin = class ThreeJSViewPlugin {
 		//var material = new THREE.MeshPhongMaterial({ ambient: 0x050505, color: 0x0033ff, specular: 0x555555, shininess: 30 });
 		var material = new THREE.MeshBasicMaterial( { color: 0xd2b48c } );
 		var mesh = new THREE.Mesh(geometry, material);
-		mesh.position.y = -20;
-		mesh.rotation.x = -Math.PI/2; //-90 degrees around the xaxis
+		if (testFlat) {
+			mesh.position.x = w/2;
+			mesh.position.y = -h/2;
+		}
+		//mesh.position.y = -20;
+		//mesh.rotation.x = -Math.PI/2; //-90 degrees around the xaxis
 		mesh.doubleSided = true;
 		return mesh;
+	}
+	/**
+	 * Builds a reference layout plane
+	 * @param dims
+	 * @returns {THREE.Mesh}
+	 * @private
+	 */
+	static buildLayout (dims) {
+		var w = dims.width * 10;
+		var h = dims.length * 10;
+		var geometry = new THREE.PlaneGeometry(w, h);
+		//var material = new THREE.MeshPhongMaterial({ ambient: 0x050505, color: 0x0033ff, specular: 0x555555, shininess: 30 });
+		var material = new THREE.MeshBasicMaterial( { color: 0xFFFFFF } );
+		var mesh = new THREE.Mesh(geometry, material);
+		if (testFlat) {
+			mesh.position.x = w/2;
+			mesh.position.y = -h/2;
+		}
+		//mesh.position.y = -20;
+		//mesh.rotation.x = -Math.PI/2; //-90 degrees around the xaxis
+		mesh.doubleSided = true;
+		return mesh;
+	}
+	/**
+	 * Builds a reference layout plane outline
+	 * @param dims
+	 * @returns {THREE.Mesh}
+	 * @private
+	 */
+	static buildLayoutOutline (dims) {
+		var w = (dims.width) * 10 + 2;
+		var h = (dims.length) * 10 + 2;
+		var geometry = new THREE.PlaneGeometry(w, h);
+		//var material = new THREE.MeshPhongMaterial({ ambient: 0x050505, color: 0x0033ff, specular: 0x555555, shininess: 30 });
+		var material = new THREE.MeshBasicMaterial( { color: 0xFF0000 } );
+		var mesh = new THREE.Mesh(geometry, material);
+		if (testFlat) {
+			mesh.position.x = w/2;
+			mesh.position.y = -h/2;
+		}
+		//mesh.scale.multiplyScalar(1.05);
+		return mesh;
+	}
+	static buildGrid (dims) {
+		// create the particle variables
+		var particleCount = 1800,
+			particles = new THREE.Geometry(),
+			pMaterial = new THREE.PointCloudMaterial({
+				color: 0xFF0000,
+				size: 1
+			});
+
+		// now create the individual particles
+		for (var p = 0; p < particleCount; p++) {
+
+			// create a particle with random
+			// position values, -250 -> 250
+			var pX = Math.random() * 500 - 250,
+				pY = Math.random() * 500 - 250,
+				pZ = 1;
+
+			// add it to the geometry
+			particles.vertices.push(new THREE.Vector3(pX, pY, pZ));
+		}
+
+		// create the particle system
+		var particleSystem = new THREE.ParticleSystem(
+			particles,
+			pMaterial);
+
+		// add it to the scene
+		return particleSystem;
 	}
 };
 

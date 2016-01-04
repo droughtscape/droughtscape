@@ -21,6 +21,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+/**********************************************************************************************************
+ * We do not follow the traditional flux/react paradigm here since the component is simply implementing a 
+ * container for PixiJS which we directly manipulate outside the VDom
+ **********************************************************************************************************/
+
 FitType = {
 	FitTypeXY: 0,
 	FitTypeX: 1,
@@ -161,7 +166,7 @@ PixiJSViewActionStore = (function () {
 		}
 		if (action.type === EVENT_TYPE) {
 			console.log('register for: ' + EVENT_TYPE);
-			handleLayoutEventXX(action);
+			handleLayoutViewEvents(action);
 		}
 	});
 	var _currentMouseState;
@@ -170,7 +175,11 @@ PixiJSViewActionStore = (function () {
 	var _pixiRenderer = null;
 	var _pixiRootContainer = null;
 	var _plugin = null;
-	var handleLayoutEventXX = function handleLayoutEventXX (action) {
+	/**
+	 * Handle events originating in the view.  These will be targeted at the name of the store
+	 * @param {object} action
+	 */
+	var handleLayoutViewEvents = function handleLayoutViewEvents (action) {
 		switch (action.constructor) {
 		case Message.SetPixiContext:
 			console.log('Message.SetPixiContext .. FOUND');
