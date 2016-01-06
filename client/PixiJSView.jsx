@@ -22,8 +22,6 @@
  * THE SOFTWARE.
  */
 
-var _testNoPlugin = true;
-
 PixiJSView = React.createClass({
     proptypes: {
 		// optional
@@ -54,43 +52,6 @@ PixiJSView = React.createClass({
 			}
 		}
 	},
-	setupStore: function () {
-		if (this.props.store) {
-			if (this.props.store.hasOwnProperty('name')) {
-				let storeName = this.props.store.name;
-				let listener = function () {
-					console.log('Event: ' + storeName);
-					// Guard setState with isMounted()
-					// If we are mounted, setState() so any jsx view related stuff can be handled if needed
-					if (this.isMounted()) {
-						console.log('Event: ' + storeName + ', mounted');
-						// Pass the state to the real component whenever the store updates the state
-						this.setState(this.getStateFromStore());
-					}
-					else {
-						// If not mounted, send state to the plugin and let it deal with it.  Caveat Emptor.
-						this.plugin.handleActionUnmounted(this.getStateFromStore().action);
-					}
-				}.bind(this);
-				EventEx.on(storeName, listener);
-			}
-		}
-	},
-	getPluginFromState: function () {
-		if (this.plugin) {
-			return plugin;
-		}
-		else {
-			if (this.state && this.state.hasOwnProperty('plugin')) {
-				this.plugin = this.state.plugin;
-				return this.plugin;
-
-			}
-			else {
-				return null;
-			}
-		}
-	},
 	/**
 	 * For pixijs components which render themselves, this is a one time action
 	 * @returns {XML}
@@ -111,9 +72,6 @@ PixiJSView = React.createClass({
 		let renderCanvas = this.refs.pixiJSCanvas;
 		console.log('componentDidMount, canvas: ' + renderCanvas);
         this.configureCanvas(renderCanvas);
-		// get the plugin renderer
-		this.plugin = this.getPluginFromState();
-		this.setupStore();
 
 		// Do some basic pixijs setup
 		if (!this.pixiRenderer) {
@@ -122,15 +80,8 @@ PixiJSView = React.createClass({
 		if (!this.pixiRootContainer) {
 			this.pixiRootContainer = new PIXI.Container();
 		}
-		if (_testNoPlugin) {
-			Dispatcher.dispatch(this.props.store.name, new Message.SetPixiContext(this.pixiRenderer, this.pixiRootContainer));
-		}
-		else {
-			// Give the plugin renderer pixi context we setup here
-			if (this.plugin) {
-				this.plugin.setContext(this.pixiRenderer, this.pixiRootContainer);
-			}
-		}
+		// Set our context into the store since it and the associated plugin will be directly manipulating this component
+		Dispatcher.dispatch(this.props.store.name, new Message.SetPixiContext(this.pixiRenderer, this.pixiRootContainer));
 		
 		// Enable animation
 		this.runAnimation = true;
@@ -148,16 +99,12 @@ PixiJSView = React.createClass({
 		window.removeEventListener('resize', this.handleResize);
 	},
 	/**
-	 * This is where we proxy action to plugin and also prevent vdom activity
+	 * This is where we prevent vdom activity
 	 * @param nextProps
 	 * @param nextState
 	 * @returns {boolean}
 	 */
 	shouldComponentUpdate: function shouldComponentUpdate (nextProps, nextState) {
-		let action = nextState.action;
-		if (this.plugin) {
-			this.plugin.handleAction(action);
-		}
 		return !this.isMounted();
 	},
 	/**
@@ -180,8 +127,12 @@ PixiJSView = React.createClass({
         canvas.height = height;
         canvas.width = width;
     },
+	/**
+	 * Debounced resize handler
+	 * @param {*} e - not used
+	 */
 	handleResize: function handleResize (e) {
-		console.log('handleResize: ' + e);
+		//console.log('handleResize: ' + e);
 		let renderCanvas = this.refs.pixiJSCanvas;
 		this.rtime = new Date();
 		this.timeout = false;
