@@ -121,6 +121,7 @@ ThreeJSViewActionStore = (function () {
 	var _threeScene = null;
 	var _threeCamera = null;
 	var _threeRenderer = null;
+	var _canvas = null;
 	var _plugin = null;
 	/**
 	 * Handle events originating in the view.  These will be targeted at the name of the store
@@ -128,13 +129,20 @@ ThreeJSViewActionStore = (function () {
 	 */
 	var handleRenderViewEvents = function handleRenderViewEvents (action) {
 		switch (action.constructor) {
-		case Message.SetThreeContext:
-			console.log('Message.SetThreeContext .. FOUND');
+		case Message.ActionNotifyComponentMounted:
+		//case Message.SetThreeContext:
+			console.log('Message.ActionNotifyComponentMounted .. FOUND');
+			_canvas = action.canvas;
 			_threeScene = action.threeScene;
 			_threeCamera = action.threeCamera;
 			_threeRenderer = action.threeRenderer;
-			_plugin.setContext(_threeScene, _threeCamera, _threeRenderer);
+			_plugin.setContext(_canvas, _threeScene, _threeCamera, _threeRenderer);
+			break;
+		case Message.ActionNotifyComponentWillUnmount:
+			_plugin.clearContext();
+			break;
 		}
+		
 	};
 	/**
 	 * Handle state of store, emit appropriate actions to the view/plugin

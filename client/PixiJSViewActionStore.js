@@ -154,6 +154,14 @@ ActionText = class ActionText extends AbstractAction {
 	}
 };
 
+ActionResizeLayout = class ActionResizeLayout extends AbstractAction {
+	constructor (w, h) {
+		super();
+		this.w = w;
+		this.h = h;
+	}
+};
+
 /**
  * Singleton layout store
  * @type {{setPlugin, getAll, getState}}
@@ -219,6 +227,9 @@ PixiJSViewActionStore = (function () {
 		case LayoutActionType.NotifySelectedPart:
 			_currentSelectedPart = action.selectedPart;
 			emit = false;
+			break;
+		case LayoutActionType.ResizeLayout:
+			_state.action = new ActionResizeLayout(action.w, action.h);
 			break;
 		case NavBarTagActionType.Fit:
 			_state.action = new ActionFitLayout(FitType.FitTypeXY);

@@ -37,7 +37,7 @@ ThreeJSView = React.createClass({
         canvasHeight: React.PropTypes.number.isRequired
     },
 	getDefaultProps: function () {
-		return {canvasWidth: 900, canvasHeight: 700, testMode: false, WIDTH: 400, HEIGHT: 300, ASPECT: 400/300, VIEW_ANGLE: 75, NEAR: 0.1, FAR: 1000};
+		return {canvasWidth: 900, canvasHeight: 700, testMode: false, WIDTH: 400, HEIGHT: 300, ASPECT: 1920/1080, VIEW_ANGLE: 75, NEAR: 0.1, FAR: 1000};
 	},
 	getInitialState: function getInitialState () {
 		return this.getStateFromStore();
@@ -193,14 +193,14 @@ ThreeJSView = React.createClass({
 			this.threeControls.addEventListener('change', this.render);
 		}
 		this.threeControls.handleResize();
-		if (_testNoPlugin) {
-			Dispatcher.dispatch(this.props.store.name, new Message.SetThreeContext(this.threeScene, this.threeCamera, this.threeRenderer));
-		}
-		else {
-			if (this.plugin) {
-				this.plugin.setContext(this.threeScene, this.threeCamera, this.threeRenderer);
-			}
-		}
+		//if (_testNoPlugin) {
+		//	Dispatcher.dispatch(this.props.store.name, new Message.SetThreeContext(this.threeScene, this.threeCamera, this.threeRenderer));
+		//}
+		//else {
+		//	if (this.plugin) {
+		//		this.plugin.setContext(this.threeScene, this.threeCamera, this.threeRenderer);
+		//	}
+		//}
 		
 		var light = new THREE.SpotLight(0xFFFFFF);
 		light.position.set(100,100,2500);
@@ -210,15 +210,17 @@ ThreeJSView = React.createClass({
 		this.runAnimation = true;
 		this.threeAnimate();
 		this.threeRender();
-		window.addEventListener('resize', this.handleResize)
+		Dispatcher.dispatch(this.props.store.name, new Message.ActionNotifyComponentMounted(renderCanvas, this.threeScene, this.threeCamera, this.threeRenderer));
+		window.addEventListener('resize', this.handleResize);
 	},
 	/**
 	 * Clear out threejs context on unmount
 	 */
 	componentWillUnmount: function componentWillUnmount () {
+		window.removeEventListener('resize', this.handleResize);
 		this.runAnimation = false;
 		this.threeControls = this.threeScene = this.threeCamera = this.threeRenderer = null;
-		window.removeEventListener('resize', this.handleResize)
+		Dispatcher.dispatch(this.props.store.name, new Message.ActionNotifyComponentWillUnmount());
 	},
 	/**
 	 * This is where we proxy action to plugin and also prevent vdom activity

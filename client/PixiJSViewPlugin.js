@@ -87,6 +87,7 @@ PixiLayout = (function () {
 	 */
 	var _rectFromPart = function _rectFromPart (part) {
 		let ul = _layoutFrame.snapToGrid(part.position);
+		//console.log('_rectFromPart: ' + ul.x + ', ' + ul.y + ' : ' + part.width + ', ' + part.height);
 		return {x: ul.x, y: ul.y, w: part.width, h: part.height};
 	};
 	/**
@@ -407,7 +408,8 @@ PixiLayout = (function () {
 			if (interactionData.data.global.x !== Infinity) {
 				let {x, y, valid} = this.computeRelativeMouseLocation(interactionData.data.global);
 				this.mouseMvPt = _layoutFrame.snapToGrid({x: x, y: y});
-				//console.log('mouseMove: ' + this.mouseMvPt.x + ', ' + this.mouseMvPt.x + ' : valid: ' + valid);
+				//console.log('mouseMove: ' + this.mouseMvPt.x + ', ' + this.mouseMvPt.y + 
+				//	' : ' + this.mouseMvPt.x * _scalePixelToReal + ', ' + this.mouseMvPt.y * _scalePixelToReal + ' : valid: ' + valid);
 
 				// Try to detect mouseover, mouseout
 				if (this.currentMoveState) {
@@ -716,7 +718,7 @@ PixiLayout = (function () {
 				_partsMgr.enumeratePartsRev(function (part) {
 					if (Utils.boxIntersectBox(_rectFromPart(part), currentBox)) {
 						// satisfied
-						console.log('_finishSelectBox: ptInBox found at i: ' + i);
+						//console.log('_finishSelectBox: ptInBox found at i: ' + i);
 						// Highlight via tint, if not selected, set to red, if selected, clear to white
 						fn(part);
 					}
@@ -735,6 +737,7 @@ PixiLayout = (function () {
 				_partsMgr.enumeratePartsRev(function (part) {
 					if (Utils.pointInBox(toPt, _rectFromPart(part))) {
 						// satisfied
+						console.log('finishSelectBox: toPt: ' + toPt.x + ', ' + toPt.y );
 						// Highlight via tint, if not selected, set to red, if selected, clear to white
 						this.selectPart(part);
 						return true;
@@ -1368,6 +1371,13 @@ PixiLayout = (function () {
 			case ActionSetAbstractPart:
 				console.log('handleAction[ActionSetAbstractPart]');
 				_currentAbstractPart = action.abstractPart;
+				break;
+			case ActionResizeLayout:
+				if (this.lastResizeW !== action.w || this.lastResizeH !== action.h) {
+					this.lastResizeW = action.w;
+					this.lastResizeH = action.h;
+					this.resizeLayout(action.w, action.h);
+				}
 				break;
 			case ActionSetMouseMode:
 				_mouseMgr.setMouseMode(action.mouseMode);

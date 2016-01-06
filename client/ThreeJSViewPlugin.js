@@ -22,6 +22,7 @@
  * THE SOFTWARE.
  */
 var testFlat = true;
+var testMouse = false;
 
 ThreeJSViewPlugin = class ThreeJSViewPlugin {
 	constructor () {
@@ -36,12 +37,41 @@ ThreeJSViewPlugin = class ThreeJSViewPlugin {
 	 * @param threeCamera
 	 * @param threeRenderer
 	 */
-	setContext (threeScene, threeCamera, threeRenderer) {
+	setContext (canvas, threeScene, threeCamera, threeRenderer) {
+		console.log('ThreeJSViewPlugin:setContext');
+		this.canvas = canvas;
 		this.threeScene = threeScene;
 		this.threeCamera = threeCamera;
 		this.threeRenderer = threeRenderer;
+		if (testMouse) {
+			// Load mouse handlers to canvas
+			this.canvas.onmouseenter = function (event) {
+				console.log('mouse enter canvas');
+			};
+			this.canvas.onmouseleave = function () {
+				console.log('mouse exit canvas');
+			};
+			this.canvas.onmousemove = (event) => this.mouseMoveHandler(event);
+		}
 	}
-
+	mouseMoveHandler (event) {
+		console.log('mouse move canvas: ' + event.pageX + ', ' + event.pageY);
+		var rPos = this.mouseToWorld(event.clientX, event.clientY, window.innerWidth, window.innerHeight);
+		console.log('mouse move rPos: ' + rPos.x + ', ' + rPos.y);
+	}
+	clearContext () {
+		console.log('ThreeJSViewPlugin:clearContext');
+		if (testMouse) {
+			// clear mouse handlers
+			this.canvas.onmouseenter = null;
+			this.canvas.onmouseexit = null;
+		}
+		// Clear context
+		this.canvas = null;
+		this.threeScene = null;
+		this.threeCamera = null;
+		this.threeRenderer = null;
+	}
 	/**
 	 * Called from shouldComponentUpdate when it proxies action to here
 	 * @param {object} action - See ActionClass and extensions in the store
@@ -172,25 +202,28 @@ ThreeJSViewPlugin = class ThreeJSViewPlugin {
 	 */
 	panCameraAcrossScene (direction, delta) {
 		if (direction === ActionType.PanLt) {
-			if (testFlat) {
-				// Set to layout mode
-				this.ground.visible = false;
-				this.lawn.position.y = 20;
-				this.lawn.rotation.x = 0;
-			}
-			else {
-				this.threeScene.position.x -= delta;
-			}
+			// Test code to simulate 2D layout
+			//if (testFlat) {
+			//	// Set to layout mode
+			//	this.ground.visible = false;
+			//	this.lawn.position.y = 20;
+			//	this.lawn.rotation.x = 0;
+			//}
+			//else {
+			//	this.threeScene.position.x -= delta;
+			//}
+			this.threeScene.position.x -= delta;
 		}
 		else if (direction === ActionType.PanRt) {
-			if (testFlat) {
-				this.ground.visible = true;
-				this.lawn.position.y = -20;
-				this.lawn.rotation.x = -Math.PI/2; //-90 degrees around the xaxis
-			}
-			else {
-				this.threeScene.position.x += delta;
-			}
+			//if (testFlat) {
+			//	this.ground.visible = true;
+			//	this.lawn.position.y = -20;
+			//	this.lawn.rotation.x = -Math.PI/2; //-90 degrees around the xaxis
+			//}
+			//else {
+			//	this.threeScene.position.x += delta;
+			//}
+			this.threeScene.position.x += delta;
 		}
 		this.threeCamera.lookAt(this.threeScene.position);
 	}
@@ -214,6 +247,17 @@ ThreeJSViewPlugin = class ThreeJSViewPlugin {
 		thiscamera.raycaster.setFromCamera(camera.mouse, this);
 		var object = this.raycaster.intersectObject(this.plane)[0];
 		position.copy(object !== undefined ? object.point : position);
+	}
+	
+	mouseToWorld (x, y, w, h) {
+		var vector = new THREE.Vector3();
+		vector.set((x / this.canvas.width) * 2 - 1,
+		- (y / (this.canvas.height)) * 2 + 1,
+		0.5);
+		vector.unproject (this.threeCamera);
+		var dir = vector.sub(this.threeCamera.position).normalize();
+		var distance = -this.threeCamera.position.z / dir.z;
+		return this.threeCamera.position.clone().add(dir.multiplyScalar(distance));
 	}
 
 	/**
@@ -243,12 +287,12 @@ ThreeJSViewPlugin = class ThreeJSViewPlugin {
 			break;
 		}
 		let mesh = new THREE.Mesh(geometry, material);
-		if (testFlat) {
-			mesh.position.x = part.locus.x * 10;
-			mesh.position.y = -(part.locus.y * 10);
-			mesh.rotation.y = Math.PI; //-90 degrees around the yaxis
-			this.lawn.add(mesh);
-		}
+		// part.locus is UL in real units
+		mesh.position.x = (part.locus.x + (part.width / 2)) * 10;
+		mesh.position.y = -((part.locus.y + (part.height / 2)) * 10);
+		mesh.rotation.y = -(Math.PI / 2); //-90 degrees around the yaxis
+		mesh.rotation.x = (Math.PI / 2); //+90 degrees around the xaxis
+		this.lawn.add(mesh);
 		//mesh.position.y = -20 + (depth / 2);
 		//mesh.rotation.y = -Math.PI/2; //-90 degrees around the yaxis
 		//// adjust x
@@ -267,7 +311,7 @@ ThreeJSViewPlugin = class ThreeJSViewPlugin {
 		this.midZ = dims.length / 2;
 		this.layoutOutline = ThreeJSViewPlugin.buildLayoutOutline(dims);
 		this.layout = ThreeJSViewPlugin.buildLayout(dims);
-		this.grid = ThreeJSViewPlugin.buildGrid(dims);
+		this.grid = this.buildGrid(dims);
 		this.ground = ThreeJSViewPlugin.buildGround(dims);
 		
 		this.lawn = new THREE.Group();
@@ -314,12 +358,8 @@ ThreeJSViewPlugin = class ThreeJSViewPlugin {
 		//var material = new THREE.MeshPhongMaterial({ ambient: 0x050505, color: 0x0033ff, specular: 0x555555, shininess: 30 });
 		var material = new THREE.MeshBasicMaterial( { color: 0xd2b48c } );
 		var mesh = new THREE.Mesh(geometry, material);
-		if (testFlat) {
-			mesh.position.x = w/2;
-			mesh.position.y = -h/2;
-		}
-		//mesh.position.y = -20;
-		//mesh.rotation.x = -Math.PI/2; //-90 degrees around the xaxis
+		mesh.position.x = w/2;
+		mesh.position.y = -h/2;
 		mesh.doubleSided = true;
 		return mesh;
 	}
@@ -336,12 +376,8 @@ ThreeJSViewPlugin = class ThreeJSViewPlugin {
 		//var material = new THREE.MeshPhongMaterial({ ambient: 0x050505, color: 0x0033ff, specular: 0x555555, shininess: 30 });
 		var material = new THREE.MeshBasicMaterial( { color: 0xFFFFFF } );
 		var mesh = new THREE.Mesh(geometry, material);
-		if (testFlat) {
-			mesh.position.x = w/2;
-			mesh.position.y = -h/2;
-		}
-		//mesh.position.y = -20;
-		//mesh.rotation.x = -Math.PI/2; //-90 degrees around the xaxis
+		mesh.position.x = w/2;
+		mesh.position.y = -h/2;
 		mesh.doubleSided = true;
 		return mesh;
 	}
@@ -358,42 +394,36 @@ ThreeJSViewPlugin = class ThreeJSViewPlugin {
 		//var material = new THREE.MeshPhongMaterial({ ambient: 0x050505, color: 0x0033ff, specular: 0x555555, shininess: 30 });
 		var material = new THREE.MeshBasicMaterial( { color: 0xFF0000 } );
 		var mesh = new THREE.Mesh(geometry, material);
-		if (testFlat) {
-			mesh.position.x = w/2;
-			mesh.position.y = -h/2;
-		}
+		mesh.position.x = w/2;
+		mesh.position.y = -h/2;
 		//mesh.scale.multiplyScalar(1.05);
 		return mesh;
 	}
-	static buildGrid (dims) {
+	buildGrid (dims) {
 		// create the particle variables
-		var particleCount = 1800,
-			particles = new THREE.Geometry(),
+		var particles = new THREE.Geometry(),
 			pMaterial = new THREE.PointCloudMaterial({
 				color: 0xFF0000,
-				size: .3
-			});
+				size: .4
+			}),
+			midX = (dims.width * 10) / 2,
+			midY = (dims.length * 10) / 2,
+			startRowX = this.layout.position.x - midX,
+			startRowY = this.layout.position.y + midY,
+			stopRowX = startRowX + (dims.width * 10),
+			gridSpacing = Session.get(Constants.gridSpacing) / 10;
 
 		// now create the individual particles
-		for (var p = 0; p < particleCount; p++) {
-
-			// create a particle with random
-			// position values, -250 -> 250
-			var pX = Math.random() * 500 - 250,
-				pY = Math.random() * 500 - 250,
-				pZ = 0;
-
-			// add it to the geometry
-			particles.vertices.push(new THREE.Vector3(pX, pY, pZ));
+		for (var pY = startRowY, stopRowY = startRowY - (dims.length * 10); pY >= stopRowY; pY -= gridSpacing) {
+			for (var pX = startRowX; pX <= stopRowX; pX += gridSpacing) {
+				particles.vertices.push(new THREE.Vector3(pX, pY, 0));
+			}
 		}
 
 		// create the particle system
-		var particleSystem = new THREE.ParticleSystem(
+		return new THREE.ParticleSystem(
 			particles,
 			pMaterial);
-
-		// add it to the scene
-		return particleSystem;
 	}
 };
 

@@ -58,7 +58,9 @@ Template.info_layout_part.onDestroyed(function () {
 Template.info_layout_part.helpers({
 	location: function () {
 		console.log('location');
-		return {x: _selectedItem.locus.x.toFixed(2), y: _selectedItem.locus.y.toFixed(2)};
+		let x = _selectedItem.locus.x + (_selectedItem.width / 2),
+			y = _selectedItem.locus.y + (_selectedItem.height / 2);
+		return {x: x.toFixed(2), y: y.toFixed(2)};
 	},
 	carouselId: function () {
 		return carouselId;
