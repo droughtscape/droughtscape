@@ -71,17 +71,7 @@ ThreeJSView = React.createClass({
 				console.log('handleResize: FIRES');
 				this.configureCanvas(renderCanvas);
 				this.threeControls.handleResize();
-				if (this.resizeLayout) {
-					this.resizeLayout(renderCanvas.width, renderCanvas.height);
-				}
-				else if (this.plugin) {
-					if (this.plugin.resizeLayout) {
-						this.resizeLayout = function (w, h) {
-							this.plugin.resizeLayout(w, h);
-						};
-						this.resizeLayout(renderCanvas.width, renderCanvas.height);
-					}
-				}
+				Dispatcher.dispatch('render', new Message.ActionNotifyResize(renderCanvas.width, renderCanvas.height));
 			}
 		};
 		if (this.timeout === false) {

@@ -21,8 +21,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-var testFlat = true;
-var testMouse = false;
 
 ThreeJSViewPlugin = class ThreeJSViewPlugin {
 	constructor () {
@@ -33,9 +31,10 @@ ThreeJSViewPlugin = class ThreeJSViewPlugin {
 
 	/**
 	 * This should be called once the threejs engine is initialized
-	 * @param threeScene
-	 * @param threeCamera
-	 * @param threeRenderer
+	 * @param {object} canvas - dom element that threejs is rendering onto
+	 * @param {object} threeScene
+	 * @param {object} threeCamera
+	 * @param {object} threeRenderer
 	 */
 	setContext (canvas, threeScene, threeCamera, threeRenderer) {
 		console.log('ThreeJSViewPlugin:setContext');
@@ -43,29 +42,13 @@ ThreeJSViewPlugin = class ThreeJSViewPlugin {
 		this.threeScene = threeScene;
 		this.threeCamera = threeCamera;
 		this.threeRenderer = threeRenderer;
-		if (testMouse) {
-			// Load mouse handlers to canvas
-			this.canvas.onmouseenter = function (event) {
-				console.log('mouse enter canvas');
-			};
-			this.canvas.onmouseleave = function () {
-				console.log('mouse exit canvas');
-			};
-			this.canvas.onmousemove = (event) => this.mouseMoveHandler(event);
-		}
 	}
-	mouseMoveHandler (event) {
-		console.log('mouse move canvas: ' + event.pageX + ', ' + event.pageY);
-		var rPos = this.mouseToWorld(event.clientX, event.clientY, window.innerWidth, window.innerHeight);
-		console.log('mouse move rPos: ' + rPos.x + ', ' + rPos.y);
-	}
+
+	/**
+	 * Should be called when the component is unloading
+	 */
 	clearContext () {
 		console.log('ThreeJSViewPlugin:clearContext');
-		if (testMouse) {
-			// clear mouse handlers
-			this.canvas.onmouseenter = null;
-			this.canvas.onmouseexit = null;
-		}
 		// Clear context
 		this.canvas = null;
 		this.threeScene = null;
@@ -73,7 +56,7 @@ ThreeJSViewPlugin = class ThreeJSViewPlugin {
 		this.threeRenderer = null;
 	}
 	/**
-	 * Called from shouldComponentUpdate when it proxies action to here
+	 * Called directly from the store when it proxies action to here
 	 * @param {object} action - See ActionClass and extensions in the store
 	 */
 	handleAction (action) {
@@ -109,6 +92,13 @@ ThreeJSViewPlugin = class ThreeJSViewPlugin {
 			break;
 		case ActionAddMesh:
 			this.threeScene.add(action.mesh);
+			break;
+		case ActionResizeLayout:
+			if (this.lastResizeW !== action.w || this.lastResizeH !== action.h) {
+				this.lastResizeW = action.w;
+				this.lastResizeH = action.h;
+				this.resizeLayout(action.w, action.h);
+			}
 			break;
 		}
 	}
@@ -176,7 +166,13 @@ ThreeJSViewPlugin = class ThreeJSViewPlugin {
 
 		this.threeCamera.lookAt(this.threeScene.position);
 	}
-	
+
+	/**
+	 * Debug 
+	 * @param x
+	 * @param y
+	 * @param z
+	 */
 	drawVector (x, y, z) {
 		if (this.cameraVector) {
 			let selectedObject = this.threeScene.getObjectByName('cameraVector');
@@ -189,7 +185,6 @@ ThreeJSViewPlugin = class ThreeJSViewPlugin {
 		var geometry = new THREE.Geometry();
 		geometry.vertices.push(new THREE.Vector3(x, y, z));
 		geometry.vertices.push(new THREE.Vector3(0, 0, 0));
-		//geometry.vertices.push(new THREE.Vector3(10, 0, 0));
 		var cameraVector = new THREE.Line(geometry, material);
 		cameraVector.name = 'cameraVector';
 		this.threeScene.add(cameraVector);
@@ -202,27 +197,9 @@ ThreeJSViewPlugin = class ThreeJSViewPlugin {
 	 */
 	panCameraAcrossScene (direction, delta) {
 		if (direction === ActionType.PanLt) {
-			// Test code to simulate 2D layout
-			//if (testFlat) {
-			//	// Set to layout mode
-			//	this.ground.visible = false;
-			//	this.lawn.position.y = 20;
-			//	this.lawn.rotation.x = 0;
-			//}
-			//else {
-			//	this.threeScene.position.x -= delta;
-			//}
 			this.threeScene.position.x -= delta;
 		}
 		else if (direction === ActionType.PanRt) {
-			//if (testFlat) {
-			//	this.ground.visible = true;
-			//	this.lawn.position.y = -20;
-			//	this.lawn.rotation.x = -Math.PI/2; //-90 degrees around the xaxis
-			//}
-			//else {
-			//	this.threeScene.position.x += delta;
-			//}
 			this.threeScene.position.x += delta;
 		}
 		this.threeCamera.lookAt(this.threeScene.position);
@@ -248,7 +225,15 @@ ThreeJSViewPlugin = class ThreeJSViewPlugin {
 		var object = this.raycaster.intersectObject(this.plane)[0];
 		position.copy(object !== undefined ? object.point : position);
 	}
-	
+
+	/**
+	 * Exploratory code to map mouse to world coordinates.  Not used
+	 * @param x
+	 * @param y
+	 * @param w
+	 * @param h
+	 * @returns {*}
+	 */
 	mouseToWorld (x, y, w, h) {
 		var vector = new THREE.Vector3();
 		vector.set((x / this.canvas.width) * 2 - 1,
@@ -291,6 +276,7 @@ ThreeJSViewPlugin = class ThreeJSViewPlugin {
 		mesh.position.x = (part.locus.x + (part.width / 2)) * 10;
 		mesh.position.y = -((part.locus.y + (part.height / 2)) * 10);
 		mesh.rotation.y = -(Math.PI / 2); //-90 degrees around the yaxis
+		// This might not be necessary.  Currently, it will cause parts to "face the camera"
 		mesh.rotation.x = (Math.PI / 2); //+90 degrees around the xaxis
 		this.lawn.add(mesh);
 		//mesh.position.y = -20 + (depth / 2);
@@ -399,6 +385,12 @@ ThreeJSViewPlugin = class ThreeJSViewPlugin {
 		//mesh.scale.multiplyScalar(1.05);
 		return mesh;
 	}
+
+	/**
+	 * Creates a grid that matches the layout grid for user reference
+	 * @param {object} dims - width, length
+	 * @returns {THREE.ParticleSystem}
+	 */
 	buildGrid (dims) {
 		// create the particle variables
 		var particles = new THREE.Geometry(),

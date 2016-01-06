@@ -204,7 +204,7 @@ PixiJSViewActionStore = (function () {
 		let emit = true;
 		console.log('handleLayoutEvent:ENTRY action.action: ' + action.action);
 		switch (action.action) {
-		case LayoutActionType.Init:
+		case ViewActionType.Init:
 			_state.action = new ActionInitLayout(FitType.FitTypeXY, 
 				action.offset, 
 				(_currentAbstractPart) ? MouseMode.Create : MouseMode.Select, 
@@ -228,7 +228,7 @@ PixiJSViewActionStore = (function () {
 			_currentSelectedPart = action.selectedPart;
 			emit = false;
 			break;
-		case LayoutActionType.ResizeLayout:
+		case ViewActionType.ResizeLayout:
 			_state.action = new ActionResizeLayout(action.w, action.h);
 			break;
 		case NavBarTagActionType.Fit:

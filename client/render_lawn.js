@@ -27,7 +27,7 @@
 Template.render_lawn.onRendered(function () {
 	var infoContainer = document.getElementById('info-container');
 	var offset = infoContainer.offsetTop + infoContainer.clientHeight;
-	Dispatcher.dispatch('render', new Message.ActionInit(RenderActionType.Init, offset));
+	Dispatcher.dispatch('render', new Message.ActionInit(offset));
 });
 
 Template.render_lawn.helpers({

@@ -130,7 +130,6 @@ ThreeJSViewActionStore = (function () {
 	var handleRenderViewEvents = function handleRenderViewEvents (action) {
 		switch (action.constructor) {
 		case Message.ActionNotifyComponentMounted:
-		//case Message.SetThreeContext:
 			console.log('Message.ActionNotifyComponentMounted .. FOUND');
 			_canvas = action.canvas;
 			_threeScene = action.threeScene;
@@ -139,6 +138,10 @@ ThreeJSViewActionStore = (function () {
 			_plugin.setContext(_canvas, _threeScene, _threeCamera, _threeRenderer);
 			break;
 		case Message.ActionNotifyComponentWillUnmount:
+			_canvas = null;
+			_threeScene = null;
+			_threeCamera = null;
+			_threeRenderer = null;
 			_plugin.clearContext();
 			break;
 		}
@@ -150,10 +153,11 @@ ThreeJSViewActionStore = (function () {
 	 */
 	var handleRenderEvent = function handleRenderEvent (action) {
 		console.log('handleRenderEvent: action: ' + action);
+		let emit = true;
 		// Currently, every action requires emit so we can fire the emit after the case.
 		// if it turns out we have to build state with multiple actions, then we have to emit on each branch
 		switch (action.action) {
-		case RenderActionType.Init:
+		case ViewActionType.Init:
 			_state.action = new ActionInitLawn(CreateLawnData.lawnData.shape.dims, action.offset);
 			break;
 		case RenderActionType.NewPart:
@@ -161,6 +165,9 @@ ThreeJSViewActionStore = (function () {
 			break;
 		case RightBarTagActionType.ZoomIn:
 			_state.action = new ActionZoom(ActionType.ZoomIn, 0.2);
+			break;
+		case ViewActionType.ResizeLayout:
+			_state.action = new ActionResizeLayout(action.w, action.h);
 			break;
 		case RightBarTagActionType.ZoomOut:
 			_state.action = new ActionZoom(ActionType.ZoomOut, 0.2);
@@ -185,10 +192,13 @@ ThreeJSViewActionStore = (function () {
 		case RightBarTagActionType.RotateCameraRt:
 			_state.action = new ActionRotate(ActionType.RotateRt, 0.2);
 			break;
+		default:
+			emit = false;
+			break;
 		}
-		_plugin.handleAction(_state.action);
-		//
-		//EventEx.emit(EVENT_TYPE, {data: null});
+		if (emit) {
+			_plugin.handleAction(_state.action);
+		}
 	};
 	
 	var _state = {

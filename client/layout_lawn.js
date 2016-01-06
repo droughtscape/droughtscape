@@ -41,7 +41,7 @@ Template.layout_lawn.onRendered(function () {
 	var infoContainer = document.getElementById('info-container');
 	var offset = infoContainer.offsetTop + infoContainer.clientHeight;
 
-	Dispatcher.dispatch('layout', new Message.ActionInit(LayoutActionType.Init, offset));
+	Dispatcher.dispatch('layout', new Message.ActionInit(offset));
 	console.log('layout_lawn.onRendered');
 });
 
