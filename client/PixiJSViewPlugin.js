@@ -37,7 +37,12 @@ PixiLayout = (function () {
 	var _unitW = 50;
 	var _scaleRealToPixel;
 	var _scalePixelToReal;
-
+	/**
+	 * Dispatch within setTimeout to avoid any dispatch within a dispatch issues
+	 * @param {string} target - label of the dispatch destination
+	 * @param {*} message - event data
+	 * @private
+	 */
 	var _safeDispatch = function _safeDispatch (target, message) {
 		setTimeout(function () {
 			Dispatcher.dispatch(target, message);
@@ -209,6 +214,10 @@ PixiLayout = (function () {
 			this.dx = -dx;
 			this.dy = -dy;
 		}
+
+		/**
+		 * Undo any move motion
+		 */
 		undoMe () {
 			for (var i=0, len=this.movedItems.length; i< len; ++i) {
 				let part = this.movedItems[i];
@@ -222,6 +231,10 @@ PixiLayout = (function () {
 		constructor () {
 			super(UndoType.Uncopy);
 		}
+
+		/**
+		 * Since copy does not affect the visual field and just copies parts to a buffer, just clear the buffer
+		 */
 		undoMe () {
 			_partsMgr.copyBuffer = [];
 		}
@@ -231,6 +244,10 @@ PixiLayout = (function () {
 			super(UndoType.Unpaste);
 			this.pasteItems = items.slice();
 		}
+
+		/**
+		 * Create a selection of the pasted items and delete them
+		 */
 		undoMe () {
 			// create a clean selected list of the pasteItems and then delete them with _delete's undo disabled
 			_selectionMgr.clearSelection();
@@ -441,6 +458,10 @@ PixiLayout = (function () {
 			}
 		}
 		// Mouse handlers
+		/**
+		 * Handle all mouse button down events
+		 * @param {object} pixelPt
+		 */
 		mouseDnSelectHandler (pixelPt) {
 			if (_selectionMgr.validSelection() > 0) {
 				if (_selectionMgr.ptOnSelection(pixelPt)) {
@@ -479,25 +500,62 @@ PixiLayout = (function () {
 				}
 			}
 		}
+
+		/**
+		 * Handles mouse move selection events
+		 * @param {object} pixelPt
+		 */
 		mouseMvSelectHandler (pixelPt) {
 			_selectionMgr.drawSelectBox(this.mouseDnPt, this.mouseMvPt);
 		}
+
+		/**
+		 * Handles mouse up selection events
+		 * @param {object} pixelPt
+		 */
 		mouseUpSelectHandler (pixelPt) {
 			this.mouseMvHandler = null;
 			_selectionMgr.finishSelectBox(this.mouseDnPt, this.mouseUpPt);
 		}
+
+		/**
+		 * Empty handler for move mouse move events.  May be used later if we drag an image of the selection
+		 * @param {object} pixelPt
+		 */
 		mouseMvMoveHandler (pixelPt) {}
+
+		/**
+		 * Handles mouse move create events.  Primarily drags the mouse sprite
+		 * @param {*} noop
+		 * @param {object} pixelPt
+		 */
 		mouseMvCreateHandler (noop, pixelPt) {
 			this.moveMouseSprite(pixelPt);
 		}
+
+		/**
+		 * Handle mouse entry create event.
+		 * On entry to the mouse tracked surface, create the sprite image of the item we will create
+		 * @param {object} pixelPt
+		 */
 		mouseEnterCreateHandler (pixelPt) {
 			this.mouseMvHandler = (noop, pixelPt) => this.mouseMvCreateHandler(noop, pixelPt);
 			this.enableMouseSprite(true, pixelPt, _currentAbstractPart);
 		}
+
+		/**
+		 * Handle mouse exit create event
+		 * Clear state on exit 
+		 */
 		mouseLeaveCreateHandler () {
 			this.mouseMvHandler = null;
 			this.enableMouseSprite(false);
 		}
+
+		/**
+		 * Handle mouse up create event.  Creates a layout part at pixelPt
+		 * @param {object} pixelPt - pixel location to create the layout part
+		 */
 		mouseUpCreateHandler (pixelPt) {
 			if (this.isMouseUpDnSame() && _currentAbstractPart) {
 				var scalePixelToReal = _scalePixelToReal;
@@ -505,6 +563,11 @@ PixiLayout = (function () {
 					pixelPt.x, pixelPt.y);
 			}
 		}
+
+		/**
+		 * Handle mouse up move event.  Moves the selected set of parts to pixelPt
+		 * @param {object} pixelPt - pixel location to finish the move at
+		 */
 		mouseUpMoveHandler (pixelPt) {
 			this.mouseMvHandler = null;
 			_selectionMgr.finishMoveSelection(this.mouseDnPt, this.mouseUpPt);
@@ -579,6 +642,12 @@ PixiLayout = (function () {
 				}
 			}
 		}
+
+		/**
+		 * compute the center point of the mouse sprite
+		 * @param {object} pixelPt - mouse pointer upper left
+		 * @returns {object}
+		 */
 		computeCenterPt (pixelPt) {
 			let centerPt = {};
 			centerPt.x = pixelPt.x - (_unitW / 2);
@@ -586,7 +655,9 @@ PixiLayout = (function () {
 			return centerPt;
 		}
 	};
-	
+	/**
+	 * Manage selections
+	 */
 	SelectionMgr = class SelectionMgr {
 		constructor () {
 			this.selectedBox = null;
@@ -783,7 +854,9 @@ PixiLayout = (function () {
             return true;
         }
 	};
-    
+	/**
+	 * Manages parts actions
+	 */
     PartsMgr = class PartsMgr {
         constructor () {
             this.parts = new PIXI.Container();
@@ -1101,6 +1174,9 @@ PixiLayout = (function () {
 		}
 	};
 
+	/**
+	 * Manages layout frame actions like fit
+	 */
 	LayoutFrame = class LayoutFrame {
 		constructor () {
 			// default scaling
@@ -1321,7 +1397,9 @@ PixiLayout = (function () {
 		};
 
 	};
-
+	/**
+	 * Handles macro plugin activity like inbound action events
+	 */
 	PixiJSViewPlugin = class PixiJSViewPlugin {
 		constructor () {
 			this.pixiRenderer = null;
@@ -1344,7 +1422,7 @@ PixiLayout = (function () {
 			}
 		}
 		/**
-		 * Called from shouldComponentUpdate when it proxies action to here
+		 * Called from PixiJSViewStore.handleLayoutEvent
 		 * @param {object} action - See ActionClass and extensions in the store
 		 */
 		handleAction (action) {
