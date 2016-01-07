@@ -301,6 +301,7 @@ ThreeJSViewPlugin = class ThreeJSViewPlugin {
 		// part.locus is UL in real units
 		mesh.position.x = (part.locus.x + (part.width / 2)) * 10;
 		mesh.position.y = -((part.locus.y + (part.height / 2)) * 10);
+		mesh.position.z = ((part.height + part.abstractPart.heightOffset) / 2 * 10);
 		mesh.rotation.y = -(Math.PI / 2); //-90 degrees around the yaxis
 		// This might not be necessary.  Currently, it will cause parts to "face the camera"
 		mesh.rotation.x = (Math.PI / 2); //+90 degrees around the xaxis
