@@ -106,6 +106,12 @@ ActionAddMesh = class ActionAddMesh extends AbstractAction {
 	}
 };
 
+ActionResetView = class ActionResetView extends AbstractAction {
+	constructor () {
+		super();
+	}
+};
+
 
 
 ThreeJSViewActionStore = (function () {
@@ -191,6 +197,9 @@ ThreeJSViewActionStore = (function () {
 			break;
 		case RightBarTagActionType.RotateCameraRt:
 			_state.action = new ActionRotate(ActionType.RotateRt, 0.2);
+			break;
+		case NavBarTagActionType.Fit:
+			_state.action = new ActionResetView();
 			break;
 		default:
 			emit = false;

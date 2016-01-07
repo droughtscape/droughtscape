@@ -65,6 +65,16 @@ ThreeJSViewPlugin = class ThreeJSViewPlugin {
 		case ActionInitLawn:
 			this.offset = action.offset;
 			this.initLawn(action);
+			// Store initial state
+			this.initialState = {threeCamera: {position: {}}, threeScene: {position: {}}};
+			this.initialState.threeCamera.zoom = this.threeCamera.zoom;
+			this.initialState.threeCamera.position.x = this.threeCamera.position.x;
+			this.initialState.threeCamera.position.y = this.threeCamera.position.y;
+			this.initialState.threeCamera.position.z = this.threeCamera.position.z;
+			this.initialState.threeScene.position.x = this.threeScene.position.x;
+			this.initialState.threeScene.position.y = this.threeScene.position.y;
+			this.initialState.threeScene.position.z = this.threeScene.position.z;
+			
 			// Force a reset to get size correct
 			window.dispatchEvent(new Event('resize'));
 			break;
@@ -93,6 +103,9 @@ ThreeJSViewPlugin = class ThreeJSViewPlugin {
 		case ActionAddMesh:
 			this.threeScene.add(action.mesh);
 			break;
+		case ActionResetView:
+			this.resetView();
+			break;
 		case ActionResizeLayout:
 			if (this.lastResizeW !== action.w || this.lastResizeH !== action.h) {
 				this.lastResizeW = action.w;
@@ -111,6 +124,19 @@ ThreeJSViewPlugin = class ThreeJSViewPlugin {
 		console.log('handleActionUnmounted: ' + action.constructor.name);
 	}
 
+	/**
+	 * Reset the view to the initial state
+	 */
+	resetView () {
+		this.threeCamera.zoom = this.initialState.threeCamera.zoom;
+		this.threeCamera.position.x = this.initialState.threeCamera.position.x;
+		this.threeCamera.position.y = this.initialState.threeCamera.position.y;
+		this.threeCamera.position.z = this.initialState.threeCamera.position.z;
+		this.threeScene.position.x = this.initialState.threeScene.position.x;
+		this.threeScene.position.y = this.initialState.threeScene.position.y;
+		this.threeScene.position.z = this.initialState.threeScene.position.z;
+		this.threeCamera.updateProjectionMatrix();
+	}
 	/**
 	 * Zooming functionality
 	 * @param {number} direction - scale in or out
