@@ -37,7 +37,7 @@ Template.nav_bar.onRendered(function () {
 		signin.style.lineHeight = '56px';
 		signin.fontSize = '1.6rem';
 	}
-	$(".dropdown-button").dropdown();
+	$(".dropdown-button").dropdown({hover: true});
 });
 
 // From useraccounts_materialize.js

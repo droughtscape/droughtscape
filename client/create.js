@@ -89,7 +89,7 @@ Template.shape_lawn.onCreated(function () {
 });
 
 Template.shape_lawn.onRendered(function () {
-	$(".dropdown-button").dropdown();
+	$(".dropdown-button").dropdown({hover: true});
 });
 
 Template.shape_lawn.onDestroyed(function () {
