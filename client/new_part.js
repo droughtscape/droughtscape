@@ -84,3 +84,9 @@ Template.new_part.onRendered(function () {
 		$('select').material_select();
 	})
 });
+
+Template.create_groundcover.onRendered(function () {
+	$(document).ready(function () {
+		$('select').material_select();
+	})
+});

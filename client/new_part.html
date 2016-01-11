@@ -27,9 +27,11 @@
             <div class="input-field col s6">
                 <select class="icons">
                     <option value="" disabled selected>Choose your option</option>
-                    <option value="" data-icon="http://lorempixel.com/580/250/nature/2" class="circle">Sphere</option>
-                    <option value="" data-icon="public/custom.png" class="circle">example 2</option>
-                    <option value="" data-icon="custom.png" class="circle">example 1</option>
+                    <option value="sphere" data-icon="mdi-action-face-unlock" class="circle">Sphere</option>
+                    <option value="cube" data-icon="custom.png" class="circle">Cube</option>
+                    <option value="cone" data-icon="public/custom.png" class="circle">Cone</option>
+                    <option value="inverted_cone" data-icon="custom.png" class="circle">Inverted Cone</option>
+                    <option value="cylinder" data-icon="custom.png" class="circle">Cylinder</option>
                 </select>
                 <label>Images in select</label>
             </div>
@@ -71,14 +73,46 @@
 </template>
 
 <template name="create_groundcover">
+    <label for="some_countries">Straight Forward</label>
+    <select name="some_countries" id="some_countries" class="icon-menu">
+        <option style="padding-left:0px;" value="">Select a Country</option>
+        <option style="background-image:url(http://lorempixel.com/580/250/nature/2);" value="US">USA</option>
+        <option style="background-image:url(public/custom.png)" value="IN">India</option>
+    </select>
     <h2>Create Groundcover</h2>
 </template>
 
 <template name="create_border">
+    <div class="row">
+        <form class="col s12">
+            <div class="row">
+                <div class="input-field col s6">
+                    <select class="icons">
+                        <option value="" disabled selected>Choose your option</option>
+                        <option value="" data-icon="http://lorempixel.com/580/250/nature/2">Sphere</option>
+                        <option value="" data-icon="public/custom.png" class="circle">example 2</option>
+                        <option value="" data-icon="custom.png" class="circle">example 1</option>
+                    </select>
+                    <label>Images in select</label>
+                </div>
+            </div>
+        </form>
+    </div>
     <h2>Create Border</h2>
 </template>
 
 <template name="create_paver">
+    <div class="row">
+        <form class="col s12">
+            <div class="row">
+                <div class="input-field col s6">
+                    <i class=mdi-action-face-unlock></i>
+                    <textarea id="icon_prefix2" class="materialize-textarea"></textarea>
+                    <label for="icon_prefix2">First Name</label>
+                </div>
+            </div>
+        </form>
+    </div>
     <h2>Create Paver</h2>
 </template>
 

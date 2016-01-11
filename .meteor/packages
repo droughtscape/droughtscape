@@ -14,7 +14,6 @@ useraccounts:materialize
 udondan:slick
 jquery
 fds:pixijs
-materialize:materialize@=0.97.0
 standard-minifiers
 meteor-base
 mobile-experience
@@ -34,3 +33,4 @@ raix:eventemitter
 react
 react-template-helper
 meteorflux:dispatcher
+materialize:materialize
