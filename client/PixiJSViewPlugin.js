@@ -49,6 +49,27 @@ PixiLayout = (function () {
 		});
 	};
 	/**
+	 * Helper to scale a pixel point (x, y) to real
+	 * @param {object} pixelPt
+	 * @returns {{x: number, y: number}}
+	 * @private
+	 */
+	var _scalePixelPtToRealPt = function _scalePixelPtToRealPt (pixelPt) {
+		return {x: pixelPt.x * _scalePixelToReal, y: pixelPt.y * _scalePixelToReal};
+	};
+	/**
+	 * Helper to scale a real point (x, y) to pixel
+	 * @param realPt
+	 * @returns {{x: number, y: number}}
+	 * @private
+	 */
+	var _scaleRealPtToPixelPt = function _scaleRealPtToPixelPt (realPt) {
+		return {x: realPt.x * _scaleRealToPixel, y: realPt.y * _scaleRealToPixel};
+	};
+	var _copyPt = function _copyPt (pt) {
+		return {x: pt.x, y: pt.y};
+	};
+	/**
 	 * _isSame function - determines if two points are identical
 	 * @param {object} p1 - object, point {x, y}
 	 * @param {object} p2 - object, point {x, y}
@@ -506,7 +527,8 @@ PixiLayout = (function () {
 		 * @param {object} pixelPt
 		 */
 		mouseMvSelectHandler (pixelPt) {
-			_selectionMgr.drawSelectBox(this.mouseDnPt, this.mouseMvPt);
+			_selectionMgr.setSelectBox(this.mouseDnPt, this.mouseMvPt);
+			_selectionMgr.drawSelectBox();
 		}
 
 		/**
@@ -756,21 +778,41 @@ PixiLayout = (function () {
 			//	', background.x: ' + background.innerX + ', background.y: ' + background.innerY);
 			selectBox.currentBox = null;
 		}
+		setSelectBox (startPixelPt, endPixelPt) {
+			let selectBox = _layoutFrame.selectBox;
+			selectBox.startPixelPt = startPixelPt;
+			selectBox.endPixelPt = endPixelPt;
+			selectBox.startRealPt = _scalePixelPtToRealPt(startPixelPt);
+			selectBox.endRealPt = _scalePixelPtToRealPt(endPixelPt);
+		}
+		drawSelectPt (selectPt) {
+			let selectBox = _layoutFrame.selectBox;
+			selectBox.beginFill(0xFF0000, 0.5);
+			selectPt = _layoutFrame.snapToGrid(selectPt);
+			selectBox.drawCircle(selectPt.x, selectPt.y, 3);
+		}
 		/**
 		 * drawSelectBox function - if in select mode, clear and redraw selection box if toPt != fromPt
 		 * @param {object} fromPt - x, y location we were at
 		 * @param {object} toPt - x, y location we are now at
 		 */
-		drawSelectBox(fromPt, toPt) {
+		drawSelectBox() {
 			let selectBox = _layoutFrame.selectBox;
+			let fromPt = selectBox.startPixelPt,
+				toPt = selectBox.endPixelPt;
 			if (selectBox.visible) {
+				selectBox.clear();
 				if (!_isSame(fromPt, toPt)) {
 					// Clear last box
-					selectBox.clear();
 					// Draw outline of final box
 					selectBox.currentBox = _computeRect(fromPt, toPt);
 					selectBox.beginFill(0xFF0000, 0.5);
 					selectBox.drawRect(selectBox.currentBox.x, selectBox.currentBox.y, selectBox.currentBox.w, selectBox.currentBox.h);
+				}
+				else {
+					selectBox.beginFill(0xFF0000, 0.5);
+					toPt = _layoutFrame.snapToGrid(toPt);
+					selectBox.drawCircle(toPt.x, toPt.y, 3);
 				}
 			}
 		}
@@ -781,8 +823,9 @@ PixiLayout = (function () {
 		 */
 		finishSelectBox (fromPt, toPt) {
 			let selectBox = _layoutFrame.selectBox;
+			this.setSelectBox(fromPt, toPt);
 			if (!_isSame(fromPt, toPt)) {
-				this.drawSelectBox(fromPt, toPt);
+				this.drawSelectBox();
 				this.clearSelection();
 				let currentBox = selectBox.currentBox;
 				let fn = (part) => this.selectPart(part);
@@ -1245,6 +1288,7 @@ PixiLayout = (function () {
 			this.background.drawRect(0, 0, width, height);
 			this.background.beginFill(0xFFFFFF);
 			this.background.drawRect(borderWidth, borderWidth, this.background.innerWidth, this.background.innerHeight);
+			//this.selectBox.clear();
 			box.position.x = x;
 			box.position.y = y;
 			// Safest to use the real session variables to determine _grid
@@ -1259,6 +1303,7 @@ PixiLayout = (function () {
 			curbText.y = this.background.height - curbText.height;
 			_plugin.pixiRenderer.bgndOffX = x;
 			_plugin.pixiRenderer.bgndOffY = y;
+			_selectionMgr.drawSelectBox();
 		}
 		/**
 		 * drawGrid function - draws a grid with xy spacing in the frame.  spacing is in cm
@@ -1333,6 +1378,11 @@ PixiLayout = (function () {
 				part.width = part.layoutPart.width * scaleRealToPixel;
 				part.height = part.layoutPart.height * scaleRealToPixel;
 			});
+			// Select box if visible
+			if (this.selectBox.visible) {
+				this.selectBox.startPixelPt = _scaleRealPtToPixelPt(this.selectBox.startRealPt);
+				this.selectBox.endPixelPt = _scaleRealPtToPixelPt(this.selectBox.endRealPt);
+			}
 		}
 
 		/**
