@@ -66,9 +66,6 @@ PixiLayout = (function () {
 	var _scaleRealPtToPixelPt = function _scaleRealPtToPixelPt (realPt) {
 		return {x: realPt.x * _scaleRealToPixel, y: realPt.y * _scaleRealToPixel};
 	};
-	var _copyPt = function _copyPt (pt) {
-		return {x: pt.x, y: pt.y};
-	};
 	/**
 	 * _isSame function - determines if two points are identical
 	 * @param {object} p1 - object, point {x, y}
@@ -778,6 +775,13 @@ PixiLayout = (function () {
 			//	', background.x: ' + background.innerX + ', background.y: ' + background.innerY);
 			selectBox.currentBox = null;
 		}
+
+		/**
+		 * Sets the select start and end point into the selectBox
+		 * Also stores real world coordinates so we can rescale the pixel ones as our scale changes
+		 * @param startPixelPt
+		 * @param endPixelPt
+		 */
 		setSelectBox (startPixelPt, endPixelPt) {
 			let selectBox = _layoutFrame.selectBox;
 			selectBox.startPixelPt = startPixelPt;
@@ -785,14 +789,10 @@ PixiLayout = (function () {
 			selectBox.startRealPt = _scalePixelPtToRealPt(startPixelPt);
 			selectBox.endRealPt = _scalePixelPtToRealPt(endPixelPt);
 		}
-		drawSelectPt (selectPt) {
-			let selectBox = _layoutFrame.selectBox;
-			selectBox.beginFill(0xFF0000, 0.5);
-			selectPt = _layoutFrame.snapToGrid(selectPt);
-			selectBox.drawCircle(selectPt.x, selectPt.y, 3);
-		}
 		/**
 		 * drawSelectBox function - if in select mode, clear and redraw selection box if toPt != fromPt
+		 * Gets the stored points from selectBox.startPixelPt, selectBox.endPixelPt
+		 *   => setSelectBox must be called 
 		 * @param {object} fromPt - x, y location we were at
 		 * @param {object} toPt - x, y location we are now at
 		 */
@@ -808,11 +808,13 @@ PixiLayout = (function () {
 					selectBox.currentBox = _computeRect(fromPt, toPt);
 					selectBox.beginFill(0xFF0000, 0.5);
 					selectBox.drawRect(selectBox.currentBox.x, selectBox.currentBox.y, selectBox.currentBox.w, selectBox.currentBox.h);
+					selectBox.endFill();
 				}
 				else {
 					selectBox.beginFill(0xFF0000, 0.5);
 					toPt = _layoutFrame.snapToGrid(toPt);
 					selectBox.drawCircle(toPt.x, toPt.y, 3);
+					selectBox.endFill();
 				}
 			}
 		}
@@ -844,6 +846,7 @@ PixiLayout = (function () {
 				selectBox.beginFill(0xFF0000, 0.5);
 				toPt = _layoutFrame.snapToGrid(toPt);
 				selectBox.drawCircle(toPt.x, toPt.y, 3);
+				selectBox.endFill();
 				// Store a select point, indicate with w, h == 0
 				selectBox.currentBox = {x: toPt.x, y: toPt.y, w: 0, h: 0};
 				// Assume sorted by z order, => search from back of list forward to find first selectable item under a point
@@ -858,6 +861,7 @@ PixiLayout = (function () {
 					}
 					return false;
 				});
+				_layoutFrame.centerPoint(toPt);
 			}
 		}
 		/**
@@ -1237,6 +1241,8 @@ PixiLayout = (function () {
 		 */
 		createLayoutFrame (x, y) {
 			console.log('createLayoutFrame');
+			this.borderWidth = 4;
+			this.centerPt = {x: _plugin.pixiRenderer.width / 2, y: _plugin.pixiRenderer.height};
 			this.box = new PIXI.Container();
 			this.box.interactive = true;
 			this.box.mousedown = (interactionData) => _mouseMgr.mouseDown(interactionData);
@@ -1267,13 +1273,13 @@ PixiLayout = (function () {
 		 * @param {number} y - y pixel position of frame - Allows centering
 		 * @param {number} width - pixel width of frame
 		 * @param {number} height - pixel height of frame
-		 * @param {number} borderWidth - pixel width of border
 		 */
-		modifyLayoutFrame (x, y, width, height, borderWidth) {
-			console.log('modifyLayoutFrame: ' + x + ', ' + y + ' : ' + width + ', ' + height + ' : ' + borderWidth)
+		modifyLayoutFrame (x, y, width, height) {
+			console.log('modifyLayoutFrame: ' + x + ', ' + y + ' : ' + width + ', ' + height);
 			let box = this.box,
 				houseText = this.houseText,
-				curbText = this.curbText;
+				curbText = this.curbText,
+				borderWidth = this.borderWidth;
 			this.background.clear();
 			// Now store positional info into background, even though we still have to explicitly draw
 			this.background.innerWidth = width - (2 * borderWidth);
@@ -1288,7 +1294,6 @@ PixiLayout = (function () {
 			this.background.drawRect(0, 0, width, height);
 			this.background.beginFill(0xFFFFFF);
 			this.background.drawRect(borderWidth, borderWidth, this.background.innerWidth, this.background.innerHeight);
-			//this.selectBox.clear();
 			box.position.x = x;
 			box.position.y = y;
 			// Safest to use the real session variables to determine _grid
@@ -1304,6 +1309,12 @@ PixiLayout = (function () {
 			_plugin.pixiRenderer.bgndOffX = x;
 			_plugin.pixiRenderer.bgndOffY = y;
 			_selectionMgr.drawSelectBox();
+		}
+		centerPoint (pt) {
+			// compute delta from pt to center point
+			let deltaX = this.centerPt.x - pt.x,
+				deltaY = this.centerPt.y - pt.y;
+			this.modifyLayoutFrame(this.box.x + deltaX, this.box.y + deltaY, _plugin.pixiRenderer.width, _plugin.pixiRenderer.height);
 		}
 		/**
 		 * drawGrid function - draws a grid with xy spacing in the frame.  spacing is in cm
@@ -1384,7 +1395,6 @@ PixiLayout = (function () {
 				this.selectBox.endPixelPt = _scaleRealPtToPixelPt(this.selectBox.endRealPt);
 			}
 		}
-
 		/**
 		 * Fits the layout into the current pixiRenderer dimensions
 		 * @param {FitType} fitMode - Type of fit
@@ -1397,39 +1407,39 @@ PixiLayout = (function () {
 				var pixiRenderHeight = _plugin.pixiRenderer.height;
 				var dims = CreateLawnData.lawnData.shape.dims;
 				var x = 0, y = 0;
-				var bestFit = {widthPixels: pixiRenderWidth, lengthPixels: pixiRenderHeight};
+				this.bestFit = {widthPixels: pixiRenderWidth, lengthPixels: pixiRenderHeight};
 				// based on fitMode, adjust values, then modify the fitted frame
 				switch (fitMode) {
 				case FitType.FitTypeXY:
-					bestFit = Utils.computeLayoutFrame(dims.width, dims.length, pixiRenderWidth, pixiRenderHeight);
+					this.bestFit = Utils.computeLayoutFrame(dims.width, dims.length, pixiRenderWidth, pixiRenderHeight);
 					// center layout frame in renderer
-					x = (pixiRenderWidth - bestFit.widthPixels) / 2;
-					y = (pixiRenderHeight - bestFit.lengthPixels) / 2;
+					x = (pixiRenderWidth - this.bestFit.widthPixels) / 2;
+					y = (pixiRenderHeight - this.bestFit.lengthPixels) / 2;
 					break;
 				case FitType.FitTypeX:
-					bestFit.lengthPixels = (dims.length * pixiRenderWidth) / dims.width;
+					this.bestFit.lengthPixels = (dims.length * pixiRenderWidth) / dims.width;
 					// center layout frame in renderer
-					y = (pixiRenderHeight - bestFit.lengthPixels) / 2;
+					y = (pixiRenderHeight - this.bestFit.lengthPixels) / 2;
 					break;
 				case FitType.FitTypeY:
-					bestFit.widthPixels = (dims.width * pixiRenderHeight) / dims.length;
+					this.bestFit.widthPixels = (dims.width * pixiRenderHeight) / dims.length;
 					// center layout frame in renderer
-					x = (pixiRenderWidth - bestFit.widthPixels) / 2;
+					x = (pixiRenderWidth - this.bestFit.widthPixels) / 2;
 					break;
 				default :
 					// error, no effect
 					break;
 				}
-				this.updateScale(bestFit.lengthPixels, dims.length);
-				this.modifyLayoutFrame(x, y, bestFit.widthPixels, bestFit.lengthPixels, 4);
+				this.updateScale(this.bestFit.lengthPixels, dims.length);
+				this.modifyLayoutFrame(x, y, this.bestFit.widthPixels, this.bestFit.lengthPixels);
 				if (fitMode !== FitType.FitTypeY) {
 					// Bogus, repeat the modifyLayoutFrame, why????
-					this.modifyLayoutFrame(x, y, bestFit.widthPixels, bestFit.lengthPixels, 4);
+					this.modifyLayoutFrame(x, y, this.bestFit.widthPixels, this.bestFit.lengthPixels);
 				}
 			}
 			else {
 				// really an error since there is no renderer but just in case we get invoked too soon noop this
-				//_modifyRectangle(self.layoutFrame, 0, 0, (border.width === 200) ? 100 : 200, 300, 4);
+				//_modifyRectangle(self.layoutFrame, 0, 0, (border.width === 200) ? 100 : 200, 300);
 			}
 		}
 		/**
