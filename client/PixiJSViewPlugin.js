@@ -1242,7 +1242,9 @@ PixiLayout = (function () {
 		createLayoutFrame (x, y) {
 			console.log('createLayoutFrame');
 			this.borderWidth = 4;
-			this.centerPt = {x: _plugin.pixiRenderer.width / 2, y: _plugin.pixiRenderer.height};
+			this.centerPt = {x: _plugin.pixiRenderer.width / 2, y: _plugin.pixiRenderer.height / 2};
+			let dims = CreateLawnData.lawnData.shape.dims;
+			this.centerPtReal = {x: dims.width / 2, y: dims.length / 2};
 			this.box = new PIXI.Container();
 			this.box.interactive = true;
 			this.box.mousedown = (interactionData) => _mouseMgr.mouseDown(interactionData);
@@ -1312,9 +1314,13 @@ PixiLayout = (function () {
 		}
 		centerPoint (pt) {
 			// compute delta from pt to center point
-			let deltaX = this.centerPt.x - pt.x,
-				deltaY = this.centerPt.y - pt.y;
-			this.modifyLayoutFrame(this.box.x + deltaX, this.box.y + deltaY, _plugin.pixiRenderer.width, _plugin.pixiRenderer.height);
+			let ptReal = _scalePixelPtToRealPt(pt),
+				deltaX = (this.centerPtReal.x - ptReal.x) + this.xOffReal,
+				deltaY = (this.centerPtReal.y - ptReal.y) + this.yOffReal;
+			deltaX = deltaX * _scaleRealToPixel;
+			deltaY = deltaY * _scaleRealToPixel;
+			//this.modifyLayoutFrame(this.box.x + deltaX, this.box.y + deltaY, _plugin.pixiRenderer.width, _plugin.pixiRenderer.height);
+			this.modifyLayoutFrame(deltaX, deltaY, this.bestFit.widthPixels, this.bestFit.lengthPixels);
 		}
 		/**
 		 * drawGrid function - draws a grid with xy spacing in the frame.  spacing is in cm
@@ -1431,6 +1437,8 @@ PixiLayout = (function () {
 					break;
 				}
 				this.updateScale(this.bestFit.lengthPixels, dims.length);
+				this.xOffReal = x * _scalePixelToReal;
+				this.yOffReal = y * _scalePixelToReal;
 				this.modifyLayoutFrame(x, y, this.bestFit.widthPixels, this.bestFit.lengthPixels);
 				if (fitMode !== FitType.FitTypeY) {
 					// Bogus, repeat the modifyLayoutFrame, why????
