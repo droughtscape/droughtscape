@@ -2,7 +2,7 @@ The next big push choices:
 - 3d rendering
 	+ camera view control - right bar
 	+ test understanding controls - right bar
-	- convert layout to render format
+	+ convert layout to render format
 	- slope 
 		- how best to show
 		- convert delta-y to radians via pythagorus
@@ -21,14 +21,17 @@ The next big push choices:
 	- callbacks? instead of MBus or in addition?
 	+ point selection support
 	+ area selection support
-	- cycle point selection
+	+ cycle point selection
 		- How for mobile
-			Maybe just support front/back semantics
-	- undo support
-	- remove obsolete api items
-	- delete
+			Maybe just support front/back semantics - Yes
+	+ undo support
+	+ remove obsolete api items
+	+ delete
 	- move
-	- copy
+		+ move works
+		- Need move image for dragging
+	+ copy
+	+ paste
 	
 - collections
 - administrative views

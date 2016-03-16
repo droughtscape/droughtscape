@@ -130,7 +130,7 @@ Template.layout_lawn.onDestroyed(function () {
 
 Template.layout_lawn.onRendered(function () {
 	// Start dropdowns
-	$(".dropdown-button").dropdown();
+	$(".dropdown-button").dropdown({hover: true});
 
 	var lawnShape = CreateLawnData.lawnData.shape;
 	lawnShape.printMe();

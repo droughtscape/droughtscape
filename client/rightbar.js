@@ -135,7 +135,6 @@ Template.right_bar.events({
 		console.log('Template.right_bar.events: ' + event);
 		// See if click item is active
 		if (!this.hasOwnProperty('disabled') || this.disabled !== 'disabled') {
-			// The way we get away with the fact that click events are 
 			if (this.hasOwnProperty('target')) {
 				ViewStack.pushTarget(this.target);
 			}
