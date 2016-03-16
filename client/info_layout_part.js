@@ -58,7 +58,7 @@ Template.info_layout_part.onDestroyed(function () {
 Template.info_layout_part.helpers({
 	location: function () {
 		console.log('location');
-		return {x: _selectedItem.locus.x, y: _selectedItem.locus.y};
+		return {x: _selectedItem.locus.x.toFixed(2), y: _selectedItem.locus.y.toFixed(2)};
 	},
 	carouselId: function () {
 		return carouselId;
@@ -78,7 +78,7 @@ Template.info_layout_part.helpers({
 		ViewStack.popState(true);
 	},
 	itemType: function () {
-		let itemId = _selectedItem.abstractPart.itemId
+		let itemId = _selectedItem.abstractPart.itemId;
 		let part = PartsManager.getPartByItemId(itemId);
 		return { itemId: itemId, url: (part) ? part.url : ''};
 	}

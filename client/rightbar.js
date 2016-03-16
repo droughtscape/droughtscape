@@ -235,20 +235,21 @@ Template.rotate.events({
         let w = target.width;
         let h = target.height;
         let halfWidth = w / 2;
-        let zoomIn = {x: 0, y: 0, w: halfWidth, h: h};
+        let rotRt = {x: 0, y: 0, w: halfWidth, h: h};
         let pt = {x: event.offsetX, y: event.offsetY};
         let graphic = document.getElementById(this.name);
         let normalImage = this.url;
-        if (Utils.pointInBox(pt, zoomIn)) {
-            MBus.publish(this.tagParent, new Message.Action(this.inAction));
+        if (Utils.pointInBox(pt, rotRt)) {
+            MBus.publish(this.tagParent, new Message.Action(this.ltAction));
             _highlightGraphic(graphic, 'rotateleft.png', normalImage);
             return;
         }
-        let zoomOut = {x: halfWidth, y: 0, w: halfWidth, h: h};
-        if (Utils.pointInBox(pt, zoomOut)) {
-            MBus.publish(this.tagParent, new Message.Action(this.outAction));
+        let rotLt = {x: halfWidth, y: 0, w: halfWidth, h: h};
+        if (Utils.pointInBox(pt, rotLt)) {
+            MBus.publish(this.tagParent, new Message.Action(this.rtAction));
             _highlightGraphic(graphic, 'rotateright.png', normalImage);
             return;
-        }    }
+        }    
+    }
 });
 
