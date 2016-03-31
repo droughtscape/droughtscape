@@ -14,7 +14,7 @@ useraccounts:materialize
 udondan:slick
 jquery
 fds:pixijs
-standard-minifiers
+materialize:materialize@=0.97.0
 meteor-base
 mobile-experience
 mongo
@@ -29,8 +29,9 @@ spacebars
 check
 ecmascript
 kevohagan:sweetalert
+standard-minifier-css
+standard-minifier-js
 raix:eventemitter
 react
 react-template-helper
 meteorflux:dispatcher
-materialize:materialize
